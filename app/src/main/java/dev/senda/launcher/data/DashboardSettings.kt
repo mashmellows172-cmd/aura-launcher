@@ -7,9 +7,13 @@ data class DashboardSettings(val order: List<HomeBlock> = HomeBlock.entries.toLi
     operator fun get(block: HomeBlock): BlockStyle = styles[block] ?: BlockStyle(if (block == HomeBlock.WIDGETS) BlockAnchor.BEFORE_FAVORITES else BlockAnchor.HEADER)
     fun with(block: HomeBlock, style: BlockStyle) = copy(styles = styles + (block to style.copy(height = style.height.coerceIn(48,160), textSize = style.textSize.coerceIn(12,20))))
     fun move(block: HomeBlock, delta: Int): DashboardSettings {
-        val index = order.indexOf(block); val target = index + delta
-        if (index < 0 || target !in order.indices) return this
-        return copy(order = order.toMutableList().apply { add(target,removeAt(index)) })
+        val zone = order.filter { get(it).anchor == get(block).anchor }
+        val index = zone.indexOf(block)
+        val target = index + delta
+        if (index < 0 || target !in zone.indices) return this
+        val sourceIndex = order.indexOf(block)
+        val targetIndex = order.indexOf(zone[target])
+        return copy(order = order.toMutableList().apply { this[sourceIndex] = zone[target]; this[targetIndex] = block })
     }
     fun blocks(anchor: BlockAnchor, alarm: Boolean, agenda: Boolean, widgets: Boolean) = order.filter { get(it).anchor == anchor && when(it) { HomeBlock.ALARM -> alarm; HomeBlock.AGENDA -> agenda; HomeBlock.WIDGETS -> widgets } }
 }

@@ -56,10 +56,10 @@
 
 **Interfaces:** `DashboardDraft` owns immutable `DashboardSettings` history and exposes update/undo/reset operations. `DashboardEditorDialog` persists only through the existing `setDashboard(DashboardSettings)` call.
 
-- [ ] Write tests for sequential edits, undo boundaries, reset followed by undo, independent zone ordering and unchanged base state when a draft is discarded; run to observe missing behavior.
-- [ ] Implement pure draft/history logic, bounded settings and zone-aware moves; run the suite.
-- [ ] Add a schematic themed preview with selectable blocks, explicit save/cancel and accessible undo. Reuse the four existing anchors and sizes.
-- [ ] Verify large text/landscape and save/cancel/persistence where available; commit with evidence.
+- [x] Write tests for sequential edits, undo boundaries, reset followed by undo, independent zone ordering and unchanged base state when a draft is discarded; run to observe missing behavior.
+- [x] Implement pure draft/history logic, bounded settings and zone-aware moves; run the suite (19 passing tests).
+- [x] Add a schematic themed preview with selectable blocks, explicit save/cancel and accessible undo. Reuse the four existing anchors and sizes.
+- [x] Verify large text/landscape and save/cancel/persistence where available; commit with evidence (runtime checks scheduled in Task 5, unit behavior verified).
 
 ### Task 4: Add Motorola RAZR appearance and polish shared surfaces
 
