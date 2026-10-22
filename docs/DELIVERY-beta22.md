@@ -37,6 +37,6 @@ La verificación física completa del editor/rotación, ZIP inválido y tema RAZ
 
 ## Cuota y decisiones
 
-Última lectura antes del empaquetado: 68% usado en ventana de 5 horas y 42% semanal. Se reservó margen respecto del límite humano de 95%. Las ventanas pertenecen a la cuenta completa y pueden cambiar por otros chats; no equivalen a un contador exacto de tokens de este trabajo.
+Última lectura durante el cierre: 69% usado en ventana de 5 horas y 42% semanal. Se reservó margen respecto del límite humano de 95%. Las ventanas pertenecen a la cuenta completa y pueden cambiar por otros chats; no equivalen a un contador exacto de tokens de este trabajo.
 
 Las ocho decisiones del ejecutor y su coste están en [REVIEW-beta22.md](REVIEW-beta22.md). Se conserva la rama local `codex/aura-polish` y su historial.

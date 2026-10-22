@@ -78,8 +78,8 @@
 
 **Interfaces:** Release-derived beta with R8 and compiler reports; no arbitrary dependency upgrades or speculative stability annotations.
 
-- [ ] Rank measured hotspots and apply only justified focused fixes, reading the relevant Compose skill first.
-- [ ] Run unit tests, optimized build, lint, signing verification and available runtime checks.
-- [ ] Dispatch one independent final reviewer using the requesting-code-review skill; address important findings with targeted regression tests.
-- [ ] Package source without builds, private evidence, user assets or keys; write checksums and evidence-backed report.
-- [ ] Check quota, save the ledger, stop heartbeat when complete and mark the goal complete only when required work is actually finished.
+- [x] Rank measured hotspots and apply only justified focused fixes, reading the relevant Compose skill first (no controlled hotspot ranking available; no speculative tuning applied).
+- [x] Run unit tests, optimized build, lint, signing verification and available runtime checks (22 tests; device follow-up explicitly recorded).
+- [x] Dispatch one independent final reviewer using the requesting-code-review skill; address important findings with targeted regression tests (one recreation defect fixed).
+- [x] Package source without builds, private evidence, user assets or keys; write checksums and evidence-backed report.
+- [x] Check quota, save the ledger, stop heartbeat when complete and mark the goal complete only when required work is actually finished (local delivery; physical QA remains listed for the next stable session).
