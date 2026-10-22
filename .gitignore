@@ -1,0 +1,13 @@
+.gradle/
+.kotlin/
+**/build/
+local.properties
+*.keystore
+*.jks
+beta/*.apk
+beta/*.idsig
+beta/*.zip
+__pycache__/
+*.pyc
+.superpowers/
+.worktrees/

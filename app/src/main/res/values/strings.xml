@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Aura Launcher</string>
+    <string name="notification_shortcut_label">Aura · Gestos del dispositivo</string>
+    <string name="notification_shortcut_description">Funciones opcionales: abrir el panel de notificaciones o bloquear la pantalla cuando ejecutas el gesto elegido en Aura. No recupera contenido de pantallas ni procesa mensajes. Puedes desactivarlo en Accesibilidad.</string>
+</resources>

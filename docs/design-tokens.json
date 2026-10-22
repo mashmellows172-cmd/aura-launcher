@@ -1,0 +1,165 @@
+{
+  "name": "Aura Launcher",
+  "description": "Sistema de pieles propias; cada piel altera el acabado sin mover los componentes del launcher.",
+  "source": "Valores originales de Aura. No extraídos de Niagara ni de fabricantes citados como inspiración.",
+  "skins": {
+    "pulse": {
+      "accent": "#FF3654",
+      "backgroundTop": "#08090C",
+      "backgroundBottom": "#160910",
+      "pattern": "pronounced dot matrix",
+      "iconHolder": "squircle",
+      "motionMs": 300
+    },
+    "bloom": {
+      "accent": "#E28B63",
+      "backgroundTop": "#32251F",
+      "backgroundBottom": "#171A20",
+      "pattern": "orbs",
+      "iconHolder": "rounded",
+      "motionMs": 420
+    },
+    "prism": {
+      "accent": "#087EB7",
+      "backgroundTop": "#D8F2F5",
+      "backgroundBottom": "#9BD8E7",
+      "pattern": "water ripples",
+      "iconHolder": "rounded",
+      "motionMs": 240
+    },
+    "flow": {
+      "accent": "#B84388",
+      "backgroundTop": "#261A28",
+      "backgroundBottom": "#101923",
+      "pattern": "wave",
+      "iconHolder": "circle",
+      "motionMs": 360
+    },
+    "horizon": {
+      "accent": "#80BFFF",
+      "backgroundTop": "#11152B",
+      "backgroundBottom": "#321D5B",
+      "pattern": "flowing wave",
+      "iconHolder": "beveled",
+      "motionMs": 220
+    }
+  },
+  "legacyModes": {
+    "amoled": "#000000",
+    "dark": "#171A17",
+    "light": "#F4F2EC",
+    "system": "system setting"
+  },
+  "typeScaleSp": {
+    "label": 12,
+    "body": 16,
+    "title": 22,
+    "display": 32
+  },
+  "spacingDp": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radiusDp": {
+    "small": 12,
+    "medium": 20,
+    "large": 28,
+    "pill": 999
+  },
+  "layoutInvariant": true,
+  "appGlyphs": "Se conserva por defecto el glifo de Android. Opcionalmente, el usuario asigna un PNG local por piel y app; nunca se redistribuyen iconos de fabricantes. Los fondos también se pueden elegir localmente por piel.",
+  "personalization": {
+    "textSizeSp": {
+      "default": 16,
+      "min": 14,
+      "max": 24
+    },
+    "iconSizeDp": {
+      "default": 42,
+      "min": 32,
+      "max": 60
+    },
+    "rowSpacingDp": {
+      "default": 0,
+      "min": 0,
+      "max": 20
+    },
+    "rowMinHeightDp": 60,
+    "rowIconPaddingDp": 12,
+    "contrastDark": {
+      "background": "#000000",
+      "foreground": "#FFFFFF",
+      "accent": "#BCE7FF"
+    },
+    "contrastLight": {
+      "background": "#FFFFFF",
+      "foreground": "#000000",
+      "accent": "#003B65"
+    }
+  },
+  "themeEditor": {
+    "previewDp": 174,
+    "swatchDp": 40,
+    "gapDp": 8,
+    "paddingDp": 12,
+    "radiusDp": 16,
+    "accentChoices": [
+      "theme",
+      "red",
+      "mint",
+      "blue",
+      "amber",
+      "violet",
+      "pink",
+      "neutral"
+    ],
+    "shapeChoices": [
+      "theme",
+      "squircle",
+      "circle",
+      "rounded",
+      "beveled",
+      "pill"
+    ],
+    "commit": "Apply only; one DataStore transaction",
+    "contrast": "accent adjusted against background and container roles; global high contrast takes priority"
+  },
+  "motionV2": {
+    "profiles": [
+      "DEPTH",
+      "FOLD",
+      "WAVE",
+      "ORBIT",
+      "GLIDE",
+      "NONE"
+    ],
+    "foldDegrees": 52,
+    "orbitDegrees": 30,
+    "depthScale": 0.14,
+    "travelDp": {
+      "depth": 30,
+      "wave": 44,
+      "orbit": 52,
+      "glide": 26,
+      "menu": 28
+    },
+    "railWidthDp": {
+      "portrait": 40,
+      "landscape": 96
+    },
+    "railBubbleDp": 52,
+    "railMagnetTravelDp": 16,
+    "previewHeightDp": 170,
+    "idleClock": "stops after settling; lifecycle STARTED only",
+    "menuEntrance": {
+      "initialScale": 0.84,
+      "springDamping": 0.78,
+      "springStiffness": 420
+    },
+    "cameraDistance": "1.5 × max(layer width, layer height), in pixels"
+  }
+}
