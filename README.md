@@ -12,7 +12,14 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.14.0-beta19.apk](beta/Aura-0.14.0-beta19.apk), variante optimizada con R8. Novedades y formato del respaldo: [beta19](docs/BETA19.md). Consulta [BETA.md](BETA.md) para instalar, cambiar opciones y volver al launcher anterior.
+Beta actual: [Aura-0.16.0-beta21.apk](beta/Aura-0.16.0-beta21.apk), variante optimizada con R8. Novedades: [beta21](docs/BETA21.md). Revisión y límites: [QA beta21](docs/QA-beta21.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+
+## Nuevo en beta21
+
+- Biblioteca retro local opcional: [preparar e importar recursos](docs/RETRO-LIBRARY.md). El APK y el código fuente no incluyen imágenes de fabricantes.
+- Fondos seleccionables por tema e iconos importados con proporciones y transparencia conservadas.
+- Caché de iconos acotada, recogida de estado ligada a visibilidad, tipos de fila y ciclo breve del clima. [Alcance de rendimiento](docs/perf-audit-2026-10-22-app.md).
+- Desarrollo de beta20 incluido: avatar, clima desde el widget público de Prognoza y distribución configurable de alarma, agenda y widgets; regresiones pendientes identificadas en QA.
 
 ## Nuevo en beta19
 

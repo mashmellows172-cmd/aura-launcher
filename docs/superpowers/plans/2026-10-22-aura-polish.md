@@ -34,10 +34,10 @@
 
 **Interfaces:** Consumes the installed beta21 and existing backup/QA scripts. Produces the documented baseline and task ledger for later comparisons.
 
-- [ ] Verify existing unit suite and record final optimized idle/scroll sample under available device conditions.
-- [ ] Exercise library rejection/persistence, normal icons, current avatar/weather and dashboard controls as availability permits.
-- [ ] Document only observed outcomes, remaining checks and current build commands.
-- [ ] Commit baseline documentation after verifying it matches evidence.
+- [x] Verify existing unit suite and record final optimized idle/scroll sample under available device conditions (samples inconclusive).
+- [x] Exercise library rejection/persistence, normal icons, current avatar/weather and dashboard controls as availability permits (remaining recovery checks carried into Task 2).
+- [x] Document only observed outcomes, remaining checks and current build commands.
+- [x] Commit baseline documentation after verifying it matches evidence.
 
 ### Task 2: Improve resource and settings integrity
 

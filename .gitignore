@@ -4,9 +4,7 @@
 local.properties
 *.keystore
 *.jks
-beta/*.apk
-beta/*.idsig
-beta/*.zip
+beta/
 __pycache__/
 *.pyc
 .superpowers/

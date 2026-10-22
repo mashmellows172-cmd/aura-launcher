@@ -1,4 +1,8 @@
-# Aura Launcher 0.14.0-beta19
+# Aura Launcher 0.16.0-beta21
+
+## Colección retro personal
+
+En **Tema visual → Acabado**, importa el ZIP de tu colección y activa **Recursos de mi colección**. En **Fondo** puedes elegir entre sus imágenes. **Aplicar tema** guarda la selección; **Cancelar** descarta el borrador. [Guía de recursos](docs/RETRO-LIBRARY.md), [novedades](docs/BETA21.md) y [verificación](docs/QA-beta21.md).
 
 ## Iconos y temas retro
 
@@ -30,7 +34,7 @@ Las transformaciones afectan al contenido de Aura. Las ventanas de otras apps y 
 
 ## Compatibilidad
 
-Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 4; se importan formatos 1, 2, 3 y 4. No incluye permisos ni autoriza accesibilidad al restaurar.
+Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 6 y admite importar formatos 1–6. La biblioteca retro se transfiere con su ZIP por separado. No incluye permisos ni autoriza accesibilidad al restaurar.
 
 Actualizar el APK firmado sin desinstalar. Mismo paquete y certificado que las betas anteriores. Código MIT y fuentes Geist bajo SIL OFL1.1, sin publicidad ni permiso de Internet.
 
