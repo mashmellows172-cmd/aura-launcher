@@ -45,10 +45,10 @@
 
 **Interfaces:** Retain existing `loadLocalImage`, theme apply and import APIs unless tests demonstrate a necessary change.
 
-- [ ] Reproduce highest-impact cancellation, stale-result, archive or lifecycle defect with a focused failing test.
-- [ ] Apply the smallest fix and verify RED→GREEN, then run the whole unit suite.
-- [ ] Validate malformed library recovery and process recreation on the available target; record unavailable cases.
-- [ ] Commit each coherent fix with its verification result in the ledger.
+- [x] Reproduce highest-impact cancellation, stale-result, archive or lifecycle defect with a focused failing test (new file transaction missing).
+- [x] Apply the smallest fix and verify RED→GREEN, then run the whole unit suite (14 tests).
+- [x] Validate malformed library recovery and process recreation on the available target; record unavailable cases (physical recovery deferred to final QA or next unlock).
+- [x] Commit each coherent fix with its verification result in the ledger.
 
 ### Task 3: Add visual dashboard editing and undo
 

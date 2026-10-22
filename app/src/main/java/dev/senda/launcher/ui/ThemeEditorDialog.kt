@@ -155,7 +155,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
 @Composable
 private fun ThemePreview(theme: LauncherTheme, wallpaper: String?, state: HomeUiState, viewModel: LauncherViewModel) {
     val context = LocalContext.current
-    val bitmap by produceState<ImageBitmap?>(null, wallpaper) { value = wallpaper?.let { withContext(Dispatchers.IO) { loadLocalImage(context, it.toUri(), 480) } } }
+    val bitmap = rememberLocalImage(wallpaper, 480)
     val style = LocalSkinStyle.current
     val highContrast = state.appearance.highContrast
     val apps = remember(state.apps, state.favoritePackages) { state.favoritePackages.mapNotNull { name -> state.apps.firstOrNull { it.packageName == name } }.ifEmpty { state.apps }.take(3) }

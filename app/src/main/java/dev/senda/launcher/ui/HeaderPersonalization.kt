@@ -44,8 +44,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun renderAvatarImage(uri: String?, modifier: Modifier = Modifier): Boolean {
-    val context = LocalContext.current
-    val image by produceState<ImageBitmap?>(null,uri) { value = uri?.let { withContext(Dispatchers.IO) { loadLocalImage(context,it.toUri(),512) } } }
+    val image = rememberLocalImage(uri, 512)
     if (image == null) return false
     Image(image!!,null,modifier.clip(CircleShape),contentScale=ContentScale.Crop)
     return true

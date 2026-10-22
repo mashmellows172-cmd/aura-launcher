@@ -389,21 +389,21 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         return try {
             val app = getApplication<Application>()
             val previous = _uiState.value
-            val savedWallpaper = withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 if (pack != null) {
                     val candidate = previous.availableIconPacks.firstOrNull { it.packageName == pack }
                     if (candidate != null) packRepository.read(candidate)
                     else require(previous.iconPacks[theme.name] == pack) { "El paquete ya no está instalado" }
                 }
-                if (wallpaper == null || wallpaper == previous.skinWallpapers[theme.name]) wallpaper else {
-                    val bitmap = loadLocalImage(app, Uri.parse(wallpaper), 1920) ?: error("No se pudo leer el fondo elegido")
-                    val dir = java.io.File(app.filesDir, "theme-wallpapers").apply { mkdirs() }
-                    val file = java.io.File(dir, "${java.util.UUID.randomUUID()}.png")
-                    file.outputStream().use { output -> check(bitmap.asAndroidBitmap().compress(android.graphics.Bitmap.CompressFormat.PNG, 100, output)) }
-                    Uri.fromFile(file).toString()
-                }
             }
-            favoritesStore.applyTheme(theme, finish, pack, savedWallpaper, retroEnabled)
+            if (wallpaper == null || wallpaper == previous.skinWallpapers[theme.name]) {
+                favoritesStore.applyTheme(theme, finish, pack, wallpaper, retroEnabled)
+            } else {
+                dev.senda.launcher.data.persistLocalResource(java.io.File(app.filesDir, "theme-wallpapers"), ".png", { file ->
+                    val bitmap = loadLocalImage(app, Uri.parse(wallpaper), 1920) ?: error("No se pudo leer el fondo elegido")
+                    file.outputStream().use { output -> check(bitmap.asAndroidBitmap().compress(android.graphics.Bitmap.CompressFormat.PNG, 100, output)) }
+                }, { file -> favoritesStore.applyTheme(theme, finish, pack, Uri.fromFile(file).toString(), retroEnabled) })
+            }
             val referenced = favoritesStore.snapshot().values.filterIsInstance<String>().toSet()
             withContext(Dispatchers.IO) {
                 java.io.File(app.filesDir, "theme-wallpapers").listFiles()?.filter { Uri.fromFile(it).toString() !in referenced }?.forEach { it.delete() }

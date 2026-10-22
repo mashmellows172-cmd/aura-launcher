@@ -89,6 +89,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.rememberScrollState
@@ -234,13 +235,7 @@ fun HomeScreen(
         label = "searchGlow",
     )
     val wallpaperUri = state.skinWallpapers[state.theme.name] ?: dev.senda.launcher.data.LocalRetroAssets.current?.wallpapers?.firstOrNull()?.uri
-    val wallpaperBitmap by produceState<ImageBitmap?>(initialValue = null, wallpaperUri) {
-        value = wallpaperUri?.let { savedUri ->
-            withContext(Dispatchers.IO) {
-                loadLocalImage(context, savedUri.toUri(), 1920)
-            }
-        }
-    }
+    val wallpaperBitmap = rememberLocalImage(wallpaperUri, 1920)
     val wallpaperPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             runCatching {
@@ -1111,7 +1106,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val preserveArtwork = importedUri != null && !retro.customHolder
     val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri"
     val cached = remember(iconKey) { AppIconCache.get(iconKey) }
-    val bitmap by produceState<ImageBitmap?>(initialValue = cached, iconKey, sourceUri) {
+    val bitmap by key(iconKey, sourceUri) { produceState<ImageBitmap?>(initialValue = cached) {
         value = withContext(Dispatchers.IO) {
             val custom = sourceUri?.takeIf { cached == null }?.let { uri ->
                 loadLocalImage(context, uri.toUri(), 128)
@@ -1123,6 +1118,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
             }
                 .getOrNull()?.also { AppIconCache.put(iconKey, it) }
         }
+    }
     }
     Box(
         modifier = Modifier.size(appearance.iconSize.dp).animateContentSize(tween(style.motionMillis))
