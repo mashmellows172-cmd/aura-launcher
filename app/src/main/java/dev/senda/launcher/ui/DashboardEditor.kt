@@ -8,6 +8,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
@@ -47,12 +49,13 @@ fun DashboardGroup(state: HomeUiState, controller: WidgetController, anchor: Blo
 
 @Composable
 fun DashboardEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, controller: WidgetController, onAddWidget: () -> Unit, onDismiss: () -> Unit) {
-    var draft by remember(state.dashboard){mutableStateOf(DashboardDraft(state.dashboard))}
-    var selected by remember { mutableStateOf(HomeBlock.ALARM) }
+    var draft by rememberSaveable(state.dashboard, stateSaver=Saver<DashboardDraft,IntArray>(save={it.saveState()},restore={DashboardDraft.restoreState(it)})){mutableStateOf(DashboardDraft(state.dashboard))}
+    var selectedName by rememberSaveable { mutableStateOf(HomeBlock.ALARM.name) }
+    val selected=HomeBlock.entries.firstOrNull { it.name==selectedName } ?: HomeBlock.ALARM
     AuraAlertDialog(onDismissRequest=onDismiss,title={Text("Organizar inicio")},text={
         Column(Modifier.heightIn(max=480.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)){
             Text("Toca un bloque de la vista previa para editarlo. Los cambios se aplican al guardar.",style=MaterialTheme.typography.bodySmall)
-            DashboardPreview(draft.current, selected, state, controller) { selected = it }
+            DashboardPreview(draft.current, selected, state, controller) { selectedName = it.name }
             Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
                 TextButton(onClick={draft=draft.undo()},enabled=draft.canUndo){Text("Deshacer")}
                 TextButton(onClick={draft=draft.reset()}){Text("Restablecer")}

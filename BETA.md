@@ -1,4 +1,14 @@
-# Aura Launcher 0.16.0-beta21
+# Aura Launcher 0.17.0-beta22
+
+## Organizar inicio
+
+Abre **Organizar inicio** desde los tres puntos. Toca un bloque del esquema para cambiar su posición, altura, texto y anchura. **Subir/Bajar** ordena solo dentro de su zona. **Deshacer** revierte el último cambio; **Restablecer** también se puede deshacer. La vista previa indica los bloques ocultos por ajustes o por falta de widgets.
+
+**Guardar distribución** aplica el borrador. **Cancelar** lo descarta. **Guardar y añadir widget** guarda antes de abrir el selector de Android. La vista previa es un esquema, no una captura exacta del widget. El borrador y su historial se conservan al recrear la actividad; salir con Inicio descarta el editor.
+
+## Motorola clásico
+
+En **Tema visual**, elige **Aura Alloy · RAZR V3** y pulsa **Aplicar tema**. Fondo de metal oscuro, reloj LCD azul y dibujos propios de categorías. Conserva la distribución y ofrece iconos normales. [Referencia histórica y alcance](docs/RAZR-design-reference.md).
 
 ## Colección retro personal
 
@@ -44,4 +54,4 @@ Actualizar el APK firmado sin desinstalar. Mismo paquete y certificado que las b
 - [Lecturas de animación en capas gráficas](https://developer.android.com/develop/ui/compose/animation/quick-guide).
 - [Observación de desplazamiento anidado](https://developer.android.com/develop/ui/compose/touch-input/scroll/nested-scroll-modifiers).
 
-La compilación optimizada y lint se completaron con cero errores, siete advertencias y dos sugerencias. No se añadieron ni ejecutaron nuevas pruebas unitarias. La revisión de dispositivo y sus límites se registran en [QA-beta17.md](docs/QA-beta17.md).
+Resultados actuales y límites de verificación: [beta22](docs/BETA22.md). Los informes de betas anteriores describen sus propias ejecuciones.

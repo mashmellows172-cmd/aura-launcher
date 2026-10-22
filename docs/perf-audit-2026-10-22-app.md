@@ -34,3 +34,11 @@ Se generaron informes para variantes no debug; métricas específicas bajo `app/
 - Perfil base propio y comprobación de su inclusión en el APK.
 - Confirmación de hotspots con instrumentación antes de cambios de estabilidad o prefetch.
 - Verificación en segundo plano y bajo presión de memoria. No hay medición de ahorro de batería.
+
+## Cierre beta22
+
+La variante final conserva esas medidas. APK firmado: 3.012.610 bytes, incluida la nueva interfaz y el estado guardado del editor. El compilador beta informa 230 composables skippable, 324 restartable y 18 clases inferidas inestables. Son diagnósticos sobre una funcionalidad mayor; no se comparan como una puntuación de velocidad.
+
+No se aplicaron ajustes especulativos de prefetch o anotaciones de estabilidad: las muestras no permiten ordenar hotspots con confianza. Las imágenes usan estado nuevo al cambiar de origen para evitar selecciones antiguas visibles; el borrador serializado ocupa como máximo aproximadamente 2,4 KiB. El fondo RAZR se dibuja con primitivas estáticas y no incorpora un ticker en reposo.
+
+Vídeo activo y cambios de primer plano impidieron una sesión física controlada. Los resultados no permiten prometer mayor FPS, menor batería ni porcentajes de mejora. La siguiente medición debe fijar configuración, carga y recorrido antes de modificar más código de rendimiento.

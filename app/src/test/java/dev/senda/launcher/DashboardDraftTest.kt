@@ -52,4 +52,18 @@ class DashboardDraftTest {
         assertEquals(BlockStyle(BlockAnchor.END, 160, 12, true), edited[HomeBlock.ALARM])
         assertEquals(base[HomeBlock.AGENDA], edited[HomeBlock.AGENDA])
     }
+
+    @Test fun recreationPreservesDraftAndUndoWithoutSavingBase() {
+        val base=DashboardSettings()
+        val first=base.with(HomeBlock.ALARM,base[HomeBlock.ALARM].copy(height=96))
+        val second=first.with(HomeBlock.AGENDA,first[HomeBlock.AGENDA].copy(anchor=BlockAnchor.END))
+        val saved=DashboardDraft(base).edit(first).edit(second).saveState()
+        val restored=DashboardDraft.restoreState(saved)!!
+        assertEquals(second,restored.current)
+        assertEquals(first,restored.undo().current)
+        assertEquals(base,restored.undo().undo().current)
+        assertEquals(BlockAnchor.HEADER,base[HomeBlock.AGENDA].anchor)
+        assertNull(DashboardDraft.restoreState(intArrayOf(999,3)))
+        assertNull(DashboardDraft.restoreState(saved.copyOf(5)))
+    }
 }

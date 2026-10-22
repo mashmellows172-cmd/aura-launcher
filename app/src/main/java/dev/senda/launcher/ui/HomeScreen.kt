@@ -251,7 +251,7 @@ fun HomeScreen(
         wallpaperPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    var handledHomeRequest by rememberSaveable { androidx.compose.runtime.mutableIntStateOf(state.homeRequest) }
+    var handledHomeRequest by remember { androidx.compose.runtime.mutableIntStateOf(state.homeRequest) }
     LaunchedEffect(state.homeRequest) {
         if (state.homeRequest != handledHomeRequest) {
             handledHomeRequest = state.homeRequest
@@ -514,7 +514,7 @@ fun HomeScreen(
     if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,
         onOpen = { val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }; if(app != null) viewModel.launch(app) else showWeatherPicker = true },
         onChooseApp = { showWeatherConnection = false; showWeatherPicker = true }, onDismiss = { showWeatherConnection = false })
-    if (showDashboard) DashboardEditorDialog(state,viewModel,widgetController,onAddWidget = { showDashboard = false; showWidgetPicker = true }) { showDashboard = false }
+    if (showDashboard && state.dashboardLoaded) DashboardEditorDialog(state,viewModel,widgetController,onAddWidget = { showDashboard = false; showWidgetPicker = true }) { showDashboard = false }
     if (showPersonalization) PersonalizationDialog(state, viewModel, onExportSettings, onImportSettings) { showPersonalization = false }
     if (state.restoreSummary != null) AuraAlertDialog(
         onDismissRequest = { if (!state.backupBusy) viewModel.cancelRestore() },

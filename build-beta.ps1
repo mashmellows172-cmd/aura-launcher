@@ -12,6 +12,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'La compilación o sus comprobaciones fallaron.' }
     if (!(Test-Path -LiteralPath $SigningKeystore)) { throw 'No se encuentra la clave de firma. Indica -SigningKeystore con la clave de las betas ya instaladas.' }
     $version = [regex]::Match((Get-Content app\build.gradle.kts -Raw), 'versionName = "([^"]+)"').Groups[1].Value
+    New-Item -ItemType Directory -Path (Join-Path $PSScriptRoot 'beta') -Force | Out-Null
     $apk = Join-Path $PSScriptRoot "beta\Aura-$version-debug.apk"
     $signer = Join-Path $env:ANDROID_HOME 'build-tools\37.0.0\apksigner.bat'
     & $signer sign --ks $SigningKeystore --ks-pass pass:android --key-pass pass:android --out $apk app\build\outputs\apk\debug\app-debug.apk

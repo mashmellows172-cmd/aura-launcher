@@ -12,7 +12,15 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.16.0-beta21.apk](beta/Aura-0.16.0-beta21.apk), variante optimizada con R8. Novedades: [beta21](docs/BETA21.md). Revisión y límites: [QA beta21](docs/QA-beta21.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+Beta actual: [Aura-0.17.0-beta22.apk](beta/Aura-0.17.0-beta22.apk), variante optimizada con R8. Novedades, verificación y límites: [beta22](docs/BETA22.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+
+## Nuevo en beta22
+
+- Editor visual de inicio con cuatro zonas, selección de bloques, deshacer, restablecimiento reversible y guardado explícito. Conserva el borrador y su historial al recrear la actividad.
+- Ordenar bloques afecta solo a su zona. Los cambios de un deslizador se deshacen como un gesto.
+- Aura Alloy: tema original inspirado en Motorola RAZR V3, con reloj LCD azul, metal grabado e iconos propios. Nothing sigue como principal.
+- Importación de fondos con limpieza de archivos parciales y protección frente a cancelaciones. Las imágenes anteriores desaparecen al cambiar su origen.
+- Fuentes distribuibles: `python tools/package-source.py --output beta/Aura-source.zip` desde un checkout Git. Excluye compilaciones, claves, evidencia privada y recursos personales.
 
 ## Nuevo en beta21
 
@@ -62,7 +70,7 @@ Beta actual: [Aura-0.16.0-beta21.apk](beta/Aura-0.16.0-beta21.apk), variante opt
 - Índice alfabético fijo a la derecha: toque directo o arrastre vertical para recorrer iniciales.
 - Favoritos locales: añadir/quitar desde estrellas o pulsación larga, reordenar y quitar desde el editor.
 - Organización local: ocultar una app desde su menú de pulsación larga y restaurarla desde **Apps ocultas**.
-- Pieles persistentes: **Aura · Nothing** (principal, negro AMOLED, Geist e iconos monocromáticos), Aura Bloom (homenaje a HTC Sense), Aura Prism (homenaje a Samsung TouchWiz), Aura Flow (homenaje a LG) y Aura Horizon (homenaje a Xperia). Además conserva AMOLED puro, Oscuro, Claro y Seguir el sistema.
+- Pieles persistentes: **Aura · Nothing** (principal, negro AMOLED, Geist e iconos monocromáticos), Aura Bloom (homenaje a HTC Sense), Aura Prism (homenaje a Samsung TouchWiz), Aura Flow (homenaje a LG), Aura Horizon (homenaje a Xperia) y Aura Alloy (homenaje al RAZR V3). Además conserva AMOLED puro, Oscuro, Claro y Seguir el sistema.
 - Cada piel aplica un fondo abstracto original, color de acento, forma animada del soporte de iconos y su propio ritmo de transición. La distribución, el catálogo y la navegación permanecen iguales. Las referencias a fabricantes son homenajes; no se incluyen recursos ni marcas de ellos.
 - Cabecera interactiva con accesos a alarmas, calendario y app de clima elegida por el usuario.
 - Widgets Android reales: añadir desde el menú, autorizar con Android, configurar con su proveedor, cambiar altura, ordenar y quitar. Hasta cuatro, guardados localmente por ID. Escuchan actualizaciones mientras Aura está visible.
@@ -74,7 +82,7 @@ Aura no necesita conexión, no recopila datos y no incluye analítica, publicida
 
 ## Verificación
 
-Beta17: compilación optimizada y lint sin errores. Alcance de las comprobaciones en el Motorola: [QA beta17](docs/QA-beta17.md).
+Beta22: pruebas de lógica, compilación optimizada, lint y firma. Resultados y comprobaciones físicas pendientes: [informe beta22](docs/BETA22.md). Los datos de betas anteriores que siguen son históricos.
 
 Compila contra Android API 37. Beta14 cuenta con 11 pruebas unitarias y análisis estático. Los pasos y la evidencia de dispositivo están en `../replica/test-plan.md`; las herramientas Android de regresión están en `e2e/`. Beta17 reemplaza el motor de movimiento anterior. El experimento beta13 permanece fuera de esta entrega, en `work/paused-motion-beta13` del workspace.
 

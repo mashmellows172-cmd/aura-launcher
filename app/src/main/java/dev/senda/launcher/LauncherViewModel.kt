@@ -63,6 +63,7 @@ data class HomeUiState(
     val avatarBusy: Boolean = false,
     val avatarError: String? = null,
     val dashboard: DashboardSettings = DashboardSettings(),
+    val dashboardLoaded: Boolean = false,
     val retroLibrary: Map<String, RetroThemeAssets> = emptyMap(),
     val retroEnabled: Map<String, Boolean> = emptyMap(),
     val retroImportBusy: Boolean = false,
@@ -150,7 +151,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { favoritesStore.themeFinishes.collect { finishes -> _uiState.update { it.copy(themeFinishes = finishes) } } }
         viewModelScope.launch { favoritesStore.lockGesture.collect { value -> _uiState.update { it.copy(lockGesture = value) } } }
         viewModelScope.launch { favoritesStore.avatar.collect { uri -> _uiState.update { it.copy(avatarUri = uri) } } }
-        viewModelScope.launch { favoritesStore.dashboard.collect { value -> _uiState.update { it.copy(dashboard = value) } } }
+        viewModelScope.launch { favoritesStore.dashboard.collect { value -> _uiState.update { it.copy(dashboard = value, dashboardLoaded = true) } } }
         viewModelScope.launch { favoritesStore.retroEnabled.collect { value -> _uiState.update { it.copy(retroEnabled = value) } } }
         viewModelScope.launch { val catalog = withContext(Dispatchers.IO) { retroAssets.load() }; _uiState.update { it.copy(retroLibrary = catalog) } }
         refreshApps()
