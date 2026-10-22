@@ -41,7 +41,7 @@ import kotlinx.coroutines.withContext
 
 private object ThemeEditorSize {
     val height = 520.dp; val preview = 174.dp; val controls = 210.dp
-    val gap = 8.dp; val padding = 12.dp; val swatch = 40.dp; val radius = 16.dp
+    val gap = 8.dp; val padding = 12.dp; val swatch = 48.dp; val radius = 16.dp
 }
 
 @Composable

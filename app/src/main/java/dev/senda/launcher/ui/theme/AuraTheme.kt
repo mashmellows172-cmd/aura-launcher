@@ -20,7 +20,7 @@ import dev.senda.launcher.data.ShapeChoice
 import dev.senda.launcher.data.LauncherTheme
 
 enum class IconHolder { SQUIRCLE, CIRCLE, ROUNDED, BEVELED, PILL }
-enum class WallpaperPattern { DOTS, ORBS, DIAGONAL, WATER_RIPPLE, WAVE, HORIZON, SENSE_LANDSCAPE, NATURE, OPTIMUS_RIBBONS, XPERIA_FLOW, NONE }
+enum class WallpaperPattern { DOTS, ORBS, DIAGONAL, WATER_RIPPLE, WAVE, HORIZON, SENSE_LANDSCAPE, NATURE, OPTIMUS_RIBBONS, XPERIA_FLOW, RAZR_METAL, NONE }
 
 data class SkinStyle(
     val accent: Color,
@@ -59,6 +59,7 @@ private fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, a
     LauncherTheme.TOUCHWIZ -> SkinStyle(Color(0xFF84D2FF), Color(0xFF071A38), Color(0xFF10334A), WallpaperPattern.NATURE, IconHolder.SQUIRCLE, 260) to dark(Color(0xFF84D2FF), Color(0xFF10334A), Color(0xFF10263C), Color(0xFF203E55))
     LauncherTheme.OPTIMUS -> SkinStyle(Color(0xFFFFAACB), Color(0xFF241C35), Color(0xFF1C1728), WallpaperPattern.OPTIMUS_RIBBONS, IconHolder.ROUNDED, 300) to dark(Color(0xFFFFAACB), Color(0xFF1C1728), Color(0xFF2C2339), Color(0xFF403149))
     LauncherTheme.XPERIA -> SkinStyle(Color(0xFFC0BCFF), Color(0xFF10162E), Color(0xFF241239), WallpaperPattern.XPERIA_FLOW, IconHolder.BEVELED, 240) to dark(Color(0xFFC0BCFF), Color(0xFF241239), Color(0xFF1C1E34), Color(0xFF34304A))
+    LauncherTheme.RAZR -> SkinStyle(Color(0xFF9DD9FF), Color(0xFF303B47), Color(0xFF0D141D), WallpaperPattern.RAZR_METAL, IconHolder.BEVELED, 180) to dark(Color(0xFF9DD9FF), Color(0xFF0D141D), Color(0xFF1D2936), Color(0xFF304052)).copy(outline=Color(0xFFB1C0CC))
     LauncherTheme.AMOLED -> SkinStyle(Color(0xFFA6D1B5), Color.Black, Color.Black, WallpaperPattern.NONE, IconHolder.ROUNDED, 220) to dark(Color(0xFFA6D1B5), Color.Black, Color.Black, Color(0xFF141414), Color(0xFF173427))
     LauncherTheme.DARK -> SkinStyle(Color(0xFFA6D1B5), Color(0xFF171A17), Color(0xFF202420), WallpaperPattern.NONE, IconHolder.ROUNDED, 260) to dark(Color(0xFFA6D1B5), Color(0xFF171A17), Color(0xFF202420), Color(0xFF2B302B), Color(0xFF173427))
     LauncherTheme.LIGHT -> SkinStyle(Color(0xFF426B58), Color(0xFFF4F2EC), Color(0xFFECE9DF), WallpaperPattern.NONE, IconHolder.ROUNDED, 260) to light(Color(0xFF426B58), Color(0xFFF4F2EC), Color(0xFFFFFEFA))

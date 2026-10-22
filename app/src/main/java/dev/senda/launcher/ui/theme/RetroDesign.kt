@@ -34,12 +34,13 @@ import dev.senda.launcher.data.LocalAppearance
 
 val LocalIconTreatment = staticCompositionLocalOf { IconTreatment.AUTO }
 data class RetroStyle(val theme: LauncherTheme? = null, val customHolder: Boolean = false) {
-    val enabled get() = theme in setOf(LauncherTheme.SENSE, LauncherTheme.TOUCHWIZ, LauncherTheme.OPTIMUS, LauncherTheme.XPERIA)
+    val enabled get() = theme in setOf(LauncherTheme.SENSE, LauncherTheme.TOUCHWIZ, LauncherTheme.OPTIMUS, LauncherTheme.XPERIA, LauncherTheme.RAZR)
     val caption get() = when (theme) {
         LauncherTheme.SENSE -> "AURA BLOOM / SENSE"
         LauncherTheme.TOUCHWIZ -> "AURA PRISM / NATURE"
         LauncherTheme.OPTIMUS -> "AURA FLOW / OPTIMUS"
         LauncherTheme.XPERIA -> "AURA HORIZON / FLOW"
+        LauncherTheme.RAZR -> "AURA ALLOY / V3"
         else -> "AURA"
     }
 }
@@ -51,6 +52,11 @@ fun retroShapes(theme: LauncherTheme): Shapes {
 }
 fun retroTypography(theme: LauncherTheme): Typography {
     val base = Typography()
+    if(theme==LauncherTheme.RAZR) return base.copy(
+        titleLarge=base.titleLarge.copy(fontFamily=FontFamily.Monospace,fontWeight=FontWeight.Medium),
+        titleMedium=base.titleMedium.copy(fontFamily=FontFamily.Monospace),
+        labelLarge=base.labelLarge.copy(fontFamily=FontFamily.Monospace),
+        labelSmall=base.labelSmall.copy(fontFamily=FontFamily.Monospace))
     val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else FontWeight.Normal
     return base.copy(
         titleLarge = base.titleLarge.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
@@ -68,7 +74,15 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
     val scale = LocalDensity.current.fontScale
     BoxWithConstraints {
         val fontSize = minOf(if (compact) 22f else 48f, (maxWidth.value - 24f).coerceAtLeast(40f) / (3.2f * scale)).sp
-        if (retro.theme == LauncherTheme.SENSE) {
+        if (retro.theme == LauncherTheme.RAZR) {
+            Text(time,modifier.heightIn(min=if(compact)28.dp else 48.dp)
+                .background(Brush.verticalGradient(listOf(Color(0xFFD6E8EE),Color(0xFF8FB2CB))),RoundedCornerShape(3.dp))
+                .drawWithContent {
+                    drawContent()
+                    drawRoundRect(Color(0xFF65879E),cornerRadius=CornerRadius(3.dp.toPx()),style=Stroke(1.dp.toPx()))
+                }.padding(horizontal=8.dp,vertical=2.dp),color=Color(0xFF132C42),fontSize=fontSize,
+                fontFamily=FontFamily.Monospace,fontWeight=FontWeight.Medium,maxLines=1)
+        } else if (retro.theme == LauncherTheme.SENSE) {
             Row(modifier.heightIn(min = if (compact) 28.dp else 48.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 listOf(time.take(2), time.takeLast(2)).forEach { digits ->
                     Text(digits, color = Color(0xFF252925), fontSize = fontSize, fontWeight = FontWeight.Bold,
@@ -127,15 +141,20 @@ fun renderRetroAppIcon(app: LaunchableApp): Boolean {
     Canvas(Modifier.size(size)) {
         withTransform({ scale(this@Canvas.size.width / 48f, this@Canvas.size.height / 48f, Offset.Zero) }) {
             val radius = if (retro.customHolder) when (holder) { IconHolder.CIRCLE, IconHolder.PILL -> 24f; IconHolder.SQUIRCLE -> 16f; IconHolder.ROUNDED -> 12f; IconHolder.BEVELED -> 4f } else when (retro.theme) { LauncherTheme.SENSE -> 7f; LauncherTheme.TOUCHWIZ -> 12f; LauncherTheme.OPTIMUS -> 8f; else -> 4f }
-            val light = if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFFAF9F0) else color
-            val dark = if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFCBCFCB) else color.copy(red = color.red * .48f, green = color.green * .48f, blue = color.blue * .48f)
+            val alloy = retro.theme == LauncherTheme.RAZR
+            val light = if(alloy)Color(0xFFDAE5EB) else if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFFAF9F0) else color
+            val dark = if(alloy)Color(0xFF758B9D) else if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFCBCFCB) else color.copy(red = color.red * .48f, green = color.green * .48f, blue = color.blue * .48f)
             drawRoundRect(Brush.verticalGradient(listOf(light, dark), endY = 48f), size = Size(48f, 48f), cornerRadius = CornerRadius(radius))
             drawRoundRect(Color.White.copy(alpha = .55f), topLeft = Offset(1f, 1f), size = Size(46f, 46f), cornerRadius = CornerRadius(radius), style = Stroke(.8f))
             if (retro.theme == LauncherTheme.TOUCHWIZ || retro.theme == LauncherTheme.SENSE) {
                 drawRoundRect(Brush.verticalGradient(listOf(Color.White.copy(alpha = .38f), Color.Transparent), endY = 25f), topLeft = Offset(2f, 2f), size = Size(44f, 23f), cornerRadius = CornerRadius(radius))
             }
             if (retro.theme == LauncherTheme.XPERIA) drawLine(Color.White.copy(alpha = .6f), Offset(5f, 44f), Offset(43f, 44f), 1f)
-            drawRetroGlyph(glyph, if (retro.theme == LauncherTheme.OPTIMUS) color.copy(red = color.red * .78f, green = color.green * .78f, blue = color.blue * .78f) else Color.White)
+            if(alloy) {
+                drawLine(Color(0xFFB3E2FF),Offset(5f,44f),Offset(43f,44f),1.5f)
+                drawLine(Color.White.copy(alpha=.7f),Offset(4f,4f),Offset(44f,4f),1f)
+            }
+            drawRetroGlyph(glyph, if(alloy)Color(0xFF173F61) else if (retro.theme == LauncherTheme.OPTIMUS) color.copy(red = color.red * .78f, green = color.green * .78f, blue = color.blue * .78f) else Color.White)
         }
     }
     return true

@@ -78,6 +78,23 @@ fun Modifier.skinPattern(skin: SkinStyle): Modifier = drawBehind {
                             drawPath(path,color.copy(alpha=if(xperia) .13f else .11f),style=Stroke(width=if(xperia) (ribbon+1).dp.toPx() else (16+ribbon*5).dp.toPx()))
                         }
                     }
+                    WallpaperPattern.RAZR_METAL -> {
+                        // Original etched-metal composition: static paths, no image or idle ticker.
+                        val gap=32.dp.toPx()
+                        for(line in 0..(size.height/gap).toInt()) {
+                            val y=line*gap
+                            drawLine(androidx.compose.ui.graphics.Color.White.copy(alpha=.025f),androidx.compose.ui.geometry.Offset(0f,y),androidx.compose.ui.geometry.Offset(size.width,y),1.dp.toPx())
+                        }
+                        val etching=Path().apply {
+                            moveTo(size.width*.58f,size.height*.12f)
+                            lineTo(size.width*.90f,size.height*.28f)
+                            lineTo(size.width*.70f,size.height*.44f)
+                            lineTo(size.width*.94f,size.height*.59f)
+                            lineTo(size.width*.62f,size.height*.78f)
+                        }
+                        drawPath(etching,skin.accent.copy(alpha=.09f),style=Stroke(1.dp.toPx()))
+                        drawCircle(skin.accent.copy(alpha=.045f),size.width*.24f,androidx.compose.ui.geometry.Offset(size.width*.82f,size.height*.30f),style=Stroke(8.dp.toPx()))
+                    }
                     WallpaperPattern.NONE -> Unit
                 }
             }

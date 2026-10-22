@@ -67,10 +67,10 @@
 
 **Interfaces:** Add one `LauncherTheme` entry that round-trips through `fromStoredValue`, backup allowlists and theme controls. Default remains `NOTHING`; existing theme names continue to reload.
 
-- [ ] Research primary or historical device references and record provenance separately from artwork.
-- [ ] Write a failing behavior test for storing/restoring the new theme and fallback compatibility.
-- [ ] Implement the theme with original code/vector artwork and coherent clock, surfaces, accents and icon fallbacks. Preserve layout and normal icon mode.
-- [ ] Verify theme switching, contrast, reduced motion, selection persistence and backup compatibility; commit.
+- [x] Research primary or historical device references and record provenance separately from artwork.
+- [x] Write a failing behavior test for storing/restoring the new theme and fallback compatibility.
+- [x] Implement the theme with original code/vector artwork and coherent clock, surfaces, accents and icon fallbacks. Preserve layout and normal icon mode.
+- [x] Verify theme switching, contrast, reduced motion, selection persistence and backup compatibility; commit (21 unit tests, optimized build and lint pass; physical appearance checks in Task 5).
 
 ### Task 5: Verify performance and deliver
 
