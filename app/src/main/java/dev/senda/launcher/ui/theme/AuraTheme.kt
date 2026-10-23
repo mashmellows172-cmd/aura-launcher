@@ -53,7 +53,7 @@ private fun dark(primary: Color, bg: Color, surface: Color, variant: Color, onPr
     surfaceVariant = variant, onSurfaceVariant = NightMuted, outline = Color(0xFF929C97), error = Color(0xFFFFB4AB),
 )
 
-private fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, androidx.compose.material3.ColorScheme> = when (theme) {
+internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, androidx.compose.material3.ColorScheme> = when (theme) {
     LauncherTheme.NOTHING -> SkinStyle(IndustrialTokens.signal, Color.Black, Color.Black, WallpaperPattern.NONE, IconHolder.CIRCLE, 240) to dark(IndustrialTokens.text, Color.Black, IndustrialTokens.surface, IndustrialTokens.raised).copy(onBackground = IndustrialTokens.text, onSurface = IndustrialTokens.text, onSurfaceVariant = IndustrialTokens.muted, outline = IndustrialTokens.outline)
     LauncherTheme.SENSE -> SkinStyle(Color(0xFFB6D88C), Color(0xFF303B39), Color(0xFF10191A), WallpaperPattern.SENSE_LANDSCAPE, IconHolder.ROUNDED, 340) to dark(Color(0xFFB6D88C), Color(0xFF10191A), Color(0xFF202A29), Color(0xFF33403D))
     LauncherTheme.TOUCHWIZ -> SkinStyle(Color(0xFF84D2FF), Color(0xFF071A38), Color(0xFF10334A), WallpaperPattern.NATURE, IconHolder.SQUIRCLE, 260) to dark(Color(0xFF84D2FF), Color(0xFF10334A), Color(0xFF10263C), Color(0xFF203E55))

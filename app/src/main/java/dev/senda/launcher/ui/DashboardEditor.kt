@@ -37,7 +37,7 @@ fun DashboardGroup(state: HomeUiState, controller: WidgetController, anchor: Blo
         FlowRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp),maxItemsInEachRow=2){
             blocks.forEach {block->
                 val style=state.dashboard[block]
-                val half=style.halfWidth&&block!=HomeBlock.WIDGETS&&width>=280.dp&&scale<=1.5f
+                val half=dashboardHalfWidth(block,style,width.value,scale)
                 Box(Modifier.width(if(half)(width-8.dp)/2 else width)){
                     if(block==HomeBlock.WIDGETS)WidgetShelf(controller)
                     else HomeInformation(state,onCalendarPermission,block,style)
@@ -100,6 +100,8 @@ private fun DashboardPreview(settings: DashboardSettings, selected: HomeBlock, s
             Text("09:41 · Reloj y clima",style=MaterialTheme.typography.titleMedium)
             BlockAnchor.entries.forEach { anchor ->
                 Text(anchor.label,style=MaterialTheme.typography.labelSmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val width=maxWidth
                 FlowRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp),maxItemsInEachRow=2) {
                     val blocks=settings.order.filter { settings[it].anchor==anchor }
                     if(blocks.isEmpty()) Text("Zona libre",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
@@ -107,8 +109,8 @@ private fun DashboardPreview(settings: DashboardSettings, selected: HomeBlock, s
                         val style=settings[block]
                         val active=block==selected
                         val visible=when(block){HomeBlock.ALARM->state.headerSettings.showAlarm;HomeBlock.AGENDA->state.headerSettings.showCalendar;HomeBlock.WIDGETS->controller.widgets.isNotEmpty()}
-                        val half=style.halfWidth&&block!=HomeBlock.WIDGETS&&LocalDensity.current.fontScale<=1.5f
-                        Surface(modifier=Modifier.fillMaxWidth(if(half).47f else 1f).heightIn(min=48.dp)
+                        val half=dashboardHalfWidth(block,style,width.value,LocalDensity.current.fontScale)
+                        Surface(modifier=Modifier.width(if(half)(width-8.dp)/2 else width).heightIn(min=48.dp)
                             .selectable(active,role=Role.RadioButton,onClick={onSelect(block)}),shape=MaterialTheme.shapes.medium,
                             color=if(active)MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                             border=androidx.compose.foundation.BorderStroke(if(active)2.dp else 1.dp,if(active)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline)) {
@@ -118,6 +120,7 @@ private fun DashboardPreview(settings: DashboardSettings, selected: HomeBlock, s
                             }
                         }
                     }
+                }
                 }
                 if(anchor==BlockAnchor.BEFORE_FAVORITES)Text("Favoritas",style=MaterialTheme.typography.bodySmall)
                 if(anchor==BlockAnchor.AFTER_FAVORITES)Text("Lista de aplicaciones",style=MaterialTheme.typography.bodySmall)
