@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +24,7 @@ import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.*
 import dev.senda.launcher.widgets.WidgetController
 import dev.senda.launcher.widgets.WidgetShelf
+import dev.senda.launcher.ui.theme.*
 
 fun dashboardBlocks(state: HomeUiState, controller: WidgetController, anchor: BlockAnchor) = state.dashboard.blocks(anchor,state.headerSettings.showAlarm,state.headerSettings.showCalendar,controller.widgets.isNotEmpty())
 
@@ -51,11 +53,16 @@ fun DashboardGroup(state: HomeUiState, controller: WidgetController, anchor: Blo
 fun DashboardEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, controller: WidgetController, onAddWidget: () -> Unit, onDismiss: () -> Unit) {
     var draft by rememberSaveable(state.dashboard, stateSaver=Saver<DashboardDraft,IntArray>(save={it.saveState()},restore={DashboardDraft.restoreState(it)})){mutableStateOf(DashboardDraft(state.dashboard))}
     var selectedName by rememberSaveable { mutableStateOf(HomeBlock.ALARM.name) }
+    var previewExpanded by rememberSaveable { mutableStateOf(false) }
     val selected=HomeBlock.entries.firstOrNull { it.name==selectedName } ?: HomeBlock.ALARM
     AuraAlertDialog(onDismissRequest=onDismiss,title={Text("Organizar inicio")},text={
         Column(Modifier.heightIn(max=480.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)){
-            Text("Toca un bloque de la vista previa para editarlo. Los cambios se aplican al guardar.",style=MaterialTheme.typography.bodySmall)
-            DashboardPreview(draft.current, selected, state, controller) { selectedName = it.name }
+            Text("Elige un bloque. Los cambios se aplican al guardar.",style=MaterialTheme.typography.bodySmall)
+            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                HomeBlock.entries.forEach { block ->
+                    FilterChip(selected=selected==block,onClick={selectedName=block.name},label={Text(block.label)},modifier=Modifier.heightIn(min=48.dp).semantics { role=Role.RadioButton })
+                }
+            }
             Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
                 TextButton(onClick={draft=draft.undo()},enabled=draft.canUndo){Text("Deshacer")}
                 TextButton(onClick={draft=draft.reset()}){Text("Restablecer")}
@@ -75,16 +82,18 @@ fun DashboardEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, cont
                             TextButton(onClick={draft=draft.edit(settings.move(block,1))},enabled=index<zone.lastIndex){Text("Bajar ${block.label}")}
                         }
                         if(block!=HomeBlock.WIDGETS){
-                            Text("Altura: ${style.height} dp",style=MaterialTheme.typography.labelMedium)
+                            Text("Altura mínima: ${style.height} dp",style=MaterialTheme.typography.labelMedium)
                             Slider(value=style.height.toFloat(),onValueChange={draft=draft.edit(draft.current.with(block,draft.current[block].copy(height=it.toInt())),"${block.name}-height")},onValueChangeFinished={draft=draft.finishChange()},valueRange=48f..160f,steps=13,modifier=Modifier.semantics { contentDescription="Altura de ${block.label}" })
                             Text("Texto: ${style.textSize} sp",style=MaterialTheme.typography.labelMedium)
                             Slider(value=style.textSize.toFloat(),onValueChange={draft=draft.edit(draft.current.with(block,draft.current[block].copy(textSize=it.toInt())),"${block.name}-text")},onValueChangeFinished={draft=draft.finishChange()},valueRange=12f..20f,steps=7,modifier=Modifier.semantics { contentDescription="Tamaño del texto de ${block.label}" })
                             Row(Modifier.fillMaxWidth().selectable(style.halfWidth,role=Role.Switch,onClick={draft=draft.edit(settings.with(block,style.copy(halfWidth=!style.halfWidth)))}).padding(vertical=8.dp),horizontalArrangement=Arrangement.SpaceBetween){Text("Media anchura",Modifier.weight(1f));Switch(style.halfWidth,null)}
-                            Text("Se adapta a anchura completa si la pantalla o el texto necesitan más espacio.",style=MaterialTheme.typography.bodySmall)
+                            Text("Se adapta a anchura completa y aumenta la altura si el texto necesita más espacio.",style=MaterialTheme.typography.bodySmall)
                         }else Text("${controller.widgets.size} widgets. Su tamaño se ajusta desde Editar widgets en su bloque.",style=MaterialTheme.typography.bodySmall)
                     }
                 }
             }
+            TextButton(onClick={previewExpanded=!previewExpanded}){Text(if(previewExpanded)"Ocultar vista previa" else "Mostrar vista previa")}
+            if(previewExpanded)DashboardPreview(draft.current,selected,state,controller){selectedName=it.name}
             TextButton(onClick={viewModel.setDashboard(draft.current);onDismiss();onAddWidget()}){Text("Guardar y añadir widget")}
             Text("La zona bajo el reloj tiene un alto limitado y se desplaza si añades mucho contenido, para conservar acceso al buscador y las apps. Alarma y agenda se muestran según Inicio y gestos.",style=MaterialTheme.typography.bodySmall)
         }
@@ -96,8 +105,10 @@ fun DashboardEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, cont
 private fun DashboardPreview(settings: DashboardSettings, selected: HomeBlock, state: HomeUiState, controller: WidgetController, onSelect: (HomeBlock) -> Unit) {
     Surface(shape=MaterialTheme.shapes.large,color=MaterialTheme.colorScheme.background,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outline)) {
         Column(Modifier.fillMaxWidth().padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-            Text("VISTA PREVIA · ESQUEMA",style=MaterialTheme.typography.labelSmall)
-            Text("09:41 · Reloj y clima",style=MaterialTheme.typography.titleMedium)
+            Text("VISTA PREVIA · DATOS DE EJEMPLO",style=MaterialTheme.typography.labelSmall)
+            if(LocalIndustrialStyle.current.enabled)DotClock("09:41",Modifier.width(170.dp).height(48.dp))
+            else if(LocalRetroStyle.current.enabled)RetroClock("09:41",compact=true)
+            else Text("09:41",style=MaterialTheme.typography.headlineMedium)
             BlockAnchor.entries.forEach { anchor ->
                 Text(anchor.label,style=MaterialTheme.typography.labelSmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
                 BoxWithConstraints(Modifier.fillMaxWidth()) {
@@ -110,7 +121,12 @@ private fun DashboardPreview(settings: DashboardSettings, selected: HomeBlock, s
                         val active=block==selected
                         val visible=when(block){HomeBlock.ALARM->state.headerSettings.showAlarm;HomeBlock.AGENDA->state.headerSettings.showCalendar;HomeBlock.WIDGETS->controller.widgets.isNotEmpty()}
                         val half=dashboardHalfWidth(block,style,width.value,LocalDensity.current.fontScale)
-                        Surface(modifier=Modifier.width(if(half)(width-8.dp)/2 else width).heightIn(min=48.dp)
+                        if(block!=HomeBlock.WIDGETS) {
+                            Column(Modifier.width(if(half)(width-8.dp)/2 else width)) {
+                                InformationCard(block.label,if(block==HomeBlock.ALARM)"06:30" else "Sin eventos próximos",block,{onSelect(block)},Modifier.fillMaxWidth(),style,active)
+                                if(!visible)Text("Oculto en el inicio",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        } else Surface(modifier=Modifier.width(width).heightIn(min=48.dp)
                             .selectable(active,role=Role.RadioButton,onClick={onSelect(block)}),shape=MaterialTheme.shapes.medium,
                             color=if(active)MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                             border=androidx.compose.foundation.BorderStroke(if(active)2.dp else 1.dp,if(active)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline)) {

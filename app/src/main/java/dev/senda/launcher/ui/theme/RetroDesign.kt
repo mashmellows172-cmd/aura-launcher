@@ -57,12 +57,12 @@ fun retroTypography(theme: LauncherTheme): Typography {
         titleMedium=base.titleMedium.copy(fontFamily=FontFamily.Monospace),
         labelLarge=base.labelLarge.copy(fontFamily=FontFamily.Monospace),
         labelSmall=base.labelSmall.copy(fontFamily=FontFamily.Monospace))
-    val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else FontWeight.Normal
+    val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else if(theme==LauncherTheme.XPERIA)FontWeight.Light else FontWeight.Normal
     return base.copy(
         titleLarge = base.titleLarge.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
         titleMedium = base.titleMedium.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
         headlineSmall = base.headlineSmall.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
-        labelSmall = base.labelSmall.copy(fontFamily = FontFamily.SansSerif),
+        labelSmall = base.labelSmall.copy(fontFamily = FontFamily.SansSerif,fontWeight=weight,letterSpacing=if(theme==LauncherTheme.XPERIA)1.sp else .4.sp),
         bodyLarge = base.bodyLarge.copy(fontFamily = FontFamily.SansSerif),
     )
 }

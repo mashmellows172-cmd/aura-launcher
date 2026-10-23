@@ -63,10 +63,10 @@ fun HomeInformation(state: HomeUiState, onCalendarPermission: () -> Unit, block:
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val info = state.headerInfo
     val format = remember(locale, DateFormat.is24HourFormat(context)) { DateTimeFormatter.ofPattern(if (DateFormat.is24HourFormat(context)) "EEE HH:mm" else "EEE h:mm a", locale) }
-    val entries = mutableListOf<Pair<String, () -> Unit>>()
+    val entries = mutableListOf<Triple<HomeBlock,String, () -> Unit>>()
     if (state.headerSettings.showAlarm && (block == null || block == dev.senda.launcher.data.HomeBlock.ALARM)) {
-        val label = info.alarmAt?.let { "Próxima alarma · ${format.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()))}" } ?: "Sin alarmas programadas"
-        entries += label to { openNextAlarm(context) }
+        val label = info.alarmAt?.let { format.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())) } ?: "Sin alarmas programadas"
+        entries += Triple(HomeBlock.ALARM,label) { openNextAlarm(context) }
     }
     if (state.headerSettings.showCalendar && (block == null || block == dev.senda.launcher.data.HomeBlock.AGENDA)) {
         val event = info.event
@@ -81,24 +81,16 @@ fun HomeInformation(state: HomeUiState, onCalendarPermission: () -> Unit, block:
                 "$time · ${event.title}"
             }
         }
-        entries += text to { if (!info.calendarPermission) onCalendarPermission() else openAgenda(context, event) }
+        entries += Triple(HomeBlock.AGENDA,text) { if (!info.calendarPermission) onCalendarPermission() else openAgenda(context, event) }
     }
     if (entries.isNotEmpty()) {
         if (androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
-                entries.forEach { (text, action) -> InformationButton(text, action, Modifier.weight(1f), blockStyle) }
+                entries.forEach { (kind,text,action) -> InformationCard(kind.label,text,kind,action,Modifier.weight(1f),blockStyle?:BlockStyle(BlockAnchor.HEADER)) }
             }
         } else Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
-            entries.forEach { (text, action) -> InformationButton(text, action, Modifier.fillMaxWidth(), blockStyle) }
+            entries.forEach { (kind,text,action) -> InformationCard(kind.label,text,kind,action,Modifier.fillMaxWidth(),blockStyle?:BlockStyle(BlockAnchor.HEADER)) }
         }
-    }
-}
-
-@Composable
-private fun InformationButton(text: String, action: () -> Unit, modifier: Modifier, blockStyle: dev.senda.launcher.data.BlockStyle?) {
-    val lines = if (blockStyle != null && blockStyle.height < blockStyle.textSize * androidx.compose.ui.platform.LocalDensity.current.fontScale * 2.6f + 16f) 1 else 2
-    TextButton(onClick = action, modifier = modifier.then(if (blockStyle == null) Modifier.heightIn(min = HomeToolsSize.target) else Modifier.height(blockStyle.height.dp)).background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.large), contentPadding = PaddingValues(horizontal = HomeToolsSize.gap)) {
-        Text(text, Modifier.fillMaxWidth(), maxLines = lines, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge, fontSize = (blockStyle?.textSize ?: 14).sp)
     }
 }
 

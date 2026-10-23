@@ -18,4 +18,9 @@ class DashboardLayoutTest {
         assertEquals(100,informationMinHeight(BlockStyle(BlockAnchor.HEADER,textSize=20),2f))
         assertEquals(160,informationMinHeight(BlockStyle(BlockAnchor.END,height=160),1f))
     }
+    @Test fun valueLinesUseSpaceRemainingAfterTheCategory() {
+        assertEquals(1,informationValueLines(BlockStyle(BlockAnchor.HEADER),1f))
+        assertEquals(2,informationValueLines(BlockStyle(BlockAnchor.HEADER,height=96),1f))
+        assertEquals(1,informationValueLines(BlockStyle(BlockAnchor.HEADER,height=96),2f))
+    }
 }
