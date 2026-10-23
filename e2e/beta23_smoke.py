@@ -15,7 +15,9 @@ def main():
     def capture(name):
         (args.evidence/(name+'.png')).write_bytes(subprocess.check_output([str(device.ADB),'-s',d.address,'exec-out','screencap','-p'],timeout=30))
     def menu(label):
-        d.shell('input','keyevent','HOME');time.sleep(.4);d.tap('Personalizar tema.');d.tap(label)
+        d.shell('input','keyevent','HOME');time.sleep(8)
+        if d.contains('Portapapeles inteligente'):raise AssertionError('A system notification covers the launcher header; no tap performed')
+        d.tap('Personalizar tema.');d.tap(label)
     def choose_theme(title):
         menu('Tema visual')
         button=next(n.get('text') for n in d.snapshot() if n.get('text','').endswith('▾'))
@@ -35,7 +37,8 @@ def main():
     try:
         assert 'showing=false' in d.shell('dumpsys','window','policy'),'Locked phone'
         d.shell('settings','put','system','screen_off_timeout','1800000')
-        menu('Organizar inicio');assert d.contains('Altura mínima')
+        menu('Organizar inicio');assert d.contains('Elige un bloque')
+        d.capture('editor-top')
         assert not d.contains('VISTA PREVIA'),'Preview should initially be collapsed'
         d.tap('Agenda');d.tap('Posición de Agenda');d.tap('Al final de las apps')
         assert any(n.get('text')=='Deshacer' and n.get('enabled')=='true' for n in d.snapshot())
@@ -44,7 +47,8 @@ def main():
         changed=True;menu('Inicio y gestos');d.scroll_to('Seguir el sistema');d.tap('Seguir el sistema');d.tap('Listo')
         menu('Organizar inicio');d.tap('Agenda');d.tap('Posición de Agenda');d.tap('Al final de las apps')
         d.shell('settings','put','system','accelerometer_rotation','0');d.shell('settings','put','system','user_rotation','1');time.sleep(1)
-        assert d.contains('Al final de las apps'),'Draft lost on rotation'
+        d.capture('editor-landscape-before-scroll')
+        d.scroll_to('Al final de las apps')
         d.capture('editor-landscape');d.tap('Deshacer');d.tap('Cancelar');results.append('draft_rotation_undo_cancel')
         d.shell('settings','put','system','user_rotation','0');time.sleep(.5)
         d.shell('settings','put','system','font_scale','2.0');time.sleep(1)

@@ -12,7 +12,14 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.17.0-beta22.apk](beta/Aura-0.17.0-beta22.apk), variante optimizada con R8. Novedades, verificación y límites: [beta22](docs/BETA22.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+Beta actual: [Aura-0.18.0-beta23.apk](beta/Aura-0.18.0-beta23.apk), variante optimizada con R8. Novedades: [beta23](docs/BETA23.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+
+## Nuevo en beta23
+
+- Barrido del símbolo meteorológico detrás de toda la franja reloj/clima, con seis acabados por tema. Controles de modo, duración e intensidad; movimiento reducido y ciclo de vida respetados.
+- Tarjetas de alarma/agenda con jerarquía y estilo del tema. Texto grande puede aumentar su altura mínima.
+- Editor con selectores y deshacer accesibles primero; vista previa opcional con los mismos componentes y regla de anchura que Inicio.
+- Respaldo7/importación1–7, 30 pruebas JVM y comprobación de contraste de las paletas reales.
 
 ## Nuevo en beta22
 

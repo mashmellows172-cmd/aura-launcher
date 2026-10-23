@@ -1,4 +1,8 @@
-# Aura Launcher 0.17.0-beta22
+# Aura Launcher 0.18.0-beta23
+
+## Barrido climático por tema
+
+Abre **Clima en el reloj → Animaciones del clima**. Elige **Al entrar al inicio**, **Repetición** o **Desactivadas**; ajusta recorrido e intensidad. El símbolo meteorológico real se desplaza detrás del reloj hasta el extremo del clima. Cada tema tiene sus propias estelas. Movimiento reducido, alto contraste y animaciones desactivadas del sistema detienen el efecto. [Tratamientos y límites](docs/BETA23.md).
 
 ## Organizar inicio
 
@@ -44,7 +48,7 @@ Las transformaciones afectan al contenido de Aura. Las ventanas de otras apps y 
 
 ## Compatibilidad
 
-Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 6 y admite importar formatos 1–6. La biblioteca retro se transfiere con su ZIP por separado. No incluye permisos ni autoriza accesibilidad al restaurar.
+Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 7 y admite importar formatos 1–7. La biblioteca retro se transfiere con su ZIP por separado. No incluye permisos ni autoriza accesibilidad al restaurar.
 
 Actualizar el APK firmado sin desinstalar. Mismo paquete y certificado que las betas anteriores. Código MIT y fuentes Geist bajo SIL OFL1.1, sin publicidad ni permiso de Internet.
 

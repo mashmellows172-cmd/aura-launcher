@@ -22,4 +22,4 @@ Block selectors, undo and reset appear before details. The sample preview is opt
 
 `ThemeContrastTest.actualThemeTextPairsMeetBodyContrast` checks every actual built-in palette in both system modes. Pairs: onBackground/background, onSurface/surface, onSurfaceVariant/surfaceVariant; threshold >=4.5:1. Gradients use those same checked endpoint surfaces and foregrounds. The test checks text roles, not arbitrary imported wallpapers or every composed pixel; native screenshots and high-contrast checks supplement it.
 
-No new animations, fonts, permissions, manufacturer assets or network dependency were added.
+No new fonts, permissions, manufacturer assets or network dependency were added. The subsequently requested weather sweep adds one visible lifecycle-bound animation: a single pass by default, optional repetition, OFF and reduced-motion/high-contrast/system gates. The actual provider icon moves behind the clock/weather row; decorative trails differ by theme. See the approved weather addition in the beta23 spec.
