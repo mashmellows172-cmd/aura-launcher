@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
@@ -31,17 +32,62 @@ internal fun InformationCard(label:String,value:String,kind:HomeBlock,onClick:()
     val scale=LocalDensity.current.fontScale
     val minHeight=informationMinHeight(style,scale)
     val lineCount=informationValueLines(style,scale)
-    val border=if(selected)skin.accent else if(industrial)IndustrialTokens.outline.copy(alpha=.55f) else scheme.outline.copy(alpha=.45f)
-    val gradient=if(retro)Brush.verticalGradient(listOf(scheme.surfaceVariant,scheme.surface)) else null
-    Surface(onClick=onClick,modifier=modifier.heightIn(min=minHeight.dp).semantics { contentDescription="$label · $value" },
-        shape=MaterialTheme.shapes.large,color=scheme.surface,contentColor=scheme.onSurface,
-        border=BorderStroke(if(selected)2.dp else 1.dp,border)) {
-        Row(Modifier.then(if(gradient!=null)Modifier.background(gradient) else Modifier).padding(horizontal=12.dp,vertical=8.dp),
-            verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
-            InformationGlyph(kind,if(industrial)skin.accent else scheme.onSurfaceVariant)
-            Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(2.dp)) {
-                Text(label,style=MaterialTheme.typography.labelSmall,fontSize=12.sp,color=scheme.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
-                Text(value,style=MaterialTheme.typography.bodyMedium,fontSize=style.textSize.sp,lineHeight=(style.textSize*1.3f).sp,maxLines=lineCount,overflow=TextOverflow.Ellipsis)
+    val retroTheme = LocalRetroStyle.current.theme
+    val border = if (selected) skin.accent else when (retroTheme) {
+        LauncherTheme.RAZR -> Color(0xFF62D0FF).copy(alpha = 0.55f)
+        LauncherTheme.XPERIA -> Color(0xFFA370F7).copy(alpha = 0.5f)
+        LauncherTheme.TOUCHWIZ -> Color(0xFF38B6FF).copy(alpha = 0.45f)
+        LauncherTheme.SENSE -> Color(0xFF98C846).copy(alpha = 0.4f)
+        LauncherTheme.OPTIMUS -> Color(0xFF00D4BB).copy(alpha = 0.45f)
+        else -> if (industrial) IndustrialTokens.outline.copy(alpha = 0.55f) else scheme.outline.copy(alpha = 0.45f)
+    }
+    val cardBg = when (retroTheme) {
+        LauncherTheme.RAZR -> Color(0xFF0D1722)
+        LauncherTheme.XPERIA -> Color(0xFF161226)
+        LauncherTheme.TOUCHWIZ -> Color(0xFF0B2138)
+        LauncherTheme.SENSE -> Color(0xFF1F2827)
+        LauncherTheme.OPTIMUS -> Color(0xFF1A1728)
+        else -> scheme.surface
+    }
+    val gradient = if (retro && retroTheme == LauncherTheme.TOUCHWIZ) {
+        Brush.verticalGradient(listOf(Color(0xFF143555), Color(0xFF0B2138)))
+    } else if (retro && retroTheme == LauncherTheme.SENSE) {
+        Brush.verticalGradient(listOf(Color(0xFF283432), Color(0xFF1F2827)))
+    } else if (retro) {
+        Brush.verticalGradient(listOf(scheme.surfaceVariant, scheme.surface))
+    } else null
+
+    Surface(
+        onClick = onClick,
+        modifier = modifier.heightIn(min = minHeight.dp).semantics { contentDescription = "$label · $value" },
+        shape = MaterialTheme.shapes.large,
+        color = cardBg,
+        contentColor = scheme.onSurface,
+        border = BorderStroke(if (selected) 2.dp else 1.dp, border)
+    ) {
+        Row(
+            Modifier.then(if (gradient != null) Modifier.background(gradient) else Modifier).padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            InformationGlyph(kind, if (industrial || retro) skin.accent else scheme.onSurfaceVariant)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    label,
+                    style = if (retroTheme == LauncherTheme.RAZR) MaterialTheme.typography.labelSmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) else MaterialTheme.typography.labelSmall,
+                    fontSize = 12.sp,
+                    color = if (retroTheme == LauncherTheme.RAZR) Color(0xFF62D0FF) else scheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    value,
+                    style = if (retroTheme == LauncherTheme.RAZR) MaterialTheme.typography.bodyMedium.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) else MaterialTheme.typography.bodyMedium,
+                    fontSize = style.textSize.sp,
+                    lineHeight = (style.textSize * 1.3f).sp,
+                    maxLines = lineCount,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

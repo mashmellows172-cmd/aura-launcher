@@ -68,11 +68,13 @@ data class HomeUiState(
     val retroEnabled: Map<String, Boolean> = emptyMap(),
     val retroImportBusy: Boolean = false,
     val retroImportMessage: String? = null,
+    val audioInfo: ActiveAudioInfo = ActiveAudioInfo(),
 )
 
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
     private val appsRepository = LauncherAppsRepository(application)
     private val favoritesStore = FavoritesStore(application)
+    private val audioMonitor = AudioPlaybackMonitor(application)
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -154,6 +156,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { favoritesStore.dashboard.collect { value -> _uiState.update { it.copy(dashboard = value, dashboardLoaded = true) } } }
         viewModelScope.launch { favoritesStore.retroEnabled.collect { value -> _uiState.update { it.copy(retroEnabled = value) } } }
         viewModelScope.launch { val catalog = withContext(Dispatchers.IO) { retroAssets.load() }; _uiState.update { it.copy(retroLibrary = catalog) } }
+        viewModelScope.launch { audioMonitor.state.collect { info -> _uiState.update { it.copy(audioInfo = info) } } }
         refreshApps()
     }
 
@@ -346,6 +349,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun setHomeVisible(visible: Boolean) {
         homeVisible = visible
+        if (visible) audioMonitor.start() else audioMonitor.stop()
         val app = getApplication<Application>()
         if (visible && !clockRegistered) {
             ContextCompat.registerReceiver(app, clockReceiver, IntentFilter().apply {
@@ -419,8 +423,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     fun clearThemeError() { _uiState.update { it.copy(themeSaveError = null) } }
 
     fun icon(app: LaunchableApp) = appsRepository.appIcon(app)
+    fun openAudioApp() = audioMonitor.openAudioApp()
 
     override fun onCleared() {
+        audioMonitor.stop()
         setHomeVisible(false)
         getApplication<Application>().unregisterReceiver(packageReceiver)
     }

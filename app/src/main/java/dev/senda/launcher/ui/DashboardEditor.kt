@@ -51,12 +51,19 @@ fun DashboardGroup(state: HomeUiState, controller: WidgetController, anchor: Blo
 
 @Composable
 fun DashboardEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, controller: WidgetController, onAddWidget: () -> Unit, onDismiss: () -> Unit) {
-    var draft by rememberSaveable(state.dashboard, stateSaver=Saver<DashboardDraft,IntArray>(save={it.saveState()},restore={DashboardDraft.restoreState(it)})){mutableStateOf(DashboardDraft(state.dashboard))}
+    // Preservar borrador sin descartarlo al recrear la configuración métrica (rotación)
+    var draft by rememberSaveable(stateSaver = Saver<DashboardDraft, IntArray>(save = { it.saveState() }, restore = { DashboardDraft.restoreState(it) })) {
+        mutableStateOf(DashboardDraft(state.dashboard))
+    }
     var selectedName by rememberSaveable { mutableStateOf(HomeBlock.ALARM.name) }
     var previewExpanded by rememberSaveable { mutableStateOf(false) }
-    val selected=HomeBlock.entries.firstOrNull { it.name==selectedName } ?: HomeBlock.ALARM
-    AuraAlertDialog(onDismissRequest=onDismiss,title={Text("Organizar inicio")},text={
-        Column(Modifier.heightIn(max=480.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)){
+    val selected = HomeBlock.entries.firstOrNull { it.name == selectedName } ?: HomeBlock.ALARM
+    val config = androidx.compose.ui.platform.LocalConfiguration.current
+    val isLandscape = config.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val maxDialogHeight = if (isLandscape) (config.screenHeightDp - 96).coerceAtLeast(220).dp else 480.dp
+
+    AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Organizar inicio") }, text = {
+        Column(Modifier.heightIn(max = maxDialogHeight).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Elige un bloque. Los cambios se aplican al guardar.",style=MaterialTheme.typography.bodySmall)
             FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 HomeBlock.entries.forEach { block ->

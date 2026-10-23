@@ -119,11 +119,13 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Inicio y gestos") }, text = {
         Column(Modifier.heightIn(max = HomeToolsSize.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
             Text("Cabecera", style = MaterialTheme.typography.titleSmall)
+            SettingToggle("Frases motivacionales", state.headerSettings.showMotivationalHeader) { viewModel.setHeaderSettings(state.headerSettings.copy(showMotivationalHeader = it)) }
+            SettingToggle("Widget de audio autónomo", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
             SettingToggle("Próxima alarma", state.headerSettings.showAlarm) { viewModel.setHeaderSettings(state.headerSettings.copy(showAlarm = it)) }
             SettingToggle("Próximo evento", state.headerSettings.showCalendar) { enabled ->
                 if (enabled && !state.headerInfo.calendarPermission) onRequestCalendar() else viewModel.setHeaderSettings(state.headerSettings.copy(showCalendar = enabled))
             }
-            Text("La agenda consulta calendarios visibles durante los próximos 7 días, solo mientras Aura está visible. No escribe eventos ni los guarda en el respaldo.", style = MaterialTheme.typography.bodySmall)
+            Text("El widget de audio se despliega autónomamente al detectar reproducción en el teléfono y adapta su visualizador al tema. Las frases motivacionales cambian de forma amable y estable según el día y la franja.", style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = onAppPermissions) { Text("Permisos de Aura") }
             HorizontalDivider()
             Text("Gestos", style = MaterialTheme.typography.titleSmall)

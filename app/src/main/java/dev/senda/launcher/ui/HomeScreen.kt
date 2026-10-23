@@ -362,7 +362,17 @@ fun HomeScreen(
             onDoubleTap = if (state.lockGesture.onLogo) lockDevice else null,
             onChooseWeatherApp = { showWeatherPicker = true },
             onChooseWidgets = { showWidgetPicker = true },
+            showMotivationalHeader = state.headerSettings.showMotivationalHeader,
         )
+        if (state.headerSettings.showAudioWidget) {
+            ThemedAudioWidget(
+                audioInfo = state.audioInfo,
+                theme = state.theme,
+                reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
+                onOpenAudio = viewModel::openAudioApp,
+                modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+            )
+        }
         if (dashboardBlocks(state,widgetController,BlockAnchor.HEADER).isNotEmpty()) {
             val dashboardLimit = with(LocalDensity.current) { (LocalWindowInfo.current.containerSize.height * .28f).toDp() }.coerceIn(120.dp,300.dp)
             Column(Modifier.fillMaxWidth().heightIn(max = dashboardLimit).verticalScroll(rememberScrollState())) {
@@ -587,6 +597,7 @@ private fun Header(
     onDoubleTap: (() -> Unit)?,
     onChooseWeatherApp: () -> Unit,
     onChooseWidgets: () -> Unit,
+    showMotivationalHeader: Boolean = true,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -603,7 +614,9 @@ private fun Header(
                     customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
                 }) { if (!renderAvatarImage(avatarUri,Modifier.size(42.dp))) AuraMark() }
             Column(Modifier.weight(1f).padding(start = 12.dp)) {
-                Text(if(LocalRetroStyle.current.enabled)LocalRetroStyle.current.caption else "AURA / LAUNCHER", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                val motivational = remember(theme, today) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) }
+                val captionText = if (showMotivationalHeader) motivational else if (LocalRetroStyle.current.enabled) LocalRetroStyle.current.caption else "AURA / LAUNCHER"
+                Text(captionText, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Box(Modifier.fillMaxWidth().padding(end=8.dp)) {
                 val matches=remember(widgetController.weatherWidgetId,widgetController.providerRevision,weatherPackage) {
                     widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId)?.provider?.packageName==weatherPackage
