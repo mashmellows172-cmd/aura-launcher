@@ -341,6 +341,7 @@ fun HomeScreen(
             widgetController = widgetController,
             weatherPackage = state.weatherPackage ?: "hr.dtakac.prognoza",
             reduceMotion = state.visualSettings.reduceMotion,
+            weatherMotion = state.headerSettings.weatherMotion,
             onAvatar = { showAvatar = true },
             onWeatherConnection = { showWeatherConnection = true },
             onDashboard = { showDashboard = true },
@@ -511,7 +512,7 @@ fun HomeScreen(
     } // Motion controller provider
 
     if (showAvatar) AvatarDialog(state,viewModel) { showAvatar = false }
-    if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,
+    if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,onSettings=viewModel::setHeaderSettings,
         onOpen = { val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }; if(app != null) viewModel.launch(app) else showWeatherPicker = true },
         onChooseApp = { showWeatherConnection = false; showWeatherPicker = true }, onDismiss = { showWeatherConnection = false })
     if (showDashboard && state.dashboardLoaded) DashboardEditorDialog(state,viewModel,widgetController,onAddWidget = { showDashboard = false; showWidgetPicker = true }) { showDashboard = false }
@@ -568,6 +569,7 @@ private fun Header(
     widgetController: WidgetController,
     weatherPackage: String,
     reduceMotion: Boolean,
+    weatherMotion: dev.senda.launcher.data.WeatherMotionSettings,
     onAvatar: () -> Unit,
     onWeatherConnection: () -> Unit,
     onDashboard: () -> Unit,
@@ -602,7 +604,12 @@ private fun Header(
                 }) { if (!renderAvatarImage(avatarUri,Modifier.size(42.dp))) AuraMark() }
             Column(Modifier.weight(1f).padding(start = 12.dp)) {
                 Text(if(LocalRetroStyle.current.enabled)LocalRetroStyle.current.caption else "AURA / LAUNCHER", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Row(Modifier.fillMaxWidth().padding(end = 8.dp),verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Box(Modifier.fillMaxWidth().padding(end=8.dp)) {
+                val matches=remember(widgetController.weatherWidgetId,widgetController.providerRevision,weatherPackage) {
+                    widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId)?.provider?.packageName==weatherPackage
+                }
+                WeatherSweep(theme,widgetController.weatherReading?.takeIf{matches},weatherMotion,reduceMotion||LocalAppearance.current.highContrast,Modifier.matchParentSize())
+                Row(Modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically,horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(Modifier.weight(1f)) {
                         if (LocalIndustrialStyle.current.enabled) BoxWithConstraints(Modifier.fillMaxWidth()) {
                             val clockWidth = minOf(maxWidth,62.dp*(27f/7f))
@@ -611,6 +618,7 @@ private fun Header(
                         else Text(clockTime,Modifier.heightIn(min=48.dp).clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button },style=MaterialTheme.typography.headlineLarge)
                     }
                     HeaderWeather(widgetController,weatherPackage,weatherAppLabel ?: "Prognoza",reduceMotion,onOpenWeather,onWeatherConnection)
+                }
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

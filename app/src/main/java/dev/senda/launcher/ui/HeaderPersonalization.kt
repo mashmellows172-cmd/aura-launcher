@@ -35,6 +35,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.loadLocalImage
+import dev.senda.launcher.data.HeaderSettings
+import dev.senda.launcher.data.WeatherMotionSettings
+import dev.senda.launcher.data.WeatherMotionMode
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
 import dev.senda.launcher.ui.theme.LocalSkinStyle
 import dev.senda.launcher.widgets.WidgetController
@@ -72,18 +75,6 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
     val connected=info?.provider?.packageName==packageName
     val reading=if(connected)controller.weatherReading else null
-    val lifecycle=LocalLifecycleOwner.current
-    val retroTheme=dev.senda.launcher.ui.theme.LocalRetroStyle.current.theme
-    val industrial=LocalIndustrialStyle.current.enabled
-    val phase = remember { Animatable(0f) }
-    // One visible cycle on appearance or changed weather; idle home stops requesting frames.
-    LaunchedEffect(lifecycle, reduceMotion, reading?.temperature, reading?.place) {
-        lifecycle.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            phase.snapTo(0f)
-            if (!reduceMotion && reading != null) phase.animateTo(1f, tween(3200, easing = LinearEasing))
-            awaitCancellation()
-        }
-    }
     Box(Modifier.width(104.dp).heightIn(min=72.dp).combinedClickable(onClick=if(reading!=null)onOpen else onConfigure,onLongClick=onConfigure)
         .semantics(mergeDescendants=true){contentDescription=if(reading!=null)"Clima de ${reading.place}: ${reading.temperature}. Datos de $sourceLabel" else "Configurar clima de $sourceLabel";role=Role.Button},contentAlignment=Alignment.Center){
         if(connected) key(id){
@@ -96,12 +87,7 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
         Column(horizontalAlignment=Alignment.CenterHorizontally,modifier=Modifier.padding(4.dp)){
             if(reading!=null){
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
-                    reading.icon?.let { icon->Image(icon,null,Modifier.size(30.dp).graphicsLayer{
-                        val wave=if(reduceMotion)0f else kotlin.math.sin(phase.value*2f*kotlin.math.PI.toFloat())
-                        translationY=wave*(if(industrial)1.dp else 2.dp).toPx()
-                        rotationZ=wave*(if(industrial)0f else if(retroTheme==dev.senda.launcher.data.LauncherTheme.TOUCHWIZ)4f else 2f)
-                        scaleX=1f+wave*(if(retroTheme==dev.senda.launcher.data.LauncherTheme.OPTIMUS).05f else .015f);scaleY=scaleX
-                    },colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
+                    reading.icon?.let { icon->Image(icon,null,Modifier.size(30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
                     Text(reading.temperature,style=MaterialTheme.typography.titleMedium,maxLines=1)
                 }
                 Text(reading.place.ifBlank{sourceLabel},style=MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
@@ -114,7 +100,7 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
 }
 
 @Composable
-fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, onOpen: () -> Unit, onChooseApp: () -> Unit, onDismiss: () -> Unit) {
+fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, onSettings:(HeaderSettings)->Unit, onOpen: () -> Unit, onChooseApp: () -> Unit, onDismiss: () -> Unit) {
     val source=state.weatherPackage?:"hr.dtakac.prognoza"
     val sourceLabel=state.apps.firstOrNull{it.packageName==source}?.label?:"Prognoza"
     val info=remember(controller.weatherWidgetId,controller.providerRevision){controller.manager.getAppWidgetInfo(controller.weatherWidgetId)}
@@ -129,7 +115,29 @@ fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, on
             TextButton(onClick=onChooseApp){Text("Elegir aplicación del clima")}
             if(info!=null) TextButton(onClick=controller::disconnectWeather){Text("Desconectar clima de la cabecera")}
             controller.weatherError?.let{Text(it,color=MaterialTheme.colorScheme.error)}
-            Text("El símbolo se anima mientras Aura está visible y respeta Movimiento reducido. El widget del clima se vincula en este teléfono; no se transfiere mediante el respaldo.",style=MaterialTheme.typography.bodySmall)
+            HorizontalDivider()
+            WeatherMotionControls(state.headerSettings.weatherMotion){onSettings(state.headerSettings.copy(weatherMotion=it))}
+            Text("El barrido usa el símbolo real del proveedor y el acabado del tema. Movimiento reducido, alto contraste y las animaciones desactivadas de Android detienen el efecto. El widget se vincula en este teléfono; no se transfiere con el respaldo.",style=MaterialTheme.typography.bodySmall)
         }
     },confirmButton={TextButton(onClick=onDismiss){Text("Listo")}})
+}
+
+@Composable
+private fun WeatherMotionControls(settings:WeatherMotionSettings,onChange:(WeatherMotionSettings)->Unit) {
+    var duration by remember(settings.durationMs){mutableFloatStateOf(settings.durationMs.toFloat())}
+    var intensity by remember(settings.intensity){mutableFloatStateOf(settings.intensity.toFloat())}
+    Text("Animaciones del clima",style=MaterialTheme.typography.titleMedium)
+    WeatherMotionMode.entries.forEach { mode ->
+        TextButton(onClick={onChange(settings.copy(mode=mode))},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
+            RadioButton(settings.mode==mode,null)
+            Text(mode.label,Modifier.weight(1f))
+        }
+    }
+    Text("Recorrido: ${(duration/1000).toInt()} s",style=MaterialTheme.typography.labelLarge)
+    Slider(duration,{duration=it},onValueChangeFinished={onChange(settings.copy(durationMs=duration.toInt()))},valueRange=3000f..12000f,steps=8,
+        modifier=Modifier.semantics {contentDescription="Duración del barrido del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
+    Text("Intensidad: ${intensity.toInt()}%",style=MaterialTheme.typography.labelLarge)
+    Slider(intensity,{intensity=it},onValueChangeFinished={onChange(settings.copy(intensity=intensity.toInt()))},valueRange=20f..100f,steps=7,
+        modifier=Modifier.semantics {contentDescription="Intensidad del barrido del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
+    Text("Al entrar realiza un recorrido y queda en reposo. Repetición mantiene ciclos mientras Inicio está visible y consume más energía.",style=MaterialTheme.typography.bodySmall)
 }

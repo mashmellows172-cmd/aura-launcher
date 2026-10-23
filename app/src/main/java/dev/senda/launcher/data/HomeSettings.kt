@@ -1,6 +1,6 @@
 package dev.senda.launcher.data
 
-data class HeaderSettings(val showAlarm: Boolean = true, val showCalendar: Boolean = false)
+data class HeaderSettings(val showAlarm: Boolean = true, val showCalendar: Boolean = false,val weatherMotion:WeatherMotionSettings=WeatherMotionSettings())
 enum class HomeRotation(val label: String) { SYSTEM("Seguir el sistema"), PORTRAIT("Vertical"), LANDSCAPE("Horizontal") }
 enum class GestureDirection(val label: String) { UP("Arriba"), DOWN("Abajo"), LEFT("Izquierda"), RIGHT("Derecha") }
 

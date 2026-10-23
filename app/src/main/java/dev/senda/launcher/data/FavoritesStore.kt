@@ -74,7 +74,8 @@ class FavoritesStore(context: Context) {
 
     val lockGesture: Flow<LockGesture> = store.data.map { prefs -> LockGesture.entries.firstOrNull { it.name == prefs[stringPreferencesKey("double_tap_lock")] } ?: LockGesture.BOTH }
     suspend fun setLockGesture(value: LockGesture) { store.edit { it[stringPreferencesKey("double_tap_lock")] = value.name } }
-    val headerSettings: Flow<HeaderSettings> = store.data.map { HeaderSettings(it[booleanPreferencesKey("header_show_alarm")] ?: true, it[booleanPreferencesKey("header_show_calendar")] ?: false) }
+    val headerSettings: Flow<HeaderSettings> = store.data.map { prefs -> HeaderSettings(prefs[booleanPreferencesKey("header_show_alarm")] ?: true,prefs[booleanPreferencesKey("header_show_calendar")] ?: false,
+        WeatherMotionSettings(WeatherMotionMode.fromStored(prefs[stringPreferencesKey("weather_motion_mode")]),prefs[intPreferencesKey("weather_motion_duration")]?:8000,prefs[intPreferencesKey("weather_motion_intensity")]?:60).bounded()) }
     val rotation: Flow<HomeRotation> = store.data.map { prefs -> HomeRotation.entries.firstOrNull { it.name == prefs[stringPreferencesKey("home_rotation")] } ?: HomeRotation.SYSTEM }
     val gestures: Flow<GestureBindings> = store.data.map { prefs ->
         fun action(key: String, fallback: String) = prefs[stringPreferencesKey(key)]?.takeIf(GestureBindings::valid) ?: fallback
@@ -85,7 +86,13 @@ class FavoritesStore(context: Context) {
             ShapeChoice.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_shape_${theme.name}")] } ?: ShapeChoice.DEFAULT,
             IconTreatment.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_icons_${theme.name}")] } ?: IconTreatment.AUTO)
     } }
-    suspend fun setHeaderSettings(value: HeaderSettings) { store.edit { it[booleanPreferencesKey("header_show_alarm")] = value.showAlarm; it[booleanPreferencesKey("header_show_calendar")] = value.showCalendar } }
+    suspend fun setHeaderSettings(value: HeaderSettings) { store.edit {
+        it[booleanPreferencesKey("header_show_alarm")]=value.showAlarm;it[booleanPreferencesKey("header_show_calendar")]=value.showCalendar
+        val motion=value.weatherMotion.bounded()
+        it[stringPreferencesKey("weather_motion_mode")]=motion.mode.name
+        it[intPreferencesKey("weather_motion_duration")]=motion.durationMs
+        it[intPreferencesKey("weather_motion_intensity")]=motion.intensity
+    } }
     suspend fun setRotation(value: HomeRotation) { store.edit { it[stringPreferencesKey("home_rotation")] = value.name } }
     suspend fun setGesture(direction: GestureDirection, action: String) {
         require(GestureBindings.valid(action))
