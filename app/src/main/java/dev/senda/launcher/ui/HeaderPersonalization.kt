@@ -36,6 +36,7 @@ import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.loadLocalImage
 import dev.senda.launcher.data.HeaderSettings
+import dev.senda.launcher.data.WeatherCondition
 import dev.senda.launcher.data.WeatherMotionSettings
 import dev.senda.launcher.data.WeatherMotionMode
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
@@ -117,7 +118,7 @@ fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, on
             controller.weatherError?.let{Text(it,color=MaterialTheme.colorScheme.error)}
             HorizontalDivider()
             WeatherMotionControls(state.headerSettings.weatherMotion){onSettings(state.headerSettings.copy(weatherMotion=it))}
-            Text("El barrido usa el símbolo real del proveedor y el acabado del tema. Movimiento reducido, alto contraste y las animaciones desactivadas de Android detienen el efecto. El widget se vincula en este teléfono; no se transfiere con el respaldo.",style=MaterialTheme.typography.bodySmall)
+            Text("La escena interpreta la descripción accesible del icono. Si falta, usa ambiente neutro. La escena manual no modifica el clima. Movimiento reducido y alto contraste detienen el efecto.",style=MaterialTheme.typography.bodySmall)
         }
     },confirmButton={TextButton(onClick=onDismiss){Text("Listo")}})
 }
@@ -133,11 +134,13 @@ private fun WeatherMotionControls(settings:WeatherMotionSettings,onChange:(Weath
             Text(mode.label,Modifier.weight(1f))
         }
     }
-    Text("Recorrido: ${(duration/1000).toInt()} s",style=MaterialTheme.typography.labelLarge)
+    EffectChoice("Escena meteorológica",settings.condition.name,WeatherCondition.entries.map{it.name to it.label},onSelect={onChange(settings.copy(condition=WeatherCondition.valueOf(it)))})
+    Text("La selección manual cambia el efecto; no modifica los datos del proveedor.",style=MaterialTheme.typography.bodySmall)
+    Text("Ciclo: ${(duration/1000).toInt()} s",style=MaterialTheme.typography.labelLarge)
     Slider(duration,{duration=it},onValueChangeFinished={onChange(settings.copy(durationMs=duration.toInt()))},valueRange=3000f..12000f,steps=8,
-        modifier=Modifier.semantics {contentDescription="Duración del barrido del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
+        modifier=Modifier.semantics {contentDescription="Duración del ciclo del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
     Text("Intensidad: ${intensity.toInt()}%",style=MaterialTheme.typography.labelLarge)
     Slider(intensity,{intensity=it},onValueChangeFinished={onChange(settings.copy(intensity=intensity.toInt()))},valueRange=20f..100f,steps=7,
-        modifier=Modifier.semantics {contentDescription="Intensidad del barrido del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
+        modifier=Modifier.semantics {contentDescription="Intensidad de la escena del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
     Text("Al entrar realiza un recorrido y queda en reposo. Repetición mantiene ciclos mientras Inicio está visible y consume más energía.",style=MaterialTheme.typography.bodySmall)
 }

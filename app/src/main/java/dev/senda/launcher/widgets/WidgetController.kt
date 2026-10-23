@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 
 data class HomeWidget(val id: Int, val heightDp: Int)
-data class WidgetWeather(val temperature: String, val place: String, val icon: androidx.compose.ui.graphics.ImageBitmap?)
+data class WidgetWeather(val temperature: String, val place: String, val icon: androidx.compose.ui.graphics.ImageBitmap?, val conditionText:String="")
 
 /** A fixed host identity and durable IDs keep provider data across process/activity recreation. */
 class WidgetController(private val activity: ComponentActivity) {
@@ -81,10 +81,10 @@ class WidgetController(private val activity: ComponentActivity) {
     }
     private var weatherIconSignature = 0
     private fun captureWeather(view: android.view.View) {
-        val texts = mutableListOf<String>();var signature = 0; var icon: androidx.compose.ui.graphics.ImageBitmap? = null
+        val texts = mutableListOf<String>();var conditionText="";var signature = 0; var icon: androidx.compose.ui.graphics.ImageBitmap? = null
         fun visit(node: android.view.View) {
             if (node is android.widget.TextView) node.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let(texts::add)
-            if (node is android.widget.ImageView && icon == null && node.drawable != null) { signature = node.drawable.constantState?.hashCode() ?: node.drawable.hashCode(); icon = runCatching { node.drawable.toBitmap(96,96).asImageBitmap() }.getOrNull() }
+            if (node is android.widget.ImageView && icon == null && node.drawable != null) { conditionText=node.contentDescription?.toString().orEmpty(); signature = node.drawable.constantState?.hashCode() ?: node.drawable.hashCode(); icon = runCatching { node.drawable.toBitmap(96,96).asImageBitmap() }.getOrNull() }
             if (node is android.view.ViewGroup) for (i in 0 until node.childCount) visit(node.getChildAt(i))
         }
         visit(view)
@@ -92,7 +92,7 @@ class WidgetController(private val activity: ComponentActivity) {
         if (temperature != null) {
             val place = texts.firstOrNull { it != temperature && !it.matches(Regex("[\\d:., ]+")) }.orEmpty()
             val old = weatherReading
-            if (old?.temperature != temperature || old.place != place || old.icon == null || signature != weatherIconSignature) { weatherIconSignature = signature; weatherReading = WidgetWeather(temperature,place,icon) }
+            if (old?.temperature != temperature || old.place != place || old.conditionText != conditionText || old.icon == null || signature != weatherIconSignature) { weatherIconSignature = signature; weatherReading = WidgetWeather(temperature,place,icon,conditionText) }
         } else if (texts.isNotEmpty()) weatherReading = null
     }
 
