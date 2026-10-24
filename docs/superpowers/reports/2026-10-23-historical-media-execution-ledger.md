@@ -13,3 +13,5 @@ Task3: shared historical clock/cards/media/dialog materials and product preview 
 Final review: one independent reviewer found two Important issues, incomplete nested light-panel Material roles and non-scrollable permission explanation. Both corrected in one pass. Minor clock format/font scaling and water ripple birth corrected; this pass was compiled/linted, not independently re-reviewed.
 Delivery: same signing certificate confirmed, beta25 APK signed. ADB/mDNS no devices; both previously paired endpoints timed out. Installation/copy pending device reconnection. No settings or permissions changed; no restoration needed.
 Quota latest check30% primary/20% weekly, below user's95% cap. Wall-clock discontinuity prevents claiming six continuous hours. Source/archive evidence and runtime gaps are documented honestly.
+
+Delivery follow-up: user supplied current paired port. Verified known Motorola identity, installed beta25 with -r successfully, copied APK to Downloads, confirmed versionCode25/versionName0.19.0-beta25 and matching device-side SHA256. No new permissions granted or settings changed. Physical visual/media checks remain pending.

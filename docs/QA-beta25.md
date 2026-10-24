@@ -26,13 +26,12 @@ Medición matemática de colores sólidos del perfil, mínimo frente a sus dos e
 
 ## Dispositivo y entrega
 
-El Motorola vinculado se identificó al inicio y estaba bloqueado. Después dejó de aparecer en ADB y mDNS. Los dos extremos ADB previamente conocidos agotaron el tiempo de conexión; el PC volvió a otra red. **La beta25 no está instalada ni copiada al teléfono todavía.** La última versión instalada conocida es beta24.
+El Motorola vinculado se identificó al inicio y estaba bloqueado. Después dejó de aparecer en ADB y mDNS. Los dos extremos ADB previamente conocidos agotaron el tiempo de conexión; el PC volvió a otra red. La conexión se recuperó después con el puerto actualizado facilitado por el usuario. **Beta25 instalada con `adb install -r`: Success.** PackageManager confirmó `versionCode=25`, `versionName=0.19.0-beta25`. APK copiado a `/sdcard/Download/Aura-0.19.0-beta25.apk`; SHA256 calculado en el Motorola coincide con el paquete firmado. No se desinstaló Aura.
 
 No se cambió el tiempo de pantalla, el launcher predeterminado, los permisos ni los datos del teléfono. No se concedió acceso a notificaciones; su activación sigue siendo voluntaria en Android.
 
 ## Comprobaciones físicas pendientes
 
-- Instalar con `adb install -r`, copiar APK a Downloads y confirmar versión25 con PackageManager.
 - Comparar los seis temas en Inicio y en su muestra, texto grande, horizontal, acabado personalizado y alto contraste.
 - Revisar movimiento reducido, sistema sin animaciones y salida/entrada de Inicio.
 - Reproducción con y sin permiso, retirada del permiso durante reproducción, dos reproductores, sesión destruida y cambio de pista/caratula rápido.

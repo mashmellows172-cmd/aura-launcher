@@ -65,8 +65,8 @@
 **Interfaces:** signed update of dev.senda.launcher.debug; existing public Android/Aura flows.
 - [x] Dispatch one independent fresh source reviewer; fix Important/Critical findings, record minor limits.
 - [x] Final optimized build/lint, same signing certificate, source ZIP excluding private data, SHA256 sums.
-- [ ] Install on connected Motorola with -r and copy APK to Downloads; verify installed version. If unavailable, preserve package and report delivery pending.
+- [x] Install on connected Motorola with -r and copy APK to Downloads; verify installed version. If unavailable, preserve package and report delivery pending.
 - [x] Observe available device state without interfering with the user; record runtime/rotation/theme/media permission limits honestly.
 - [x] Preserve ledger, coherent commits and a concise self-contained delivery report.
 
-Delivery exception: no paired device remains reachable after final build. APK is ready; installation and Downloads copy remain pending. See docs/QA-beta25.md.
+Delivery completed after the user supplied the current paired port: install -r Success, installed version25 confirmed and Downloads APK hash matches. Native visual/media scenarios remain unverified; see docs/QA-beta25.md.
