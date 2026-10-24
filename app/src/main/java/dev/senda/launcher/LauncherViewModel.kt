@@ -147,7 +147,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             favoritesStore.iconPacks.collect { value -> _uiState.update { it.copy(iconPacks = value) }; refreshIconPacks() }
         }
-        viewModelScope.launch { favoritesStore.headerSettings.collect { settings -> _uiState.update { it.copy(headerSettings = settings) }; refreshHeader() } }
+        viewModelScope.launch { favoritesStore.headerSettings.collect { settings ->
+            _uiState.update { it.copy(headerSettings = settings) }
+            if (homeVisible && settings.showAudioWidget) audioMonitor.start() else audioMonitor.stop()
+            refreshHeader()
+        } }
         viewModelScope.launch { favoritesStore.rotation.collect { rotation -> _uiState.update { it.copy(rotation = rotation) } } }
         viewModelScope.launch { favoritesStore.gestures.collect { gestures -> _uiState.update { it.copy(gestures = gestures) } } }
         viewModelScope.launch { favoritesStore.themeFinishes.collect { finishes -> _uiState.update { it.copy(themeFinishes = finishes) } } }
@@ -349,7 +353,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun setHomeVisible(visible: Boolean) {
         homeVisible = visible
-        if (visible) audioMonitor.start() else audioMonitor.stop()
+        if (visible && _uiState.value.headerSettings.showAudioWidget) audioMonitor.start() else audioMonitor.stop()
         val app = getApplication<Application>()
         if (visible && !clockRegistered) {
             ContextCompat.registerReceiver(app, clockReceiver, IntentFilter().apply {
@@ -423,11 +427,14 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     fun clearThemeError() { _uiState.update { it.copy(themeSaveError = null) } }
 
     fun icon(app: LaunchableApp) = appsRepository.appIcon(app)
-    fun openAudioApp() = audioMonitor.openAudioApp()
+    fun openAudioApp() { audioMonitor.openAudioApp() }
+    fun pauseAudio(sessionId: String?) = audioMonitor.pause(sessionId)
+    fun previousAudio(sessionId: String?) = audioMonitor.previous(sessionId)
+    fun nextAudio(sessionId: String?) = audioMonitor.next(sessionId)
 
     override fun onCleared() {
-        audioMonitor.stop()
         setHomeVisible(false)
+        audioMonitor.close()
         getApplication<Application>().unregisterReceiver(packageReceiver)
     }
 }

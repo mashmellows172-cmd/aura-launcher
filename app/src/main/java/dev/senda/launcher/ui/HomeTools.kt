@@ -120,12 +120,13 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
         Column(Modifier.heightIn(max = HomeToolsSize.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
             Text("Cabecera", style = MaterialTheme.typography.titleSmall)
             SettingToggle("Frases motivacionales", state.headerSettings.showMotivationalHeader) { viewModel.setHeaderSettings(state.headerSettings.copy(showMotivationalHeader = it)) }
-            SettingToggle("Widget de audio autónomo", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
+            SettingToggle("Widget multimedia automático", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
+            if (state.headerSettings.showAudioWidget) MediaAccessControl(state.audioInfo.mediaAccess)
             SettingToggle("Próxima alarma", state.headerSettings.showAlarm) { viewModel.setHeaderSettings(state.headerSettings.copy(showAlarm = it)) }
             SettingToggle("Próximo evento", state.headerSettings.showCalendar) { enabled ->
                 if (enabled && !state.headerInfo.calendarPermission) onRequestCalendar() else viewModel.setHeaderSettings(state.headerSettings.copy(showCalendar = enabled))
             }
-            Text("El widget de audio se despliega autónomamente al detectar reproducción en el teléfono y adapta su visualizador al tema. Las frases motivacionales cambian de forma amable y estable según el día y la franja.", style = MaterialTheme.typography.bodySmall)
+            Text("El widget aparece al detectar reproducción y adopta el tema elegido. El visualizador es decorativo: no escucha ni analiza el sonido. Las frases cambian según el día y la franja horaria.", style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = onAppPermissions) { Text("Permisos de Aura") }
             HorizontalDivider()
             Text("Gestos", style = MaterialTheme.typography.titleSmall)
