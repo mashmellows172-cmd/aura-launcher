@@ -65,6 +65,7 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
 
 @Composable
 internal fun EffectChoice(label: String, value: String, options: List<Pair<String, String>>, onSelect: (String) -> Unit) {
+    val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     var expanded by remember { mutableStateOf(false) }
     Column {
         Text(label, style = MaterialTheme.typography.titleSmall)
@@ -73,7 +74,7 @@ internal fun EffectChoice(label: String, value: String, options: List<Pair<Strin
                 Text("${options.firstOrNull { it.first == value }?.second ?: value} ▾")
             }
             DropdownMenu(expanded, { expanded = false }) {
-                options.forEach { (id, title) -> DropdownMenuItem(text = { Text(title) }, onClick = { expanded = false; onSelect(id) }) }
+                options.forEach { (id, title) -> DropdownMenuItem(text = { Text(title) }, onClick = { expanded = false; soundFeedback.play(dev.senda.launcher.data.SoundEvent.SELECT); onSelect(id) }) }
             }
         }
     }

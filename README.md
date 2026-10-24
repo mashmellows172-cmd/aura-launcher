@@ -12,7 +12,13 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.20.0-beta26.apk](beta/Aura-0.20.0-beta26.apk), variante optimizada con R8. [Iconos beta26](docs/BETA26.md), [verificación](docs/QA-beta26.md).
+Beta actual: [Aura-0.21.0-beta27.apk](beta/Aura-0.21.0-beta27.apk), variante optimizada con R8. [Iconos beta26](docs/BETA26.md), [verificación](docs/QA-beta26.md).
+
+## Nuevo en beta27
+
+- 30 señales sonoras originales, configurables y desactivadas inicialmente; respetan silencio, No molestar y sonidos táctiles del sistema.
+- Familia sonora automática o independiente, volumen y eventos; audio del índice opcional y limitado. Pool ligado a visibilidad de Inicio.
+- Respaldo10/importación1–10. [Entrega intermedia y evidencia](docs/BETA27.md).
 
 ## Nuevo en beta26
 

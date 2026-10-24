@@ -1,0 +1,272 @@
+[
+  {
+    "theme": "nothing",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "cd02221423a2523009b7987c19d6de7cc339a770a0554d282dc22588ce3059d6"
+  },
+  {
+    "theme": "nothing",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "80dec9de4938ff8777235ae6df793f50c9754f73e695441baa822ec3102dda81"
+  },
+  {
+    "theme": "nothing",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "ecb0a0e7646b23a6d2c9cfe623911f6ead6d3132b01ccbda6952c7ebb5536171"
+  },
+  {
+    "theme": "nothing",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "9d818cc09f4cf36a29f2c2b236d5f68b78b63f79449316e8549fb6e916412edb"
+  },
+  {
+    "theme": "nothing",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "3e4ed906c4308a7cbf5d91b7c180a602d9fed8f1941300405c9ac13924b28a7f"
+  },
+  {
+    "theme": "sense",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "6bd3c66a8592ac1b507c8f26e845c5e5b5975efe66b42fac18cc9f92633f1c8b"
+  },
+  {
+    "theme": "sense",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "c8c86e8625ab08b3cb7e86250f65e76501cab0fd03f5b560299ab9e4f6f51d06"
+  },
+  {
+    "theme": "sense",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "c91df15428f11a8f35efc975335394ed055fbbfb06b82150750bab804b08bcba"
+  },
+  {
+    "theme": "sense",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "0ac546a424776cce751e11073cbbde42385eeff1dffc24106615030b90ab2c98"
+  },
+  {
+    "theme": "sense",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "d75342a49908e49bed128881c0e6b4c6d718ab67a45ca0170b71c4da904d74f4"
+  },
+  {
+    "theme": "touchwiz",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "890ede0f22834d1f44fbe0bb643a73fd0c7768af7f16ab953d1305f714e8570c"
+  },
+  {
+    "theme": "touchwiz",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "dfe9776ab3e0934418a41645e79c3cbdde3f88d530f0da1d105b8ac2883b2f97"
+  },
+  {
+    "theme": "touchwiz",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "718346ce3e0247cbc5bd3c04f6f5aed323937263d171ca99a9fa348e16476d40"
+  },
+  {
+    "theme": "touchwiz",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "ab5f01b9a55fe3a0a94fd9d109d7d2b99c8953fefedd6b69d13f6250c5a60d95"
+  },
+  {
+    "theme": "touchwiz",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "141b021f88b9e4197d1c1015bee3a97023a023dd2679a2183211a8f14ef94ea8"
+  },
+  {
+    "theme": "optimus",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "dc3e6f8483da32f36ce9c66f0c00fdf947f69a87abf4623680ef9933183374d5"
+  },
+  {
+    "theme": "optimus",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "95b5a5f854c564788553e4cd8bc3c655bbd6bd890bdee635e34c664c1e18e63a"
+  },
+  {
+    "theme": "optimus",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "4cb24d80454d85bc96330b097f1071d76a1656cfe9625b26e86f8bbdc43324bc"
+  },
+  {
+    "theme": "optimus",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "d520637112323da5cdabca3723c252444517adf918f390ee4abcab1cc3f7f5c5"
+  },
+  {
+    "theme": "optimus",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "46b6120bffe67d08b7424134e13e0b5b419edea0acd6acf1112c2577f0ea22a8"
+  },
+  {
+    "theme": "xperia",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "b3b73a6cd0ddd89817c3e36b5f80bb453b8d36b01c42030d8b1e864ab57add8c"
+  },
+  {
+    "theme": "xperia",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "926312f2d9b5acd67765de7468fe95784168029077ae9870a1964297d3c9b5df"
+  },
+  {
+    "theme": "xperia",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "833e8fac9f71240bee28485fb406d81298013a1576356bb2759a1b69cac9a59e"
+  },
+  {
+    "theme": "xperia",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "b04967ce92b6a528364cd20d30f9aa4c3822c9141d8851f295cad36a28dca994"
+  },
+  {
+    "theme": "xperia",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "fec3892ab331b15b93a4737799e16dd9b362f5744b87d12ef384648c3af50a22"
+  },
+  {
+    "theme": "razr",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "f3b1cb91f5b3d04f00c606d2e30e1b436011d18df632894ed3106e0bf2f1871f"
+  },
+  {
+    "theme": "razr",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "a6c60f0e3ec63cf9a57a868f768f035bf8f9c679185149801547b87b3875e6ff"
+  },
+  {
+    "theme": "razr",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "bbfca598b739308edfeb288941895edf15f99f657a670a31a3126a6d7e2cf0a7"
+  },
+  {
+    "theme": "razr",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "3517680377b3565c443fbe491abe94e5b2d88bfe0b1b1a90b6e90c767f7581c4"
+  },
+  {
+    "theme": "razr",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "117cd0377a152d6b3b7a55e9dbd0256bf4949bd4d25637defd9721139b3a8524"
+  }
+]

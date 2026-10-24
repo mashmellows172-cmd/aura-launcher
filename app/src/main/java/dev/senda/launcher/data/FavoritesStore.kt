@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -181,6 +182,32 @@ class FavoritesStore(context: Context) {
     suspend fun setWeatherPackage(packageName: String?) {
         store.edit { prefs -> if (packageName == null) prefs.remove(weatherPackageKey) else prefs[weatherPackageKey] = packageName }
     }
+
+    val soundSettings: Flow<SoundSettings> = store.data
+        .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }
+        .map { prefs -> SoundSettings(
+            enabled = prefs[booleanPreferencesKey("sound_enabled")] ?: false,
+            volume = (prefs[intPreferencesKey("sound_volume")] ?: 35).coerceIn(0, 100),
+            family = SoundFamily.fromStored(prefs[stringPreferencesKey("sound_family")]),
+            launch = prefs[booleanPreferencesKey("sound_launch")] ?: true,
+            menu = prefs[booleanPreferencesKey("sound_menu")] ?: true,
+            select = prefs[booleanPreferencesKey("sound_select")] ?: true,
+            favorite = prefs[booleanPreferencesKey("sound_favorite")] ?: true,
+            index = prefs[booleanPreferencesKey("sound_index")] ?: false,
+            muteDuringMedia = prefs[booleanPreferencesKey("sound_mute_media")] ?: true,
+        ) }.distinctUntilChanged()
+
+    suspend fun setSoundSettings(value: SoundSettings) { val settings = value.bounded(); store.edit { prefs ->
+        prefs[booleanPreferencesKey("sound_enabled")] = settings.enabled
+        prefs[intPreferencesKey("sound_volume")] = settings.volume
+        prefs[stringPreferencesKey("sound_family")] = settings.family.name
+        prefs[booleanPreferencesKey("sound_launch")] = settings.launch
+        prefs[booleanPreferencesKey("sound_menu")] = settings.menu
+        prefs[booleanPreferencesKey("sound_select")] = settings.select
+        prefs[booleanPreferencesKey("sound_favorite")] = settings.favorite
+        prefs[booleanPreferencesKey("sound_index")] = settings.index
+        prefs[booleanPreferencesKey("sound_mute_media")] = settings.muteDuringMedia
+    } }
 
     val visualSettings: Flow<VisualSettings> = store.data
         .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }

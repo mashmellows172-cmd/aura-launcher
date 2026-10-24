@@ -37,6 +37,7 @@ data class HomeUiState(
     val skinWallpapers: Map<String, String> = emptyMap(),
     val skinIcons: Map<String, String> = emptyMap(),
     val visualSettings: VisualSettings = VisualSettings(),
+    val soundSettings: SoundSettings = SoundSettings(),
     val weatherPackage: String? = null,
     val query: String = "",
     val isLoading: Boolean = true,
@@ -131,6 +132,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 _uiState.update { it.copy(skinIcons = icons) }
             }
         }
+        viewModelScope.launch { favoritesStore.soundSettings.collect { settings -> _uiState.update { it.copy(soundSettings = settings) } } }
         viewModelScope.launch {
             favoritesStore.visualSettings.collect { settings ->
                 _uiState.update { it.copy(visualSettings = settings) }
@@ -215,6 +217,8 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun setLockGesture(value: LockGesture) { viewModelScope.launch { favoritesStore.setLockGesture(value) } }
+
+    fun setSoundSettings(settings: SoundSettings) { viewModelScope.launch { favoritesStore.setSoundSettings(settings) } }
 
     fun setVisualSettings(settings: VisualSettings) {
         viewModelScope.launch { favoritesStore.setVisualSettings(settings) }

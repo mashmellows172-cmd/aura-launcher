@@ -4,6 +4,8 @@ import dev.senda.launcher.widgets.WidgetController
 import dev.senda.launcher.widgets.WidgetPickerDialog
 import dev.senda.launcher.widgets.WidgetShelf
 import dev.senda.launcher.HomeUiState
+import dev.senda.launcher.audio.LocalSoundFeedback
+import dev.senda.launcher.data.SoundEvent
 import dev.senda.launcher.data.BlockAnchor
 import dev.senda.launcher.data.sectionStartIndices
 import dev.senda.launcher.data.loadLocalImage
@@ -186,6 +188,7 @@ fun HomeScreen(
     onNotificationSettings: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val soundFeedback = LocalSoundFeedback.current
     val locale = LocalConfiguration.current.locales[0]
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
     val keyboard = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
@@ -202,6 +205,7 @@ fun HomeScreen(
     var showHiddenApps by rememberSaveable { mutableStateOf(false) }
     var showThemePicker by rememberSaveable { mutableStateOf(false) }
     var showVisualSettings by rememberSaveable { mutableStateOf(false) }
+    var showSoundSettings by rememberSaveable { mutableStateOf(false) }
     var showPersonalization by rememberSaveable { mutableStateOf(false) }
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
@@ -260,7 +264,7 @@ fun HomeScreen(
             showFavoritesEditor = false
             showHiddenApps = false
             showThemePicker = false
-            showVisualSettings = false
+            showVisualSettings = false; showSoundSettings = false
             showPersonalization = false
             showWeatherPicker = false
             showWidgetPicker = false
@@ -361,6 +365,7 @@ fun HomeScreen(
             onManageHiddenApps = { showHiddenApps = true },
             onChooseTheme = { viewModel.clearThemeError(); showThemePicker = true },
             onVisualSettings = { showVisualSettings = true },
+            onSoundSettings = { showSoundSettings = true },
             onPersonalization = { showPersonalization = true },
             onHomeSettings = { showHomeSettings = true },
             onGesture = executeGesture,
@@ -461,8 +466,8 @@ fun HomeScreen(
                 skinIcons = state.skinIcons,
                 listState = listState,
                 visualSettings = state.visualSettings,
-                onLaunch = { keyboard?.hide(); viewModel.launch(it) },
-                onToggleFavorite = viewModel::toggleFavorite,
+                onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
+                onToggleFavorite = { soundFeedback.play(SoundEvent.FAVORITE); viewModel.toggleFavorite(it) },
                 onLoadIcon = viewModel::icon,
                 onHide = viewModel::toggleHidden,
                 onChooseIcon = onChooseIcon,
@@ -507,8 +512,8 @@ fun HomeScreen(
                         skinIcons = state.skinIcons,
                         visualSettings = state.visualSettings,
                         listState = listState,
-                        onLaunch = { keyboard?.hide(); viewModel.launch(it) },
-                        onToggleFavorite = viewModel::toggleFavorite,
+                        onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
+                        onToggleFavorite = { soundFeedback.play(SoundEvent.FAVORITE); viewModel.toggleFavorite(it) },
                         onLoadIcon = viewModel::icon,
                         onHide = viewModel::toggleHidden,
                         onChooseIcon = onChooseIcon,
@@ -542,6 +547,7 @@ fun HomeScreen(
         iconTargetPackage?.let { name -> viewModel.setFamilyIcon(LauncherTheme.valueOf(iconTargetTheme), name, artworkTheme, icon) }
         showFamilyIconPicker = false; iconTargetPackage = null
     })
+    if (showSoundSettings) SoundSettingsDialog(state.soundSettings, state.theme, viewModel::setSoundSettings) { showSoundSettings = false }
     if (showAvatar) AvatarDialog(state,viewModel) { showAvatar = false }
     if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,onSettings=viewModel::setHeaderSettings,
         onOpen = { val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }; if(app != null) viewModel.launch(app) else showWeatherPicker = true },
@@ -612,6 +618,7 @@ private fun Header(
     onManageHiddenApps: () -> Unit,
     onChooseTheme: () -> Unit,
     onVisualSettings: () -> Unit,
+    onSoundSettings: () -> Unit,
     onPersonalization: () -> Unit,
     onHomeSettings: () -> Unit,
     onGesture: (GestureDirection) -> Unit,
@@ -622,6 +629,7 @@ private fun Header(
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
+    val soundFeedback = LocalSoundFeedback.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
     Row(
@@ -665,7 +673,7 @@ private fun Header(
         }
         Box {
             IconButton(
-                onClick = { themeMenuExpanded = true },
+                onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
                 modifier = Modifier.size(48.dp),
             ) {
                 Icon(Icons.Filled.MoreVert, contentDescription = "Personalizar tema. Actual: ${theme.title}")
@@ -677,6 +685,7 @@ private fun Header(
                 DropdownMenuItem(text = { Text("Organizar inicio") }, onClick = { themeMenuExpanded = false; onDashboard() })
                 DropdownMenuItem(text = { Text("Inicio y gestos") }, onClick = { themeMenuExpanded = false; onHomeSettings() })
                 DropdownMenuItem(text = { Text("Personalización y respaldo") }, onClick = { themeMenuExpanded = false; onPersonalization() })
+                DropdownMenuItem(text = { Text("Sonidos y respuesta") }, onClick = { themeMenuExpanded = false; onSoundSettings() })
                 DropdownMenuItem(text = { Text("Movimiento y efectos") }, onClick = { themeMenuExpanded = false; onVisualSettings() })
                 DropdownMenuItem(text = { Text(if (weatherAppLabel == null) "Elegir app del clima" else "App del clima · $weatherAppLabel") }, onClick = { themeMenuExpanded = false; onChooseWeatherApp() })
                 DropdownMenuItem(text = { Text("Añadir widget") }, onClick = { themeMenuExpanded = false; onChooseWidgets() })

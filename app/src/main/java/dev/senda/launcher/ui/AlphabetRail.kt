@@ -48,6 +48,7 @@ fun AlphabetRail(
     visualSettings: VisualSettings, onClick: (String) -> Unit, onScrub: (String) -> Unit,
 ) {
     if (letters.isEmpty()) return
+    val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val haptics = LocalHapticFeedback.current
     var dragging by remember { mutableStateOf(false) }
     var fingerIndex by remember { mutableFloatStateOf(0f) }
@@ -62,6 +63,7 @@ fun AlphabetRail(
     val select: (Int, Boolean) -> Unit = { index, scrub ->
         val letter = letters[index.coerceIn(0, letters.lastIndex)]
         if (letter != chosen || !scrub) {
+            soundFeedback.play(dev.senda.launcher.data.SoundEvent.INDEX)
             chosen = letter
             if (visualSettings.railHaptics && SystemClock.uptimeMillis() - lastHaptic >= RailTokens.hapticGapMs) {
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)

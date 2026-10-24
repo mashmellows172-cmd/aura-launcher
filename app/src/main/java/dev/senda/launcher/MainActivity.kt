@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: LauncherViewModel by viewModels()
     private var isDefaultHome by mutableStateOf(false)
     private lateinit var widgets: WidgetController
+    private lateinit var soundFeedback: dev.senda.launcher.audio.SoundFeedbackController
 
     private val calendarPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         viewModel.setHeaderSettings(viewModel.uiState.value.headerSettings.copy(showCalendar = granted))
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        soundFeedback = dev.senda.launcher.audio.SoundFeedbackController(applicationContext)
         widgets = WidgetController(this)
         updateHomeState()
         setContent {
@@ -54,6 +56,7 @@ class MainActivity : ComponentActivity() {
             val systemIsDark = isSystemInDarkTheme()
             val darkTheme = uiState.theme.isDarkSkin(systemIsDark)
             SideEffect {
+                soundFeedback.configure(uiState.soundSettings, uiState.theme)
                 val orientation = when (uiState.rotation) {
                     HomeRotation.SYSTEM -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                     HomeRotation.PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
@@ -68,7 +71,7 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = !darkTheme
                 }
             }
-            CompositionLocalProvider(dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
+            CompositionLocalProvider(dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
             AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion) {
                 HomeScreen(
@@ -99,8 +102,10 @@ class MainActivity : ComponentActivity() {
         if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_HOME)) viewModel.returnHome()
     }
 
-    override fun onStart() { super.onStart(); widgets.start(); viewModel.setHomeVisible(true) }
-    override fun onStop() { viewModel.setHomeVisible(false); widgets.stop(); super.onStop() }
+    override fun onStart() { super.onStart(); soundFeedback.setVisible(true); widgets.start(); viewModel.setHomeVisible(true) }
+    override fun onStop() { soundFeedback.setVisible(false); viewModel.setHomeVisible(false); widgets.stop(); super.onStop() }
+
+    override fun onDestroy() { soundFeedback.close(); super.onDestroy() }
 
     @Deprecated("Required by the public AppWidgetHost configuration API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
