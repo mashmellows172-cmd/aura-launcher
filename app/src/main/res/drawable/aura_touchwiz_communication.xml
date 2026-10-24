@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt" android:width="48dp" android:height="48dp" android:viewportWidth="64" android:viewportHeight="64">
+<path android:pathData="M10,54 A22,2.5 0 1,0 54,54 A22,2.5 0 1,0 10,54 Z" android:fillAlpha="0.27" android:fillColor="#75C6EA">
+</path>
+<path android:pathData="M31,11 H48 Q57,11 57,20 V30 Q57,39 48,39 H31 Q22,39 22,30 V20 Q22,11 31,11 Z" android:fillAlpha="1" android:strokeColor="#E8EDFD" android:strokeWidth="0.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#BDEAF5" android:endColor="#347FAC"/></aapt:attr>
+</path>
+<path android:pathData="M13,16 H47 Q53,16 53,22 V40 Q53,46 47,46 H24 L12,54 L15,46 H13 Q7,46 7,40 V22 Q7,16 13,16 Z" android:fillAlpha="1" android:strokeColor="#89A072" android:strokeWidth="0.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#D2F49B" android:endColor="#77B13F"/></aapt:attr>
+</path>
+<path android:pathData="M15,26 L40,26" android:fillAlpha="1" android:fillColor="#00000000" android:strokeColor="#50633C" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+</path>
+<path android:pathData="M15,33 L35,33" android:fillAlpha="1" android:fillColor="#00000000" android:strokeColor="#50633C" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+</path>
+<path android:pathData="M15,40 L29,40" android:fillAlpha="1" android:fillColor="#00000000" android:strokeColor="#50633C" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+</path>
+</vector>

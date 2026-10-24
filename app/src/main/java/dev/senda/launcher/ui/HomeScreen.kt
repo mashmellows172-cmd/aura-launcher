@@ -152,7 +152,7 @@ import androidx.compose.foundation.layout.widthIn
 import dev.senda.launcher.ui.theme.LocalRetroStyle
 import dev.senda.launcher.ui.theme.LocalIconTreatment
 import dev.senda.launcher.ui.theme.RetroClock
-import dev.senda.launcher.ui.theme.renderRetroAppIcon
+import dev.senda.launcher.ui.theme.icons.renderFamilyAppIcon
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
 import dev.senda.launcher.ui.theme.IndustrialTokens
 import dev.senda.launcher.ui.theme.DotClock
@@ -212,6 +212,8 @@ fun HomeScreen(
     var showNotificationHelp by rememberSaveable { mutableStateOf(false) }
     var iconTargetPackage by rememberSaveable { mutableStateOf<String?>(null) }
     var iconTargetTheme by rememberSaveable { mutableStateOf(state.theme.name) }
+    var showIconSource by rememberSaveable { mutableStateOf(false) }
+    var showFamilyIconPicker by rememberSaveable { mutableStateOf(false) }
     val searchFocus = remember { FocusRequester() }
     val compact = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     val skin = LocalSkinStyle.current
@@ -248,7 +250,7 @@ fun HomeScreen(
     val onChooseIcon: (LaunchableApp) -> Unit = { app ->
         iconTargetPackage = app.packageName
         iconTargetTheme = state.theme.name
-        wallpaperPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        showIconSource = true
     }
 
     var handledHomeRequest by remember { androidx.compose.runtime.mutableIntStateOf(state.homeRequest) }
@@ -264,6 +266,9 @@ fun HomeScreen(
             showWidgetPicker = false
             showHomeSettings = false; showAvatar = false; showWeatherConnection = false; showDashboard = false
             showNotificationHelp = false
+            showIconSource = false
+            showFamilyIconPicker = false
+            iconTargetPackage = null
             keyboard?.hide()
             focusManager.clearFocus()
             listState.scrollToItem(0)
@@ -525,6 +530,18 @@ fun HomeScreen(
 
     } // Motion controller provider
 
+    if (showIconSource) AuraAlertDialog(onDismissRequest = { showIconSource = false; iconTargetPackage = null },
+        title = { Text("Elegir icono") }, text = {
+            Column(Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Se guarda solo para esta app y este tema. Normales conserva el símbolo de Android.", style = MaterialTheme.typography.bodySmall)
+                TextButton(onClick = { showIconSource = false; showFamilyIconPicker = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Dibujos de las familias Aura") }
+                TextButton(onClick = { showIconSource = false; wallpaperPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Imagen de mi galería") }
+            }
+        }, confirmButton = { TextButton(onClick = { showIconSource = false; iconTargetPackage = null }) { Text("Cancelar") } })
+    if (showFamilyIconPicker) IconFamilyDialog(LauncherTheme.valueOf(iconTargetTheme), onUse = {}, onDismiss = { showFamilyIconPicker = false; iconTargetPackage = null }, onPick = { icon, artworkTheme ->
+        iconTargetPackage?.let { name -> viewModel.setFamilyIcon(LauncherTheme.valueOf(iconTargetTheme), name, artworkTheme, icon) }
+        showFamilyIconPicker = false; iconTargetPackage = null
+    })
     if (showAvatar) AvatarDialog(state,viewModel) { showAvatar = false }
     if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,onSettings=viewModel::setHeaderSettings,
         onOpen = { val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }; if(app != null) viewModel.launch(app) else showWeatherPicker = true },
@@ -1113,7 +1130,8 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val retro = LocalRetroStyle.current
     val importedUri = if (retro.enabled && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null)
         dev.senda.launcher.data.LocalRetroAssets.current?.icon(app.packageName, dev.senda.launcher.ui.theme.glyphFor(app.packageName)?.name) else null
-    if (importedUri == null && retro.enabled && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null && renderRetroAppIcon(app)) return
+    val familyTheme = if (LocalIndustrialStyle.current.enabled) dev.senda.launcher.data.LauncherTheme.NOTHING else retro.theme
+    if (importedUri == null && familyTheme != null && !LocalAppearance.current.highContrast && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null && renderFamilyAppIcon(app, familyTheme, retro.customHolder)) return
     val holderRadius = when (style.iconHolder) {
         IconHolder.SQUIRCLE -> 15.dp
         IconHolder.CIRCLE -> 21.dp
@@ -1128,7 +1146,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val appearance = LocalAppearance.current
     val pack = if (normal) null else LocalIconPack.current
     val sourceUri = if (normal) null else customIconUri ?: importedUri
-    val preserveArtwork = importedUri != null && !retro.customHolder
+    val preserveArtwork = sourceUri != null && !retro.customHolder
     val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri"
     val cached = remember(iconKey) { AppIconCache.get(iconKey) }
     val bitmap by key(iconKey, sourceUri) { produceState<ImageBitmap?>(initialValue = cached) {

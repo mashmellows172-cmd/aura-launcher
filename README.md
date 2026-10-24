@@ -12,7 +12,14 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.19.0-beta25.apk](beta/Aura-0.19.0-beta25.apk), variante optimizada con R8. [Novedades beta25](docs/BETA25.md), [verificación y límites](docs/QA-beta25.md).
+Beta actual: [Aura-0.20.0-beta26.apk](beta/Aura-0.20.0-beta26.apk), variante optimizada con R8. [Iconos beta26](docs/BETA26.md), [verificación](docs/QA-beta26.md).
+
+## Nuevo en beta26
+
+- 192 variantes vectoriales originales:32 funciones por cada una de las seis familias de tema.
+- Galería con tamaños32/42/60dp y fondo claro/oscuro. Selección manual por aplicación, además de asignación exacta para funciones del sistema.
+- Los iconos normales, reemplazos personales, packs externos y colección retro conservan su prioridad. Sin permisos nuevos ni cambio del respaldo9.
+- Maestros SVG y generador reproducible en [artwork/icon-families](artwork/icon-families/README.md).
 
 ## Nuevo en beta25
 

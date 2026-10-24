@@ -232,6 +232,16 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { favoritesStore.setSkinIcon(theme.name, packageName, uri) }
     }
 
+    fun setFamilyIcon(theme: LauncherTheme, packageName: String, artworkTheme: LauncherTheme, icon: dev.senda.launcher.ui.theme.icons.FamilyIcon) {
+        viewModelScope.launch {
+            try {
+                val uri = saveFamilyIcon(getApplication<Application>(), artworkTheme, icon)
+                favoritesStore.setSkinIcon(theme.name, packageName, uri)
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (error: Exception) { _uiState.update { it.copy(errorMessage = "No se pudo guardar el dibujo: ${error.localizedMessage}") } }
+        }
+    }
+
     fun setSkinIcon(theme: LauncherTheme, app: LaunchableApp, uri: String?) {
         viewModelScope.launch { favoritesStore.setSkinIcon(theme.name, app.packageName, uri) }
     }

@@ -1,4 +1,8 @@
-# Aura Launcher 0.19.0-beta25
+# Aura Launcher 0.20.0-beta26
+
+## Nuevo en beta26
+
+**Tema visual → Iconos → Explorar familias de iconos** permite comparar32 funciones en cada tema. **Usar esta familia** prepara el borrador; **Aplicar tema** guarda. Para elegir un dibujo para una sola app: pulsación larga → **Elegir icono** → **Dibujos de las familias Aura**. Se puede restablecer y no modifica otras apps. [Detalle](docs/BETA26.md) y [evidencia](docs/QA-beta26.md).
 
 ## Nuevo en beta25
 

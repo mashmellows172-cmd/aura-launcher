@@ -57,6 +57,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     var section by rememberSaveable { mutableIntStateOf(0) }
     var chooseTheme by remember { mutableStateOf(false) }
     var showIdentity by rememberSaveable { mutableStateOf(false) }
+    var showIconFamilies by rememberSaveable { mutableStateOf(false) }
     val finish = ThemeFinish(AccentChoice.valueOf(accentName), ShapeChoice.valueOf(shapeName), IconTreatment.valueOf(iconsName))
     val scope = rememberCoroutineScope()
     val bodyScroll = rememberScrollState()
@@ -122,6 +123,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
                         }
                     }
                     1 -> {
+                        TextButton(onClick = { showIconFamilies = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar familias de iconos") }
                         Text("Estilo de iconos", style = MaterialTheme.typography.labelLarge)
                         IconTreatment.entries.forEach { choice ->
                             TextButton(onClick = { iconsName = choice.name }, enabled = !state.themeSaveBusy) { RadioButton(iconsName == choice.name, null); Text(choice.label) }
@@ -152,6 +154,11 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     }, confirmButton = {
         TextButton(onClick = { scope.launch { if (viewModel.applyTheme(theme, finish, pack, wallpaper, useRetro)) onDismiss() } }, enabled = !state.themeSaveBusy && !state.retroImportBusy && !iconPreview.first && !state.isLoading) { Text(if (state.themeSaveBusy) "Aplicando…" else "Aplicar tema") }
     }, dismissButton = { TextButton(onClick = onDismiss, enabled = !state.themeSaveBusy) { Text("Cancelar") } })
+    if (showIconFamilies) IconFamilyDialog(theme, onUse = { candidate ->
+        if (candidate != theme) selectTheme(candidate)
+        iconsName = IconTreatment.AUTO.name; pack = null; useRetro = false
+        showIconFamilies = false
+    }, onDismiss = { showIconFamilies = false })
     if (showIdentity) ThemeIdentityDialog(theme, finish, state.visualSettings.reduceMotion, state.appearance.highContrast) { showIdentity = false }
 }
 

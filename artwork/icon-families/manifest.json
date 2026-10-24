@@ -1,0 +1,1730 @@
+[
+  {
+    "theme": "nothing",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_nothing_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "539824284fa78f154c810a66d6629e5e7234f08ecc42c27a771215a8dfbdaa96"
+  },
+  {
+    "theme": "nothing",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_nothing_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6d3c52032cc8b494408f39e2c2442f9aa3a77223a6e56c54cf0890e0a22be2c5"
+  },
+  {
+    "theme": "nothing",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_nothing_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a1028145a5e26f255fed71dd71f6b1a63715ebe6edf8f459fd972638cf043774"
+  },
+  {
+    "theme": "nothing",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_nothing_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "024dafe726dc7e1bb3a7940b5d32ed586029e39090df58dc255041878f254691"
+  },
+  {
+    "theme": "nothing",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_nothing_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "220fbd9da8d6f4fc09ad6eb18e54aeeb242c431291f264ccf7f043c3ba41d6de"
+  },
+  {
+    "theme": "nothing",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_nothing_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "dab8546c7b74f2c91ed6f65b127243a488cffdeac47abc2bc44e7cd77ab5e514"
+  },
+  {
+    "theme": "nothing",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_nothing_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "aca87acc8258ab5cb53b7531114662a1c0a31271d033bccaf37e00e771dc5a52"
+  },
+  {
+    "theme": "nothing",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_nothing_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f39d96f6de30975a055ff9c3ee9121f467cc90fdee87285658630845b5d2ee89"
+  },
+  {
+    "theme": "nothing",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_nothing_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b6fc07a4577bdd2512650a5a99c1a05c149f248f1465cf7a6ae79f4349405836"
+  },
+  {
+    "theme": "nothing",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_nothing_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "af407e5d01413599af16bcdb25dc3708ae25ba4595fbfaee0950588a3dcb026d"
+  },
+  {
+    "theme": "nothing",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_nothing_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "13bb09c71be610a913a3eb24b883e57213d8dcd525d697a4dd293b44d5597a15"
+  },
+  {
+    "theme": "nothing",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_nothing_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0189a417cfd7f1636f84063b612071e651ecaf81279a53fe8504c7d4fff28358"
+  },
+  {
+    "theme": "nothing",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_nothing_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1dd81f35b8bc91e04cac718da89c816c35c1264abb8c2a205976489e9f6a2dc1"
+  },
+  {
+    "theme": "nothing",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_nothing_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "76da83f6a4844a3d6f3b8acfe1784152460bd8ed678e2d4a69430eef52791ace"
+  },
+  {
+    "theme": "nothing",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_nothing_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "349c4d57e0f7e6d7eaa30dc998dea7e9bb8da829a061d2b7f7166f104a8ddbba"
+  },
+  {
+    "theme": "nothing",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_nothing_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "12ca225b4a551720f2393d208ab15441c2e82d8a3001f1b8320218cae1f5e826"
+  },
+  {
+    "theme": "nothing",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_nothing_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "4a434a2bbe907e0f9fbb4cf291eecb9ebc46d29b730d4f1632d68fb75bf61981"
+  },
+  {
+    "theme": "nothing",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_nothing_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "ad791aec407c91929b074377cf0dea47edf48e8c48c5e03e614c05197b6d55b6"
+  },
+  {
+    "theme": "nothing",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_nothing_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f695579e4529c5611580a73c5deda133bb7dc9ae619a3f6a9db91608e3dd492a"
+  },
+  {
+    "theme": "nothing",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_nothing_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d8b01e9b3198bee7ade78a8a21f1d3765ee98215b4352f706bbbf2ccf8d9be01"
+  },
+  {
+    "theme": "nothing",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_nothing_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "54cc21524a7f5027261b8e6b882dd279ae2263719c71e84dd50c05339cec9f5e"
+  },
+  {
+    "theme": "nothing",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_nothing_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "311e7505413a0a5e709cd6ab4d88e674a5ee47c171c855102c9c9a60a2342170"
+  },
+  {
+    "theme": "nothing",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_nothing_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "fdf55bb48c7938ebd39408b65ea6b0d889e6abe92cec626b40849f46b71f30b8"
+  },
+  {
+    "theme": "nothing",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_nothing_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "04b6854d5673e59f3d57d4503913f94871e5a7e1b80bd8c183177c8f9ded1901"
+  },
+  {
+    "theme": "nothing",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_nothing_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a9783ab077ac6b1b007c3be1e6d306d43bbc12d55aa76ee7120f70dac8d4d167"
+  },
+  {
+    "theme": "nothing",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_nothing_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "9f23560bb85fa7a6a7b82c655b4ae7d0bd4719751f55d1a23561073a70d59095"
+  },
+  {
+    "theme": "nothing",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_nothing_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "98f2918b16cbe1ed29eed07b04c752bad498deaa4909accbd9116a093766d54f"
+  },
+  {
+    "theme": "nothing",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_nothing_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d6c31d246a68f600a89558458fbbf6eb9314e5fe18ae8055ceee42ecee87a673"
+  },
+  {
+    "theme": "nothing",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_nothing_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f53123431b574a01c63f8be4a377c067639a41fad8164d6a05ed0a19266f3535"
+  },
+  {
+    "theme": "nothing",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_nothing_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0dcd85de24af2f6adeb87934da98fe4f157a0b32b91d27fa6bc1521dee39c17f"
+  },
+  {
+    "theme": "nothing",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_nothing_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b573eae235f8eeaf62e174426de49f6092ec4676a6c375f36d55644504730329"
+  },
+  {
+    "theme": "nothing",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_nothing_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d01d838dd58dc4495d1ec65b42bbc562a44c6d56c0fc9ef548f34bd8c668b2bf"
+  },
+  {
+    "theme": "sense",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_sense_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "9bcd6305b6a6b2ff4ef3dd3cd2a87bdb3657f02a30c132e974f41809608b4521"
+  },
+  {
+    "theme": "sense",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_sense_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d0caf32de13a24dcd3879c48c8a3e3658f51841ebb86673533db5e42bc0cf8b6"
+  },
+  {
+    "theme": "sense",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_sense_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e7391721edfd3f789c72e9c3e6d79a692540d7c6e4441209264beb2500424339"
+  },
+  {
+    "theme": "sense",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_sense_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6af61a39d0043cc547497b2f86b3555218ab0a6e401b2cea32d8a839fbd606bd"
+  },
+  {
+    "theme": "sense",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_sense_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "26b76024727e676bcce83878bf37eb78dc5be4dc51f981d016c1772923bd5e67"
+  },
+  {
+    "theme": "sense",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_sense_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "341de963013afbac2921635742897b98034b29139dfa690d858099b2b649c044"
+  },
+  {
+    "theme": "sense",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_sense_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "97200032996f0212107a0f7e4bf91707b59ea81cf10356977422454278e3f62b"
+  },
+  {
+    "theme": "sense",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_sense_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "57162623e689b484a5ef7034e536499ff18a323a52409a766570961b5ecb7f34"
+  },
+  {
+    "theme": "sense",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_sense_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c3c042bd506e9266221d552718fb68e6187cb3a6c593108e364b56fdc70e70e5"
+  },
+  {
+    "theme": "sense",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_sense_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "17686a1b8080a38199abc1fe8359b02b94e84e102a49cf504bc60967c59754fa"
+  },
+  {
+    "theme": "sense",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_sense_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "8410e8d44668b1e77f8bf1e0a069647f5396a00e8852507e9c284f68e1867952"
+  },
+  {
+    "theme": "sense",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_sense_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "da6c87bc6da3f74eb0a7a1ab10279af8d26ea53ca7546f675977118e6cdbbd1b"
+  },
+  {
+    "theme": "sense",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_sense_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "ea6f36d923957b041417d3805322f13bf6c445a436cda46e674d9b0be69d6779"
+  },
+  {
+    "theme": "sense",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_sense_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1f1841f1f17d7cfc9482fcf668df69cbf99747e64e2f695fb5d1a3726376fd74"
+  },
+  {
+    "theme": "sense",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_sense_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6033cd4d1d2fd3dce8003bd20844573822b619a3bf7162477f754320f6a5371e"
+  },
+  {
+    "theme": "sense",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_sense_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "37ca60c5cc710cc99cb93f8e0de9cfaff7427ed7574a2a275dfd5d4605b02683"
+  },
+  {
+    "theme": "sense",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_sense_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1456fb9fb043b287db7cd65c4eb692b527d9c72f2367115296b6e935c998a486"
+  },
+  {
+    "theme": "sense",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_sense_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0397f0dbfdb969e16cdbcf80e95d19138d1c426a863ac196bfda127b2fbc5711"
+  },
+  {
+    "theme": "sense",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_sense_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "70d599f9995573568d13cc2b98fc684b2d60a13498c6625735717b8fc469e41d"
+  },
+  {
+    "theme": "sense",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_sense_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "fe031ac34761b3534540307376466cf532681f1b0aa7996256ace60b3da79754"
+  },
+  {
+    "theme": "sense",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_sense_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "7f595a79110b23b77b89a26c21ebcc62dcfcb544158f2f8e8ecf35890fb9ec8c"
+  },
+  {
+    "theme": "sense",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_sense_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "393b4ea8eb63b8f818a8e55ec32ee2731aa07e85ccbf36f30d949595251c78b2"
+  },
+  {
+    "theme": "sense",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_sense_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "4f3630947c84b7c0720c97a8a1a802f199831316ed30d37279a2ac9a6196ad52"
+  },
+  {
+    "theme": "sense",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_sense_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b6cdfa79d9d6d5627cd4e6b6d1158146280ce08ac5d9524f52620dc336173bf4"
+  },
+  {
+    "theme": "sense",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_sense_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "abf7172f8518f77ff67528209e50f17a5a1d195dc7e506ab6a449f9898a56a00"
+  },
+  {
+    "theme": "sense",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_sense_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f3bbabb27c380e39e9b4451004f928bfd234575355f0a770a9f1f7036403d7b5"
+  },
+  {
+    "theme": "sense",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_sense_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d95756406c91d05732e042270c53c66f352cffcf58b806096d98215d98ac20a3"
+  },
+  {
+    "theme": "sense",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_sense_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0ad10396853654e22f5424977b19449e5c858e46f42a6a2674c44f0dc11464c8"
+  },
+  {
+    "theme": "sense",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_sense_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f4896476f3110d4391cbe4faf19971822ee748581d159990d828b3c57094b44d"
+  },
+  {
+    "theme": "sense",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_sense_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "803d51567dc9b486cdc5a3539e3e309eff1479c609aaf75289e611255b5a2a0a"
+  },
+  {
+    "theme": "sense",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_sense_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "2e02e726ee42763ad9634635f769a8f500e91b550542d23cb016ee4c9e71741f"
+  },
+  {
+    "theme": "sense",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_sense_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "42c50df980c26ca32aec121baefafa7f01570857f5596b87964cfdeba3ad064f"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_touchwiz_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b5bf906a1f868bddb79448145fcfb7071bb907721026297d19f850658b3e821d"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_touchwiz_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "aaf4ee8832ec375d64f080174a7f6bc9a89c565b2c84c9118e7bc1e9b015e2f5"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_touchwiz_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "42de4add81c872cf7145f57d17c97698566f4cbdac33518a96764bddc646b700"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_touchwiz_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0db9c966c8740ffe5e60faf96f0650a6033a10a5f8249febf39423bc3d2d33b5"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_touchwiz_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "79a56fc5744a6b82885f6c9a11be80cded30a6a122b6ddedb277506ce364ec55"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_touchwiz_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "429f67871d4ee1772c0d3ab04184b25df0780c7edadcaf0857787543c538e97b"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_touchwiz_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "75da31341f358e04c4848e92e663d3874663b58aa886d4ea08256b47eaa540ba"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_touchwiz_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "33ea56fe511612e2814abcedc544ee6725492b3eae6a276c341d8fd503da121b"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_touchwiz_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "dad673d1064b1f4d076d2ad7920fb0f3c3ce01b46109f2f3942c496aaee81c7f"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_touchwiz_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "712a560f8f0b4da71135c973c22e2fa5199f35aef2e72cc8b3eeadfb6250b53b"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_touchwiz_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "60492fc0e9ebdb199b7ad0dc64350159da42334cf33ab3a1cf52e8ba47be2f92"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_touchwiz_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "4e5c62dece3f10962604f3252a3e166bf6628d98fe900dba71e3e1f0b2c03db1"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_touchwiz_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "37c00f112e933fc7dede576e52c238c34b1b5558e572544930e3044fcd611494"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_touchwiz_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "341110193296a9a9fc107a9ce299f5b49d08064addcde8d714bad895833a0cd5"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_touchwiz_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d1552520593887657e9d13878b702881b321e3edf978003d67ee2b0700e2bc92"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_touchwiz_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "877c81e391c7dfcf3827f11905b88a7854b48c0b05a4d1ebde3968b164199a1a"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_touchwiz_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f198e2694f0de078aafba610fe6796548853e370b8b118bb559361a5804502f0"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_touchwiz_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f3b36e2b678342d6c063c38fffdbcd777bbd299ff9329c234cf3bb9c21d5ad83"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_touchwiz_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "19b7f49a6a5b8a2838f42bcad32b991913478ac9eb7b0783cceaaac514b23928"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_touchwiz_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c5a5da0a51f996da1b3116618f8bc577275734574db52fd1c55a3d22de343765"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_touchwiz_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b069ebaf3dea7f0b594b000679212155d8fe00d4c213622766a6c8c77fbb230a"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_touchwiz_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "99cf232f94a992c05f61f3bd91398bcf2a0dd1b84217c808fea0ff68e7b30374"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_touchwiz_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "2ec8ca14323c5a458cd6719366a6f4817ad337e980921a25ef351624afc44bde"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_touchwiz_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "78f823d5c6cef291dbb0bea50ed757a1c92553301dedbf62f1ecd07a3c7fcff4"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_touchwiz_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "77a41f39d79182830061539e419efb07e2fe271f8917fe5425086534171b4a90"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_touchwiz_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c85e0b3015f5a3f4ac27b27040d723db245734d444d3ae53dff577eef0383b31"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_touchwiz_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "291d4e029ed6ea90b32dc07667e2b9d74536957b2424cab2fe7848f6c3813deb"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_touchwiz_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1784c8c699c8810220361cd5f7d138119a4e18e2203d88d97801b8ce8d27b9fd"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_touchwiz_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "48ef5310610dba34fdf20e45eff73a845c84a9fa6f681fdec40654965d1f532b"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_touchwiz_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "bb9ce08391e62a664f38c76b30d0c02e3afe1060cdd479ea3d615cb82081b343"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_touchwiz_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1be740842e0f907583db5a98ea97c23c467d0dd511a2f1ed5091b31792fbb449"
+  },
+  {
+    "theme": "touchwiz",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_touchwiz_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "2f7a9a4d0118093e083bab0d36d451f28681985e68edc818da7b8f7c89715673"
+  },
+  {
+    "theme": "optimus",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_optimus_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d95ba2d6f58310765c9a7cdcdecdc8a01cadcf14c59d5fb6b324ab6af3e04ad0"
+  },
+  {
+    "theme": "optimus",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_optimus_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "816e9809e05ef44e3353545ccc215214d51dac37cce4b3f03b567885fea1c6e6"
+  },
+  {
+    "theme": "optimus",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_optimus_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b2daa4a029c1fea1819f565113e2404696691220dcff1bade7a2a4ee6e36754c"
+  },
+  {
+    "theme": "optimus",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_optimus_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f79c5e39040b5c17acdb7b9fec59635f7021c97185c12151805ab8fd0dbdbe60"
+  },
+  {
+    "theme": "optimus",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_optimus_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "8288a05c169b1146b79c4309818dcf3bde9859c351f851dbef2f48e55c520fa2"
+  },
+  {
+    "theme": "optimus",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_optimus_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "70855205e70e9fd1c022336529494a9dfebfe3a98a2d029f2bd61fd748356710"
+  },
+  {
+    "theme": "optimus",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_optimus_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0ad83f134701635190fbb2eb5e47a3fbfd05971739489702aa6baa2f023fb968"
+  },
+  {
+    "theme": "optimus",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_optimus_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c1bd0f3a0a4ca2a9ff516800e3cb3bb8014e64e439ecadda92c02731d35861d8"
+  },
+  {
+    "theme": "optimus",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_optimus_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "32b7813e8d81fce1587a6272ad5355d88e41bc2bc3e641fb8a5a625276d04666"
+  },
+  {
+    "theme": "optimus",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_optimus_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "22785188999376925886dfcd80dfa7dff58013b9c75fd45cc17db515dccbe710"
+  },
+  {
+    "theme": "optimus",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_optimus_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a869f63a6e1660de80eee34090985c1e79fb464e24fc08a93222c69448fcdba7"
+  },
+  {
+    "theme": "optimus",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_optimus_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6e14dd3aeb88ee258bd4b09e816470527f2a732146a3aa5fe6d8087bbe4e981a"
+  },
+  {
+    "theme": "optimus",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_optimus_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "21f8826be1ef539eba8503e3c17b2e64c43afed95f209dfa954e8f97d4e71fac"
+  },
+  {
+    "theme": "optimus",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_optimus_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "8508de8a5d639ab3ef741f8907ef3902b567af2bfc90f25e9df7f5554427fa68"
+  },
+  {
+    "theme": "optimus",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_optimus_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c45c3728bed817d00e433505d2acd7ddee1869615496dfaccfba64cc1af44198"
+  },
+  {
+    "theme": "optimus",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_optimus_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0227e93b4e6c9f0ff5a4e433174a96e801542795feef3d91cef116ede0c9a8ca"
+  },
+  {
+    "theme": "optimus",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_optimus_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "db76857efa502f0689105eb50d359e7627e5a0c57872f54eae7ebfd7ac25f971"
+  },
+  {
+    "theme": "optimus",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_optimus_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c7ab016f19ffb752356924c3739192309b7a30f45738e7626913bf40898bc039"
+  },
+  {
+    "theme": "optimus",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_optimus_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a5a0850feee58f5e7889cba001be4bfd2d95a41a06772cbf25e5fd380c3706d1"
+  },
+  {
+    "theme": "optimus",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_optimus_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c73deb68865cf139975e061a77c577f48b107ab1ad9c01f01784ada239b803c6"
+  },
+  {
+    "theme": "optimus",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_optimus_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "76bb99f684e0afb6521cfc4dae7293ca1dd4a325ec50f98101ea70e68141969c"
+  },
+  {
+    "theme": "optimus",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_optimus_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0428efe2c399955c58b06f4b3ae4226c806f8291f7c5e0cc856e24e7b7ea4518"
+  },
+  {
+    "theme": "optimus",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_optimus_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "fc18ca80fde2c1711bdff16009ea2f6e299f322bc08142a1f323e13230735e5a"
+  },
+  {
+    "theme": "optimus",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_optimus_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f83abdae44d243db61d570f9e95ff3bb0aa398288a73c6977a2efba9bd1de9a6"
+  },
+  {
+    "theme": "optimus",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_optimus_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "7f25df6f6479f9de2176640fbda2709abc8c3d2a73e617b0a4427d2e44dd20cf"
+  },
+  {
+    "theme": "optimus",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_optimus_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6d4f67476b47027b7e543fd5c726a3528c51c14231ef6f8a75e581e4b259a901"
+  },
+  {
+    "theme": "optimus",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_optimus_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "28015428067c6830d891f3b7ac4f66ad69102b750d7de8c8a2e1601cf229b446"
+  },
+  {
+    "theme": "optimus",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_optimus_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "7383993383c99a96f7a0545336a67a251a91ac67b752e9725e5c0fa09f38a8d5"
+  },
+  {
+    "theme": "optimus",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_optimus_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "07d89b058cb0e8610204e1da9528df47e4c95920d8eb4eefa4e0465e49b19d03"
+  },
+  {
+    "theme": "optimus",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_optimus_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e687279a27330f08400bc0ef41fabe07f4434e0c5a084ce23ab2535cab81a600"
+  },
+  {
+    "theme": "optimus",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_optimus_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "dbc3faafe6c171a5d021dc3a7eb85b954b485138759a9842f24c9c99ea96058f"
+  },
+  {
+    "theme": "optimus",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_optimus_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "7f0a4008d61eb30d44ca421ce2269189895f7cd51f076121a09c1c25e773736a"
+  },
+  {
+    "theme": "xperia",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_xperia_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "128239611b7748126c5a26d76f090d8c9501735656c2f95c491a70ac1170253e"
+  },
+  {
+    "theme": "xperia",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_xperia_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "3773da08c449544f4004c4ec37afacd7438b3b3420d38b83fd72950e16a7d505"
+  },
+  {
+    "theme": "xperia",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_xperia_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "79fb47b5c4845884f3707b8a6e568a305744640173e1794f6e9f2184f179150d"
+  },
+  {
+    "theme": "xperia",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_xperia_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "61be2d8d7ed8101d120c8783a84b09261d23682335ddf1c7bea80444f663bfa3"
+  },
+  {
+    "theme": "xperia",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_xperia_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "3dd40b666f04ab4f054d1e590b789761e788425695042628ca7b79175ab4127f"
+  },
+  {
+    "theme": "xperia",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_xperia_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "5c69b17cccd44c3a9d164b7bb2fdbc3a60b936a663f1ad702af6d599429cb9a9"
+  },
+  {
+    "theme": "xperia",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_xperia_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "9e6fbe79f3af22d16e7b0fbe4c33323e8fc054562c62e93ef671c91c3b48b59b"
+  },
+  {
+    "theme": "xperia",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_xperia_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a29ba086387ac246d7f6252d046ff5a40e146db0263ba2b1ba629c62739542cd"
+  },
+  {
+    "theme": "xperia",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_xperia_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "faf59a7b6bd952336438307f5ca022056e530c1d18d5643abe7224da4d772401"
+  },
+  {
+    "theme": "xperia",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_xperia_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6b85094d2b929448598d0937e9378091b68d6f14080374a94e7fa9a640e6ee52"
+  },
+  {
+    "theme": "xperia",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_xperia_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a1f44f3cac7c3cd61bdd995d72b041d85d763dfa0819a1ac66e18e8392c5b677"
+  },
+  {
+    "theme": "xperia",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_xperia_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c0c124951715ec8bf0481cac65fffa67b6978ea9a3a3882fe0632a3341bec758"
+  },
+  {
+    "theme": "xperia",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_xperia_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b07b211be79f8fd125fc87dde065e6d1b533e17b7596655937a9a68036a7babf"
+  },
+  {
+    "theme": "xperia",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_xperia_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "10dc39230404a3c0ce8a56577653728fd93df52cb7923f1e06cd4533d805a3a3"
+  },
+  {
+    "theme": "xperia",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_xperia_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1e76e1be322f1c7d42e692ff63eb0afb1c38fd6d87a3d024f993ed99a600d20f"
+  },
+  {
+    "theme": "xperia",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_xperia_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "2efeebde4b50df5a0c5466f13d50f9816c8de8a2c5aee76b23efc7da545e5367"
+  },
+  {
+    "theme": "xperia",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_xperia_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "72ece1fbb26888c1ccd0a2ff43410a368e698640547fabafcfa848d7beb9f700"
+  },
+  {
+    "theme": "xperia",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_xperia_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e974f0cfe97ca7ae88c889e72db2a458ab0944b26ae9ea3fe5495b58104decdf"
+  },
+  {
+    "theme": "xperia",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_xperia_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "5073df3ea7a19b02337641dcc748b3e8effc7c20f56fb04fe7545b5eae247c1c"
+  },
+  {
+    "theme": "xperia",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_xperia_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f586519c0fa52e06ebda4eaba3a4fdd2c91fff3252050c12f123105b761b911f"
+  },
+  {
+    "theme": "xperia",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_xperia_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "99263df563998b7ebd6bbf843c8ab9c3602851c061c95b40fd7507a9783d9930"
+  },
+  {
+    "theme": "xperia",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_xperia_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "8f5948b123d9a60a699c751a9f10a6052d3d13ef43211943e9c2c113a8136100"
+  },
+  {
+    "theme": "xperia",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_xperia_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "aef1ff8749044bcc114efd86d3d0d873b69634ddcb4701d4ca66c2503f16250f"
+  },
+  {
+    "theme": "xperia",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_xperia_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c24e3ae403fc860e08aa6e7d468fc6d1130d43b66cdc81c34f83647c892f07a3"
+  },
+  {
+    "theme": "xperia",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_xperia_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "ea286a439ab7c0c80cc9a31ce8fe0e038c7611d1330bd8d9c9539c744e5f95c7"
+  },
+  {
+    "theme": "xperia",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_xperia_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "afc7fe26c92a34f44e148941e2affe1f6038edce147a754db80e9c3875ef1644"
+  },
+  {
+    "theme": "xperia",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_xperia_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "957d8052d64683a0721756c86f22400317c7a5ea98675d862aa2c7974f13bf88"
+  },
+  {
+    "theme": "xperia",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_xperia_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "35cbf58f6efa30e6f91661eccbe75a9fdf9dcbd5ccf49a6d240330dff6e54a2d"
+  },
+  {
+    "theme": "xperia",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_xperia_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e0d4a116638d56fcb311415f6ecab05a42a1aa53c95e3f5392cfff92704406a2"
+  },
+  {
+    "theme": "xperia",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_xperia_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "9ffa08b26ff339fea911315616682eb5d4c91eff77bbb85f676052cbf861daca"
+  },
+  {
+    "theme": "xperia",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_xperia_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "467c3046b853c54aea1f894d3a823bd5469a20fc90a9b2aa576c9c77d580b661"
+  },
+  {
+    "theme": "xperia",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_xperia_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "7fd41a64e1f49f9587d7f4e3dc248146d0f10cff9264fabd405729a763484d13"
+  },
+  {
+    "theme": "razr",
+    "function": "phone",
+    "label": "Teléfono",
+    "resource": "aura_razr_phone",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "5dfa7c489252ff2a2baaf672088db50abfa7c6740c70d9dffb0c3fade6f5e2ee"
+  },
+  {
+    "theme": "razr",
+    "function": "message",
+    "label": "Mensajes",
+    "resource": "aura_razr_message",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0189f9dd9a3a1739b26bd8148bf435fd3a0882bafd587b493c279f205852f056"
+  },
+  {
+    "theme": "razr",
+    "function": "camera",
+    "label": "Cámara",
+    "resource": "aura_razr_camera",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e131032ee72def63e928542eb7c3504a9b81958334b324b66c44f1caf9e5f353"
+  },
+  {
+    "theme": "razr",
+    "function": "browser",
+    "label": "Navegador",
+    "resource": "aura_razr_browser",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "31a33aa8562424b55227f854c619272e1371bf05b3a4cc1939d7bc5d8d08c8bf"
+  },
+  {
+    "theme": "razr",
+    "function": "music",
+    "label": "Música",
+    "resource": "aura_razr_music",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "92de96dbd35a76ea16415291a97ca1373e5ea72796c9efa62b9137cc985344e2"
+  },
+  {
+    "theme": "razr",
+    "function": "calendar",
+    "label": "Calendario",
+    "resource": "aura_razr_calendar",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f6635b44fc61fb21edafc4316269e9bebe64c94108166f357230d4afd576c102"
+  },
+  {
+    "theme": "razr",
+    "function": "settings",
+    "label": "Ajustes",
+    "resource": "aura_razr_settings",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "fae76cfe97548fdea780c14386abedca1cd634af3900cc32985f24f6f1140a1e"
+  },
+  {
+    "theme": "razr",
+    "function": "files",
+    "label": "Archivos",
+    "resource": "aura_razr_files",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "df740b94355f1b8df4645d23825e062383a28b1b1aa64c9ab19ab35d4435df71"
+  },
+  {
+    "theme": "razr",
+    "function": "contacts",
+    "label": "Contactos",
+    "resource": "aura_razr_contacts",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "ff3553c5aec7a9768de97eac2515ec4e2206c98ab9f96b7fb4d9f099711820bd"
+  },
+  {
+    "theme": "razr",
+    "function": "clock",
+    "label": "Reloj",
+    "resource": "aura_razr_clock",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "2a2153f265ce8a680ae5d8b0c526c97408b056a17940abe7618bec32cc663728"
+  },
+  {
+    "theme": "razr",
+    "function": "gallery",
+    "label": "Galería",
+    "resource": "aura_razr_gallery",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "91cd112d1dd24755edb8f2c9a1d2973513a5f4435095422857b00d9028c7cbed"
+  },
+  {
+    "theme": "razr",
+    "function": "calculator",
+    "label": "Calculadora",
+    "resource": "aura_razr_calculator",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6015759fc3c0f412ccbe0961b6d8593e7c2d2ba4f84ba2750aa1e230b6371d86"
+  },
+  {
+    "theme": "razr",
+    "function": "email",
+    "label": "Correo",
+    "resource": "aura_razr_email",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "a70ce4fb92858bb8bceee9b7507203c82361c1b63f9c9dddafe3809de72fa320"
+  },
+  {
+    "theme": "razr",
+    "function": "video",
+    "label": "Vídeo",
+    "resource": "aura_razr_video",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "52c1370971d0750a6ac45324d02f73d2206be7d001d6bb0d44eb3e2e8b28d838"
+  },
+  {
+    "theme": "razr",
+    "function": "store",
+    "label": "Tienda",
+    "resource": "aura_razr_store",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "d611f1385508936d1f555a39621a6fa5c97d0acabd48890fe9fd5aa8fe410f31"
+  },
+  {
+    "theme": "razr",
+    "function": "maps",
+    "label": "Mapas",
+    "resource": "aura_razr_maps",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c141cb986de6a4c29378b7521d441d8a71018839ae9f56725699da378f0f452f"
+  },
+  {
+    "theme": "razr",
+    "function": "notes",
+    "label": "Notas",
+    "resource": "aura_razr_notes",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "9e44baf30edd9bf5b9657f4dafa5f0b8ee2484e8fc388f502fb08fcdb0d4ba88"
+  },
+  {
+    "theme": "razr",
+    "function": "recorder",
+    "label": "Grabadora",
+    "resource": "aura_razr_recorder",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "af374ba27eaa36cefdbb60cb5e0f8c94938ae930db5c4bf8943dd467727cb3e4"
+  },
+  {
+    "theme": "razr",
+    "function": "radio",
+    "label": "Radio",
+    "resource": "aura_razr_radio",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "b387631ef73f71dc4ca05a1e44ab1bd38358533ac9d3dd726d2223c4ac37530f"
+  },
+  {
+    "theme": "razr",
+    "function": "weather",
+    "label": "Clima",
+    "resource": "aura_razr_weather",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "e7632157160068f2e157af57587cb83a6d495d435346a75ef5620f422c15a2c1"
+  },
+  {
+    "theme": "razr",
+    "function": "downloads",
+    "label": "Descargas",
+    "resource": "aura_razr_downloads",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "05d16d6046d62eca493bdc5ff2d11a26038ccaed0319ba9f2333bca3b3037da2"
+  },
+  {
+    "theme": "razr",
+    "function": "games",
+    "label": "Juegos",
+    "resource": "aura_razr_games",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f60653ea85c98c86ef4ebbe1e85629d504edfa0d1f6a2dba1fa81dba1c5c5c6a"
+  },
+  {
+    "theme": "razr",
+    "function": "health",
+    "label": "Salud",
+    "resource": "aura_razr_health",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "34220053e9232857e9ca36a0a2083c4f1ffcbc86a63782b2f85e23291df8f79d"
+  },
+  {
+    "theme": "razr",
+    "function": "navigation",
+    "label": "Navegación",
+    "resource": "aura_razr_navigation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c1ea397f4189252aaa287411d29c08a1dba725803ccd0ab052203d6e000fcbc1"
+  },
+  {
+    "theme": "razr",
+    "function": "documents",
+    "label": "Documentos",
+    "resource": "aura_razr_documents",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "97fd823de4ba39581218175cdccc38927d859c1c28208acfba4de9a8e69dced7"
+  },
+  {
+    "theme": "razr",
+    "function": "reader",
+    "label": "Lectura",
+    "resource": "aura_razr_reader",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "837cbf27c4e2dae4a6438f137671aab78ba7d27c27e9312211344c7a28a015a5"
+  },
+  {
+    "theme": "razr",
+    "function": "cloud",
+    "label": "Nube",
+    "resource": "aura_razr_cloud",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "1fc94f6d78dfed74942c36469dfa50057e44cf64fc4bb006d205486b4625c4a9"
+  },
+  {
+    "theme": "razr",
+    "function": "security",
+    "label": "Seguridad",
+    "resource": "aura_razr_security",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "98ac2b6096dceffb4a39fc1d5213afa68516d95a3fa1e5d9598f6dd804ca26a4"
+  },
+  {
+    "theme": "razr",
+    "function": "automation",
+    "label": "Automatización",
+    "resource": "aura_razr_automation",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "6d6a044fa9c66624ae2894d51d6fb31b92abef2e13e203de7bdeab7e1d45d08f"
+  },
+  {
+    "theme": "razr",
+    "function": "tools",
+    "label": "Herramientas",
+    "resource": "aura_razr_tools",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "c28a500b17f5151887130602009faf208e150e20e02f1f2f347fe1a7791cf1e2"
+  },
+  {
+    "theme": "razr",
+    "function": "communication",
+    "label": "Comunicación",
+    "resource": "aura_razr_communication",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "0eb55e26187b2ef9e24e942cd74d27c030ee043ef3a71379b4747588fd2455b2"
+  },
+  {
+    "theme": "razr",
+    "function": "photography",
+    "label": "Fotografía",
+    "resource": "aura_razr_photography",
+    "author": "Aura original",
+    "version": 1,
+    "sha256": "f1389b9255a86050a73ba84a1ad659579764f2e2983c2c64f9db8b67250dcee3"
+  }
+]

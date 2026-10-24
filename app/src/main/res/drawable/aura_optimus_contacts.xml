@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt" android:width="48dp" android:height="48dp" android:viewportWidth="64" android:viewportHeight="64">
+<path android:pathData="M14,7 H50 Q59,7 59,16 V50 Q59,59 50,59 H14 Q5,59 5,50 V16 Q5,7 14,7 Z" android:fillAlpha="0.32" android:fillColor="#786754">
+</path>
+<path android:pathData="M13,4 H51 Q60,4 60,13 V48 Q60,57 51,57 H13 Q4,57 4,48 V13 Q4,4 13,4 Z" android:fillAlpha="1" android:strokeColor="#FFF9EB" android:strokeWidth="1" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#FAF9EF" android:endColor="#D4C9B5"/></aapt:attr>
+</path>
+<path android:pathData="M11,8 L52,8" android:fillAlpha="1" android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeWidth="1.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+</path>
+<path android:pathData="M15,9 H48 Q51,9 51,12 V52 Q51,55 48,55 H15 Q12,55 12,52 V12 Q12,9 15,9 Z" android:fillAlpha="1" android:strokeColor="#E6D2A7" android:strokeWidth="1" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#D56D23" android:endColor="#9D431B"/></aapt:attr>
+</path>
+<path android:pathData="M26,26 A7,8 0 1,0 40,26 A7,8 0 1,0 26,26 Z" android:fillAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#FAF9EF" android:endColor="#D4C9B5"/></aapt:attr>
+</path>
+<path android:pathData="M21,45 Q22,33 33,34 Q44,33 45,45 Z" android:fillAlpha="1">
+<aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="8" android:startY="8" android:endX="8" android:endY="56" android:startColor="#FAF9EF" android:endColor="#D4C9B5"/></aapt:attr>
+</path>
+</vector>
