@@ -56,6 +56,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     var useRetro by rememberSaveable { mutableStateOf(state.retroEnabled[themeName] == true) }
     var section by rememberSaveable { mutableIntStateOf(0) }
     var chooseTheme by remember { mutableStateOf(false) }
+    var showIdentity by rememberSaveable { mutableStateOf(false) }
     val finish = ThemeFinish(AccentChoice.valueOf(accentName), ShapeChoice.valueOf(shapeName), IconTreatment.valueOf(iconsName))
     val scope = rememberCoroutineScope()
     val bodyScroll = rememberScrollState()
@@ -85,7 +86,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
                 }
             }
             Text("Vista previa · Inicio cambia al aplicar", style = MaterialTheme.typography.labelSmall)
-            AuraTheme(theme, isSystemInDarkTheme(), state.appearance.highContrast, finish) {
+            AuraTheme(theme, isSystemInDarkTheme(), state.appearance.highContrast, finish, reduceMotion = state.visualSettings.reduceMotion) {
                 CompositionLocalProvider(LocalIconPack provides iconPreview.second, LocalAppearance provides AppearanceSettings(iconSize = 32), LocalRetroAssets provides activeLibrary) {
                     ThemePreview(theme, wallpaper ?: activeLibrary?.wallpapers?.firstOrNull()?.uri, state, viewModel)
                 }
@@ -96,6 +97,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
             Column(Modifier.heightIn(max = ThemeEditorSize.controls).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
                 when (section) {
                     0 -> {
+                        TextButton(onClick = { showIdentity = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar identidad y clima") }
                         Text(theme.subtitle, style = MaterialTheme.typography.bodySmall)
                         if (themeName in RetroAssets.themes) {
                             RetroLibraryToggle(library, useRetro, state.retroImportBusy || state.themeSaveBusy, { useRetro = it }, { libraryPicker.launch(arrayOf("application/zip", "application/x-zip-compressed", "application/octet-stream")) })
@@ -150,6 +152,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     }, confirmButton = {
         TextButton(onClick = { scope.launch { if (viewModel.applyTheme(theme, finish, pack, wallpaper, useRetro)) onDismiss() } }, enabled = !state.themeSaveBusy && !state.retroImportBusy && !iconPreview.first && !state.isLoading) { Text(if (state.themeSaveBusy) "Aplicando…" else "Aplicar tema") }
     }, dismissButton = { TextButton(onClick = onDismiss, enabled = !state.themeSaveBusy) { Text("Cancelar") } })
+    if (showIdentity) ThemeIdentityDialog(theme, finish, state.visualSettings.reduceMotion, state.appearance.highContrast) { showIdentity = false }
 }
 
 @Composable

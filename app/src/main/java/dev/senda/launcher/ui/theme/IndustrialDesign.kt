@@ -6,6 +6,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -71,17 +72,26 @@ private val clockDots = mapOf(
     ':' to listOf("000","010","010","000","010","010","000"),
 )
 
-/** Static dots: redraws only on minute/theme changes, never runs an idle animation. */
+/** A finite dot reveal on minute change; no idle animation. */
 @Composable
 fun DotClock(time: String, modifier: Modifier = Modifier, color: Color = IndustrialTokens.text) {
+    val normalized = remember(time) { time.map { digit ->
+        val number = Character.getNumericValue(digit)
+        if (digit.isDigit() && number in 0..9) ('0'.code + number).toChar() else if (digit == '：') ':' else digit
+    }.joinToString("") }
+    val reduced = dev.senda.launcher.ui.LocalMotionSettings.current.reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast
+    val reveal = rememberClockChange(normalized, dev.senda.launcher.data.LauncherTheme.NOTHING, reduced)
     Canvas(modifier.height(56.dp).semantics { contentDescription = time }) {
-        val columns = time.sumOf { if (it == ':') 4 else 6 } - 1
+        val columns = normalized.sumOf { if (it == ':') 4 else 6 } - 1
         val pitch = minOf(size.width / columns.coerceAtLeast(1), size.height / 7f)
         val top = (size.height - pitch * 7f) / 2f
         var x = 0f
-        time.forEach { digit ->
+        normalized.forEach { digit ->
             clockDots[digit]?.forEachIndexed { row, line -> line.forEachIndexed { col, bit ->
-                if (bit == '1') drawCircle(color, pitch * .34f, Offset(x + (col + .5f) * pitch, top + (row + .5f) * pitch))
+                if (bit == '1') {
+                    val wave = ((reveal.value * 1.35f - x / size.width.coerceAtLeast(1f) * .35f) * 2f).coerceIn(.25f, 1f)
+                    drawCircle(color.copy(alpha = color.alpha * wave), pitch * .34f, Offset(x + (col + .5f) * pitch, top + (row + .5f) * pitch))
+                }
             } }
             x += (if (digit == ':') 4 else 6) * pitch
         }

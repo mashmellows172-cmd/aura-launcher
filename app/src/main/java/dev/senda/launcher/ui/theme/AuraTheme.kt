@@ -57,7 +57,7 @@ internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, 
     LauncherTheme.NOTHING -> SkinStyle(IndustrialTokens.signal, Color.Black, Color.Black, WallpaperPattern.NONE, IconHolder.CIRCLE, 240) to dark(IndustrialTokens.text, Color.Black, IndustrialTokens.surface, IndustrialTokens.raised).copy(onBackground = IndustrialTokens.text, onSurface = IndustrialTokens.text, onSurfaceVariant = IndustrialTokens.muted, outline = IndustrialTokens.outline)
     LauncherTheme.SENSE -> SkinStyle(Color(0xFFB6D88C), Color(0xFF303B39), Color(0xFF10191A), WallpaperPattern.SENSE_LANDSCAPE, IconHolder.ROUNDED, 340) to dark(Color(0xFFB6D88C), Color(0xFF10191A), Color(0xFF202A29), Color(0xFF33403D))
     LauncherTheme.TOUCHWIZ -> SkinStyle(Color(0xFF84D2FF), Color(0xFF071A38), Color(0xFF10334A), WallpaperPattern.NATURE, IconHolder.SQUIRCLE, 260) to dark(Color(0xFF84D2FF), Color(0xFF10334A), Color(0xFF10263C), Color(0xFF203E55))
-    LauncherTheme.OPTIMUS -> SkinStyle(Color(0xFFFFAACB), Color(0xFF241C35), Color(0xFF1C1728), WallpaperPattern.OPTIMUS_RIBBONS, IconHolder.ROUNDED, 300) to dark(Color(0xFFFFAACB), Color(0xFF1C1728), Color(0xFF2C2339), Color(0xFF403149))
+    LauncherTheme.OPTIMUS -> SkinStyle(Color(0xFFFFCC96), Color(0xFF3D322A), Color(0xFF1D1A18), WallpaperPattern.OPTIMUS_RIBBONS, IconHolder.ROUNDED, 300) to dark(Color(0xFFFFCC96), Color(0xFF1D1A18), Color(0xFF302820), Color(0xFF473D31))
     LauncherTheme.XPERIA -> SkinStyle(Color(0xFFC0BCFF), Color(0xFF10162E), Color(0xFF241239), WallpaperPattern.XPERIA_FLOW, IconHolder.BEVELED, 240) to dark(Color(0xFFC0BCFF), Color(0xFF241239), Color(0xFF1C1E34), Color(0xFF34304A))
     LauncherTheme.RAZR -> SkinStyle(Color(0xFF9DD9FF), Color(0xFF303B47), Color(0xFF0D141D), WallpaperPattern.RAZR_METAL, IconHolder.BEVELED, 180) to dark(Color(0xFF9DD9FF), Color(0xFF0D141D), Color(0xFF1D2936), Color(0xFF304052)).copy(outline=Color(0xFFB1C0CC))
     LauncherTheme.AMOLED -> SkinStyle(Color(0xFFA6D1B5), Color.Black, Color.Black, WallpaperPattern.NONE, IconHolder.ROUNDED, 220) to dark(Color(0xFFA6D1B5), Color.Black, Color.Black, Color(0xFF141414), Color(0xFF173427))
@@ -67,7 +67,7 @@ internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, 
 }
 
 @Composable
-fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), content: @Composable () -> Unit) {
+fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, content: @Composable () -> Unit) {
     val (presetStyle, presetScheme) = skin(theme, systemIsDark)
     val requested = finish.accent.argb?.let { Color(it) }
     val adjusted = ensureReadableAccent(requested ?: presetStyle.accent, listOf(presetScheme.background, presetStyle.backgroundTop, presetStyle.backgroundBottom, presetScheme.surface, presetScheme.surfaceVariant))
@@ -95,9 +95,10 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
         surfaceContainerLowest = background, surfaceContainerLow = background, surfaceContainer = background,
         surfaceContainerHigh = background, surfaceContainerHighest = background, surfaceBright = background, surfaceDim = background,
         primaryContainer = background, onPrimaryContainer = foreground, secondaryContainer = background, onSecondaryContainer = foreground) else baseScheme
-    val accent by animateColorAsState(style.accent, tween(style.motionMillis), label = "skin-accent")
-    val top by animateColorAsState(style.backgroundTop, tween(style.motionMillis), label = "skin-background-top")
-    val bottom by animateColorAsState(style.backgroundBottom, tween(style.motionMillis), label = "skin-background-bottom")
+    val colorDuration = if (highContrast || reduceMotion) 0 else style.motionMillis
+    val accent by animateColorAsState(style.accent, tween(colorDuration), label = "skin-accent")
+    val top by animateColorAsState(style.backgroundTop, tween(colorDuration), label = "skin-background-top")
+    val bottom by animateColorAsState(style.backgroundBottom, tween(colorDuration), label = "skin-background-bottom")
     val industrial = theme == LauncherTheme.NOTHING
     val retro = RetroStyle(theme, finish.shape != ShapeChoice.DEFAULT)
     val animatedScheme = if (industrial && !highContrast) scheme.copy(

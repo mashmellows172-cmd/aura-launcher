@@ -12,7 +12,14 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.18.0-beta23.apk](beta/Aura-0.18.0-beta23.apk), variante optimizada con R8. Novedades: [beta23](docs/BETA23.md). Consulta [BETA.md](BETA.md) para instalar y cambiar opciones.
+Beta actual: [Aura-0.19.0-beta25.apk](beta/Aura-0.19.0-beta25.apk), variante optimizada con R8. [Novedades beta25](docs/BETA25.md), [verificación y límites](docs/QA-beta25.md).
+
+## Nuevo en beta25
+
+- Seis identidades históricas diferenciadas en reloj, tarjetas, clima y controles; muestra interactiva del tema en el editor.
+- Widget automático de reproducción con sesiones y controles opcionales, carátula acotada y modo básico sin acceso especial.
+- 108 mensajes por tema y franja horaria; animaciones decorativas ligadas al ciclo de vida y ajustes de accesibilidad.
+- Respaldo9 compatible con formatos1–9. [Detalles y procedencia de recursos](docs/BETA25.md).
 
 ## Nuevo en beta23
 
@@ -89,7 +96,7 @@ Aura no necesita conexión, no recopila datos y no incluye analítica, publicida
 
 ## Verificación
 
-Beta22: pruebas de lógica, compilación optimizada, lint y firma. Resultados y comprobaciones físicas pendientes: [informe beta22](docs/BETA22.md). Los datos de betas anteriores que siguen son históricos.
+Beta25: compilación optimizada, lint, revisión de código y firma. Consulta [QA beta25](docs/QA-beta25.md) para evidencia de instalación y límites. No se ejecutaron suites automáticas nuevas en esta entrega. Los resultados de betas anteriores son históricos.
 
 Compila contra Android API 37. Beta14 cuenta con 11 pruebas unitarias y análisis estático. Los pasos y la evidencia de dispositivo están en `../replica/test-plan.md`; las herramientas Android de regresión están en `e2e/`. Beta17 reemplaza el motor de movimiento anterior. El experimento beta13 permanece fuera de esta entrega, en `work/paused-motion-beta13` del workspace.
 

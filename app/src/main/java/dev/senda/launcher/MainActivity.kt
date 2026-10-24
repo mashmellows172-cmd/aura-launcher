@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
             }
             CompositionLocalProvider(dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
-            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish()) {
+            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion) {
                 HomeScreen(
                     viewModel = viewModel,
                     isDefaultHome = isDefaultHome,

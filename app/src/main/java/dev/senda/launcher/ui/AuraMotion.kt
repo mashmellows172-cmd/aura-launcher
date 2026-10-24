@@ -24,6 +24,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.VisualSettings
+import dev.senda.launcher.data.LauncherTheme
+import dev.senda.launcher.data.LocalAppearance
+import dev.senda.launcher.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.*
 
@@ -182,28 +185,46 @@ fun AuraAlertDialog(
 ) {
     val settings = LocalMotionSettings.current
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(settings.menuEffect, settings.reduceMotion) {
-        if (settings.reduceMotion || settings.menuEffect == "NONE") progress.snapTo(1f)
+    val theme = if (LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme
+    val profile = theme?.let(::historicalProfile)?.takeUnless { LocalAppearance.current.highContrast }
+    val noMotion = settings.reduceMotion || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
+    LaunchedEffect(settings.menuEffect, noMotion, profile?.motion) {
+        if (noMotion || settings.menuEffect == "NONE") progress.snapTo(1f)
         else {
             progress.snapTo(0f)
             progress.animateTo(1f, if (settings.menuEffect == "SPRING") spring(dampingRatio = .78f, stiffness = 420f * (360f / settings.durationMs).pow(2)) else tween(settings.durationMs.coerceAtMost(450)))
         }
     }
+    val colors = MaterialTheme.colorScheme
+    val container = profile?.bottom ?: colors.surface
+    val ink = profile?.ink ?: colors.onSurface
+    val muted = profile?.muted ?: colors.onSurfaceVariant
+    val accent = profile?.readableAccent(LocalSkinStyle.current.accent) ?: colors.primary
+    MaterialTheme(colorScheme = profile?.let { historicalColors(it, colors, accent) } ?: colors) {
     AlertDialog(onDismissRequest, confirmButton, modifier.graphicsLayer {
         val p = progress.value
-        scaleX = 1f; scaleY = 1f; rotationX = 0f; translationY = 0f
+        scaleX = 1f; scaleY = 1f; rotationX = 0f; translationY = 0f; translationX = 0f
         alpha = p.coerceIn(0f, 1f)
-        if (settings.menuEffect == "SPRING" && !settings.reduceMotion) {
-            scaleX = .84f + .16f * p; scaleY = scaleX
-            rotationX = (1f - p) * 9f; cameraDistance = max(size.width, size.height).coerceAtLeast(1f) * MotionTokens.cameraDistanceFactor
+        if (settings.menuEffect == "SPRING" && !noMotion) {
+            when (profile?.motion) {
+                HistoricalMotion.HINGE -> { rotationX = (1f - p) * 12f; transformOrigin = TransformOrigin(.5f, .1f) }
+                HistoricalMotion.RIPPLE -> { scaleX = .94f + .06f * p; scaleY = .94f + .06f * p }
+                HistoricalMotion.LAYERS -> translationY = (1f - p) * 14.dp.toPx()
+                HistoricalMotion.GLIDE -> translationX = (1f - p) * 24.dp.toPx()
+                HistoricalMotion.SEGMENTS -> { scaleY = .98f + .02f * p }
+                HistoricalMotion.DOT_REVEAL -> { scaleX = .98f + .02f * p; scaleY = scaleX }
+                else -> { scaleX = .9f + .1f * p; scaleY = scaleX }
+            }
+            cameraDistance = max(size.width, size.height).coerceAtLeast(1f) * MotionTokens.cameraDistanceFactor
         }
-        if (settings.menuEffect in setOf("SLIDE", "SPRING") && !settings.reduceMotion) translationY = (1f - p) * MotionTokens.menuTravel.toPx()
+        if (settings.menuEffect == "SLIDE" && !noMotion) translationY = (1f - p) * MotionTokens.menuTravel.toPx()
     }, dismissButton = dismissButton, title = title, text = text,
         shape = MaterialTheme.shapes.extraLarge,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = container,
         tonalElevation = 0.dp,
-        titleContentColor = MaterialTheme.colorScheme.onSurface,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+        titleContentColor = ink,
+        textContentColor = muted)
+    }
 }
 
 /** Explicit replay and drag preview. No endless animation while the settings screen is idle. */

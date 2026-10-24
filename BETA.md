@@ -1,4 +1,8 @@
-# Aura Launcher 0.18.0-beta23
+# Aura Launcher 0.19.0-beta25
+
+## Nuevo en beta25
+
+Identidades históricas en reloj, superficies, clima y menús. En **Tema visual → Acabado → Explorar identidad y clima** puedes comparar la muestra del tema sin cambiar Inicio. En los ajustes de Inicio puedes mostrar mensajes por tema y reproducción multimedia. Carátula y controles requieren acceso opcional en Android; el modo básico no identifica el contenido. [Detalles](docs/BETA25.md) y [verificación](docs/QA-beta25.md).
 
 ## Barrido climático por tema
 
@@ -48,7 +52,7 @@ Las transformaciones afectan al contenido de Aura. Las ventanas de otras apps y 
 
 ## Compatibilidad
 
-Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 7 y admite importar formatos 1–7. La biblioteca retro se transfiere con su ZIP por separado. No incluye permisos ni autoriza accesibilidad al restaurar.
+Los perfiles antiguos se traducen al nuevo motor. No se borran favoritas, temas, fondos ni widgets. El respaldo exportado usa formato 9 y admite importar formatos 1–9. La biblioteca retro se transfiere con su ZIP por separado. No incluye permisos ni autoriza accesibilidad al restaurar.
 
 Actualizar el APK firmado sin desinstalar. Mismo paquete y certificado que las betas anteriores. Código MIT y fuentes Geist bajo SIL OFL1.1, sin publicidad ni permiso de Internet.
 

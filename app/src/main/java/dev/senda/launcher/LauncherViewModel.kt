@@ -427,7 +427,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     fun clearThemeError() { _uiState.update { it.copy(themeSaveError = null) } }
 
     fun icon(app: LaunchableApp) = appsRepository.appIcon(app)
-    fun openAudioApp() { audioMonitor.openAudioApp() }
+    fun openAudioApp(sessionId: String? = _uiState.value.audioInfo.sessionId) { audioMonitor.openAudioApp(sessionId) }
     fun pauseAudio(sessionId: String?) = audioMonitor.pause(sessionId)
     fun previousAudio(sessionId: String?) = audioMonitor.previous(sessionId)
     fun nextAudio(sessionId: String?) = audioMonitor.next(sessionId)

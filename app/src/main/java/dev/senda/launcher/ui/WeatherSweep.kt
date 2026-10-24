@@ -10,11 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -35,6 +38,18 @@ internal fun WeatherSweep(theme:LauncherTheme,reading:WidgetWeather?,settings:We
     val lifecycle=LocalLifecycleOwner.current.lifecycle
     val accent=LocalSkinStyle.current.accent
     val treatment=weatherTreatment(theme)
+    val density = LocalDensity.current.density
+    val dynamicPaths = remember { List(5) { Path() } }
+    val cloudPixels = remember(density, treatment) { Path().apply {
+        for (col in -8..8) for (row in -3..3) {
+            val x=col/8f; val y=row/3f
+            if (x*x+y*y<1f || (x+.25f)*(x+.25f)+(y+.45f)*(y+.45f)<.55f) {
+                val radius = density * if (treatment == WeatherTreatment.LCD_SCAN) 1.3f else 1f
+                val bounds = Rect(col*4*density-radius, row*4*density-radius, col*4*density+radius, row*4*density+radius)
+                if (treatment == WeatherTreatment.LCD_SCAN) addRect(bounds) else addOval(bounds)
+            }
+        }
+    } }
     val condition=remember(motion.condition,reading?.conditionText) {
         if(motion.condition==WeatherCondition.AUTO)providerWeatherCondition(reading?.conditionText.orEmpty()) else motion.condition
     }
@@ -56,14 +71,14 @@ internal fun WeatherSweep(theme:LauncherTheme,reading:WidgetWeather?,settings:We
     }
     Canvas(modifier.clipToBounds().clearAndSetSemantics {}) {
         val p=phase.value
-        if(reduced||motion.mode==WeatherMotionMode.OFF||reading==null||!active)return@Canvas
+        if(reduced||motion.mode==WeatherMotionMode.OFF||reading==null||!active||!ValueAnimator.areAnimatorsEnabled())return@Canvas
         // Repeat scenes are periodic at both endpoints; ONCE uses a soft entrance and exit.
         val fade=if(motion.mode==WeatherMotionMode.REPEAT)1f else min(p/.16f,(1f-p)/.22f).coerceIn(0f,1f)
-        drawWeatherScene(p,condition,treatment,accent,fade*motion.intensity/100f)
+        drawWeatherScene(p,condition,treatment,accent,fade*motion.intensity/100f, cloudPixels, dynamicPaths)
     }
 }
 
-private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatment:WeatherTreatment,accent:Color,strength:Float) {
+private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatment:WeatherTreatment,accent:Color,strength:Float,cloudPixels:Path,paths:List<Path>) {
     val dots=treatment==WeatherTreatment.DOT_MATRIX
     val lcd=treatment==WeatherTreatment.LCD_SCAN
     val unit=dp(1f)
@@ -82,10 +97,9 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
     }
     fun cloud(cx:Float,cy:Float,r:Float,color:Color) {
         if(dots||lcd) {
-            for(col in -8..8)for(row in -3..3) {
-                val x=col/8f;val y=row/3f
-                if(x*x+y*y<1f || (x+.25f).pow(2)+(y+.45f).pow(2)<.55f)
-                    particle(cx+col*dp(4f),cy+row*dp(4f),dp(if(lcd)1.3f else 1f),color,.45f)
+            withTransform({ translate(cx,cy); scale(r/(32f*unit),r/(32f*unit),Offset.Zero) }) {
+                if(dots)drawPath(cloudPixels,ink(color,.12f),style=Stroke(dp(3f)))
+                drawPath(cloudPixels,ink(color,.60f))
             }
         } else {
             val a=if(treatment==WeatherTreatment.CLOUD_BANK).24f else .12f
@@ -105,17 +119,27 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
             val glow=.12f+.12f*(1f+sin(tau*(p+i*.19f)))
             particle(x,y,dp(.7f),accent,glow)
         }
-        WeatherTreatment.CLOUD_BANK -> for(i in 0..2)cloud((wrap(p+i/3f)*1.6f-.3f)*size.width,size.height*(.22f+i*.22f),size.height*.36f,Color.White)
+        WeatherTreatment.CLOUD_BANK -> for(i in 0..2) {
+            val center=Offset((wrap(p+i/3f)*1.6f-.3f)*size.width,size.height*(.22f+i*.22f))
+            for(layer in 1..3)drawCircle(ink(Color(0xFFFFE1AE),.025f),size.height*(.18f+layer*.12f),center)
+        }
         WeatherTreatment.WATER_GLASS -> for(i in 0..5) {
             val t=wrap(p+i/6f);val r=dp(8f)+t*size.height*.45f
-            drawOval(ink(accent,(1f-t)*.3f),Offset(size.width*(i+.5f)/6-r,size.height*.75f-r*.25f),Size(r*2,r*.5f),style=Stroke(dp(1f)))
+            drawOval(ink(accent,(1f-t)*.3f*min(t/.12f,1f)),Offset(size.width*(i+.5f)/6-r,size.height*.75f-r*.25f),Size(r*2,r*.5f),style=Stroke(dp(1f)))
         }
-        WeatherTreatment.COLOR_RIBBON,WeatherTreatment.AURORA -> for(i in 0..3) {
+        WeatherTreatment.COLOR_RIBBON -> for(i in 0..15) {
+            val x=wrap(p+i*.618034f)*size.width
+            val y=(.15f+wrap(i*.381966f)*.7f)*size.height
+            val tile=dp(3f+(i%3)*2f)
+            val light=.08f+.10f*(.5f+.5f*sin(tau*(p+i*.13f)))
+            drawRoundRect(ink(if(i%2==0)accent else Color(0xFFEBD4A6),light),Offset(x,y),Size(tile,tile),CornerRadius(dp(.7f)))
+        }
+        WeatherTreatment.AURORA -> for(i in 0..3) {
             val y=size.height*(.20f+i*.18f)
             val swing=sin(tau*(p+i*.14f))*size.height*.22f
-            val path=Path().apply {moveTo(-size.width*.1f,y);cubicTo(size.width*.25f,y+swing,size.width*.62f,y-swing,size.width*1.1f,y)}
+            val path=paths[i].apply {reset();moveTo(-size.width*.1f,y);cubicTo(size.width*.25f,y+swing,size.width*.62f,y-swing,size.width*1.1f,y)}
             val color=if(i%2==0)accent else Color(0xFF75CDEB)
-            drawPath(path,ink(color,if(treatment==WeatherTreatment.AURORA).22f else .16f),style=Stroke(dp(if(treatment==WeatherTreatment.AURORA)1.5f+i else 8f+i*3)))
+            drawPath(path,ink(color,.22f),style=Stroke(dp(1.5f+i)))
         }
         WeatherTreatment.LCD_SCAN -> {
             for(i in 0..12)drawLine(ink(accent,.08f),Offset(0f,size.height*i/12),Offset(size.width,size.height*i/12),unit)
@@ -162,8 +186,13 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
                 // Slow breathing bolt, never a full-field flash.
                 val alpha=.22f+.25f*(.5f+.5f*sin(tau*p))
                 val x=size.width*.77f;val y=size.height*.16f
-                val bolt=Path().apply {moveTo(x,y);lineTo(x-dp(10f),y+dp(15f));lineTo(x+dp(2f),y+dp(13f));lineTo(x-dp(5f),y+dp(31f))}
-                drawPath(bolt,ink(warm,alpha),style=Stroke(dp(if(lcd)2f else 1.6f)))
+                if(dots) {
+                    for(row in stormPixels.indices) for(col in stormPixels[row].indices) if(stormPixels[row][col]=='1')
+                        particle(x+(col-3)*dp(3f),y+row*dp(3f),dp(1f),warm,alpha)
+                } else {
+                    val bolt=paths[4].apply {reset();moveTo(x,y);lineTo(x-dp(10f),y+dp(15f));lineTo(x+dp(2f),y+dp(13f));lineTo(x-dp(5f),y+dp(31f))}
+                    drawPath(bolt,ink(warm,alpha),style=Stroke(dp(if(lcd)2f else 1.6f)))
+                }
             }
         }
         WeatherCondition.FOG -> for(i in 0..4) {
@@ -177,3 +206,4 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
 }
 
 private fun DrawScope.dp(value:Float)=value.dp.toPx()
+private val stormPixels = listOf("0001100", "0011100", "0111000", "1111110", "0001100", "0011000", "0110000")

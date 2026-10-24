@@ -47,7 +47,7 @@ data class RetroStyle(val theme: LauncherTheme? = null, val customHolder: Boolea
 val LocalRetroStyle = staticCompositionLocalOf { RetroStyle() }
 
 fun retroShapes(theme: LauncherTheme): Shapes {
-    val radius = when (theme) { LauncherTheme.SENSE -> 8; LauncherTheme.TOUCHWIZ -> 18; LauncherTheme.OPTIMUS -> 12; else -> 4 }.dp
+    val radius = (historicalProfile(theme)?.radius ?: 4).dp
     return Shapes(extraSmall = RoundedCornerShape(3.dp), small = RoundedCornerShape(radius / 2), medium = RoundedCornerShape(radius), large = RoundedCornerShape(radius), extraLarge = RoundedCornerShape(radius + 4.dp))
 }
 fun retroTypography(theme: LauncherTheme): Typography {
@@ -67,173 +67,7 @@ fun retroTypography(theme: LauncherTheme): Typography {
     )
 }
 
-/** The parent measures available space; only the visible clock receives the clickable modifier. */
-@Composable
-fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = false) {
-    val retro = LocalRetroStyle.current
-    val scale = LocalDensity.current.fontScale
-    BoxWithConstraints {
-        val fontSize = minOf(if (compact) 22f else 48f, (maxWidth.value - 24f).coerceAtLeast(40f) / (3.2f * scale)).sp
-        when (retro.theme) {
-            LauncherTheme.RAZR -> {
-                Box(
-                    modifier = modifier
-                        .heightIn(min = if (compact) 28.dp else 48.dp)
-                        .background(
-                            Brush.verticalGradient(listOf(Color(0xFF142130), Color(0xFF0A131F))),
-                            RoundedCornerShape(3.dp)
-                        )
-                        .drawWithContent {
-                            drawContent()
-                            drawRoundRect(
-                                Color(0xFF62D0FF).copy(alpha = 0.55f),
-                                cornerRadius = CornerRadius(3.dp.toPx()),
-                                style = Stroke(1.2.dp.toPx())
-                            )
-                            val s = 4.dp.toPx()
-                            drawLine(Color(0xFF62D0FF), Offset(2f, 2f), Offset(2f + s, 2f), 1f)
-                            drawLine(Color(0xFF62D0FF), Offset(2f, 2f), Offset(2f, 2f + s), 1f)
-                            drawLine(Color(0xFF62D0FF), Offset(size.width - 2f, 2f), Offset(size.width - 2f - s, 2f), 1f)
-                            drawLine(Color(0xFF62D0FF), Offset(size.width - 2f, 2f), Offset(size.width - 2f, 2f + s), 1f)
-                        }
-                        .padding(horizontal = 10.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        time,
-                        color = Color(0xFF62D0FF),
-                        fontSize = fontSize,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        maxLines = 1
-                    )
-                }
-            }
-            LauncherTheme.SENSE -> {
-                Row(
-                    modifier = modifier.heightIn(min = if (compact) 28.dp else 48.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    listOf(time.take(2), time.takeLast(2)).forEach { digits ->
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    Brush.verticalGradient(listOf(Color(0xFFFAFAF4), Color(0xFFB8BEB8))),
-                                    RoundedCornerShape(5.dp)
-                                )
-                                .drawWithContent {
-                                    drawContent()
-                                    drawRoundRect(
-                                        Color(0xFF8A948A),
-                                        cornerRadius = CornerRadius(5.dp.toPx()),
-                                        style = Stroke(0.8.dp.toPx())
-                                    )
-                                    val mid = size.height / 2f
-                                    drawLine(Color.Black.copy(alpha = 0.38f), Offset(0f, mid), Offset(size.width, mid), 1.5.dp.toPx())
-                                    drawLine(Color.White.copy(alpha = 0.55f), Offset(0f, mid + 1.5.dp.toPx()), Offset(size.width, mid + 1.5.dp.toPx()), 0.8.dp.toPx())
-                                }
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                digits,
-                                color = Color(0xFF222622),
-                                fontSize = fontSize,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.SansSerif,
-                                maxLines = 1
-                            )
-                        }
-                    }
-                }
-            }
-            LauncherTheme.TOUCHWIZ -> {
-                val parts = time.split(":")
-                val hour = parts.getOrNull(0) ?: time
-                val min = parts.getOrNull(1) ?: ""
-                Row(
-                    modifier = modifier
-                        .heightIn(min = if (compact) 28.dp else 48.dp)
-                        .background(
-                            Brush.verticalGradient(listOf(Color(0xFF14304D).copy(alpha = 0.85f), Color(0xFF0B1D30).copy(alpha = 0.95f))),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .drawWithContent {
-                            drawContent()
-                            drawRoundRect(
-                                Brush.verticalGradient(listOf(Color(0xFF68C0FF).copy(alpha = 0.6f), Color(0xFF1C5380).copy(alpha = 0.2f))),
-                                cornerRadius = CornerRadius(16.dp.toPx()),
-                                style = Stroke(1.dp.toPx())
-                            )
-                        }
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Text(hour, color = Color.White, fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium, fontSize = fontSize, maxLines = 1)
-                    Text(":", color = Color(0xFF38B6FF), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Light, fontSize = fontSize, maxLines = 1)
-                    Text(min, color = Color(0xFF70CBFF), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Light, fontSize = fontSize, maxLines = 1)
-                }
-            }
-            LauncherTheme.OPTIMUS -> {
-                val parts = time.split(":")
-                val hour = parts.getOrNull(0) ?: time
-                val min = parts.getOrNull(1) ?: ""
-                Row(
-                    modifier = modifier
-                        .heightIn(min = if (compact) 28.dp else 48.dp)
-                        .background(Color(0xFF1B1926), RoundedCornerShape(10.dp))
-                        .drawWithContent {
-                            drawContent()
-                            drawLine(Color(0xFF00D4BB), Offset(8f, 1f), Offset(size.width - 8f, 1f), 2.dp.toPx())
-                            drawRoundRect(Color(0xFF2E2B40), cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(1.dp.toPx()))
-                        }
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Text(hour, color = Color.White, fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold, fontSize = fontSize, maxLines = 1)
-                    Text(":", color = Color(0xFF00D4BB), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.SemiBold, fontSize = fontSize, maxLines = 1)
-                    Text(min, color = Color(0xFF00D4BB), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold, fontSize = fontSize, maxLines = 1)
-                }
-            }
-            LauncherTheme.XPERIA -> {
-                val parts = time.split(":")
-                val hour = parts.getOrNull(0) ?: time
-                val min = parts.getOrNull(1) ?: ""
-                Row(
-                    modifier = modifier
-                        .heightIn(min = if (compact) 28.dp else 48.dp)
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(hour, color = Color(0xFFF2F0FF), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.ExtraLight, fontSize = fontSize, letterSpacing = 1.sp, maxLines = 1)
-                    Box(
-                        Modifier
-                            .width(1.dp)
-                            .height((fontSize.value * 0.7f).dp)
-                            .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xFFA370F7), Color.Transparent)))
-                    )
-                    Text(min, color = Color(0xFFC4B8FF), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Light, fontSize = fontSize, letterSpacing = 1.sp, maxLines = 1)
-                }
-            }
-            else -> {
-                Text(
-                    time,
-                    modifier = modifier.heightIn(min = if (compact) 28.dp else 48.dp),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Light,
-                    fontSize = fontSize,
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}
-
-internal enum class RetroGlyph { PHONE, CAMERA, BROWSER, MUSIC, VIDEO, MESSAGE, CONTACTS, CLOCK, CALENDAR, SETTINGS, FILES, GALLERY, CALCULATOR, STORE, EMAIL, MAPS, NOTES }
+enum class RetroGlyph { PHONE, CAMERA, BROWSER, MUSIC, VIDEO, MESSAGE, CONTACTS, CLOCK, CALENDAR, SETTINGS, FILES, GALLERY, CALCULATOR, STORE, EMAIL, MAPS, NOTES }
 internal fun glyphFor(packageName: String): RetroGlyph? {
     val name = packageName.lowercase(java.util.Locale.ROOT)
     return when {
@@ -279,9 +113,12 @@ fun renderRetroAppIcon(app: LaunchableApp): Boolean {
             val alloy = retro.theme == LauncherTheme.RAZR
             val light = if(alloy)Color(0xFFDAE5EB) else if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFFAF9F0) else color
             val dark = if(alloy)Color(0xFF758B9D) else if (retro.theme == LauncherTheme.OPTIMUS) Color(0xFFCBCFCB) else color.copy(red = color.red * .48f, green = color.green * .48f, blue = color.blue * .48f)
-            drawRoundRect(Brush.verticalGradient(listOf(light, dark), endY = 48f), size = Size(48f, 48f), cornerRadius = CornerRadius(radius))
-            drawRoundRect(Color.White.copy(alpha = .55f), topLeft = Offset(1f, 1f), size = Size(46f, 46f), cornerRadius = CornerRadius(radius), style = Stroke(.8f))
-            if (retro.theme == LauncherTheme.TOUCHWIZ || retro.theme == LauncherTheme.SENSE) {
+            val floating = retro.theme == LauncherTheme.TOUCHWIZ && !retro.customHolder
+            if (!floating) {
+                drawRoundRect(Brush.verticalGradient(listOf(light, dark), endY = 48f), size = Size(48f, 48f), cornerRadius = CornerRadius(radius))
+                drawRoundRect(Color.White.copy(alpha = .55f), topLeft = Offset(1f, 1f), size = Size(46f, 46f), cornerRadius = CornerRadius(radius), style = Stroke(.8f))
+            }
+            if (!floating && (retro.theme == LauncherTheme.TOUCHWIZ || retro.theme == LauncherTheme.SENSE)) {
                 drawRoundRect(Brush.verticalGradient(listOf(Color.White.copy(alpha = .38f), Color.Transparent), endY = 25f), topLeft = Offset(2f, 2f), size = Size(44f, 23f), cornerRadius = CornerRadius(radius))
             }
             if (retro.theme == LauncherTheme.XPERIA) drawLine(Color.White.copy(alpha = .6f), Offset(5f, 44f), Offset(43f, 44f), 1f)
@@ -289,15 +126,18 @@ fun renderRetroAppIcon(app: LaunchableApp): Boolean {
                 drawLine(Color(0xFFB3E2FF),Offset(5f,44f),Offset(43f,44f),1.5f)
                 drawLine(Color.White.copy(alpha=.7f),Offset(4f,4f),Offset(44f,4f),1f)
             }
-            drawRetroGlyph(glyph, if(alloy)Color(0xFF173F61) else if (retro.theme == LauncherTheme.OPTIMUS) color.copy(red = color.red * .78f, green = color.green * .78f, blue = color.blue * .78f) else Color.White)
+            if (floating) withTransform({ translate(0f, 1.5f) }) { drawRetroGlyph(glyph, Color.Black.copy(alpha = .3f), 3.4f) }
+            drawRetroGlyph(glyph, if (floating) color.copy(red = (color.red * 1.25f).coerceAtMost(1f), green = (color.green * 1.25f).coerceAtMost(1f), blue = (color.blue * 1.25f).coerceAtMost(1f))
+                else if(alloy)Color(0xFF173F61) else if (retro.theme == LauncherTheme.OPTIMUS) color.copy(red = color.red * .78f, green = color.green * .78f, blue = color.blue * .78f) else Color.White,
+                if (retro.theme == LauncherTheme.XPERIA) 1.8f else if (floating) 3.1f else 2.7f)
         }
     }
     return true
 }
 
-private fun DrawScope.drawRetroGlyph(glyph: RetroGlyph, ink: Color) {
-    val stroke = Stroke(2.7f)
-    fun line(a: Float, b: Float, c: Float, d: Float) = drawLine(ink, Offset(a, b), Offset(c, d), 2.7f)
+private fun DrawScope.drawRetroGlyph(glyph: RetroGlyph, ink: Color, strokeWidth: Float = 2.7f) {
+    val stroke = Stroke(strokeWidth)
+    fun line(a: Float, b: Float, c: Float, d: Float) = drawLine(ink, Offset(a, b), Offset(c, d), strokeWidth)
     fun rect(x: Float, y: Float, w: Float, h: Float) = drawRoundRect(ink, Offset(x,y), Size(w,h), CornerRadius(2f), style = stroke)
     when (glyph) {
         RetroGlyph.PHONE -> {

@@ -370,6 +370,10 @@ fun HomeScreen(
                 theme = state.theme,
                 reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
                 onOpenAudio = viewModel::openAudioApp,
+                onPause = viewModel::pauseAudio,
+                onPrevious = viewModel::previousAudio,
+                onNext = viewModel::nextAudio,
+                onEnableAccess = { showHomeSettings = true },
                 modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
             )
         }
@@ -614,9 +618,9 @@ private fun Header(
                     customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
                 }) { if (!renderAvatarImage(avatarUri,Modifier.size(42.dp))) AuraMark() }
             Column(Modifier.weight(1f).padding(start = 12.dp)) {
-                val motivational = remember(theme, today) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) }
+                val motivational = remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) }
                 val captionText = if (showMotivationalHeader) motivational else if (LocalRetroStyle.current.enabled) LocalRetroStyle.current.caption else "AURA / LAUNCHER"
-                Text(captionText, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                ThemedHeaderCaption(theme, captionText, reduceMotion)
                 Box(Modifier.fillMaxWidth().padding(end=8.dp)) {
                 val matches=remember(widgetController.weatherWidgetId,widgetController.providerRevision,weatherPackage) {
                     widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId)?.provider?.packageName==weatherPackage

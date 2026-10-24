@@ -5,7 +5,7 @@ enum class LauncherTheme(val title: String, val subtitle: String) {
     NOTHING("Aura · Nothing", "Principal · AMOLED, Geist, reloj de puntos e iconos monocromáticos"),
     SENSE("Aura Bloom · Sense", "HTC Sense clásico · reloj de láminas, paisaje y relieve"),
     TOUCHWIZ("Aura Prism · TouchWiz", "Galaxy S III · naturaleza, agua y brillo"),
-    OPTIMUS("Aura Flow · LG", "LG Optimus · iconos esmaltados y cintas de color"),
+    OPTIMUS("Aura Flow · LG", "LG G2 · notas cálidas, capas táctiles e iconos esmaltados"),
     XPERIA("Aura Horizon · Xperia", "Xperia clásico · tipografía ligera, cristal y ondas luminosas"),
     RAZR("Aura Alloy · RAZR V3", "Motorola clásico · metal grabado, azul LCD e iconos biselados propios"),
     AMOLED("AMOLED puro", "Negro absoluto y acento menta"),

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -64,6 +65,27 @@ fun historicalProfile(theme: LauncherTheme): HistoricalProfile? = when (theme) {
     else -> null
 }
 
+/** Keep nested Material menus and controls coherent, including light paper inside a dark home. */
+internal fun historicalColors(profile: HistoricalProfile, base: ColorScheme, requested: Color): ColorScheme {
+    val accent = profile.readableAccent(requested)
+    val onAccent = if (accent.luminance() > .179f) Color.Black else Color.White
+    val paper = profile.material == HistoricalMaterial.PAPER
+    return base.copy(
+        primary = accent, onPrimary = onAccent, primaryContainer = profile.top, onPrimaryContainer = profile.ink,
+        secondary = accent, onSecondary = onAccent, secondaryContainer = profile.top, onSecondaryContainer = profile.ink,
+        tertiary = accent, onTertiary = onAccent, tertiaryContainer = profile.top, onTertiaryContainer = profile.ink,
+        surface = profile.bottom, onSurface = profile.ink, surfaceVariant = profile.top, onSurfaceVariant = profile.muted,
+        surfaceContainerLowest = profile.bottom, surfaceContainerLow = profile.bottom,
+        surfaceContainer = profile.top, surfaceContainerHigh = profile.top, surfaceContainerHighest = profile.top,
+        surfaceBright = profile.top, surfaceDim = profile.bottom, surfaceTint = Color.Transparent,
+        outline = profile.frame, outlineVariant = profile.frame,
+        error = if (paper) Color(0xFF9B1C1C) else base.error,
+        onError = if (paper) Color.White else base.onError,
+        errorContainer = if (paper) Color(0xFFFFDAD6) else base.errorContainer,
+        onErrorContainer = if (paper) Color(0xFF410002) else base.onErrorContainer,
+    )
+}
+
 /** Shared by information, media and previews; a real clickable Surface owns input semantics. */
 @Composable
 fun HistoricalPanel(
@@ -76,16 +98,23 @@ fun HistoricalPanel(
     val profile = theme?.let(::historicalProfile)?.takeUnless { LocalAppearance.current.highContrast }
     val scheme = MaterialTheme.colorScheme
     val customShape = LocalRetroStyle.current.customHolder
-    val shape = if (profile == null || customShape) MaterialTheme.shapes.large else RoundedCornerShape(profile.radius.dp)
+    val shape = when {
+        customShape -> when (LocalSkinStyle.current.iconHolder) {
+            IconHolder.CIRCLE, IconHolder.PILL -> RoundedCornerShape(50)
+            IconHolder.SQUIRCLE -> RoundedCornerShape(22.dp)
+            IconHolder.ROUNDED -> RoundedCornerShape(14.dp)
+            IconHolder.BEVELED -> androidx.compose.foundation.shape.CutCornerShape(6.dp)
+        }
+        profile == null -> MaterialTheme.shapes.large
+        else -> RoundedCornerShape(profile.radius.dp)
+    }
     val top = profile?.top ?: scheme.surface
     val bottom = profile?.bottom ?: scheme.surface
     val foreground = profile?.ink ?: scheme.onSurface
     val muted = profile?.muted ?: scheme.onSurfaceVariant
     val accent = profile?.readableAccent(LocalSkinStyle.current.accent) ?: scheme.primary
     val frame = if (selected) accent else profile?.frame ?: scheme.outline
-    val panelScheme = scheme.copy(surface = bottom, onSurface = foreground, surfaceVariant = top, onSurfaceVariant = muted,
-        primary = accent, secondary = accent, outline = frame, outlineVariant = frame,
-        onPrimary = if (accent.luminance() > .179f) Color.Black else Color.White)
+    val panelScheme = profile?.let { historicalColors(it, scheme, accent) } ?: scheme
     val inner: @Composable () -> Unit = {
         MaterialTheme(colorScheme = panelScheme) {
             CompositionLocalProvider(LocalContentColor provides foreground) {

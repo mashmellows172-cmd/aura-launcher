@@ -69,13 +69,24 @@ fun Modifier.skinPattern(skin: SkinStyle): Modifier = drawBehind {
                         }
                         for (ring in 1..4) drawOval(skin.accent.copy(alpha=.065f), androidx.compose.ui.geometry.Offset(size.width*.05f-ring*size.width*.10f,size.height*.89f-ring*size.height*.018f),androidx.compose.ui.geometry.Size(ring*size.width*.42f,ring*size.height*.06f), style=Stroke(1.dp.toPx()))
                     }
-                    WallpaperPattern.OPTIMUS_RIBBONS, WallpaperPattern.XPERIA_FLOW -> {
-                        val xperia = skin.pattern == WallpaperPattern.XPERIA_FLOW
+                    WallpaperPattern.OPTIMUS_RIBBONS -> {
+                        // Tactile paper collage, deliberately distinct from Xperia's light ribbons.
+                        for (tile in 0..4) {
+                            val x = size.width * (.42f + tile * .12f)
+                            val y = size.height * (.62f + (tile % 2) * .10f)
+                            val width = size.width * .24f
+                            val height = size.height * .24f
+                            val ink = if (tile % 2 == 0) androidx.compose.ui.graphics.Color(0xFFE8BA75) else androidx.compose.ui.graphics.Color(0xFFB79674)
+                            drawRoundRect(ink.copy(alpha = .07f + tile * .008f), androidx.compose.ui.geometry.Offset(x, y), androidx.compose.ui.geometry.Size(width, height), androidx.compose.ui.geometry.CornerRadius(3.dp.toPx()))
+                            drawLine(ink.copy(alpha = .12f), androidx.compose.ui.geometry.Offset(x, y), androidx.compose.ui.geometry.Offset(x + width, y), 1.dp.toPx())
+                        }
+                    }
+                    WallpaperPattern.XPERIA_FLOW -> {
                         for (ribbon in 0..5) {
                             val offset = ribbon * size.height * .028f
                             val path = Path().apply {moveTo(-size.width*.15f,size.height*.82f+offset);cubicTo(size.width*.24f,size.height*.39f+offset,size.width*.63f,size.height*1.07f-offset,size.width*1.15f,size.height*.47f+offset) }
-                            val color = if (ribbon%2==0) skin.accent else androidx.compose.ui.graphics.Color(if(xperia) 0xFF5C9DFF else 0xFF52B8D5)
-                            drawPath(path,color.copy(alpha=if(xperia) .13f else .11f),style=Stroke(width=if(xperia) (ribbon+1).dp.toPx() else (16+ribbon*5).dp.toPx()))
+                            val color = if (ribbon%2==0) skin.accent else androidx.compose.ui.graphics.Color(0xFF5C9DFF)
+                            drawPath(path,color.copy(alpha=.13f),style=Stroke(width=(ribbon+1).dp.toPx()))
                         }
                     }
                     WallpaperPattern.RAZR_METAL -> {

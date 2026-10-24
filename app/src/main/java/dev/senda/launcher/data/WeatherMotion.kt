@@ -31,13 +31,15 @@ enum class WeatherCondition(val label:String) {
 internal fun providerWeatherCondition(description:String):WeatherCondition {
     val text=java.text.Normalizer.normalize(description.lowercase(java.util.Locale.ROOT),java.text.Normalizer.Form.NFD).replace(Regex("\\p{M}+"),"")
     fun has(words:String)=Regex("(?<![a-z])(?:$words)(?![a-z])").containsMatchIn(text)
+    // A description containing forecasts/probabilities cannot safely identify the current condition.
+    if ('%' in text || has("probabilidad|probability|chance|tomorrow|manana|forecast|later") || "sin lluvia" in text || "no rain" in text) return WeatherCondition.AMBIENT
     return when {
         has("thunderstorm|thunderstorms|thunder|tormenta|tormentas|burza|burze")->WeatherCondition.STORM
         has("snow|snowy|snowfall|nieve|nevando|snieg|sniezne")->WeatherCondition.SNOW
         has("rain|rainy|showers|drizzle|lluvia|lluvias|llovizna|deszcz|opady")->WeatherCondition.RAIN
-        has("fog|foggy|mist|niebla|neblina|mgla")->WeatherCondition.FOG
-        has("cloudy|clouds|overcast|nublado|nuboso|nubes|zachmurzenie|pochmurno")->WeatherCondition.CLOUDS
-        has("sunny|clear sky|soleado|despejado|slonecznie|bezchmurnie")->WeatherCondition.SUN
+        has("fog|foggy|mist|niebla|neblina|bruma|mgla")->WeatherCondition.FOG
+        has("cloudy|clouds|overcast|nublado|nublados|nuboso|nubosos|nubosidad|nubes|zachmurzenie|pochmurno")->WeatherCondition.CLOUDS
+        has("sunny|clear|sunshine|soleado|despejado|slonecznie|bezchmurnie")->WeatherCondition.SUN
         else->WeatherCondition.AMBIENT
     }
 }

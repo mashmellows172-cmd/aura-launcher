@@ -1,34 +1,30 @@
 package dev.senda.launcher.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -37,10 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.senda.launcher.data.ActiveAudioInfo
 import dev.senda.launcher.data.LauncherTheme
-import dev.senda.launcher.ui.theme.IndustrialTokens
-import dev.senda.launcher.ui.theme.LocalIndustrialStyle
-import dev.senda.launcher.ui.theme.LocalRetroStyle
-import dev.senda.launcher.ui.theme.LocalSkinStyle
+import dev.senda.launcher.ui.theme.*
 import kotlin.math.sin
 
 @Composable
@@ -48,131 +41,70 @@ fun ThemedAudioWidget(
     audioInfo: ActiveAudioInfo,
     theme: LauncherTheme,
     reduceMotion: Boolean,
-    onOpenAudio: () -> Unit,
-    modifier: Modifier = Modifier
+    onOpenAudio: (String?) -> Unit,
+    modifier: Modifier = Modifier,
+    onPause: (String?) -> Unit = {},
+    onPrevious: (String?) -> Unit = {},
+    onNext: (String?) -> Unit = {},
+    onEnableAccess: () -> Unit = {},
+    preview: Boolean = false,
 ) {
-    AnimatedVisibility(
-        visible = audioInfo.isPlaying,
-        enter = fadeIn(tween(280)) + expandVertically(tween(320)),
-        exit = fadeOut(tween(220)) + shrinkVertically(tween(280)),
-        modifier = modifier
-    ) {
-        val scheme = MaterialTheme.colorScheme
-        val skin = LocalSkinStyle.current
-        val industrial = LocalIndustrialStyle.current.enabled
-        val retro = LocalRetroStyle.current.enabled
-
-        val shape = when (theme) {
-            LauncherTheme.NOTHING -> RoundedCornerShape(18.dp)
-            LauncherTheme.SENSE -> RoundedCornerShape(10.dp)
-            LauncherTheme.TOUCHWIZ -> RoundedCornerShape(18.dp)
-            LauncherTheme.OPTIMUS -> RoundedCornerShape(12.dp)
-            LauncherTheme.XPERIA -> RoundedCornerShape(4.dp)
-            LauncherTheme.RAZR -> RoundedCornerShape(3.dp)
-            else -> RoundedCornerShape(12.dp)
-        }
-
-        val border = when (theme) {
-            LauncherTheme.NOTHING -> BorderStroke(1.dp, IndustrialTokens.outline.copy(alpha = 0.5f))
-            LauncherTheme.RAZR -> BorderStroke(1.dp, Color(0xFF62D0FF).copy(alpha = 0.6f))
-            LauncherTheme.XPERIA -> BorderStroke(0.8.dp, Color(0xFFA370F7).copy(alpha = 0.5f))
-            LauncherTheme.TOUCHWIZ -> BorderStroke(1.dp, Color(0xFF38B6FF).copy(alpha = 0.45f))
-            LauncherTheme.SENSE -> BorderStroke(1.dp, Color(0xFF98C846).copy(alpha = 0.4f))
-            LauncherTheme.OPTIMUS -> BorderStroke(1.dp, Color(0xFF00D4BB).copy(alpha = 0.45f))
-            else -> BorderStroke(1.dp, scheme.outline.copy(alpha = 0.4f))
-        }
-
-        val cardBg = when (theme) {
-            LauncherTheme.NOTHING -> Color(0xFF0F0F0F)
-            LauncherTheme.RAZR -> Color(0xFF0D1722)
-            LauncherTheme.XPERIA -> Color(0xFF161226)
-            LauncherTheme.TOUCHWIZ -> Color(0xFF0A223D)
-            LauncherTheme.SENSE -> Color(0xFF1E2625)
-            LauncherTheme.OPTIMUS -> Color(0xFF1A1728)
-            else -> scheme.surface
-        }
-
-        val trackTitle = audioInfo.title ?: audioInfo.appLabel ?: "Reproduciendo audio"
-        val subtitle = if (audioInfo.artist != null) {
-            "${audioInfo.artist} · ${audioInfo.appLabel ?: "Audio"}"
-        } else {
-            audioInfo.appLabel ?: "Tocar para abrir reproductor"
-        }
-
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onOpenAudio)
-                .semantics {
-                    role = Role.Button
-                    contentDescription = "Reproductor de audio: $trackTitle. $subtitle"
-                },
-            shape = shape,
-            color = cardBg,
-            border = border,
-            tonalElevation = 2.dp
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Visualizador temático animado
-                ThemedAudioVisualizer(
-                    theme = theme,
-                    accent = skin.accent,
-                    reduceMotion = reduceMotion,
-                    modifier = Modifier.size(width = 44.dp, height = 36.dp)
-                )
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Text(
-                        text = trackTitle,
-                        style = if (theme == LauncherTheme.RAZR) {
-                            MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
-                        } else if (theme == LauncherTheme.XPERIA) {
-                            MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Light)
-                        } else {
-                            MaterialTheme.typography.titleMedium
-                        },
-                        color = if (theme == LauncherTheme.RAZR) Color(0xFF62D0FF) else scheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = subtitle,
-                        style = if (theme == LauncherTheme.RAZR) {
-                            MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace)
-                        } else {
-                            MaterialTheme.typography.bodySmall
-                        },
-                        color = scheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+    var retained by remember { mutableStateOf(audioInfo) }
+    if (audioInfo.isPlaying) SideEffect { retained = audioInfo }
+    val info = if (audioInfo.isPlaying) audioInfo else retained
+    val duration = if (reduceMotion) 0 else historicalProfile(theme)?.durationMs ?: 240
+    AnimatedVisibility(audioInfo.isPlaying, modifier = modifier,
+        enter = fadeIn(tween(duration)) + expandVertically(tween(duration)),
+        exit = fadeOut(tween(duration.coerceAtMost(200))) + shrinkVertically(tween(duration.coerceAtMost(240)))) {
+        HistoricalPanel(theme, Modifier.fillMaxWidth(), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
+            val scheme = MaterialTheme.colorScheme
+            val compact = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE || LocalDensity.current.fontScale > 1.5f
+            var menu by remember { mutableStateOf(false) }
+            val title = info.title ?: info.appLabel ?: "Contenido en reproducción"
+            Row(Modifier.fillMaxWidth().heightIn(min = 76.dp).padding(horizontal = 10.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(Modifier.size(if (compact) 40.dp else 48.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
+                    val art = info.artwork?.takeUnless { it.isRecycled }
+                    if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    else ThemedAudioVisualizer(theme, scheme.primary, reduceMotion, Modifier.fillMaxSize())
                 }
-
-                // Indicador de estado
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = skin.accent.copy(alpha = 0.15f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "EN VIVO",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = skin.accent,
-                        letterSpacing = 0.8.sp
-                    )
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(if (info.generic) "REPRODUCCIÓN DETECTADA" else when (theme) {
+                        LauncherTheme.NOTHING -> "AUDIO / ON"
+                        LauncherTheme.SENSE -> "Música y compañía"
+                        LauncherTheme.TOUCHWIZ -> "Sonidos del día"
+                        LauncherTheme.OPTIMUS -> "Tu momento musical"
+                        LauncherTheme.XPERIA -> "En tu frecuencia"
+                        LauncherTheme.RAZR -> "MEDIA PLAYER"
+                        else -> "En reproducción"
+                    }, style = MaterialTheme.typography.labelSmall, color = scheme.onSurfaceVariant,
+                        fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(title, style = MaterialTheme.typography.titleSmall,
+                        fontFamily = if (theme == LauncherTheme.RAZR || theme == LauncherTheme.NOTHING) FontFamily.Monospace else FontFamily.SansSerif,
+                        fontWeight = if (theme == LauncherTheme.XPERIA) FontWeight.Light else FontWeight.Medium,
+                        color = scheme.onSurface, maxLines = if (compact) 1 else 2, overflow = TextOverflow.Ellipsis)
+                    if (!compact) Text(if (info.generic) "Modo básico · tocar para configurar" else listOfNotNull(info.artist, info.appLabel).distinct().joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                if (!info.generic) {
+                    IconButton(onClick = { onPause(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPause,
+                        modifier = Modifier.size(48.dp).semantics { contentDescription = "Pausar reproducción" }) {
+                        MediaControlGlyph("pause", if (info.canPause) scheme.primary else scheme.onSurfaceVariant.copy(alpha = .4f))
+                    }
+                    Box {
+                        IconButton(onClick = { menu = true }, enabled = !preview && audioInfo.isPlaying,
+                            modifier = Modifier.size(48.dp).semantics { contentDescription = "Más controles multimedia" }) {
+                            MediaControlGlyph("more", scheme.onSurface)
+                        }
+                        DropdownMenu(menu, { menu = false }) {
+                            DropdownMenuItem(text = { Text("Anterior") }, enabled = info.canPrevious && audioInfo.isPlaying,
+                                onClick = { menu = false; onPrevious(info.sessionId) })
+                            DropdownMenuItem(text = { Text("Siguiente") }, enabled = info.canNext && audioInfo.isPlaying,
+                                onClick = { menu = false; onNext(info.sessionId) })
+                            DropdownMenuItem(text = { Text("Abrir ${info.appLabel ?: "reproductor"}") },
+                                onClick = { menu = false; onOpenAudio(info.sessionId) })
+                        }
+                    }
                 }
             }
         }
@@ -180,40 +112,31 @@ fun ThemedAudioWidget(
 }
 
 @Composable
-private fun ThemedAudioVisualizer(
-    theme: LauncherTheme,
-    accent: Color,
-    reduceMotion: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val transition = rememberInfiniteTransition(label = "audio-vis")
-    val phase by if (reduceMotion) {
-        remember { mutableFloatStateOf(0.5f) }
-    } else {
-        transition.animateFloat(
-            initialValue = 0f,
-            targetValue = (Math.PI * 2).toFloat(),
-            animationSpec = infiniteRepeatable(
-                animation = tween(1400, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "vis-phase"
-        )
-    }
-
-    Canvas(modifier = modifier) {
-        when (theme) {
-            LauncherTheme.NOTHING -> drawNothingVisualizer(phase, accent)
-            LauncherTheme.SENSE -> drawSenseVisualizer(phase, accent)
-            LauncherTheme.TOUCHWIZ -> drawTouchWizVisualizer(phase, accent)
-            LauncherTheme.OPTIMUS -> drawOptimusVisualizer(phase, accent)
-            LauncherTheme.XPERIA -> drawXperiaVisualizer(phase, accent)
-            LauncherTheme.RAZR -> drawRazrVisualizer(phase, accent)
-            else -> drawDefaultVisualizer(phase, accent)
-        }
+private fun MediaControlGlyph(kind: String, color: Color) {
+    Canvas(Modifier.size(22.dp).clearAndSetSemantics {}) {
+        if (kind == "pause") {
+            drawRoundRect(color, Offset(size.width * .22f, size.height * .15f), Size(size.width * .18f, size.height * .7f), CornerRadius(1.dp.toPx()))
+            drawRoundRect(color, Offset(size.width * .60f, size.height * .15f), Size(size.width * .18f, size.height * .7f), CornerRadius(1.dp.toPx()))
+        } else for (i in 0..2) drawCircle(color, 1.7.dp.toPx(), Offset(size.width * .5f, size.height * (.22f + i * .28f)))
     }
 }
 
+@Composable
+private fun ThemedAudioVisualizer(theme: LauncherTheme, accent: Color, reduceMotion: Boolean, modifier: Modifier = Modifier) {
+    val phase = rememberHistoricalPhase(theme, moving = true, reduced = reduceMotion)
+    Canvas(modifier.clearAndSetSemantics {}) {
+        val angle = phase.value * (Math.PI * 2).toFloat()
+        when (theme) {
+            LauncherTheme.NOTHING -> drawNothingVisualizer(angle, accent)
+            LauncherTheme.SENSE -> drawSenseVisualizer(angle, accent)
+            LauncherTheme.TOUCHWIZ -> drawTouchWizVisualizer(angle, accent)
+            LauncherTheme.OPTIMUS -> drawOptimusVisualizer(angle, accent)
+            LauncherTheme.XPERIA -> drawXperiaVisualizer(angle, accent)
+            LauncherTheme.RAZR -> drawRazrVisualizer(angle, accent)
+            else -> drawDefaultVisualizer(angle, accent)
+        }
+    }
+}
 private fun DrawScope.drawNothingVisualizer(phase: Float, accent: Color) {
     val bars = 6
     val barWidth = size.width / (bars * 1.6f)
@@ -225,8 +148,9 @@ private fun DrawScope.drawNothingVisualizer(phase: Float, accent: Color) {
         for (d in 0 until numDots) {
             val y = size.height - (d + 0.5f) * (size.height / 6f)
             val isTop = d == numDots - 1
-            val dotColor = if (isTop && i % 2 == 1) IndustrialTokens.signal else Color.White
-            drawCircle(dotColor, dotRadius, Offset(x, y))
+            val dotColor = if (isTop && i % 2 == 1) accent else Color.White
+            val intensity = (hFactor * 6 - d).coerceIn(.15f, 1f)
+            drawCircle(dotColor.copy(alpha = intensity), dotRadius, Offset(x, y))
         }
     }
 }
@@ -270,25 +194,16 @@ private fun DrawScope.drawTouchWizVisualizer(phase: Float, accent: Color) {
 }
 
 private fun DrawScope.drawOptimusVisualizer(phase: Float, accent: Color) {
-    val cyan = Color(0xFF00D4BB)
-    val coral = Color(0xFFFF5277)
-    val bars = 5
-    val barWidth = size.width / (bars * 1.4f)
-    for (i in 0 until bars) {
-        val hFactor = ((sin(phase + i * 1.3f) + 1f) / 2f).coerceIn(0.2f, 1f)
-        val barHeight = size.height * hFactor
-        val x = i * barWidth * 1.4f
-        val y = size.height - barHeight
-        val color = if (i % 2 == 0) cyan else coral
-        drawRoundRect(
-            color = color,
-            topLeft = Offset(x, y),
-            size = Size(barWidth, barHeight),
-            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-        )
-    }
+    // A small rotating record, not an imitation of microphone or spectrum analysis.
+    val center = Offset(size.width / 2, size.height / 2)
+    val radius = minOf(size.width, size.height) * .43f
+    drawCircle(Color(0xFF38312C), radius, center)
+    for (ring in 1..3) drawCircle(Color(0xFFAD9980).copy(alpha = .5f), radius * ring / 4, center, style = Stroke(.6.dp.toPx()))
+    drawArc(Color(0xFFDCAA58), phase * 180f / Math.PI.toFloat(), 72f, false,
+        Offset(center.x - radius * .8f, center.y - radius * .8f), Size(radius * 1.6f, radius * 1.6f), style = Stroke(2.dp.toPx()))
+    drawCircle(Color(0xFFF2DAAE), radius * .23f, center)
+    drawCircle(accent, radius * .08f, center)
 }
-
 private fun DrawScope.drawXperiaVisualizer(phase: Float, accent: Color) {
     val violet = Color(0xFFA370F7)
     val blue = Color(0xFF4361EE)
@@ -297,7 +212,7 @@ private fun DrawScope.drawXperiaVisualizer(phase: Float, accent: Color) {
     val points = 20
     for (i in 0..points) {
         val x = (i.toFloat() / points) * size.width
-        val wave = sin(phase * 1.5f + (i * 0.5f)) * (size.height * 0.35f)
+        val wave = sin(phase + (i * 0.5f)) * (size.height * 0.35f)
         val y = midY + wave
         if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
     }

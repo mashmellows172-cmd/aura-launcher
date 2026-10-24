@@ -1,6 +1,8 @@
 package dev.senda.launcher.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,7 +21,7 @@ internal fun MediaAccessControl(granted: Boolean) {
         Text(if (granted) "Administrar acceso multimedia" else "Activar carátula y controles")
     }
     if (explain) AuraAlertDialog(onDismissRequest = { explain = false }, title = { Text("Acceso a reproducción") }, text = {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.heightIn(max = 480.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Android ofrece las sesiones de otras apps mediante el acceso a notificaciones. Este permiso tiene un alcance amplio en el sistema.")
             Text("Aura usa la identidad de ese acceso para mostrar título, carátula y controles de la sesión activa. No lee, guarda ni envía el contenido de tus notificaciones.")
             Text("Sin acceso, el widget puede indicar audio local de forma básica; no identifica la app, no muestra carátula y no ofrece controles. Algunas reproducciones, como vídeo silencioso, no se detectan en modo básico.")
