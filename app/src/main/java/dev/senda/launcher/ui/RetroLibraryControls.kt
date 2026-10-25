@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,8 +27,12 @@ import dev.senda.launcher.data.loadLocalImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Same scrim in the theme editor and home. A bright white source stays below 0.38 sRGB. */
-internal fun wallpaperReadabilityScrim(): Brush = Brush.verticalGradient(listOf(Color.Black.copy(alpha = .64f), Color.Black.copy(alpha = .70f)))
+/** Same bounded scrim in preview and home; light themes protect dark text with a white veil. */
+internal fun wallpaperReadabilityScrim(protection: Int = 64, foreground: Color = Color.White): Brush {
+    val alpha = protection.coerceIn(60, 90) / 100f
+    val veil = if (foreground.luminance() > .5f) Color.Black else Color.White
+    return Brush.verticalGradient(listOf(veil.copy(alpha = alpha), veil.copy(alpha = (alpha + .06f).coerceAtMost(.96f))))
+}
 
 @Composable
 internal fun RetroLibraryToggle(library: RetroThemeAssets?, enabled: Boolean, busy: Boolean, onToggle: (Boolean) -> Unit, onImport: () -> Unit) {

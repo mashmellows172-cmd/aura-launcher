@@ -203,6 +203,7 @@ fun HomeScreen(
     }
     var showFavoritesEditor by rememberSaveable { mutableStateOf(false) }
     var showHiddenApps by rememberSaveable { mutableStateOf(false) }
+    var showLetterJump by rememberSaveable { mutableStateOf(false) }
     var showThemePicker by rememberSaveable { mutableStateOf(false) }
     var showVisualSettings by rememberSaveable { mutableStateOf(false) }
     var showSoundSettings by rememberSaveable { mutableStateOf(false) }
@@ -263,6 +264,7 @@ fun HomeScreen(
             handledHomeRequest = state.homeRequest
             showFavoritesEditor = false
             showHiddenApps = false
+            showLetterJump = false
             showThemePicker = false
             showVisualSettings = false; showSoundSettings = false
             showPersonalization = false
@@ -321,6 +323,25 @@ fun HomeScreen(
     val lockDevice: () -> Unit = {
         if (!NotificationShadeService.lock()) showNotificationHelp = true
     }
+    val starts = remember(groupLetters, groups, favoriteApps, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
+        val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
+        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections }
+    }
+    val activeLetter by remember(listState, starts) {
+        derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
+    }
+    val targetIndexFor: (String) -> Int = { letter -> starts[letter] ?: 0 }
+    val onSelectLetter: (String) -> Unit = { letter ->
+        alphabetJob?.cancel()
+        alphabetJob = scope.launch {
+            listState.animateScrollToItem(targetIndexFor(letter))
+        }
+    }
+    val onScrubLetter: (String) -> Unit = { letter ->
+        alphabetJob?.cancel()
+        alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
+    }
+
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController) {
     Box(Modifier.fillMaxSize().homeGestures(executeGesture).pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
@@ -336,8 +357,8 @@ fun HomeScreen(
         Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (wallpaperBitmap == null || state.appearance.highContrast) skin.wallpaper else wallpaperReadabilityScrim())
-            .then(if (wallpaperBitmap == null || state.appearance.highContrast) Modifier.skinPattern(skin) else Modifier)
+            .background(if (wallpaperBitmap == null || state.appearance.highContrast) skin.wallpaper else wallpaperReadabilityScrim(state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64, MaterialTheme.colorScheme.onBackground))
+            .then(if (wallpaperBitmap == null && !state.appearance.highContrast) Modifier.skinPattern(skin) else Modifier)
             .imePadding()
             .padding(WindowInsets.statusBars.union(WindowInsets.navigationBars).asPaddingValues())
             .padding(horizontal = 22.dp),
@@ -364,6 +385,8 @@ fun HomeScreen(
             onEditFavorites = { showFavoritesEditor = true },
             onManageHiddenApps = { showHiddenApps = true },
             onChooseTheme = { viewModel.clearThemeError(); showThemePicker = true },
+            onLetterJump = { showLetterJump = true },
+            letterJumpEnabled = state.query.isBlank() && groupLetters.isNotEmpty(),
             onVisualSettings = { showVisualSettings = true },
             onSoundSettings = { showSoundSettings = true },
             onPersonalization = { showPersonalization = true },
@@ -400,43 +423,11 @@ fun HomeScreen(
             Spacer(Modifier.height(14.dp))
         }
 
-        OutlinedTextField(
-            value = state.query,
-            onValueChange = viewModel::setQuery,
-            modifier = Modifier.fillMaxWidth().focusRequester(searchFocus).drawBehind {
-                if (glowAlpha > .01f) {
-                    for (ring in 3 downTo 1) {
-                        val inset = -ring * 2.8.dp.toPx()
-                        drawRoundRect(
-                            color = skin.accent.copy(alpha = glowAlpha * (MotionTokens.glowRingAlpha / ring)),
-                            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-                            size = androidx.compose.ui.geometry.Size(size.width - inset * 2, size.height - inset * 2),
-                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(24.dp.toPx()),
-                            style = Stroke(width = (8 - ring).dp.toPx()),
-                        )
-                    }
-                }
-            },
-            interactionSource = searchInteractions,
-            placeholder = { Text("Buscar apps") },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-            trailingIcon = if (state.query.isNotEmpty()) {
-                {
-                    IconButton(onClick = { viewModel.setQuery(""); keyboard?.hide() }) {
-                        Icon(Icons.Filled.Close, contentDescription = "Borrar búsqueda")
-                    }
-                }
-            } else null,
-            singleLine = true,
-            shape = if (LocalIndustrialStyle.current.enabled) RoundedCornerShape(IndustrialTokens.radius) else MaterialTheme.shapes.large,
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = if (LocalIndustrialStyle.current.enabled) 1f else .35f),
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-            ),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
+        ThemedSearchField(
+            theme = state.theme, query = state.query, onQuery = viewModel::setQuery,
+            onClear = { viewModel.setQuery(""); keyboard?.hide() },
+            onSearch = { keyboard?.hide() }, focus = searchFocus,
+            interactions = searchInteractions, glow = { glowAlpha },
         )
 
         if (state.errorMessage != null) {
@@ -474,24 +465,6 @@ fun HomeScreen(
                 onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
             )
             else -> {
-                val starts = remember(groupLetters, groups, favoriteApps, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
-                    val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
-                    sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections }
-                }
-                val activeLetter by remember(listState, starts) {
-                    derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
-                }
-                val targetIndexFor: (String) -> Int = { letter -> starts[letter] ?: 0 }
-                val onSelectLetter: (String) -> Unit = { letter ->
-                    alphabetJob?.cancel()
-                    alphabetJob = scope.launch {
-                        listState.animateScrollToItem(targetIndexFor(letter))
-                    }
-                }
-                val onScrubLetter: (String) -> Unit = { letter ->
-                    alphabetJob?.cancel()
-                    alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
-                }
                 Row(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -520,6 +493,7 @@ fun HomeScreen(
                         onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
                     )
                     AlphabetRail(
+                        theme = state.theme,
                         letters = groupLetters,
                         modifier = Modifier.width(if (compact) MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),
                         selectedLetter = activeLetter,
@@ -547,6 +521,7 @@ fun HomeScreen(
         iconTargetPackage?.let { name -> viewModel.setFamilyIcon(LauncherTheme.valueOf(iconTargetTheme), name, artworkTheme, icon) }
         showFamilyIconPicker = false; iconTargetPackage = null
     })
+    if (showLetterJump) LetterJumpDialog(groupLetters, onSelect = { showLetterJump = false; onSelectLetter(it) }, onDismiss = { showLetterJump = false })
     if (showSoundSettings) SoundSettingsDialog(state.soundSettings, state.theme, viewModel::setSoundSettings) { showSoundSettings = false }
     if (showAvatar) AvatarDialog(state,viewModel) { showAvatar = false }
     if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,onSettings=viewModel::setHeaderSettings,
@@ -617,6 +592,8 @@ private fun Header(
     onEditFavorites: () -> Unit,
     onManageHiddenApps: () -> Unit,
     onChooseTheme: () -> Unit,
+    onLetterJump: () -> Unit,
+    letterJumpEnabled: Boolean,
     onVisualSettings: () -> Unit,
     onSoundSettings: () -> Unit,
     onPersonalization: () -> Unit,
@@ -680,6 +657,7 @@ private fun Header(
             }
             DropdownMenu(expanded = themeMenuExpanded, onDismissRequest = { themeMenuExpanded = false }, modifier = Modifier.animateContentSize(tween(240))) {
                 DropdownMenuItem(text = { Text("Tema visual · ${theme.title}") }, onClick = { themeMenuExpanded = false; onChooseTheme() })
+                DropdownMenuItem(text = { Text("Saltar a una letra · A–Z") }, enabled = letterJumpEnabled, onClick = { themeMenuExpanded = false; onLetterJump() })
                 DropdownMenuItem(text = { Text("Clima en el reloj") }, onClick = { themeMenuExpanded = false; onWeatherConnection() })
                 DropdownMenuItem(text = { Text("Cambiar avatar") }, onClick = { themeMenuExpanded = false; onAvatar() })
                 DropdownMenuItem(text = { Text("Organizar inicio") }, onClick = { themeMenuExpanded = false; onDashboard() })
@@ -959,13 +937,13 @@ private fun AppSections(
     ) {
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (favoriteApps.isNotEmpty()) {
-            item(key = "favorites-heading", contentType = "heading") { SectionHeading("Tus favoritas", favoriteApps.size) }
+            item(key = "favorites-heading", contentType = "heading") { SectionHeading("Tus favoritas", favoriteApps.size, LauncherTheme.valueOf(skinName)) }
             items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
                 AppRow(app, isFavorite = true, skinName = skinName, skinTitle = skinTitle, customIconUri = skinIcons["${skinName}_${app.packageName}"], listState = listState, visualSettings = visualSettings, rowKey = "favorite-${app.packageName}", modifier = Modifier.animateItem(fadeInSpec = if (visualSettings.reduceMotion) null else tween(160), placementSpec = if (visualSettings.reduceMotion) null else spring(stiffness = 700f, dampingRatio = .9f), fadeOutSpec = if (visualSettings.reduceMotion) null else tween(100)), onLaunch = { onLaunch(app) }, onToggleFavorite = { onToggleFavorite(app) }, onHide = { onHide(app) }, onChooseIcon = { onChooseIcon(app) }, onResetIcon = { onResetIcon(app) }, onLoadIcon = onLoadIcon)
             }
         }
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.AFTER_FAVORITES).isNotEmpty()) item(key="dashboard-after", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.AFTER_FAVORITES,onCalendarPermission) }
-        item(key = "all-heading", contentType = "heading") { SectionHeading("Todas las apps", allApps.size) }
+        item(key = "all-heading", contentType = "heading") { SectionHeading("Todas las apps", allApps.size, LauncherTheme.valueOf(skinName)) }
         groupLetters.forEach { letter ->
             item(key = "section-$letter", contentType = "letter") {
                 Text(
@@ -1198,16 +1176,8 @@ private object AppIconCache {
 }
 
 @Composable
-private fun SectionHeading(title: String, count: Int) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-        Text(count.toString(), modifier = if (LocalIndustrialStyle.current.enabled) Modifier.background(MaterialTheme.colorScheme.surfaceVariant, CircleShape).padding(horizontal = 10.dp, vertical = 3.dp) else Modifier,
-            style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
+private fun SectionHeading(title: String, count: Int, theme: LauncherTheme) {
+    dev.senda.launcher.ui.theme.ThemedSectionHeading(title, count, theme)
 }
 
 @Composable

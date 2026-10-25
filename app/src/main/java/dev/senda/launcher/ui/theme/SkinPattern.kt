@@ -1,111 +1,150 @@
 package dev.senda.launcher.ui.theme
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import kotlin.math.cos
+import kotlin.math.sin
 
-fun Modifier.skinPattern(skin: SkinStyle): Modifier = drawBehind {
-                val tint = skin.accent.copy(alpha = if (skin.pattern == WallpaperPattern.DOTS) 0.19f else 0.10f)
-                when (skin.pattern) {
-                    WallpaperPattern.DOTS -> {
-                        val step = 20.dp.toPx()
-                        for (x in 0..(size.width / step).toInt()) for (y in 0..(size.height / step).toInt()) {
-                            drawCircle(tint, radius = 1.25.dp.toPx(), center = androidx.compose.ui.geometry.Offset(x * step, y * step))
-                        }
-                    }
-                    WallpaperPattern.ORBS -> {
-                        drawCircle(tint, size.width * .35f, androidx.compose.ui.geometry.Offset(size.width * .98f, size.height * .12f))
-                        drawCircle(skin.accent.copy(alpha = .045f), size.width * .43f, androidx.compose.ui.geometry.Offset(size.width * .03f, size.height * .82f), style = Stroke(width = 1.5.dp.toPx()))
-                    }
-                    WallpaperPattern.DIAGONAL -> for (i in -10..30) {
-                        val x = i * 38.dp.toPx()
-                        drawLine(tint, androidx.compose.ui.geometry.Offset(x, 0f), androidx.compose.ui.geometry.Offset(x - size.height * .35f, size.height), 1.dp.toPx())
-                    }
-                    WallpaperPattern.WATER_RIPPLE -> {
-                        val center = androidx.compose.ui.geometry.Offset(size.width * .50f, size.height * .39f)
-                        for (ring in 1..9) {
-                            drawCircle(
-                                color = skin.accent.copy(alpha = .035f + (ring % 3) * .012f),
-                                radius = ring * size.width * .105f,
-                                center = center,
-                                style = Stroke(width = if (ring % 3 == 0) 2.dp.toPx() else 1.dp.toPx()),
-                            )
-                        }
-                        drawCircle(skin.accent.copy(alpha = .07f), radius = 3.dp.toPx(), center = center)
-                    }
-                    WallpaperPattern.WAVE -> {
-                        val path = Path().apply {
-                            moveTo(0f, size.height * .68f)
-                            cubicTo(size.width * .32f, size.height * .45f, size.width * .68f, size.height * .86f, size.width, size.height * .57f)
-                            lineTo(size.width, size.height); lineTo(0f, size.height); close()
-                        }
-                        drawPath(path, skin.accent.copy(alpha = .045f))
-                    }
-                    WallpaperPattern.HORIZON -> {
-                        drawLine(skin.accent.copy(alpha = .16f), androidx.compose.ui.geometry.Offset(size.width * .52f, 0f), androidx.compose.ui.geometry.Offset(size.width * .52f, size.height), 1.dp.toPx())
-                        drawLine(skin.accent.copy(alpha = .08f), androidx.compose.ui.geometry.Offset(0f, size.height * .72f), androidx.compose.ui.geometry.Offset(size.width, size.height * .72f), 1.dp.toPx())
-                    }
-                    WallpaperPattern.SENSE_LANDSCAPE -> {
-                        drawCircle(androidx.compose.ui.graphics.Brush.radialGradient(listOf(androidx.compose.ui.graphics.Color(0xFFE9C384).copy(alpha = .17f), androidx.compose.ui.graphics.Color.Transparent), center = androidx.compose.ui.geometry.Offset(size.width * .82f, size.height * .12f), radius = size.width * .7f), radius = size.width * .7f, center = androidx.compose.ui.geometry.Offset(size.width * .82f, size.height * .12f))
-                        for (layer in 0..2) {
-                            val y = size.height * (.70f + layer * .08f)
-                            val path = Path().apply { moveTo(0f, y); cubicTo(size.width * .3f, y - size.height * .12f, size.width * .65f, y + size.height * .14f, size.width, y - size.height * .04f); lineTo(size.width, size.height);lineTo(0f,size.height);close() }
-                            drawPath(path, androidx.compose.ui.graphics.Color(0xFF759783).copy(alpha = .09f + layer * .025f))
-                        }
-                    }
-                    WallpaperPattern.NATURE -> {
-                        val base = androidx.compose.ui.geometry.Offset(size.width * .90f, size.height * .88f)
-                        val head = androidx.compose.ui.geometry.Offset(size.width * .79f, size.height * .48f)
-                        val stem = Path().apply { moveTo(base.x,base.y); quadraticTo(size.width*.68f,size.height*.67f,head.x,head.y) }
-                        drawPath(stem, androidx.compose.ui.graphics.Color(0xFFCDE6B3).copy(alpha=.2f), style=Stroke(2.dp.toPx()))
-                        for (seed in 0..17) {
-                            val a = seed * kotlin.math.PI.toFloat() * 2f / 18
-                            val radius = size.width * .18f
-                            val tip = head + androidx.compose.ui.geometry.Offset(kotlin.math.cos(a)*radius,kotlin.math.sin(a)*radius)
-                            drawLine(androidx.compose.ui.graphics.Color.White.copy(alpha=.16f), head,tip,.7.dp.toPx())
-                            drawCircle(androidx.compose.ui.graphics.Color.White.copy(alpha=.23f),2.dp.toPx(),tip)
-                        }
-                        for (ring in 1..4) drawOval(skin.accent.copy(alpha=.065f), androidx.compose.ui.geometry.Offset(size.width*.05f-ring*size.width*.10f,size.height*.89f-ring*size.height*.018f),androidx.compose.ui.geometry.Size(ring*size.width*.42f,ring*size.height*.06f), style=Stroke(1.dp.toPx()))
-                    }
-                    WallpaperPattern.OPTIMUS_RIBBONS -> {
-                        // Tactile paper collage, deliberately distinct from Xperia's light ribbons.
-                        for (tile in 0..4) {
-                            val x = size.width * (.42f + tile * .12f)
-                            val y = size.height * (.62f + (tile % 2) * .10f)
-                            val width = size.width * .24f
-                            val height = size.height * .24f
-                            val ink = if (tile % 2 == 0) androidx.compose.ui.graphics.Color(0xFFE8BA75) else androidx.compose.ui.graphics.Color(0xFFB79674)
-                            drawRoundRect(ink.copy(alpha = .07f + tile * .008f), androidx.compose.ui.geometry.Offset(x, y), androidx.compose.ui.geometry.Size(width, height), androidx.compose.ui.geometry.CornerRadius(3.dp.toPx()))
-                            drawLine(ink.copy(alpha = .12f), androidx.compose.ui.geometry.Offset(x, y), androidx.compose.ui.geometry.Offset(x + width, y), 1.dp.toPx())
-                        }
-                    }
-                    WallpaperPattern.XPERIA_FLOW -> {
-                        for (ribbon in 0..5) {
-                            val offset = ribbon * size.height * .028f
-                            val path = Path().apply {moveTo(-size.width*.15f,size.height*.82f+offset);cubicTo(size.width*.24f,size.height*.39f+offset,size.width*.63f,size.height*1.07f-offset,size.width*1.15f,size.height*.47f+offset) }
-                            val color = if (ribbon%2==0) skin.accent else androidx.compose.ui.graphics.Color(0xFF5C9DFF)
-                            drawPath(path,color.copy(alpha=.13f),style=Stroke(width=(ribbon+1).dp.toPx()))
-                        }
-                    }
-                    WallpaperPattern.RAZR_METAL -> {
-                        // Original etched-metal composition: static paths, no image or idle ticker.
-                        val gap=32.dp.toPx()
-                        for(line in 0..(size.height/gap).toInt()) {
-                            val y=line*gap
-                            drawLine(androidx.compose.ui.graphics.Color.White.copy(alpha=.025f),androidx.compose.ui.geometry.Offset(0f,y),androidx.compose.ui.geometry.Offset(size.width,y),1.dp.toPx())
-                        }
-                        val etching=Path().apply {
-                            moveTo(size.width*.58f,size.height*.12f)
-                            lineTo(size.width*.90f,size.height*.28f)
-                            lineTo(size.width*.70f,size.height*.44f)
-                            lineTo(size.width*.94f,size.height*.59f)
-                            lineTo(size.width*.62f,size.height*.78f)
-                        }
-                        drawPath(etching,skin.accent.copy(alpha=.09f),style=Stroke(1.dp.toPx()))
-                        drawCircle(skin.accent.copy(alpha=.045f),size.width*.24f,androidx.compose.ui.geometry.Offset(size.width*.82f,size.height*.30f),style=Stroke(8.dp.toPx()))
-                    }
-                    WallpaperPattern.NONE -> Unit
+/** Original static scenes. Paths, gradients and seed geometry are rebuilt only with cache inputs. */
+fun Modifier.skinPattern(skin: SkinStyle): Modifier = drawWithCache {
+    val w = size.width
+    val h = size.height
+    val hairline = .7.dp.toPx()
+    val commands = mutableListOf<DrawScope.() -> Unit>()
+    fun line(a: Offset, b: Offset, color: Color, width: Float = hairline) {
+        commands += { drawLine(color, a, b, width) }
+    }
+    fun circle(center: Offset, radius: Float, color: Color, stroke: Float = 0f) {
+        if (stroke > 0f) {
+            val style = Stroke(stroke)
+            commands += { drawCircle(color, radius, center, style = style) }
+        } else commands += { drawCircle(color, radius, center) }
+    }
+    fun path(path: Path, color: Color, stroke: Float = 0f) {
+        if (stroke > 0f) {
+            val style = Stroke(stroke)
+            commands += { drawPath(path, color, style = style) }
+        } else commands += { drawPath(path, color) }
+    }
+    val accent = skin.accent
+    when (skin.pattern) {
+        WallpaperPattern.DOTS -> {
+            val step = 20.dp.toPx()
+            for (x in 0..(w / step).toInt()) for (y in 0..(h / step).toInt())
+                circle(Offset(x * step, y * step), 1.25.dp.toPx(), accent.copy(alpha = .19f))
+        }
+        WallpaperPattern.SENSE_LANDSCAPE -> {
+            val sun = Offset(w * .80f, h * .16f)
+            val glow = Brush.radialGradient(listOf(Color(0xFFE9C384).copy(alpha = .25f), Color.Transparent), sun, w * .75f)
+            commands += { drawCircle(glow, w * .75f, sun) }
+            // Layered valley silhouettes recall the era without embedding a manufacturer's wallpaper.
+            repeat(4) { layer ->
+                val y = h * (.61f + layer * .09f)
+                val hill = Path().apply {
+                    moveTo(0f, y)
+                    cubicTo(w * .23f, y - h * .13f, w * .52f, y + h * .09f, w, y - h * .05f)
+                    lineTo(w, h); lineTo(0f, h); close()
+                }
+                path(hill, Color(0xFF82A18A).copy(alpha = .07f + layer * .026f))
+                val ridge = Path().apply { moveTo(0f, y); cubicTo(w * .23f, y - h * .13f, w * .52f, y + h * .09f, w, y - h * .05f) }
+                path(ridge, Color(0xFFD0C7A1).copy(alpha = .07f), hairline)
+            }
+        }
+        WallpaperPattern.NATURE -> {
+            val head = Offset(w * .82f, h * .49f)
+            path(Path().apply { moveTo(w * .95f, h); cubicTo(w * .68f, h * .79f, w * .72f, h * .64f, head.x, head.y) }, Color(0xFFCDE6B3).copy(alpha = .28f), 1.5.dp.toPx())
+            repeat(24) { seed ->
+                val angle = seed * Math.PI.toFloat() * 2 / 24
+                val radius = w * (.14f + seed % 3 * .013f)
+                val tip = head + Offset(cos(angle) * radius, sin(angle) * radius)
+                line(head, tip, Color.White.copy(alpha = .17f))
+                // Fine parachute tufts rather than identical solid dots.
+                repeat(3) { ray ->
+                    val spread = angle + (ray - 1) * .65f
+                    line(tip, tip + Offset(cos(spread) * w * .017f, sin(spread) * w * .017f), Color.White.copy(alpha = .24f))
                 }
             }
+            repeat(3) { seed ->
+                val tip = Offset(w * (.38f + seed * .10f), h * (.30f + seed * .035f))
+                line(tip, tip + Offset(5.dp.toPx(), 8.dp.toPx()), Color.White.copy(alpha = .22f))
+                line(tip + Offset(-4.dp.toPx(), -2.dp.toPx()), tip + Offset(5.dp.toPx(), 1.dp.toPx()), Color.White.copy(alpha = .24f))
+            }
+            for (ring in 1..4) {
+                val origin = Offset(w * .08f - ring * w * .10f, h * .90f - ring * h * .018f)
+                val bounds = Size(ring * w * .42f, ring * h * .06f)
+                val stroke = Stroke(hairline)
+                commands += { drawOval(accent.copy(alpha = .10f), origin, bounds, style = stroke) }
+            }
+        }
+        WallpaperPattern.OPTIMUS_RIBBONS -> {
+            // Paper swatches: rectilinear, warm, visibly separate from Flow's continuous curves.
+            repeat(5) { tile ->
+                val origin = Offset(w * (.40f + tile * .12f), h * (.60f + tile % 2 * .10f))
+                val bounds = Size(w * .24f, h * .24f)
+                val corner = CornerRadius(2.dp.toPx())
+                val color = if (tile % 2 == 0) Color(0xFFE8BA75) else Color(0xFFB79674)
+                commands += { drawRoundRect(color.copy(alpha = .11f + tile * .008f), origin, bounds, corner) }
+                line(origin, origin + Offset(bounds.width, 0f), color.copy(alpha = .24f), 1.dp.toPx())
+                repeat(3) { rule ->
+                    val y = origin.y + 12.dp.toPx() + rule * 6.dp.toPx()
+                    line(Offset(origin.x + 6.dp.toPx(), y), Offset(origin.x + bounds.width * .65f, y), color.copy(alpha = .10f))
+                }
+            }
+        }
+        WallpaperPattern.XPERIA_FLOW -> {
+            repeat(7) { ribbon ->
+                val offset = ribbon * h * .022f
+                val wave = Path().apply {
+                    moveTo(-w * .15f, h * .83f + offset)
+                    cubicTo(w * .24f, h * .37f + offset, w * .63f, h * 1.05f - offset, w * 1.15f, h * .45f + offset)
+                }
+                val color = if (ribbon % 2 == 0) accent else Color(0xFF5C9DFF)
+                path(wave, color.copy(alpha = .035f), (ribbon + 7).dp.toPx())
+                path(wave, color.copy(alpha = .19f), (.5f + ribbon * .32f).dp.toPx())
+            }
+        }
+        WallpaperPattern.RAZR_METAL -> {
+            val gap = 9.dp.toPx()
+            for (row in 0..(h / gap).toInt()) {
+                val y = row * gap
+                line(Offset(0f, y), Offset(w, y), Color.White.copy(alpha = .025f))
+            }
+            val crease = Path().apply {
+                moveTo(w * .58f, h * .12f); lineTo(w * .90f, h * .28f); lineTo(w * .70f, h * .44f)
+                lineTo(w * .94f, h * .59f); lineTo(w * .62f, h * .78f)
+            }
+            path(crease, Color.Black.copy(alpha = .24f), 4.dp.toPx())
+            path(crease, accent.copy(alpha = .17f), hairline)
+            circle(Offset(w * .82f, h * .30f), w * .24f, accent.copy(alpha = .05f), 8.dp.toPx())
+        }
+        WallpaperPattern.ORBS -> {
+            circle(Offset(w * .98f, h * .12f), w * .35f, accent.copy(alpha = .10f))
+            circle(Offset(w * .03f, h * .82f), w * .43f, accent.copy(alpha = .045f), 1.5.dp.toPx())
+        }
+        WallpaperPattern.DIAGONAL -> for (i in -10..30) {
+            val x = i * 38.dp.toPx()
+            line(Offset(x, 0f), Offset(x - h * .35f, h), accent.copy(alpha = .10f), 1.dp.toPx())
+        }
+        WallpaperPattern.WATER_RIPPLE -> for (ring in 1..9)
+            circle(Offset(w * .50f, h * .39f), ring * w * .105f, accent.copy(alpha = .035f + ring % 3 * .012f), (if (ring % 3 == 0) 2 else 1).dp.toPx())
+        WallpaperPattern.WAVE -> path(Path().apply {
+            moveTo(0f, h * .68f); cubicTo(w * .32f, h * .45f, w * .68f, h * .86f, w, h * .57f)
+            lineTo(w, h); lineTo(0f, h); close()
+        }, accent.copy(alpha = .045f))
+        WallpaperPattern.HORIZON -> {
+            line(Offset(w * .52f, 0f), Offset(w * .52f, h), accent.copy(alpha = .16f), 1.dp.toPx())
+            line(Offset(0f, h * .72f), Offset(w, h * .72f), accent.copy(alpha = .08f), 1.dp.toPx())
+        }
+        WallpaperPattern.NONE -> Unit
+    }
+    onDrawBehind { commands.forEach { it() } }
+}

@@ -35,6 +35,7 @@ import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.*
 import dev.senda.launcher.ui.theme.*
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -51,6 +52,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     var accentName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).accent.name) }
     var shapeName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).shape.name) }
     var iconsName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).icons.name) }
+    var wallpaperDim by rememberSaveable { mutableIntStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).wallpaperDim) }
     var pack by rememberSaveable { mutableStateOf(state.iconPacks[themeName]) }
     var wallpaper by rememberSaveable { mutableStateOf(state.skinWallpapers[themeName]) }
     var useRetro by rememberSaveable { mutableStateOf(state.retroEnabled[themeName] == true) }
@@ -58,7 +60,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
     var chooseTheme by remember { mutableStateOf(false) }
     var showIdentity by rememberSaveable { mutableStateOf(false) }
     var showIconFamilies by rememberSaveable { mutableStateOf(false) }
-    val finish = ThemeFinish(AccentChoice.valueOf(accentName), ShapeChoice.valueOf(shapeName), IconTreatment.valueOf(iconsName))
+    val finish = ThemeFinish(AccentChoice.valueOf(accentName), ShapeChoice.valueOf(shapeName), IconTreatment.valueOf(iconsName), wallpaperDim)
     val scope = rememberCoroutineScope()
     val bodyScroll = rememberScrollState()
     val compact = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -74,6 +76,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
         themeName = candidate.name; accentName = (state.themeFinishes[themeName] ?: ThemeFinish()).accent.name
         shapeName = (state.themeFinishes[themeName] ?: ThemeFinish()).shape.name
         iconsName = (state.themeFinishes[themeName] ?: ThemeFinish()).icons.name
+        wallpaperDim = (state.themeFinishes[themeName] ?: ThemeFinish()).wallpaperDim
         pack = state.iconPacks[themeName]; wallpaper = state.skinWallpapers[themeName]
         useRetro = state.retroEnabled[themeName] == true
         viewModel.clearThemeError(); chooseTheme = false
@@ -89,7 +92,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
             Text("Vista previa · Inicio cambia al aplicar", style = MaterialTheme.typography.labelSmall)
             AuraTheme(theme, isSystemInDarkTheme(), state.appearance.highContrast, finish, reduceMotion = state.visualSettings.reduceMotion) {
                 CompositionLocalProvider(LocalIconPack provides iconPreview.second, LocalAppearance provides AppearanceSettings(iconSize = 32), LocalRetroAssets provides activeLibrary) {
-                    ThemePreview(theme, wallpaper ?: activeLibrary?.wallpapers?.firstOrNull()?.uri, state, viewModel)
+                    ThemePreview(theme, wallpaper ?: activeLibrary?.wallpapers?.firstOrNull()?.uri, state, viewModel, wallpaperDim)
                 }
             }
             TabRow(section) {
@@ -104,7 +107,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
                             RetroLibraryToggle(library, useRetro, state.retroImportBusy || state.themeSaveBusy, { useRetro = it }, { libraryPicker.launch(arrayOf("application/zip", "application/x-zip-compressed", "application/octet-stream")) })
                             state.retroImportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
                         }
-                        TextButton(onClick = { accentName = AccentChoice.DEFAULT.name; shapeName = ShapeChoice.DEFAULT.name; iconsName = IconTreatment.AUTO.name; pack = null; wallpaper = null; useRetro = false }, enabled = !state.themeSaveBusy) { Text(if (theme == LauncherTheme.NOTHING) "Restablecer estilo Nothing" else "Restablecer estilo del tema") }
+                        TextButton(onClick = { accentName = AccentChoice.DEFAULT.name; shapeName = ShapeChoice.DEFAULT.name; iconsName = IconTreatment.AUTO.name; pack = null; wallpaper = null; useRetro = false; wallpaperDim = 64 }, enabled = !state.themeSaveBusy) { Text(if (theme == LauncherTheme.NOTHING) "Restablecer estilo Nothing" else "Restablecer estilo del tema") }
                         Text("Acento: ${finish.accent.label}", style = MaterialTheme.typography.labelLarge)
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
                             items(AccentChoice.entries) { accent ->
@@ -144,6 +147,11 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
                         if (activeLibrary != null) RetroWallpaperGallery(activeLibrary, wallpaper) { wallpaper = it }
                         TextButton(onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !state.themeSaveBusy) { Text("Elegir imagen de fondo") }
                         TextButton(onClick = { wallpaper = null }, enabled = !state.themeSaveBusy) { Text("Usar fondo del tema") }
+                        Text("Protección de lectura: $wallpaperDim %", style = MaterialTheme.typography.labelLarge)
+                        Slider(value = wallpaperDim.toFloat(), onValueChange = { wallpaperDim = it.roundToInt().coerceIn(60, 90) },
+                            valueRange = 60f..90f, steps = 29, enabled = !state.themeSaveBusy && !state.appearance.highContrast,
+                            modifier = Modifier.semantics { contentDescription = "Protección de lectura del fondo" })
+                        Text("Regula el velo sobre tu imagen. El fondo original se conserva; el cambio se guarda al aplicar.", style = MaterialTheme.typography.bodySmall)
                         Text("El fondo elegido se copia al almacenamiento privado al aplicar. Cancelar conserva tu configuración anterior.", style = MaterialTheme.typography.bodySmall)
                     }
                 }
@@ -163,7 +171,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
 }
 
 @Composable
-private fun ThemePreview(theme: LauncherTheme, wallpaper: String?, state: HomeUiState, viewModel: LauncherViewModel) {
+private fun ThemePreview(theme: LauncherTheme, wallpaper: String?, state: HomeUiState, viewModel: LauncherViewModel, wallpaperDim: Int) {
     val context = LocalContext.current
     val bitmap = rememberLocalImage(wallpaper, 480)
     val style = LocalSkinStyle.current
@@ -171,7 +179,7 @@ private fun ThemePreview(theme: LauncherTheme, wallpaper: String?, state: HomeUi
     val apps = remember(state.apps, state.favoritePackages) { state.favoritePackages.mapNotNull { name -> state.apps.firstOrNull { it.packageName == name } }.ifEmpty { state.apps }.take(3) }
     Box(Modifier.fillMaxWidth().height(ThemeEditorSize.preview).clip(RoundedCornerShape(ThemeEditorSize.radius)).background(style.wallpaper).semantics { contentDescription = "Vista previa de ${theme.title}" }) {
         if (bitmap != null && !highContrast) Image(bitmap!!, null, Modifier.matchParentSize(), contentScale = ContentScale.Crop)
-        Box(Modifier.matchParentSize().background(if (bitmap != null && !highContrast) wallpaperReadabilityScrim() else style.wallpaper).then(if (bitmap == null || highContrast) Modifier.skinPattern(style) else Modifier))
+        Box(Modifier.matchParentSize().background(if (bitmap != null && !highContrast) wallpaperReadabilityScrim(wallpaperDim, MaterialTheme.colorScheme.onBackground) else style.wallpaper).then(if (bitmap == null && !highContrast) Modifier.skinPattern(style) else Modifier))
         Column(Modifier.padding(ThemeEditorSize.padding), verticalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
             if (LocalIndustrialStyle.current.enabled) DotClock("09:41", Modifier.width(140.dp).height(30.dp)) else if (LocalRetroStyle.current.enabled) RetroClock("09:41", compact = true) else Text("Aura · 09:41", style = MaterialTheme.typography.titleSmall)
             apps.forEach { app ->

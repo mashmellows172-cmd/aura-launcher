@@ -27,7 +27,7 @@ internal fun SoundSettingsDialog(current: SoundSettings, theme: LauncherTheme, o
     fun commit(value: SoundSettings) { draft = value.bounded(); onChange(draft) }
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Sonidos y respuesta") }, text = {
         Column(Modifier.heightIn(max = 520.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("Cues breves y originales para cada tema. Solo responden a tus acciones; no hay audio de fondo.", style = MaterialTheme.typography.bodySmall)
+            Text("Sonidos breves y originales para cada tema. Solo responden a tus acciones; no hay audio de fondo.", style = MaterialTheme.typography.bodySmall)
             SoundToggle("Activar sonidos de Aura", draft.enabled) { commit(draft.copy(enabled = it)) }
             EffectChoice("Familia sonora", draft.family.name, SoundFamily.entries.map { it.name to it.label }) { commit(draft.copy(family = SoundFamily.fromStored(it))) }
             Text("Volumen relativo · ${draft.volume}%")

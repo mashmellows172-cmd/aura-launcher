@@ -7,6 +7,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.border
+import dev.senda.launcher.ui.theme.*
+import dev.senda.launcher.data.LauncherTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -44,11 +47,13 @@ private object RailTokens {
 /** One gesture surface for scrub; per-letter semantics remain available to accessibility. */
 @Composable
 fun AlphabetRail(
-    letters: List<String>, modifier: Modifier = Modifier, selectedLetter: String?,
+    letters: List<String>, theme: LauncherTheme = LauncherTheme.NOTHING, modifier: Modifier = Modifier, selectedLetter: String?,
     visualSettings: VisualSettings, onClick: (String) -> Unit, onScrub: (String) -> Unit,
 ) {
     if (letters.isEmpty()) return
     val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
+    val profile = historicalProfile(theme).takeUnless { dev.senda.launcher.data.LocalAppearance.current.highContrast }
+    val markerShape = profile.chromeShape()
     val haptics = LocalHapticFeedback.current
     var dragging by remember { mutableStateOf(false) }
     var fingerIndex by remember { mutableFloatStateOf(0f) }
@@ -56,7 +61,7 @@ fun AlphabetRail(
     var held by remember { mutableStateOf(false) }
     var lastHaptic by remember { mutableLongStateOf(0L) }
     var releaseToken by remember { mutableIntStateOf(0) }
-    val reduced = visualSettings.reduceMotion || visualSettings.railEffect == "NONE"
+    val reduced = dev.senda.launcher.data.LocalAppearance.current.highContrast || visualSettings.reduceMotion || visualSettings.railEffect == "NONE"
     LaunchedEffect(releaseToken, dragging) {
         if (!dragging) { delay(RailTokens.bubbleHoldMs); held = false }
     }
@@ -84,7 +89,8 @@ fun AlphabetRail(
         val indicatorY by animateDpAsState(slot * (selected % rows), if (reduced || visualSettings.railEffect == "MAGNET" && dragging) snap() else if (visualSettings.railEffect == "SPRING") spring(.68f, 650f * (360f / visualSettings.durationMs) * (360f / visualSettings.durationMs)) else tween(130), label = "rail-position")
         Box(Modifier.offset { IntOffset((columnWidth * (selected / rows)).roundToPx(), indicatorY.roundToPx()) }
             .width(columnWidth).height(slot).padding(1.dp)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = .18f), CircleShape))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = .18f), markerShape)
+            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = .55f), markerShape))
         Row(Modifier.fillMaxSize().pointerInput(letters, columns, rows) {
             var previous = -1
             fun move(position: Offset) {
@@ -121,9 +127,10 @@ fun AlphabetRail(
         Box(Modifier.offset { IntOffset(-(RailTokens.bubble + RailTokens.bubbleGap).roundToPx(), bubbleY.roundToPx()) }) {
             AnimatedVisibility(held, enter = if (reduced) fadeIn(tween(0)) else if (visualSettings.railEffect == "FADE") fadeIn(tween(140)) else fadeIn(tween(100)) + scaleIn(spring(.7f, 600f), initialScale = .65f),
                 exit = if (reduced) fadeOut(tween(0)) else fadeOut(tween(130)) + scaleOut(tween(130), targetScale = .8f)) {
-                Box(Modifier.size(RailTokens.bubble).background(if (dev.senda.launcher.ui.theme.LocalIndustrialStyle.current.enabled) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary, CircleShape)
-                    .clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
-                    Text(letters[selected], color = if (dev.senda.launcher.ui.theme.LocalIndustrialStyle.current.enabled) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                HistoricalPanel(theme, Modifier.size(RailTokens.bubble).clearAndSetSemantics {}, selected = true) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(letters[selected], fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                    }
                 }
             }
         }

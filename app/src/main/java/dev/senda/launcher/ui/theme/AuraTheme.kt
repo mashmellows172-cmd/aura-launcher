@@ -31,6 +31,8 @@ data class SkinStyle(
     val motionMillis: Int,
 )
 
+val LocalHistoricalProfile = staticCompositionLocalOf<HistoricalProfile?> { null }
+
 val LocalSkinStyle = staticCompositionLocalOf {
     SkinStyle(Color(0xFFFF334F), Color.Black, Color(0xFF10050A), WallpaperPattern.DOTS, IconHolder.SQUIRCLE, 280)
 }
@@ -114,7 +116,7 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
     MaterialTheme(colorScheme = animatedScheme,
         typography = if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
         shapes = if (industrial) IndustrialShapes else if (retro.enabled) retroShapes(theme) else androidx.compose.material3.Shapes(), content = {
-        CompositionLocalProvider(LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
+        CompositionLocalProvider(LocalHistoricalProfile provides historicalProfile(theme).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
             LocalIconTreatment provides finish.icons, LocalRetroStyle provides if (highContrast) RetroStyle() else retro,
             LocalIndustrialStyle provides IndustrialStyle(industrial, finish.icons == IconTreatment.MONOCHROME || (industrial && finish.icons == IconTreatment.AUTO)), content = content)
     })

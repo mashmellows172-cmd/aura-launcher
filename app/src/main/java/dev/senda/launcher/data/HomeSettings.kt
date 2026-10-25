@@ -28,7 +28,7 @@ enum class AccentChoice(val label: String, val argb: Long?) {
 enum class ShapeChoice(val label: String) { DEFAULT("Del tema"), SQUIRCLE("Suave"), CIRCLE("Círculo"), ROUNDED("Redondeado"), BEVELED("Angular"), PILL("Cápsula") }
 enum class IconTreatment(val label: String) { AUTO("Temáticos"), ORIGINAL("Normales"), MONOCHROME("Monocromáticos") }
 
-data class ThemeFinish(val accent: AccentChoice = AccentChoice.DEFAULT, val shape: ShapeChoice = ShapeChoice.DEFAULT, val icons: IconTreatment = IconTreatment.AUTO)
+data class ThemeFinish(val accent: AccentChoice = AccentChoice.DEFAULT, val shape: ShapeChoice = ShapeChoice.DEFAULT, val icons: IconTreatment = IconTreatment.AUTO, val wallpaperDim: Int = 64)
 
 /** Optional double tap; accessibility permission is never granted by this preference. */
 enum class LockGesture(val label: String) {
