@@ -12,7 +12,15 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.22.0-beta28.apk](beta/Aura-0.22.0-beta28.apk), variante optimizada con R8. [Cobertura por app y evidencia](docs/BETA28.md).
+Beta actual: **0.23.1-beta30**, variante optimizada con R8. [Entrega y límites](docs/BETA30.md). Los APK y claves de firma quedan fuera del repositorio.
+
+[Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
+
+## Nuevo en beta30
+
+- Reconstrucción específica Galaxy SIII: 20 de176 apps con recursos preparados (9 iconos IA y11 equivalencias históricas por función);156 pendientes. El resto conserva su icono normal.
+- Corrección del selector manual para usar el mismo recurso SIII de su vista previa.
+- Tema PS4 introducido en beta29: fondo de ondas azules, favoritas horizontales y barra de funciones. La fidelidad de navegación continúa en desarrollo.
 
 ## Nuevo en beta28
 

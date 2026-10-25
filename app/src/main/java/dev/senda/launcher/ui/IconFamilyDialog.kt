@@ -40,7 +40,7 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
                 }
             }
             item(key = "explanation") {
-                Text(if (theme == LauncherTheme.TOUCHWIZ && onPick == null) "Galaxy SIII en reconstrucción · ${visibleInstalled.size} de$installedArtworkCount apps con recurso revisado. Las demás conservan su icono normal mientras se crean sus versiones de época." else if (onPick == null) "$installedArtworkCount apps del Motorola · seis reinterpretaciones por app, además de32 funciones. Tus reemplazos y colecciones tienen prioridad. Las apps instaladas después conservan su símbolo si no tienen equivalencia." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
+                Text(if (theme == LauncherTheme.TOUCHWIZ && onPick == null) "Galaxy SIII en reconstrucción · ${visibleInstalled.size} de$installedArtworkCount apps con recurso SIII o recreación IA. Las demás conservan su icono normal mientras se crean sus versiones de época." else if (onPick == null) "$installedArtworkCount apps del Motorola · seis reinterpretaciones por app, además de32 funciones. Tus reemplazos y colecciones tienen prioridad. Las apps instaladas después conservan su símbolo si no tienen equivalencia." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
             }
             if (onPick == null) item(key = "catalog") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

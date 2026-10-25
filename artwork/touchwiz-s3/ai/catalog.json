@@ -1,0 +1,86 @@
+{
+  "count": 9,
+  "entries": [
+    {
+      "key": "grok",
+      "package": "ai.x.grok",
+      "resource": "aura_s3_ai_grok",
+      "revision": 1,
+      "source": "grok-v1.png",
+      "sha256": "bc66e374b02e5955e40522b38d6b41864569faae73ad363e2cd12c8da6264d5e",
+      "review": "Generated image inspected; optical/native review pending"
+    },
+    {
+      "key": "adobe_scan",
+      "package": "com.adobe.scan.android",
+      "resource": "aura_s3_ai_adobe_scan",
+      "revision": 1,
+      "source": "adobe_scan-v1.png",
+      "sha256": "d8a4e57f5f6590561be6915d0d2ef45f24506abc8a108f2e0323d1c5adb7fcd6",
+      "review": "Generated image inspected; optical/native review pending"
+    },
+    {
+      "key": "claude",
+      "package": "com.anthropic.claude",
+      "resource": "aura_s3_ai_claude",
+      "revision": 1,
+      "source": "claude-v1.png",
+      "sha256": "bee22485e6aac8ca84d5b105c7f45c6a996c1ac32549f5b2dcf72f925c49ffca",
+      "review": "Image inspected, production/native review pending"
+    },
+    {
+      "key": "canva",
+      "package": "com.canva.editor",
+      "resource": "aura_s3_ai_canva",
+      "revision": 2,
+      "source": "canva-v2.png",
+      "sha256": "96de6b4d515832af3de8d4cb089e3409539dd42730efc1139328497ab66fd0e4",
+      "review": "Image inspected; native optical check pending"
+    },
+    {
+      "key": "gemini",
+      "package": "com.google.android.apps.bard",
+      "resource": "aura_s3_ai_gemini",
+      "revision": 1,
+      "source": "gemini-v1.png",
+      "sha256": "9d8b7bf4b10b5db9e6bdf2b8bdd6ec3bdae80544d4d90a2cd0a20fdfb982ab5e",
+      "review": "Image inspected, production/native review pending"
+    },
+    {
+      "key": "google_photos",
+      "package": "com.google.android.apps.photos",
+      "resource": "aura_s3_ai_google_photos",
+      "revision": 1,
+      "source": "google_photos-v1.png",
+      "sha256": "e7185b99d4952d21898599b3260f05e222e9b30f9c9fd9ae91c9079529a57d74",
+      "review": "Image inspected; native optical check pending"
+    },
+    {
+      "key": "chatgpt",
+      "package": "com.openai.chatgpt",
+      "resource": "aura_s3_ai_chatgpt",
+      "revision": 1,
+      "source": "chatgpt-v1.png",
+      "sha256": "ee933f72a7c4dcfde749c7d9ddf68247bf656e6eb80531b4b50632d1c62ed135",
+      "review": "Generated image inspected; production optical/native review pending"
+    },
+    {
+      "key": "qwen",
+      "package": "com.tongyi.intl",
+      "resource": "aura_s3_ai_qwen",
+      "revision": 1,
+      "source": "qwen-v1.png",
+      "sha256": "e0381289cce09e04befeee87aaa623b09263c38e019d217f708987e1b4db03e9",
+      "review": "Image inspected; native optical check pending"
+    },
+    {
+      "key": "telegram",
+      "package": "org.telegram.messenger",
+      "resource": "aura_s3_ai_telegram",
+      "revision": 1,
+      "source": "telegram-v1.png",
+      "sha256": "b0ca97a1a9a056d96c77ef1d113cc2439871e1f809ca8328150791cf6bc40434",
+      "review": "Generated image inspected; optical/native review pending"
+    }
+  ]
+}

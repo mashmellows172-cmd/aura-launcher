@@ -1,0 +1,147 @@
+# Historial de actualizaciones de Aura Launcher
+
+Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
+
+## Pendiente · próxima actualización
+
+- Prioridad alta: PlayStation más fiel en distribución, tarjetas, tipografía y navegación.
+- Nothing: iconos con silueta nativa, monocromáticos y sin contenedores circulares; conservar lectura dot-matrix.
+- Moto Razr: pulido profundo, metal/LCD y guiños al formato plegable, sin mezclar arbitrariamente generaciones. El tema actual parte del RAZR V3; cualquier evolución moderna debe quedar documentada.
+- SIII: completar156 apps pendientes con recursos de época comprobados o IA identificada; conservar evidencia por icono.
+- Estos puntos están solicitados, todavía NO se presentan como implementados.
+
+## 0.23.1-beta30
+
+Cambios: Reconstrucción SIII20/176 (9 IA,11 equivalencias históricas);156 pendientes. Selector manual usa el recurso de la vista previa. Calendario y correo incorrectos descartados.
+
+Validación y límites: Compilación/lint e instalación verificadas; revisión nativa visual completa pendiente.
+
+Fuente: [BETA30.md](docs/BETA30.md).
+
+## 0.23.0-beta29
+
+Cambios: SIII sustituye fallback genérico por catálogo explícito:6/176 apps. Primer tema PS4: ondas azules, favoritas horizontales y barra de funciones.
+
+Validación y límites: Compilación/lint e instalación documentadas; prototipo PS4 pendiente de pulido.
+
+Fuente: [BETA29.md](docs/BETA29.md).
+
+## 0.22.0-beta28
+
+Cambios: Inventario de176 apps;1.056 interpretaciones de seis familias, SVG editables y WebP precalculados. Galería por app.
+
+Validación y límites: Cobertura del inventario no equivale a fidelidad histórica. TouchWiz fue reemplazado posteriormente por reconstrucción SIII.
+
+Fuente: [BETA28.md](docs/BETA28.md).
+
+## 0.21.0-beta27
+
+Cambios: 30 sonidos originales por tema; volumen y eventos configurables, desactivados inicialmente. Respeto de silencio/No molestar y reproducción.
+
+Validación y límites: Entrega intermedia; límites en documento de versión.
+
+Fuente: [BETA27.md](docs/BETA27.md).
+
+## 0.20.0-beta26
+
+Cambios: 32 funciones por seis familias:192 variantes. Selección reversible por app y galería de tamaños.
+
+Validación y límites: Son funciones e interpretaciones; no192 apps históricas.
+
+Fuente: [BETA26.md](docs/BETA26.md).
+
+## 0.19.0-beta25
+
+Cambios: Contratos visuales de seis temas; media con sesiones opcionales y controles; mensajes por tema/franja horaria.
+
+Validación y límites: Detalles y verificación en documento de versión.
+
+Fuente: [BETA25.md](docs/BETA25.md).
+
+## beta24
+
+Cambios: Escenas atmosféricas por condición y tema sustituyen el bitmap viajero: puntos, nubes, ondas, cintas, auroras y segmentos LCD.
+
+Validación y límites: La condición depende del texto accesible del proveedor; fallback neutro. Véase documento de versión.
+
+Fuente: [BETA24.md](docs/BETA24.md).
+
+## 0.18.0-beta23
+
+Cambios: Barrido meteorológico detrás del reloj; tarjetas y editor con jerarquía temática y alturas accesibles.
+
+Validación y límites: Este efecto fue sustituido después; no describe el clima actual.
+
+Fuente: [BETA23.md](docs/BETA23.md).
+
+## 0.17.0-beta22
+
+Cambios: Editor de cuatro zonas; deshacer/restablecer; borrador persistente; fondos con transacción local; tema Alloy inspirado en RAZR V3.
+
+Validación y límites: Checkpoint local documentado; consultar límites de validación.
+
+Fuente: [BETA22.md](docs/BETA22.md).
+
+## 0.16.0-beta21
+
+Cambios: Biblioteca retro ZIP opcional; fondos e iconos de colección personal, caché acotada y prioridad de reemplazos.
+
+Validación y límites: Importación validada; recursos personales se transfieren por separado.
+
+Fuente: [BETA21.md](docs/BETA21.md).
+
+## 0.14.0-beta19
+
+Cambios: Modos Temáticos/Normales/Monocromáticos; bloqueo en huecos; cuatro temas retro e ilustraciones de categorías.
+
+Validación y límites: Los iconos normales conservan su identidad.
+
+Fuente: [BETA19.md](docs/BETA19.md).
+
+## 0.13.0-beta18
+
+Cambios: Lenguaje Nothing/CMF, AMOLED, Geist/Geist Mono y reloj de puntos; acento naranja opcional.
+
+Validación y límites: Tratamiento circular original sujeto a la nueva petición: retirar contenedores circulares.
+
+Fuente: [BETA18.md](docs/BETA18.md).
+
+## 0.12.0-beta17
+
+Cambios: Doble toque para bloquear; accesibilidad voluntaria; motor visual de lista/índice/menús y movimiento reducido.
+
+Validación y límites: Bloqueo real y desbloqueo por huella registrados en conversación.
+
+Fuente: [BETA17.md](docs/BETA17.md).
+
+## 0.11.0-beta16
+
+Cambios: Próxima alarma, agenda opcional y gestos de inicio con accesos independientes.
+
+Validación y límites: Permisos opcionales y consultas solo mientras Inicio es visible.
+
+Fuente: [BETA16.md](docs/BETA16.md).
+
+## 0.10.0-beta15
+
+Cambios: Tamaños de texto/iconos/espacios, alto contraste, paquetes Android y personalización/respaldo.
+
+Validación y límites: Consultar documento de versión para alcance.
+
+Fuente: [BETA15.md](docs/BETA15.md).
+
+## 0.9.0-beta14
+
+Cambios: Uso diario y widgets, temas y accesos de reloj, calendario y clima.
+
+Validación y límites: La validación histórica está en el documento original; no se repitió al generar esta cronología.
+
+Fuente: [BETA14.md](docs/BETA14.md).
+
+## Versiones sin ficha independiente en este índice
+
+La evolución anterior a beta14 y beta20 no se reconstruye como entrega independiente sin evidencia suficiente. Avatar, proveedor Prognoza y distribución del dashboard aparecen recogidos en las notas posteriores. Las notas y los commits originales se conservan; la ausencia de entrada no significa ausencia de trabajo.
+
+## Cómo registrar la siguiente entrega
+
+Antes de publicar una versión, añadir arriba una entrada con versión/código, fecha real, cambios visibles, correcciones, validación ejecutada, límites conocidos y enlace a su ficha. Si se instala, anotar resultado y hash del APK; si no se instala, decirlo. Mover aquí únicamente cambios completados desde Pendiente. Hacer commit de código, recursos y documentación juntos. No registrar tokens, claves, cuentas ni respaldos del teléfono.

@@ -1,0 +1,138 @@
+{
+  "source": "https://www.mediafire.com/file/4xmw6ygn2ffvvb4/S3_Icons_By__ELiTSamsunG_V5_FINAL.zip/file",
+  "archiveSha256": "678bdc2e30350d2d75fb54d03bdc3357cc40ec7c92db8e6130bf66f643ed7922",
+  "provenanceArticle": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+  "excluded": "All scripts, executables and flashing machinery ignored; only whitelisted PNG bytes copied",
+  "assets": [
+    {
+      "role": "contacts",
+      "sourceEntry": "unpack/Contacts.apk/res/drawable-ldpi/ic_launcher_contacts.png",
+      "resource": "aura_s3_period_contacts",
+      "sha256": "a482f0a82026f8c551bc76e016e785edaa816910b1dda6d83c2b49b98886cc0b",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "clock",
+      "sourceEntry": "unpack/DeskClock.apk/res/drawable-ldpi/ic_launcher_alarmclock.png",
+      "resource": "aura_s3_period_clock",
+      "sha256": "419a6f323c169aace11872b0dd15f58dc7d0672678558fb7a0d94653edb8bc86",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "calculator",
+      "sourceEntry": "unpack/Calculator.apk/res/drawable-ldpi/icon.png",
+      "resource": "aura_s3_period_calculator",
+      "sha256": "2aa5a6ca909e1abbb8bdaa3b44c4b5fffd9bde2b1250217d65614be67db38a33",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "calendar",
+      "sourceEntry": "unpack/Calendar.apk/res/drawable-ldpi/app_icon.png",
+      "resource": "aura_s3_period_calendar",
+      "sha256": "adf29c7dce0d31f53b29b3876248aab2b86ff6e19d851913fbc91eb0b5a05a36",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "rejected",
+      "reason": "Archive generic calendar does not match the SPlanner31 icon visible in the launch overview. Do not reinstate."
+    },
+    {
+      "role": "message",
+      "sourceEntry": "unpack/Mms.apk/res/drawable-mdpi/ic_launcher_smsmms.png",
+      "resource": "aura_s3_period_message",
+      "sha256": "0e8d3e362963b2706a675515e491961338d66ea4dadc2887716d13e7a6a4f736",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "files",
+      "sourceEntry": "unpack/MyFiles.apk/res/drawable-ldpi/icon_myfiles.png",
+      "resource": "aura_s3_period_files",
+      "sha256": "6d1027688a815aea3c350ce851cf8042f7009eab131ca6240fa6750ce980c087",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate"
+    },
+    {
+      "role": "maps",
+      "sourceEntry": "unpack/Maps.apk/res/drawable-240dpi/ic_launcher_maps.png",
+      "resource": "aura_s3_period_maps",
+      "sha256": "f2848d31db976253352db5526a622c53eb734f16206fdd62f1772b82cbea54ab",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "recorder",
+      "sourceEntry": "unpack/VoiceRecorder.apk/res/drawable-ldpi/homescreen_icon_voicerec.png",
+      "resource": "aura_s3_period_recorder",
+      "sha256": "2c6b17e303f26af6032f476f6d3537ae0f44777300f97ce3c4979c39e0b6aa03",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate"
+    },
+    {
+      "role": "notes",
+      "sourceEntry": "unpack/Memo.apk/res/drawable-ldpi/a_memo.png",
+      "resource": "aura_s3_period_notes",
+      "sha256": "1a500f6aa01e9da34ba964d579f45aee057199f80997da75575e1b75758d79d1",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate"
+    },
+    {
+      "role": "browser",
+      "sourceEntry": "unpack/browser.apk/res/drawable-ldpi/ic_launcher_browser.png",
+      "resource": "aura_s3_period_browser",
+      "sha256": "107ea2ea18beeb36d10a44e5b4a62fde59fb6ebbd0535cb6e3b332bf5946d280",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "email",
+      "sourceEntry": "unpack/Email.apk/res/drawable-ldpi/icon.png",
+      "resource": "aura_s3_period_email",
+      "sha256": "0e8d3e362963b2706a675515e491961338d66ea4dadc2887716d13e7a6a4f736",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "rejected",
+      "reason": "Archive yellow envelope lacks the red@of the launch Email icon. Do not reinstate."
+    },
+    {
+      "role": "gallery",
+      "sourceEntry": "unpack/Gallery3D.apk/res/drawable-ldpi/icon.png",
+      "resource": "aura_s3_period_gallery",
+      "sha256": "6a48dc42bcf41acd668a73f55428f397765a5a5de018acbd8ea04d7ccb6be803",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "radio",
+      "sourceEntry": "unpack/FmRadio.apk/res/drawable-ldpi/icon.png",
+      "resource": "aura_s3_period_radio",
+      "sha256": "fb7dde32aec6ae89ae833346bc0259a21eec177ed857c57454a8515f5b58eb5f",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Silhouette and palette correspond to launch screenshot030; this does not certify unmodified OEM pixels."
+    },
+    {
+      "role": "video",
+      "sourceEntry": "unpack/Music.apk/res/drawable/app_video.png",
+      "resource": "aura_s3_period_video",
+      "sha256": "b930fe23a23a0f70c7eb89892fe88cd73bfb0984df50bea89beb080c2deb695f",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "productionStatus": "prepared-period-candidate"
+    },
+    {
+      "role": "downloads",
+      "sourceEntry": "unpack/DownloadProviderUi.apk/res/drawable-ldpi/ic_launcher_download_main.png",
+      "resource": "aura_s3_period_downloads",
+      "productionStatus": "prepared-period-candidate",
+      "visualReview": "Dark board and green downward arrow match launch screenshot030; not OEM-byte certification"
+    }
+  ],
+  "launchVisualEvidence": "https://www.gsmarena.com/samsung_i9300_galaxy_s_iii-review-761p4.php,20May2012,shots004 and030"
+}

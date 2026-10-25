@@ -9,3 +9,15 @@ __pycache__/
 *.pyc
 .superpowers/
 .worktrees/
+
+# Local credentials, device evidence and IDE state
+.env
+.env.*
+!.env.example
+.idea/
+*.iml
+work/
+*.apk
+*.idsig
+key.properties
+keystore.properties

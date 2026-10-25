@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
 import dev.senda.launcher.ui.theme.icons.FamilyIcon
+import dev.senda.launcher.ui.theme.icons.s3FunctionArtwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -11,11 +12,13 @@ import java.io.File
 /** Manual choices become bounded local PNGs, compatible with existing per-theme overrides and backup9. */
 internal suspend fun saveFamilyIcon(context: Context, theme: LauncherTheme, icon: FamilyIcon): String = withContext(Dispatchers.IO) {
     val directory = File(context.filesDir, "family-icons").apply { check(isDirectory || mkdirs()) }
-    val destination = File(directory, "v1-${theme.name}-${icon.name}.png")
+    val revision = if (theme == LauncherTheme.TOUCHWIZ) "s3-v2" else "v1"
+    val resource = if (theme == LauncherTheme.TOUCHWIZ) s3FunctionArtwork(icon) ?: icon.resource(theme) else icon.resource(theme)
+    val destination = File(directory, "$revision-${theme.name}-${icon.name}.png")
     if (!destination.isFile || destination.length() == 0L) {
         val temporary = File.createTempFile("family-", ".png", directory)
         try {
-            val drawable = requireNotNull(context.getDrawable(icon.resource(theme)))
+            val drawable = requireNotNull(context.getDrawable(resource))
             val bitmap = drawable.toBitmap(128, 128, Bitmap.Config.ARGB_8888)
             temporary.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
             // Multiple apps can choose the same immutable artwork without rewriting an active file.
