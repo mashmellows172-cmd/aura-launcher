@@ -27,8 +27,9 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
     var light by rememberSaveable { mutableStateOf(false) }
     var size by rememberSaveable { mutableIntStateOf(42) }
     var showInstalled by rememberSaveable { mutableStateOf(onPick == null) }
-    val installedRows = remember { installedArtworkEntries.chunked(3) }
-    val rows = remember { FamilyIcon.entries.chunked(3) }
+    val visibleInstalled = remember(theme) { if (theme == LauncherTheme.TOUCHWIZ) installedArtworkEntries.filter { s3AppArtwork(it.packageName) != null } else installedArtworkEntries }
+    val installedRows = remember(visibleInstalled) { visibleInstalled.chunked(3) }
+    val rows = remember(theme) { FamilyIcon.entries.filter { theme != LauncherTheme.TOUCHWIZ || s3FunctionArtwork(it) != null }.chunked(3) }
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text(if (onPick == null) "Familias de iconos" else "Elegir dibujo de Aura") }, text = {
         LazyColumn(Modifier.fillMaxWidth().heightIn(max = 470.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item(key = "themes") {
@@ -39,12 +40,12 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
                 }
             }
             item(key = "explanation") {
-                Text(if (onPick == null) "$installedArtworkCount apps del Motorola · seis reinterpretaciones por app, además de32 funciones. Tus reemplazos y colecciones tienen prioridad. Las apps instaladas después conservan su símbolo si no tienen equivalencia." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
+                Text(if (theme == LauncherTheme.TOUCHWIZ && onPick == null) "Galaxy SIII en reconstrucción · ${visibleInstalled.size} de$installedArtworkCount apps con recurso revisado. Las demás conservan su icono normal mientras se crean sus versiones de época." else if (onPick == null) "$installedArtworkCount apps del Motorola · seis reinterpretaciones por app, además de32 funciones. Tus reemplazos y colecciones tienen prioridad. Las apps instaladas después conservan su símbolo si no tienen equivalencia." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
             }
             if (onPick == null) item(key = "catalog") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(showInstalled, { showInstalled = true }, label = { Text("Apps · $installedArtworkCount") }, modifier = Modifier.heightIn(min = 48.dp))
-                    FilterChip(!showInstalled, { showInstalled = false }, label = { Text("Funciones ·32") }, modifier = Modifier.heightIn(min = 48.dp))
+                    FilterChip(showInstalled, { showInstalled = true }, label = { Text("Apps · ${visibleInstalled.size}") }, modifier = Modifier.heightIn(min = 48.dp))
+                    FilterChip(!showInstalled, { showInstalled = false }, label = { Text("Funciones ·${rows.sumOf { it.size }}") }, modifier = Modifier.heightIn(min = 48.dp))
                 }
             }
             item(key = "sizes") {

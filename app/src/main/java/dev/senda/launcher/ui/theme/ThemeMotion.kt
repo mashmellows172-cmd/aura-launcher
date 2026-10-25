@@ -22,6 +22,7 @@ fun rememberHistoricalPhase(theme: LauncherTheme, moving: Boolean, reduced: Bool
         LauncherTheme.OPTIMUS -> 2600
         LauncherTheme.XPERIA -> 4400
         LauncherTheme.RAZR -> 1600
+        LauncherTheme.PS4 -> 20000
         else -> 2400
     }
     LaunchedEffect(lifecycle, theme, moving, reduced) {

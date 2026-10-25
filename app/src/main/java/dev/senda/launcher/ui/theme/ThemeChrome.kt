@@ -21,7 +21,7 @@ import dev.senda.launcher.data.LauncherTheme
 internal fun HistoricalProfile?.chromeShape(): Shape = when (this?.material) {
     HistoricalMaterial.CHROME -> RoundedCornerShape(6.dp)
     HistoricalMaterial.PAPER -> RoundedCornerShape(3.dp)
-    HistoricalMaterial.FLOW -> RoundedCornerShape(2.dp)
+    HistoricalMaterial.FLOW, HistoricalMaterial.CONSOLE -> RoundedCornerShape(2.dp)
     HistoricalMaterial.LCD -> CutCornerShape(4.dp)
     HistoricalMaterial.WATER -> RoundedCornerShape(18.dp)
     else -> RoundedCornerShape(22.dp)

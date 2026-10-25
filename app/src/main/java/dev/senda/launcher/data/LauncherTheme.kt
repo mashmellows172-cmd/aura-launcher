@@ -8,13 +8,14 @@ enum class LauncherTheme(val title: String, val subtitle: String) {
     OPTIMUS("Aura Flow · LG", "LG G2 · notas cálidas, capas táctiles e iconos esmaltados"),
     XPERIA("Aura Horizon · Xperia", "Xperia clásico · tipografía ligera, cristal y ondas luminosas"),
     RAZR("Aura Alloy · RAZR V3", "Motorola clásico · metal grabado, azul LCD e iconos biselados propios"),
+    PS4("Aura Orbit · PS4", "Dynamic Menu clásico · azul, ondas de luz y contenido en cinta"),
     AMOLED("AMOLED puro", "Negro absoluto y acento menta"),
     DARK("Oscuro", "Gris carbón y acento menta"),
     LIGHT("Claro", "Papel cálido y acento verde"),
     SYSTEM("Seguir el sistema", "Usa el modo claro u oscuro del teléfono");
 
     fun isDark(systemIsDark: Boolean): Boolean = when (this) {
-        NOTHING, XPERIA, RAZR, AMOLED, DARK -> true
+        NOTHING, XPERIA, RAZR, PS4, AMOLED, DARK -> true
         LIGHT, SENSE, TOUCHWIZ, OPTIMUS -> false
         SYSTEM -> systemIsDark
     }

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.LocalAppearance
 
-enum class HistoricalMaterial { DOTS, CHROME, WATER, PAPER, FLOW, LCD }
+enum class HistoricalMaterial { DOTS, CHROME, WATER, PAPER, FLOW, LCD, CONSOLE }
 enum class HistoricalMotion { DOT_REVEAL, HINGE, RIPPLE, LAYERS, GLIDE, SEGMENTS }
 
 /** Original material roles. Personal archive artwork and manufacturer fonts are never bundled. */
@@ -62,6 +62,8 @@ fun historicalProfile(theme: LauncherTheme): HistoricalProfile? = when (theme) {
         Color(0xFF25233E), Color(0xFF101323), Color(0xFFF5F3FF), Color(0xFFD0CCEC), Color(0xFF8C86B1), Color(0xFFC4C0FF), 2, 480)
     LauncherTheme.RAZR -> HistoricalProfile("Motorola RAZR V3", "2004 · metal y LCD", "Biseles, segmentos y azul eléctrico", HistoricalMaterial.LCD, HistoricalMotion.SEGMENTS,
         Color(0xFF142A3B), Color(0xFF081824), Color(0xFFD5F1FF), Color(0xFFACD2E5), Color(0xFFB3C2CF), Color(0xFF9DE4FF), 2, 180)
+    LauncherTheme.PS4 -> HistoricalProfile("PS4 · Dynamic Menu", "2013 · azul y movimiento", "Cinta de contenido, líneas finas y ondas de luz", HistoricalMaterial.CONSOLE, HistoricalMotion.GLIDE,
+        Color(0xFF154D9F), Color(0xFF082E72), Color.White, Color(0xFFD2E6FF), Color(0xFF82BCFA), Color(0xFFBDE8FF), 2, 320)
     else -> null
 }
 

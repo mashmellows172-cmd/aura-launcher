@@ -24,7 +24,7 @@ import dev.senda.launcher.ui.theme.LocalSkinStyle
 /** Compiled native vectors: no bitmap decoding, animation timer or path construction in a draw loop. */
 @Composable
 fun FamilyArtwork(icon: FamilyIcon, theme: LauncherTheme, modifier: Modifier = Modifier, customHolder: Boolean = false) {
-    ArtworkResource(icon.resource(theme), modifier, customHolder)
+    ArtworkResource(if (theme == LauncherTheme.TOUCHWIZ) s3FunctionArtwork(icon) ?: icon.resource(theme) else icon.resource(theme), modifier, customHolder)
 }
 
 @Composable
@@ -48,6 +48,7 @@ private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boo
 fun renderFamilyAppIcon(app: LaunchableApp, theme: LauncherTheme, customHolder: Boolean): Boolean {
     if (theme !in iconFamilyThemes) return false
     if (renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)) return true
+    if (theme == LauncherTheme.TOUCHWIZ) return false
     val icon = familyIconFor(app.packageName) ?: return false
     FamilyArtwork(icon, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
     return true

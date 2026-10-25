@@ -1,0 +1,16 @@
+# Aura0.23.0-beta29 — Galaxy SIII reconstruction and PS4 first implementation
+
+TouchWiz's generic blue disc fallback is retired. Explicit SIII archive phone/settings/camera assets and three genuinely AI-generated ChatGPT/Claude/Gemini interpretations replace it. Music is available in the function gallery. Six of the176 captured installed identities have a reviewed resource in this reconstruction catalog; the other170 deliberately retain their normal app icons. The previous176 generic TouchWiz variants are not counted as approved historical coverage. Normal mode and personal overrides remain prior to the new catalog.
+
+Archive resources were visually inspected and copied unchanged,96px originals. They are identified as user-provided SIII archive candidates; launch-year authenticity for every asset still requires independent screenshot comparison. No invented promise of exact fidelity for every icon. Generated modern-app icons use actual camera/gear/phone/music references and current app identity. Their1024px originals and provenance are in artwork/touchwiz-s3/ai; production192px WebP preserves transparency. They are interpretations, not icons officially released in2012.
+
+PS4 introduces a selectable seventh signature theme: blue wave background, thin translucent panels/light type, controller-symbol avatar fallback and real function actions for avatar/favorites/library/theme. Favorites become a native horizontal content ribbon with selection scale, keyboard focus and preserved click-to-launch. The complete app list/search/alphabet remain available; letter indices account for the condensed favorites row. Original app images act as content covers. This is not a complete consoleOS replica or a new176-icon console pack.
+
+Background uses one lifecycle-bound frame clock and cached paths/brushes; state is read in drawing, not Home composition. Animation stops outside STARTED or with reduced motion/system animators disabled. Personal wallpaper disables the built-in scene. High contrast omits it. Wave and floating-symbol loops are continuous; no wallpaper video, new permission or background service. No FPS/native visual claim until physical review.
+
+References: Sony's2013 UI reveal, https://blog.playstation.com/2013/11/14/first-look-ps4s-new-ui-revealed/ ; official home-screen anatomy, https://manuals.playstation.net/document/en/ps4/basic/screens.html (current guide includes later features; only basic content/function structure used). Samsung GT-I9300 launch2012 is the intended baseline, not S4/OneUI.
+
+Remaining work: classify and reconstruct170 TouchWiz identities with individual historical evidence or IA art; optical review32/42/60dp of all new art; real-device review of PS4 focus/waves/accessibility and touch conflicts. Do not mark the main icon request complete after this checkpoint.
+
+
+Verified delivery: final assembleBeta/lintBeta succeeded2m24s,0errors/12warnings/3hints. Same signing certificate as previous betas. APK SHA256be9378e9307fb78ef9f4cb641b49c4aa992f2422025b61f63d3d3acb96a7df19. Update returnedSuccess; installed code29/0.23.0-beta29 and Downloads copy hash confirmed. No selected-theme or phone-setting change, no forced navigation for QA. Native visual/gesture validation remains pending.

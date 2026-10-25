@@ -1,0 +1,12 @@
+{
+  "package": "com.openai.chatgpt",
+  "origin": "Built-in imagegen; historical reference generation",
+  "historicalStatus": "Modern app interpreted as2012 Nature UX; not official period artwork",
+  "references": [
+    "SamsungCamera_tw30_icon_camera.png",
+    "SecPhone_ic_launcher_phone.png",
+    "SecPhone_ic_launcher_settings.png",
+    "MusicPlayer_homescreen_icon_musicplayer.png"
+  ],
+  "review": "Generated image inspected; production optical/native review pending"
+}

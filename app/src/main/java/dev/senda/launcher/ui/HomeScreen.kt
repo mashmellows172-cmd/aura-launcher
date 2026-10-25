@@ -323,9 +323,9 @@ fun HomeScreen(
     val lockDevice: () -> Unit = {
         if (!NotificationShadeService.lock()) showNotificationHelp = true
     }
-    val starts = remember(groupLetters, groups, favoriteApps, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
+    val starts = remember(groupLetters, groups, favoriteApps, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
-        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections }
+        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, if (state.theme == LauncherTheme.PS4 && favoriteApps.isNotEmpty()) 1 else favoriteApps.size, false).mapValues { it.value + dashboardSections }
     }
     val activeLetter by remember(listState, starts) {
         derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
@@ -354,11 +354,13 @@ fun HomeScreen(
                 contentScale = ContentScale.Crop,
             )
         }
+        val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
+        if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize())
         Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (wallpaperBitmap == null || state.appearance.highContrast) skin.wallpaper else wallpaperReadabilityScrim(state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64, MaterialTheme.colorScheme.onBackground))
-            .then(if (wallpaperBitmap == null && !state.appearance.highContrast) Modifier.skinPattern(skin) else Modifier)
+            .background(if (consoleBackground) Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color.Transparent, androidx.compose.ui.graphics.Color.Transparent)) else if (wallpaperBitmap == null || state.appearance.highContrast) skin.wallpaper else wallpaperReadabilityScrim(state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64, MaterialTheme.colorScheme.onBackground))
+            .then(if (wallpaperBitmap == null && !state.appearance.highContrast && !consoleBackground) Modifier.skinPattern(skin) else Modifier)
             .imePadding()
             .padding(WindowInsets.statusBars.union(WindowInsets.navigationBars).asPaddingValues())
             .padding(horizontal = 22.dp),
@@ -397,6 +399,9 @@ fun HomeScreen(
             onChooseWidgets = { showWidgetPicker = true },
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
         )
+        if (state.theme == LauncherTheme.PS4) Ps4FunctionBar(
+            onAvatar = { showAvatar = true }, onFavorites = { showFavoritesEditor = true },
+            onLibrary = { showLetterJump = true }, onTheme = { showThemePicker = true })
         if (state.headerSettings.showAudioWidget) {
             ThemedAudioWidget(
                 audioInfo = state.audioInfo,
@@ -618,7 +623,7 @@ private fun Header(
             Box(Modifier.homeGestures(onGesture).combinedClickable(onClick = onAvatar, onLongClick = onPersonalization, onDoubleClick = onDoubleTap)
                 .semantics { contentDescription = "Avatar de Aura: cambiar imagen y gestos"; role = Role.Button
                     customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
-                }) { if (!renderAvatarImage(avatarUri,Modifier.size(42.dp))) AuraMark() }
+                }) { if (!renderAvatarImage(avatarUri,Modifier.size(42.dp))) { if (theme == LauncherTheme.PS4) Ps4Mark() else AuraMark() } }
             Column(Modifier.weight(1f).padding(start = 12.dp)) {
                 val motivational = remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) }
                 val captionText = if (showMotivationalHeader) motivational else if (LocalRetroStyle.current.enabled) LocalRetroStyle.current.caption else "AURA / LAUNCHER"
@@ -938,7 +943,10 @@ private fun AppSections(
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (favoriteApps.isNotEmpty()) {
             item(key = "favorites-heading", contentType = "heading") { SectionHeading("Tus favoritas", favoriteApps.size, LauncherTheme.valueOf(skinName)) }
-            items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
+            if (skinName == LauncherTheme.PS4.name) item(key = "ps4-favorites", contentType = "console-ribbon") {
+                Ps4Favorites(favoriteApps, skinIcons, visualSettings.reduceMotion || LocalAppearance.current.highContrast, onLaunch, onLoadIcon)
+            }
+            else items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
                 AppRow(app, isFavorite = true, skinName = skinName, skinTitle = skinTitle, customIconUri = skinIcons["${skinName}_${app.packageName}"], listState = listState, visualSettings = visualSettings, rowKey = "favorite-${app.packageName}", modifier = Modifier.animateItem(fadeInSpec = if (visualSettings.reduceMotion) null else tween(160), placementSpec = if (visualSettings.reduceMotion) null else spring(stiffness = 700f, dampingRatio = .9f), fadeOutSpec = if (visualSettings.reduceMotion) null else tween(100)), onLaunch = { onLaunch(app) }, onToggleFavorite = { onToggleFavorite(app) }, onHide = { onHide(app) }, onChooseIcon = { onChooseIcon(app) }, onResetIcon = { onResetIcon(app) }, onLoadIcon = onLoadIcon)
             }
         }

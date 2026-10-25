@@ -1,0 +1,30 @@
+[
+  {
+    "role": "phone",
+    "resource": "aura_s3_original_phone.png",
+    "source": "User-provided Samsung_Galaxy_S3 archive, original bytes retained",
+    "sha256": "a664591d299492d1866d0f7821e96217c554c0216c2df7940393c62a2895966b",
+    "confidence": "Visual period candidate; independent launch-era screenshot verification pending"
+  },
+  {
+    "role": "camera",
+    "resource": "aura_s3_original_camera.png",
+    "source": "User-provided Samsung_Galaxy_S3 archive, original bytes retained",
+    "sha256": "2205ca525a211ac5fb3e4f9f16d2bf80b6f6f72e691802c2441c598c77670339",
+    "confidence": "Visual period candidate; independent launch-era screenshot verification pending"
+  },
+  {
+    "role": "settings",
+    "resource": "aura_s3_original_settings.png",
+    "source": "User-provided Samsung_Galaxy_S3 archive, original bytes retained",
+    "sha256": "4fdc120ca4cb386d69a3b5741c8d043e3fd65c4bb6e7244bae008c19eb24e1dd",
+    "confidence": "Visual period candidate; independent launch-era screenshot verification pending"
+  },
+  {
+    "role": "music",
+    "resource": "aura_s3_original_music.png",
+    "source": "User-provided Samsung_Galaxy_S3 archive, original bytes retained",
+    "sha256": "250f007e80d20a46cfeb48f74b9467d16414207687debc210694ac8840b3808d",
+    "confidence": "Visual period candidate; independent launch-era screenshot verification pending"
+  }
+]

@@ -185,6 +185,7 @@ private val installedArtwork = mapOf(
 )
 
 @DrawableRes fun installedAppArtwork(packageName: String, theme: LauncherTheme): Int? {
+    if (theme == LauncherTheme.TOUCHWIZ) return s3AppArtwork(packageName)
     val slot = when (theme) {
         LauncherTheme.NOTHING -> 0; LauncherTheme.SENSE -> 1; LauncherTheme.TOUCHWIZ -> 2
         LauncherTheme.OPTIMUS -> 3; LauncherTheme.XPERIA -> 4; LauncherTheme.RAZR -> 5

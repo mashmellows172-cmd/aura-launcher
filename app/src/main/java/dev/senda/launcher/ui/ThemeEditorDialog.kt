@@ -126,7 +126,7 @@ fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismis
                         }
                     }
                     1 -> {
-                        TextButton(onClick = { showIconFamilies = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar familias de iconos") }
+                        TextButton(onClick = { showIconFamilies = true }, enabled = theme != LauncherTheme.PS4, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar familias de iconos") }
                         Text("Estilo de iconos", style = MaterialTheme.typography.labelLarge)
                         IconTreatment.entries.forEach { choice ->
                             TextButton(onClick = { iconsName = choice.name }, enabled = !state.themeSaveBusy) { RadioButton(iconsName == choice.name, null); Text(choice.label) }

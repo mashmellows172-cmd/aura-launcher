@@ -15,7 +15,7 @@ internal fun weatherTreatment(theme:LauncherTheme)=when(theme) {
     LauncherTheme.SENSE->WeatherTreatment.CLOUD_BANK
     LauncherTheme.TOUCHWIZ->WeatherTreatment.WATER_GLASS
     LauncherTheme.OPTIMUS->WeatherTreatment.COLOR_RIBBON
-    LauncherTheme.XPERIA->WeatherTreatment.AURORA
+    LauncherTheme.XPERIA, LauncherTheme.PS4->WeatherTreatment.AURORA
     LauncherTheme.RAZR->WeatherTreatment.LCD_SCAN
     else->WeatherTreatment.DOT_MATRIX
 }

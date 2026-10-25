@@ -30,7 +30,7 @@ internal fun ThemeIdentityDialog(initialTheme: LauncherTheme, finish: ThemeFinis
     AuraTheme(theme, isSystemInDarkTheme(), highContrast, previewFinish, reduceMotion = reduced) {
         AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Identidad del tema") }, text = {
             Column(Modifier.heightIn(max = 520.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                EffectChoice("Comparar familia", themeName, dev.senda.launcher.ui.theme.icons.iconFamilyThemes.map { it.name to it.title },
+                EffectChoice("Comparar familia", themeName, (dev.senda.launcher.ui.theme.icons.iconFamilyThemes + LauncherTheme.PS4).map { it.name to it.title },
                     onSelect = { themeName = it; playing = false })
                 Text("La comparación no aplica cambios. Las otras familias muestran sus acabados predeterminados.", style = MaterialTheme.typography.bodySmall)
                 Text(profile?.reference ?: theme.title, style = MaterialTheme.typography.titleMedium)
@@ -57,7 +57,7 @@ internal fun ThemeIdentityDialog(initialTheme: LauncherTheme, finish: ThemeFinis
                     }
                     ThemedSearchField(theme, "", {}, {}, {}, searchFocus, searchInteractions, { 0f }, readOnly = true)
                     ThemedSectionHeading("Tus favoritas", 3, theme)
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    if (theme != LauncherTheme.PS4) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         listOf(dev.senda.launcher.ui.theme.icons.FamilyIcon.PHONE, dev.senda.launcher.ui.theme.icons.FamilyIcon.CAMERA,
                             dev.senda.launcher.ui.theme.icons.FamilyIcon.MUSIC).forEach { icon ->
                             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {

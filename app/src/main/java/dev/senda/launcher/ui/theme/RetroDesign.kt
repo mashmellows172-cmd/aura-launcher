@@ -13,13 +13,14 @@ import dev.senda.launcher.data.LauncherTheme
 
 val LocalIconTreatment = staticCompositionLocalOf { IconTreatment.AUTO }
 data class RetroStyle(val theme: LauncherTheme? = null, val customHolder: Boolean = false) {
-    val enabled get() = theme in setOf(LauncherTheme.SENSE, LauncherTheme.TOUCHWIZ, LauncherTheme.OPTIMUS, LauncherTheme.XPERIA, LauncherTheme.RAZR)
+    val enabled get() = theme in setOf(LauncherTheme.SENSE, LauncherTheme.TOUCHWIZ, LauncherTheme.OPTIMUS, LauncherTheme.XPERIA, LauncherTheme.RAZR, LauncherTheme.PS4)
     val caption get() = when (theme) {
         LauncherTheme.SENSE -> "AURA BLOOM / SENSE"
         LauncherTheme.TOUCHWIZ -> "AURA PRISM / NATURE"
         LauncherTheme.OPTIMUS -> "AURA FLOW / OPTIMUS"
         LauncherTheme.XPERIA -> "AURA HORIZON / FLOW"
         LauncherTheme.RAZR -> "AURA ALLOY / V3"
+        LauncherTheme.PS4 -> "AURA / DYNAMIC MENU"
         else -> "AURA"
     }
 }
@@ -36,7 +37,7 @@ fun retroTypography(theme: LauncherTheme): Typography {
         titleMedium=base.titleMedium.copy(fontFamily=FontFamily.Monospace),
         labelLarge=base.labelLarge.copy(fontFamily=FontFamily.Monospace),
         labelSmall=base.labelSmall.copy(fontFamily=FontFamily.Monospace))
-    val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else if(theme==LauncherTheme.XPERIA)FontWeight.Light else FontWeight.Normal
+    val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else if(theme==LauncherTheme.XPERIA || theme==LauncherTheme.PS4)FontWeight.Light else FontWeight.Normal
     return base.copy(
         titleLarge = base.titleLarge.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
         titleMedium = base.titleMedium.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
