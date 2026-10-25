@@ -34,3 +34,7 @@ Account starts62% short window/25% weekly. Check at milestone boundaries; checkp
 ## Review focus
 
 Silent/DND/system touch-sound disabled and media playback must suppress sound; disabled settings allocate no persistent audio resources. Loading callbacks cannot play after leaving Home or after a new preview supersedes them. Rapid rail scrubbing must be rate-limited independently of other actions. Old backup imports default safely, new settings are bounded and validated. New themed surfaces must retain keyboard/input semantics, empty-space lock gestures, icon choices and contrast. No claim of runtime fidelity/FPS/native audio verification from a build or source render alone.
+
+## Updated priority during execution
+
+Installed-app pack coverage now takes precedence over further generic UI embellishment; see2026-10-24-installed-app-icon-packs.md. M2/M3 code is implemented and compile-checked; visual/physical acceptance remains part ofM4. Keep open checkboxes until that review is recorded. The user provided the new phone endpoint and the176-app inventory is captured; do not repeat stale disconnected-device requests. Continue per-app historical optical refinement after the current beta checkpoint.

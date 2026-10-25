@@ -1,0 +1,2654 @@
+{
+  "appCount": 176,
+  "themes": [
+    "nothing",
+    "sense",
+    "touchwiz",
+    "optimus",
+    "xperia",
+    "razr"
+  ],
+  "variantCount": 1056,
+  "entries": [
+    {
+      "package": "ai.perplexity.app.android",
+      "label": "Perplexity",
+      "key": "app_71a2919c8a28",
+      "resources": [
+        "aura_nothing_app_71a2919c8a28",
+        "aura_sense_app_71a2919c8a28",
+        "aura_touchwiz_app_71a2919c8a28",
+        "aura_optimus_app_71a2919c8a28",
+        "aura_xperia_app_71a2919c8a28",
+        "aura_razr_app_71a2919c8a28"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "ai.qwenlm.chat.android",
+      "label": "Qwen Studio",
+      "key": "app_e969940ce09b",
+      "resources": [
+        "aura_nothing_app_e969940ce09b",
+        "aura_sense_app_e969940ce09b",
+        "aura_touchwiz_app_e969940ce09b",
+        "aura_optimus_app_e969940ce09b",
+        "aura_xperia_app_e969940ce09b",
+        "aura_razr_app_e969940ce09b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "ai.x.grok",
+      "label": "Grok",
+      "key": "app_f7325ee99d34",
+      "resources": [
+        "aura_nothing_app_f7325ee99d34",
+        "aura_sense_app_f7325ee99d34",
+        "aura_touchwiz_app_f7325ee99d34",
+        "aura_optimus_app_f7325ee99d34",
+        "aura_xperia_app_f7325ee99d34",
+        "aura_razr_app_f7325ee99d34"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "app.aksports.live",
+      "label": "AK47Sports",
+      "key": "app_c6cd30e1fe1c",
+      "resources": [
+        "aura_nothing_app_c6cd30e1fe1c",
+        "aura_sense_app_c6cd30e1fe1c",
+        "aura_touchwiz_app_c6cd30e1fe1c",
+        "aura_optimus_app_c6cd30e1fe1c",
+        "aura_xperia_app_c6cd30e1fe1c",
+        "aura_razr_app_c6cd30e1fe1c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "bitpit.launcher",
+      "label": "Niagara Launcher",
+      "key": "app_8eadccdc2b5a",
+      "resources": [
+        "aura_nothing_app_8eadccdc2b5a",
+        "aura_sense_app_8eadccdc2b5a",
+        "aura_touchwiz_app_8eadccdc2b5a",
+        "aura_optimus_app_8eadccdc2b5a",
+        "aura_xperia_app_8eadccdc2b5a",
+        "aura_razr_app_8eadccdc2b5a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cajalosandes.cla",
+      "label": "Caja Los Andes",
+      "key": "app_f0149325169c",
+      "resources": [
+        "aura_nothing_app_f0149325169c",
+        "aura_sense_app_f0149325169c",
+        "aura_touchwiz_app_f0149325169c",
+        "aura_optimus_app_f0149325169c",
+        "aura_xperia_app_f0149325169c",
+        "aura_razr_app_f0149325169c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.bancochile.mi_banco",
+      "label": "Mi Banco",
+      "key": "app_6cfba532cbe9",
+      "resources": [
+        "aura_nothing_app_6cfba532cbe9",
+        "aura_sense_app_6cfba532cbe9",
+        "aura_touchwiz_app_6cfba532cbe9",
+        "aura_optimus_app_6cfba532cbe9",
+        "aura_xperia_app_6cfba532cbe9",
+        "aura_razr_app_6cfba532cbe9"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.bancochile.mi_pass2",
+      "label": "Mi Pass",
+      "key": "app_3ec1b0be6c12",
+      "resources": [
+        "aura_nothing_app_3ec1b0be6c12",
+        "aura_sense_app_3ec1b0be6c12",
+        "aura_touchwiz_app_3ec1b0be6c12",
+        "aura_optimus_app_3ec1b0be6c12",
+        "aura_xperia_app_3ec1b0be6c12",
+        "aura_razr_app_3ec1b0be6c12"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.bancoestado.cirrus.prod",
+      "label": "Rutpay",
+      "key": "app_92050d028172",
+      "resources": [
+        "aura_nothing_app_92050d028172",
+        "aura_sense_app_92050d028172",
+        "aura_touchwiz_app_92050d028172",
+        "aura_optimus_app_92050d028172",
+        "aura_xperia_app_92050d028172",
+        "aura_razr_app_92050d028172"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.buk.app",
+      "label": "Buk",
+      "key": "app_48c1b5111227",
+      "resources": [
+        "aura_nothing_app_48c1b5111227",
+        "aura_sense_app_48c1b5111227",
+        "aura_touchwiz_app_48c1b5111227",
+        "aura_optimus_app_48c1b5111227",
+        "aura_xperia_app_48c1b5111227",
+        "aura_razr_app_48c1b5111227"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.cencosud.giftcard",
+      "label": "Mi Gift Card",
+      "key": "app_f0f16ca9cfc6",
+      "resources": [
+        "aura_nothing_app_f0f16ca9cfc6",
+        "aura_sense_app_f0f16ca9cfc6",
+        "aura_touchwiz_app_f0f16ca9cfc6",
+        "aura_optimus_app_f0f16ca9cfc6",
+        "aura_xperia_app_f0f16ca9cfc6",
+        "aura_razr_app_f0f16ca9cfc6"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.com.papajohns",
+      "label": "Papa Johns",
+      "key": "app_d2950e891807",
+      "resources": [
+        "aura_nothing_app_d2950e891807",
+        "aura_sense_app_d2950e891807",
+        "aura_touchwiz_app_d2950e891807",
+        "aura_optimus_app_d2950e891807",
+        "aura_xperia_app_d2950e891807",
+        "aura_razr_app_d2950e891807"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.coopeuchdale",
+      "label": "Dale Coopeuch",
+      "key": "app_4ba9f4464786",
+      "resources": [
+        "aura_nothing_app_4ba9f4464786",
+        "aura_sense_app_4ba9f4464786",
+        "aura_touchwiz_app_4ba9f4464786",
+        "aura_optimus_app_4ba9f4464786",
+        "aura_xperia_app_4ba9f4464786",
+        "aura_razr_app_4ba9f4464786"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.copec.PagoClick",
+      "label": "Copec",
+      "key": "app_24e9cc8a1418",
+      "resources": [
+        "aura_nothing_app_24e9cc8a1418",
+        "aura_sense_app_24e9cc8a1418",
+        "aura_touchwiz_app_24e9cc8a1418",
+        "aura_optimus_app_24e9cc8a1418",
+        "aura_xperia_app_24e9cc8a1418",
+        "aura_razr_app_24e9cc8a1418"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.entel.appswlsdesa",
+      "label": "Entel",
+      "key": "app_f7ff5a9b5daa",
+      "resources": [
+        "aura_nothing_app_f7ff5a9b5daa",
+        "aura_sense_app_f7ff5a9b5daa",
+        "aura_touchwiz_app_f7ff5a9b5daa",
+        "aura_optimus_app_f7ff5a9b5daa",
+        "aura_xperia_app_f7ff5a9b5daa",
+        "aura_razr_app_f7ff5a9b5daa"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.metromuv.app",
+      "label": "MetroMuv",
+      "key": "app_63d9e607cf90",
+      "resources": [
+        "aura_nothing_app_63d9e607cf90",
+        "aura_sense_app_63d9e607cf90",
+        "aura_touchwiz_app_63d9e607cf90",
+        "aura_optimus_app_63d9e607cf90",
+        "aura_xperia_app_63d9e607cf90",
+        "aura_razr_app_63d9e607cf90"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.narki.sbpay",
+      "label": "Salcobrand",
+      "key": "app_c4464f9c9fff",
+      "resources": [
+        "aura_nothing_app_c4464f9c9fff",
+        "aura_sense_app_c4464f9c9fff",
+        "aura_touchwiz_app_c4464f9c9fff",
+        "aura_optimus_app_c4464f9c9fff",
+        "aura_xperia_app_c4464f9c9fff",
+        "aura_razr_app_c4464f9c9fff"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.ripley.rapp",
+      "label": "Ripley",
+      "key": "app_f6890c2bcda4",
+      "resources": [
+        "aura_nothing_app_f6890c2bcda4",
+        "aura_sense_app_f6890c2bcda4",
+        "aura_touchwiz_app_f6890c2bcda4",
+        "aura_optimus_app_f6890c2bcda4",
+        "aura_xperia_app_f6890c2bcda4",
+        "aura_razr_app_f6890c2bcda4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.sodimac",
+      "label": "Sodimac",
+      "key": "app_421a8252f32e",
+      "resources": [
+        "aura_nothing_app_421a8252f32e",
+        "aura_sense_app_421a8252f32e",
+        "aura_touchwiz_app_421a8252f32e",
+        "aura_optimus_app_421a8252f32e",
+        "aura_xperia_app_421a8252f32e",
+        "aura_razr_app_421a8252f32e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.tapp",
+      "label": "Tapp",
+      "key": "app_938ad2455400",
+      "resources": [
+        "aura_nothing_app_938ad2455400",
+        "aura_sense_app_938ad2455400",
+        "aura_touchwiz_app_938ad2455400",
+        "aura_optimus_app_938ad2455400",
+        "aura_xperia_app_938ad2455400",
+        "aura_razr_app_938ad2455400"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.transbank.onepay",
+      "label": "Onepay",
+      "key": "app_5d101c0ab7a1",
+      "resources": [
+        "aura_nothing_app_5d101c0ab7a1",
+        "aura_sense_app_5d101c0ab7a1",
+        "aura_touchwiz_app_5d101c0ab7a1",
+        "aura_optimus_app_5d101c0ab7a1",
+        "aura_xperia_app_5d101c0ab7a1",
+        "aura_razr_app_5d101c0ab7a1"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.walmart.liderapp",
+      "label": "Lider",
+      "key": "app_65ac631b31d2",
+      "resources": [
+        "aura_nothing_app_65ac631b31d2",
+        "aura_sense_app_65ac631b31d2",
+        "aura_touchwiz_app_65ac631b31d2",
+        "aura_optimus_app_65ac631b31d2",
+        "aura_xperia_app_65ac631b31d2",
+        "aura_razr_app_65ac631b31d2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "cl.wom.transformacion.appwommobile",
+      "label": "WOM",
+      "key": "app_b716fdb89ba0",
+      "resources": [
+        "aura_nothing_app_b716fdb89ba0",
+        "aura_sense_app_b716fdb89ba0",
+        "aura_touchwiz_app_b716fdb89ba0",
+        "aura_optimus_app_b716fdb89ba0",
+        "aura_xperia_app_b716fdb89ba0",
+        "aura_razr_app_b716fdb89ba0"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "co.shopney.productosdelujo",
+      "label": "Productos de Lujo",
+      "key": "app_87b65ca89872",
+      "resources": [
+        "aura_nothing_app_87b65ca89872",
+        "aura_sense_app_87b65ca89872",
+        "aura_touchwiz_app_87b65ca89872",
+        "aura_optimus_app_87b65ca89872",
+        "aura_xperia_app_87b65ca89872",
+        "aura_razr_app_87b65ca89872"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.adeeteya.classipod",
+      "label": "Classipod",
+      "key": "app_a3c7dc36b203",
+      "resources": [
+        "aura_nothing_app_a3c7dc36b203",
+        "aura_sense_app_a3c7dc36b203",
+        "aura_touchwiz_app_a3c7dc36b203",
+        "aura_optimus_app_a3c7dc36b203",
+        "aura_xperia_app_a3c7dc36b203",
+        "aura_razr_app_a3c7dc36b203"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.adidas.app",
+      "label": "adidas",
+      "key": "app_13e01692cf9a",
+      "resources": [
+        "aura_nothing_app_13e01692cf9a",
+        "aura_sense_app_13e01692cf9a",
+        "aura_touchwiz_app_13e01692cf9a",
+        "aura_optimus_app_13e01692cf9a",
+        "aura_xperia_app_13e01692cf9a",
+        "aura_razr_app_13e01692cf9a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.adobe.scan.android",
+      "label": "Adobe Scan",
+      "key": "app_e8ff271f24fa",
+      "resources": [
+        "aura_nothing_app_e8ff271f24fa",
+        "aura_sense_app_e8ff271f24fa",
+        "aura_touchwiz_app_e8ff271f24fa",
+        "aura_optimus_app_e8ff271f24fa",
+        "aura_xperia_app_e8ff271f24fa",
+        "aura_razr_app_e8ff271f24fa"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.agc.gcam91",
+      "label": "Cámara",
+      "key": "app_6e383eb50d68",
+      "resources": [
+        "aura_nothing_app_6e383eb50d68",
+        "aura_sense_app_6e383eb50d68",
+        "aura_touchwiz_app_6e383eb50d68",
+        "aura_optimus_app_6e383eb50d68",
+        "aura_xperia_app_6e383eb50d68",
+        "aura_razr_app_6e383eb50d68"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.alibaba.aliexpresshd",
+      "label": "AliExpress",
+      "key": "app_549bd7820f83",
+      "resources": [
+        "aura_nothing_app_549bd7820f83",
+        "aura_sense_app_549bd7820f83",
+        "aura_touchwiz_app_549bd7820f83",
+        "aura_optimus_app_549bd7820f83",
+        "aura_xperia_app_549bd7820f83",
+        "aura_razr_app_549bd7820f83"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.amazon.clouddrive.photos",
+      "label": "Amazon Photos",
+      "key": "app_0614b27f579e",
+      "resources": [
+        "aura_nothing_app_0614b27f579e",
+        "aura_sense_app_0614b27f579e",
+        "aura_touchwiz_app_0614b27f579e",
+        "aura_optimus_app_0614b27f579e",
+        "aura_xperia_app_0614b27f579e",
+        "aura_razr_app_0614b27f579e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.amazon.dee.app",
+      "label": "Amazon Alexa",
+      "key": "app_a8861127e552",
+      "resources": [
+        "aura_nothing_app_a8861127e552",
+        "aura_sense_app_a8861127e552",
+        "aura_touchwiz_app_a8861127e552",
+        "aura_optimus_app_a8861127e552",
+        "aura_xperia_app_a8861127e552",
+        "aura_razr_app_a8861127e552"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.amazon.mp3",
+      "label": "Amazon Music",
+      "key": "app_2a137d7f3cf4",
+      "resources": [
+        "aura_nothing_app_2a137d7f3cf4",
+        "aura_sense_app_2a137d7f3cf4",
+        "aura_touchwiz_app_2a137d7f3cf4",
+        "aura_optimus_app_2a137d7f3cf4",
+        "aura_xperia_app_2a137d7f3cf4",
+        "aura_razr_app_2a137d7f3cf4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.amazon.storm.lightning.client.aosp",
+      "label": "Fire TV",
+      "key": "app_8578f29996ae",
+      "resources": [
+        "aura_nothing_app_8578f29996ae",
+        "aura_sense_app_8578f29996ae",
+        "aura_touchwiz_app_8578f29996ae",
+        "aura_optimus_app_8578f29996ae",
+        "aura_xperia_app_8578f29996ae",
+        "aura_razr_app_8578f29996ae"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.amipass.app",
+      "label": "Amipass",
+      "key": "app_327383e53622",
+      "resources": [
+        "aura_nothing_app_327383e53622",
+        "aura_sense_app_327383e53622",
+        "aura_touchwiz_app_327383e53622",
+        "aura_optimus_app_327383e53622",
+        "aura_xperia_app_327383e53622",
+        "aura_razr_app_327383e53622"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.android.chrome",
+      "label": "Chrome",
+      "key": "app_3966e13ad3d5",
+      "resources": [
+        "aura_nothing_app_3966e13ad3d5",
+        "aura_sense_app_3966e13ad3d5",
+        "aura_touchwiz_app_3966e13ad3d5",
+        "aura_optimus_app_3966e13ad3d5",
+        "aura_xperia_app_3966e13ad3d5",
+        "aura_razr_app_3966e13ad3d5"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.android.settings",
+      "label": "Ajustes",
+      "key": "app_48f96ab723a4",
+      "resources": [
+        "aura_nothing_app_48f96ab723a4",
+        "aura_sense_app_48f96ab723a4",
+        "aura_touchwiz_app_48f96ab723a4",
+        "aura_optimus_app_48f96ab723a4",
+        "aura_xperia_app_48f96ab723a4",
+        "aura_razr_app_48f96ab723a4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.android.vending",
+      "label": "Play Store",
+      "key": "app_6bc560052007",
+      "resources": [
+        "aura_nothing_app_6bc560052007",
+        "aura_sense_app_6bc560052007",
+        "aura_touchwiz_app_6bc560052007",
+        "aura_optimus_app_6bc560052007",
+        "aura_xperia_app_6bc560052007",
+        "aura_razr_app_6bc560052007"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.anthropic.claude",
+      "label": "Claude",
+      "key": "app_5ea98778570b",
+      "resources": [
+        "aura_nothing_app_5ea98778570b",
+        "aura_sense_app_5ea98778570b",
+        "aura_touchwiz_app_5ea98778570b",
+        "aura_optimus_app_5ea98778570b",
+        "aura_xperia_app_5ea98778570b",
+        "aura_razr_app_5ea98778570b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.apprecio.appreciochile",
+      "label": "Apprecio Chile",
+      "key": "app_cfcd0d2be3b8",
+      "resources": [
+        "aura_nothing_app_cfcd0d2be3b8",
+        "aura_sense_app_cfcd0d2be3b8",
+        "aura_touchwiz_app_cfcd0d2be3b8",
+        "aura_optimus_app_cfcd0d2be3b8",
+        "aura_xperia_app_cfcd0d2be3b8",
+        "aura_razr_app_cfcd0d2be3b8"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.arjonasoftware.babycam",
+      "label": "BabyCam",
+      "key": "app_9036544f4961",
+      "resources": [
+        "aura_nothing_app_9036544f4961",
+        "aura_sense_app_9036544f4961",
+        "aura_touchwiz_app_9036544f4961",
+        "aura_optimus_app_9036544f4961",
+        "aura_xperia_app_9036544f4961",
+        "aura_razr_app_9036544f4961"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.arlosoft.macrodroid.connectivityhelper",
+      "label": "Asistente de Conexión MD",
+      "key": "app_679a022a28f2",
+      "resources": [
+        "aura_nothing_app_679a022a28f2",
+        "aura_sense_app_679a022a28f2",
+        "aura_touchwiz_app_679a022a28f2",
+        "aura_optimus_app_679a022a28f2",
+        "aura_xperia_app_679a022a28f2",
+        "aura_razr_app_679a022a28f2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.betano.sportsbook",
+      "label": "Betano",
+      "key": "app_2e03f0efc583",
+      "resources": [
+        "aura_nothing_app_2e03f0efc583",
+        "aura_sense_app_2e03f0efc583",
+        "aura_touchwiz_app_2e03f0efc583",
+        "aura_optimus_app_2e03f0efc583",
+        "aura_xperia_app_2e03f0efc583",
+        "aura_razr_app_2e03f0efc583"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.betterlife.connect",
+      "label": "betterlife connect",
+      "key": "app_0a206ed3a33a",
+      "resources": [
+        "aura_nothing_app_0a206ed3a33a",
+        "aura_sense_app_0a206ed3a33a",
+        "aura_touchwiz_app_0a206ed3a33a",
+        "aura_optimus_app_0a206ed3a33a",
+        "aura_xperia_app_0a206ed3a33a",
+        "aura_razr_app_0a206ed3a33a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.box.android",
+      "label": "Box",
+      "key": "app_cfd043af53e5",
+      "resources": [
+        "aura_nothing_app_cfd043af53e5",
+        "aura_sense_app_cfd043af53e5",
+        "aura_touchwiz_app_cfd043af53e5",
+        "aura_optimus_app_cfd043af53e5",
+        "aura_xperia_app_cfd043af53e5",
+        "aura_razr_app_cfd043af53e5"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.brother.mfc.brprint",
+      "label": "iPrint&Scan",
+      "key": "app_e30cd9720bba",
+      "resources": [
+        "aura_nothing_app_e30cd9720bba",
+        "aura_sense_app_e30cd9720bba",
+        "aura_touchwiz_app_e30cd9720bba",
+        "aura_optimus_app_e30cd9720bba",
+        "aura_xperia_app_e30cd9720bba",
+        "aura_razr_app_e30cd9720bba"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.brother.mfc.mobileconnect",
+      "label": "Mobile Connect",
+      "key": "app_6097ccfb6428",
+      "resources": [
+        "aura_nothing_app_6097ccfb6428",
+        "aura_sense_app_6097ccfb6428",
+        "aura_touchwiz_app_6097ccfb6428",
+        "aura_optimus_app_6097ccfb6428",
+        "aura_xperia_app_6097ccfb6428",
+        "aura_razr_app_6097ccfb6428"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.brother.printservice",
+      "label": "Brother Print Service Plugin",
+      "key": "app_8c0d7a606174",
+      "resources": [
+        "aura_nothing_app_8c0d7a606174",
+        "aura_sense_app_8c0d7a606174",
+        "aura_touchwiz_app_8c0d7a606174",
+        "aura_optimus_app_8c0d7a606174",
+        "aura_xperia_app_8c0d7a606174",
+        "aura_razr_app_8c0d7a606174"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.canva.editor",
+      "label": "Canva",
+      "key": "app_14abd4155b8e",
+      "resources": [
+        "aura_nothing_app_14abd4155b8e",
+        "aura_sense_app_14abd4155b8e",
+        "aura_touchwiz_app_14abd4155b8e",
+        "aura_optimus_app_14abd4155b8e",
+        "aura_xperia_app_14abd4155b8e",
+        "aura_razr_app_14abd4155b8e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.cencosud.cl.sisa",
+      "label": "Santa Isabel",
+      "key": "app_eb9383782215",
+      "resources": [
+        "aura_nothing_app_eb9383782215",
+        "aura_sense_app_eb9383782215",
+        "aura_touchwiz_app_eb9383782215",
+        "aura_optimus_app_eb9383782215",
+        "aura_xperia_app_eb9383782215",
+        "aura_razr_app_eb9383782215"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.cencosud.parisapp.android",
+      "label": "Paris App",
+      "key": "app_5faf4bd99343",
+      "resources": [
+        "aura_nothing_app_5faf4bd99343",
+        "aura_sense_app_5faf4bd99343",
+        "aura_touchwiz_app_5faf4bd99343",
+        "aura_optimus_app_5faf4bd99343",
+        "aura_xperia_app_5faf4bd99343",
+        "aura_razr_app_5faf4bd99343"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.cheaf.app",
+      "label": "Cheaf",
+      "key": "app_a374d379ee25",
+      "resources": [
+        "aura_nothing_app_a374d379ee25",
+        "aura_sense_app_a374d379ee25",
+        "aura_touchwiz_app_a374d379ee25",
+        "aura_optimus_app_a374d379ee25",
+        "aura_xperia_app_a374d379ee25",
+        "aura_razr_app_a374d379ee25"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.collabora.libreoffice",
+      "label": "Collabora Office",
+      "key": "app_4b9b3196457f",
+      "resources": [
+        "aura_nothing_app_4b9b3196457f",
+        "aura_sense_app_4b9b3196457f",
+        "aura_touchwiz_app_4b9b3196457f",
+        "aura_optimus_app_4b9b3196457f",
+        "aura_xperia_app_4b9b3196457f",
+        "aura_razr_app_4b9b3196457f"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.como.prod774620191210",
+      "label": "Carl's Jr",
+      "key": "app_05e33ee1984c",
+      "resources": [
+        "aura_nothing_app_05e33ee1984c",
+        "aura_sense_app_05e33ee1984c",
+        "aura_touchwiz_app_05e33ee1984c",
+        "aura_optimus_app_05e33ee1984c",
+        "aura_xperia_app_05e33ee1984c",
+        "aura_razr_app_05e33ee1984c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.crazycake.burgerkingchile",
+      "label": "Burger King CL",
+      "key": "app_e0fa9025f0c4",
+      "resources": [
+        "aura_nothing_app_e0fa9025f0c4",
+        "aura_sense_app_e0fa9025f0c4",
+        "aura_touchwiz_app_e0fa9025f0c4",
+        "aura_optimus_app_e0fa9025f0c4",
+        "aura_xperia_app_e0fa9025f0c4",
+        "aura_razr_app_e0fa9025f0c4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.cruzverde.cl.ecommerce",
+      "label": "Cruz Verde",
+      "key": "app_d0af2cf0c8df",
+      "resources": [
+        "aura_nothing_app_d0af2cf0c8df",
+        "aura_sense_app_d0af2cf0c8df",
+        "aura_touchwiz_app_d0af2cf0c8df",
+        "aura_optimus_app_d0af2cf0c8df",
+        "aura_xperia_app_d0af2cf0c8df",
+        "aura_razr_app_d0af2cf0c8df"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.cxinventor.file.explorer",
+      "label": "Cx Explorador de Archivos",
+      "key": "app_ad19133ff997",
+      "resources": [
+        "aura_nothing_app_ad19133ff997",
+        "aura_sense_app_ad19133ff997",
+        "aura_touchwiz_app_ad19133ff997",
+        "aura_optimus_app_ad19133ff997",
+        "aura_xperia_app_ad19133ff997",
+        "aura_razr_app_ad19133ff997"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.degoo.android",
+      "label": "Degoo",
+      "key": "app_974a275f194b",
+      "resources": [
+        "aura_nothing_app_974a275f194b",
+        "aura_sense_app_974a275f194b",
+        "aura_touchwiz_app_974a275f194b",
+        "aura_optimus_app_974a275f194b",
+        "aura_xperia_app_974a275f194b",
+        "aura_razr_app_974a275f194b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.discord",
+      "label": "Discord",
+      "key": "app_41bade45ee0e",
+      "resources": [
+        "aura_nothing_app_41bade45ee0e",
+        "aura_sense_app_41bade45ee0e",
+        "aura_touchwiz_app_41bade45ee0e",
+        "aura_optimus_app_41bade45ee0e",
+        "aura_xperia_app_41bade45ee0e",
+        "aura_razr_app_41bade45ee0e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.disney.disneyplus",
+      "label": "Disney+",
+      "key": "app_af6f579ea8b7",
+      "resources": [
+        "aura_nothing_app_af6f579ea8b7",
+        "aura_sense_app_af6f579ea8b7",
+        "aura_touchwiz_app_af6f579ea8b7",
+        "aura_optimus_app_af6f579ea8b7",
+        "aura_xperia_app_af6f579ea8b7",
+        "aura_razr_app_af6f579ea8b7"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.dropbox.android",
+      "label": "Dropbox",
+      "key": "app_9385b382f4b4",
+      "resources": [
+        "aura_nothing_app_9385b382f4b4",
+        "aura_sense_app_9385b382f4b4",
+        "aura_touchwiz_app_9385b382f4b4",
+        "aura_optimus_app_9385b382f4b4",
+        "aura_xperia_app_9385b382f4b4",
+        "aura_razr_app_9385b382f4b4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.einnovation.temu",
+      "label": "Temu",
+      "key": "app_cb307ab7bb49",
+      "resources": [
+        "aura_nothing_app_cb307ab7bb49",
+        "aura_sense_app_cb307ab7bb49",
+        "aura_touchwiz_app_cb307ab7bb49",
+        "aura_optimus_app_cb307ab7bb49",
+        "aura_xperia_app_cb307ab7bb49",
+        "aura_razr_app_cb307ab7bb49"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.facebook.katana",
+      "label": "Facebook",
+      "key": "app_1191b6d21997",
+      "resources": [
+        "aura_nothing_app_1191b6d21997",
+        "aura_sense_app_1191b6d21997",
+        "aura_touchwiz_app_1191b6d21997",
+        "aura_optimus_app_1191b6d21997",
+        "aura_xperia_app_1191b6d21997",
+        "aura_razr_app_1191b6d21997"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.facebook.orca",
+      "label": "Messenger",
+      "key": "app_29e4aa19541d",
+      "resources": [
+        "aura_nothing_app_29e4aa19541d",
+        "aura_sense_app_29e4aa19541d",
+        "aura_touchwiz_app_29e4aa19541d",
+        "aura_optimus_app_29e4aa19541d",
+        "aura_xperia_app_29e4aa19541d",
+        "aura_razr_app_29e4aa19541d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.facebook.stella",
+      "label": "Meta AI",
+      "key": "app_71125223d59e",
+      "resources": [
+        "aura_nothing_app_71125223d59e",
+        "aura_sense_app_71125223d59e",
+        "aura_touchwiz_app_71125223d59e",
+        "aura_optimus_app_71125223d59e",
+        "aura_xperia_app_71125223d59e",
+        "aura_razr_app_71125223d59e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.falabella.falabellaApp",
+      "label": "Falabella",
+      "key": "app_069fce7b7564",
+      "resources": [
+        "aura_nothing_app_069fce7b7564",
+        "aura_sense_app_069fce7b7564",
+        "aura_touchwiz_app_069fce7b7564",
+        "aura_optimus_app_069fce7b7564",
+        "aura_xperia_app_069fce7b7564",
+        "aura_razr_app_069fce7b7564"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.gasconnect",
+      "label": "Gasco",
+      "key": "app_a96faa98c75d",
+      "resources": [
+        "aura_nothing_app_a96faa98c75d",
+        "aura_sense_app_a96faa98c75d",
+        "aura_touchwiz_app_a96faa98c75d",
+        "aura_optimus_app_a96faa98c75d",
+        "aura_xperia_app_a96faa98c75d",
+        "aura_razr_app_a96faa98c75d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.getjusto.apps.tarragonacl",
+      "label": "Tarragona",
+      "key": "app_7cde2dafcace",
+      "resources": [
+        "aura_nothing_app_7cde2dafcace",
+        "aura_sense_app_7cde2dafcace",
+        "aura_touchwiz_app_7cde2dafcace",
+        "aura_optimus_app_7cde2dafcace",
+        "aura_xperia_app_7cde2dafcace",
+        "aura_razr_app_7cde2dafcace"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.goodmealspa.goodmeal",
+      "label": "GoodMeal",
+      "key": "app_b496efdb159b",
+      "resources": [
+        "aura_nothing_app_b496efdb159b",
+        "aura_sense_app_b496efdb159b",
+        "aura_touchwiz_app_b496efdb159b",
+        "aura_optimus_app_b496efdb159b",
+        "aura_xperia_app_b496efdb159b",
+        "aura_razr_app_b496efdb159b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.adm",
+      "label": "Localizador",
+      "key": "app_1b1433cea4dc",
+      "resources": [
+        "aura_nothing_app_1b1433cea4dc",
+        "aura_sense_app_1b1433cea4dc",
+        "aura_touchwiz_app_1b1433cea4dc",
+        "aura_optimus_app_1b1433cea4dc",
+        "aura_xperia_app_1b1433cea4dc",
+        "aura_razr_app_1b1433cea4dc"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.authenticator2",
+      "label": "Autenticador",
+      "key": "app_04c0bdebae29",
+      "resources": [
+        "aura_nothing_app_04c0bdebae29",
+        "aura_sense_app_04c0bdebae29",
+        "aura_touchwiz_app_04c0bdebae29",
+        "aura_optimus_app_04c0bdebae29",
+        "aura_xperia_app_04c0bdebae29",
+        "aura_razr_app_04c0bdebae29"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.bard",
+      "label": "Gemini",
+      "key": "app_86a1ec6b4be2",
+      "resources": [
+        "aura_nothing_app_86a1ec6b4be2",
+        "aura_sense_app_86a1ec6b4be2",
+        "aura_touchwiz_app_86a1ec6b4be2",
+        "aura_optimus_app_86a1ec6b4be2",
+        "aura_xperia_app_86a1ec6b4be2",
+        "aura_razr_app_86a1ec6b4be2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.chromecast.app",
+      "label": "Home",
+      "key": "app_3f911207ab9d",
+      "resources": [
+        "aura_nothing_app_3f911207ab9d",
+        "aura_sense_app_3f911207ab9d",
+        "aura_touchwiz_app_3f911207ab9d",
+        "aura_optimus_app_3f911207ab9d",
+        "aura_xperia_app_3f911207ab9d",
+        "aura_razr_app_3f911207ab9d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.docs",
+      "label": "Drive",
+      "key": "app_893c6c86bc82",
+      "resources": [
+        "aura_nothing_app_893c6c86bc82",
+        "aura_sense_app_893c6c86bc82",
+        "aura_touchwiz_app_893c6c86bc82",
+        "aura_optimus_app_893c6c86bc82",
+        "aura_xperia_app_893c6c86bc82",
+        "aura_razr_app_893c6c86bc82"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.googleassistant",
+      "label": "Asistente",
+      "key": "app_fd8b1ff00b5b",
+      "resources": [
+        "aura_nothing_app_fd8b1ff00b5b",
+        "aura_sense_app_fd8b1ff00b5b",
+        "aura_touchwiz_app_fd8b1ff00b5b",
+        "aura_optimus_app_fd8b1ff00b5b",
+        "aura_xperia_app_fd8b1ff00b5b",
+        "aura_razr_app_fd8b1ff00b5b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.maps",
+      "label": "Maps",
+      "key": "app_61f5747032f2",
+      "resources": [
+        "aura_nothing_app_61f5747032f2",
+        "aura_sense_app_61f5747032f2",
+        "aura_touchwiz_app_61f5747032f2",
+        "aura_optimus_app_61f5747032f2",
+        "aura_xperia_app_61f5747032f2",
+        "aura_razr_app_61f5747032f2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.messaging",
+      "label": "Mensajes",
+      "key": "app_fd794caba1ac",
+      "resources": [
+        "aura_nothing_app_fd794caba1ac",
+        "aura_sense_app_fd794caba1ac",
+        "aura_touchwiz_app_fd794caba1ac",
+        "aura_optimus_app_fd794caba1ac",
+        "aura_xperia_app_fd794caba1ac",
+        "aura_razr_app_fd794caba1ac"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.nbu.files",
+      "label": "Files",
+      "key": "app_dc464243afb3",
+      "resources": [
+        "aura_nothing_app_dc464243afb3",
+        "aura_sense_app_dc464243afb3",
+        "aura_touchwiz_app_dc464243afb3",
+        "aura_optimus_app_dc464243afb3",
+        "aura_xperia_app_dc464243afb3",
+        "aura_razr_app_dc464243afb3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.photos",
+      "label": "Fotos",
+      "key": "app_2571a9effbd4",
+      "resources": [
+        "aura_nothing_app_2571a9effbd4",
+        "aura_sense_app_2571a9effbd4",
+        "aura_touchwiz_app_2571a9effbd4",
+        "aura_optimus_app_2571a9effbd4",
+        "aura_xperia_app_2571a9effbd4",
+        "aura_razr_app_2571a9effbd4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.subscriptions.red",
+      "label": "Google One",
+      "key": "app_0bad4be4bae4",
+      "resources": [
+        "aura_nothing_app_0bad4be4bae4",
+        "aura_sense_app_0bad4be4bae4",
+        "aura_touchwiz_app_0bad4be4bae4",
+        "aura_optimus_app_0bad4be4bae4",
+        "aura_xperia_app_0bad4be4bae4",
+        "aura_razr_app_0bad4be4bae4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.tachyon",
+      "label": "Meet",
+      "key": "app_d4afbbb7c70e",
+      "resources": [
+        "aura_nothing_app_d4afbbb7c70e",
+        "aura_sense_app_d4afbbb7c70e",
+        "aura_touchwiz_app_d4afbbb7c70e",
+        "aura_optimus_app_d4afbbb7c70e",
+        "aura_xperia_app_d4afbbb7c70e",
+        "aura_razr_app_d4afbbb7c70e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.walletnfcrel",
+      "label": "Billetera",
+      "key": "app_87711eacb7ff",
+      "resources": [
+        "aura_nothing_app_87711eacb7ff",
+        "aura_sense_app_87711eacb7ff",
+        "aura_touchwiz_app_87711eacb7ff",
+        "aura_optimus_app_87711eacb7ff",
+        "aura_xperia_app_87711eacb7ff",
+        "aura_razr_app_87711eacb7ff"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.apps.youtube.music",
+      "label": "YT Music",
+      "key": "app_fe442c19021f",
+      "resources": [
+        "aura_nothing_app_fe442c19021f",
+        "aura_sense_app_fe442c19021f",
+        "aura_touchwiz_app_fe442c19021f",
+        "aura_optimus_app_fe442c19021f",
+        "aura_xperia_app_fe442c19021f",
+        "aura_razr_app_fe442c19021f"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.calculator",
+      "label": "Calculadora",
+      "key": "app_0348ea9d7b6a",
+      "resources": [
+        "aura_nothing_app_0348ea9d7b6a",
+        "aura_sense_app_0348ea9d7b6a",
+        "aura_touchwiz_app_0348ea9d7b6a",
+        "aura_optimus_app_0348ea9d7b6a",
+        "aura_xperia_app_0348ea9d7b6a",
+        "aura_razr_app_0348ea9d7b6a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.calendar",
+      "label": "Calendario",
+      "key": "app_3096d03fd67f",
+      "resources": [
+        "aura_nothing_app_3096d03fd67f",
+        "aura_sense_app_3096d03fd67f",
+        "aura_touchwiz_app_3096d03fd67f",
+        "aura_optimus_app_3096d03fd67f",
+        "aura_xperia_app_3096d03fd67f",
+        "aura_razr_app_3096d03fd67f"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.contacts",
+      "label": "Contactos",
+      "key": "app_0ccae271d1ca",
+      "resources": [
+        "aura_nothing_app_0ccae271d1ca",
+        "aura_sense_app_0ccae271d1ca",
+        "aura_touchwiz_app_0ccae271d1ca",
+        "aura_optimus_app_0ccae271d1ca",
+        "aura_xperia_app_0ccae271d1ca",
+        "aura_razr_app_0ccae271d1ca"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.deskclock",
+      "label": "Reloj",
+      "key": "app_3a3296a47757",
+      "resources": [
+        "aura_nothing_app_3a3296a47757",
+        "aura_sense_app_3a3296a47757",
+        "aura_touchwiz_app_3a3296a47757",
+        "aura_optimus_app_3a3296a47757",
+        "aura_xperia_app_3a3296a47757",
+        "aura_razr_app_3a3296a47757"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.dialer",
+      "label": "Teléfono",
+      "key": "app_f395222d29ec",
+      "resources": [
+        "aura_nothing_app_f395222d29ec",
+        "aura_sense_app_f395222d29ec",
+        "aura_touchwiz_app_f395222d29ec",
+        "aura_optimus_app_f395222d29ec",
+        "aura_xperia_app_f395222d29ec",
+        "aura_razr_app_f395222d29ec"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.gm",
+      "label": "Gmail",
+      "key": "app_a2f1115ae1c3",
+      "resources": [
+        "aura_nothing_app_a2f1115ae1c3",
+        "aura_sense_app_a2f1115ae1c3",
+        "aura_touchwiz_app_a2f1115ae1c3",
+        "aura_optimus_app_a2f1115ae1c3",
+        "aura_xperia_app_a2f1115ae1c3",
+        "aura_razr_app_a2f1115ae1c3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.googlequicksearchbox",
+      "label": "Google",
+      "key": "app_f63807f0530a",
+      "resources": [
+        "aura_nothing_app_f63807f0530a",
+        "aura_sense_app_f63807f0530a",
+        "aura_touchwiz_app_f63807f0530a",
+        "aura_optimus_app_f63807f0530a",
+        "aura_xperia_app_f63807f0530a",
+        "aura_razr_app_f63807f0530a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.videos",
+      "label": "Google TV",
+      "key": "app_762bf4c3cbfc",
+      "resources": [
+        "aura_nothing_app_762bf4c3cbfc",
+        "aura_sense_app_762bf4c3cbfc",
+        "aura_touchwiz_app_762bf4c3cbfc",
+        "aura_optimus_app_762bf4c3cbfc",
+        "aura_xperia_app_762bf4c3cbfc",
+        "aura_razr_app_762bf4c3cbfc"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.android.youtube",
+      "label": "YouTube",
+      "key": "app_8ceb6fa4b77e",
+      "resources": [
+        "aura_nothing_app_8ceb6fa4b77e",
+        "aura_sense_app_8ceb6fa4b77e",
+        "aura_touchwiz_app_8ceb6fa4b77e",
+        "aura_optimus_app_8ceb6fa4b77e",
+        "aura_xperia_app_8ceb6fa4b77e",
+        "aura_razr_app_8ceb6fa4b77e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.google.ar.lens",
+      "label": "Lens",
+      "key": "app_a4933d2eadfa",
+      "resources": [
+        "aura_nothing_app_a4933d2eadfa",
+        "aura_sense_app_a4933d2eadfa",
+        "aura_touchwiz_app_a4933d2eadfa",
+        "aura_optimus_app_a4933d2eadfa",
+        "aura_xperia_app_a4933d2eadfa",
+        "aura_razr_app_a4933d2eadfa"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.grability.rappi",
+      "label": "Rappi",
+      "key": "app_1833832877b7",
+      "resources": [
+        "aura_nothing_app_1833832877b7",
+        "aura_sense_app_1833832877b7",
+        "aura_touchwiz_app_1833832877b7",
+        "aura_optimus_app_1833832877b7",
+        "aura_xperia_app_1833832877b7",
+        "aura_razr_app_1833832877b7"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.handmark.expressweather",
+      "label": "1Weather",
+      "key": "app_4b154141d1b4",
+      "resources": [
+        "aura_nothing_app_4b154141d1b4",
+        "aura_sense_app_4b154141d1b4",
+        "aura_touchwiz_app_4b154141d1b4",
+        "aura_optimus_app_4b154141d1b4",
+        "aura_xperia_app_4b154141d1b4",
+        "aura_razr_app_4b154141d1b4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.hihonor.magichome",
+      "label": "Espacio de Honor AI",
+      "key": "app_d8feb8be7ab0",
+      "resources": [
+        "aura_nothing_app_d8feb8be7ab0",
+        "aura_sense_app_d8feb8be7ab0",
+        "aura_touchwiz_app_d8feb8be7ab0",
+        "aura_optimus_app_d8feb8be7ab0",
+        "aura_xperia_app_d8feb8be7ab0",
+        "aura_razr_app_d8feb8be7ab0"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.hp.printercontrol",
+      "label": "HP",
+      "key": "app_4bbc30f2541d",
+      "resources": [
+        "aura_nothing_app_4bbc30f2541d",
+        "aura_sense_app_4bbc30f2541d",
+        "aura_touchwiz_app_4bbc30f2541d",
+        "aura_optimus_app_4bbc30f2541d",
+        "aura_xperia_app_4bbc30f2541d",
+        "aura_razr_app_4bbc30f2541d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.igg.android.doomsdaylastsurvivors",
+      "label": "Doomsday",
+      "key": "app_99bed61d38e3",
+      "resources": [
+        "aura_nothing_app_99bed61d38e3",
+        "aura_sense_app_99bed61d38e3",
+        "aura_touchwiz_app_99bed61d38e3",
+        "aura_optimus_app_99bed61d38e3",
+        "aura_xperia_app_99bed61d38e3",
+        "aura_razr_app_99bed61d38e3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.inmobi.weather",
+      "label": "Weather",
+      "key": "app_0c4d0ca60f54",
+      "resources": [
+        "aura_nothing_app_0c4d0ca60f54",
+        "aura_sense_app_0c4d0ca60f54",
+        "aura_touchwiz_app_0c4d0ca60f54",
+        "aura_optimus_app_0c4d0ca60f54",
+        "aura_xperia_app_0c4d0ca60f54",
+        "aura_razr_app_0c4d0ca60f54"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.instagram.android",
+      "label": "Instagram",
+      "key": "app_1b707952995a",
+      "resources": [
+        "aura_nothing_app_1b707952995a",
+        "aura_sense_app_1b707952995a",
+        "aura_touchwiz_app_1b707952995a",
+        "aura_optimus_app_1b707952995a",
+        "aura_xperia_app_1b707952995a",
+        "aura_razr_app_1b707952995a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.kfcecuador.kfc",
+      "label": "KFC APP",
+      "key": "app_533e35ffd95a",
+      "resources": [
+        "aura_nothing_app_533e35ffd95a",
+        "aura_sense_app_533e35ffd95a",
+        "aura_touchwiz_app_533e35ffd95a",
+        "aura_optimus_app_533e35ffd95a",
+        "aura_xperia_app_533e35ffd95a",
+        "aura_razr_app_533e35ffd95a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.kick.mobile",
+      "label": "Kick",
+      "key": "app_c204abec9613",
+      "resources": [
+        "aura_nothing_app_c204abec9613",
+        "aura_sense_app_c204abec9613",
+        "aura_touchwiz_app_c204abec9613",
+        "aura_optimus_app_c204abec9613",
+        "aura_xperia_app_c204abec9613",
+        "aura_razr_app_c204abec9613"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.krealo.tenpo",
+      "label": "Tenpo",
+      "key": "app_21b0ef1dc98c",
+      "resources": [
+        "aura_nothing_app_21b0ef1dc98c",
+        "aura_sense_app_21b0ef1dc98c",
+        "aura_touchwiz_app_21b0ef1dc98c",
+        "aura_optimus_app_21b0ef1dc98c",
+        "aura_xperia_app_21b0ef1dc98c",
+        "aura_razr_app_21b0ef1dc98c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.lenovo.qira",
+      "label": "Motorola Qira",
+      "key": "app_cdff4598bd34",
+      "resources": [
+        "aura_nothing_app_cdff4598bd34",
+        "aura_sense_app_cdff4598bd34",
+        "aura_touchwiz_app_cdff4598bd34",
+        "aura_optimus_app_cdff4598bd34",
+        "aura_xperia_app_cdff4598bd34",
+        "aura_razr_app_cdff4598bd34"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.lgeha.nuts",
+      "label": "LG ThinQ",
+      "key": "app_c12a0cb4d736",
+      "resources": [
+        "aura_nothing_app_c12a0cb4d736",
+        "aura_sense_app_c12a0cb4d736",
+        "aura_touchwiz_app_c12a0cb4d736",
+        "aura_optimus_app_c12a0cb4d736",
+        "aura_xperia_app_c12a0cb4d736",
+        "aura_razr_app_c12a0cb4d736"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.linkedin.android",
+      "label": "LinkedIn",
+      "key": "app_82da499587e5",
+      "resources": [
+        "aura_nothing_app_82da499587e5",
+        "aura_sense_app_82da499587e5",
+        "aura_touchwiz_app_82da499587e5",
+        "aura_optimus_app_82da499587e5",
+        "aura_xperia_app_82da499587e5",
+        "aura_razr_app_82da499587e5"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.mcdo.mcdonalds",
+      "label": "McDonald's",
+      "key": "app_02645e686c5a",
+      "resources": [
+        "aura_nothing_app_02645e686c5a",
+        "aura_sense_app_02645e686c5a",
+        "aura_touchwiz_app_02645e686c5a",
+        "aura_optimus_app_02645e686c5a",
+        "aura_xperia_app_02645e686c5a",
+        "aura_razr_app_02645e686c5a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.mercadolibre",
+      "label": "Mercado Libre",
+      "key": "app_b492912af196",
+      "resources": [
+        "aura_nothing_app_b492912af196",
+        "aura_sense_app_b492912af196",
+        "aura_touchwiz_app_b492912af196",
+        "aura_optimus_app_b492912af196",
+        "aura_xperia_app_b492912af196",
+        "aura_razr_app_b492912af196"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.mercadopago.wallet",
+      "label": "Mercado Pago",
+      "key": "app_faf536a33f0a",
+      "resources": [
+        "aura_nothing_app_faf536a33f0a",
+        "aura_sense_app_faf536a33f0a",
+        "aura_touchwiz_app_faf536a33f0a",
+        "aura_optimus_app_faf536a33f0a",
+        "aura_xperia_app_faf536a33f0a",
+        "aura_razr_app_faf536a33f0a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.miclaro.app",
+      "label": "Mi Claro",
+      "key": "app_177aea5d5219",
+      "resources": [
+        "aura_nothing_app_177aea5d5219",
+        "aura_sense_app_177aea5d5219",
+        "aura_touchwiz_app_177aea5d5219",
+        "aura_optimus_app_177aea5d5219",
+        "aura_xperia_app_177aea5d5219",
+        "aura_razr_app_177aea5d5219"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.microsoft.copilot",
+      "label": "Copilot (heredado)",
+      "key": "app_1b1bdc0259a1",
+      "resources": [
+        "aura_nothing_app_1b1bdc0259a1",
+        "aura_sense_app_1b1bdc0259a1",
+        "aura_touchwiz_app_1b1bdc0259a1",
+        "aura_optimus_app_1b1bdc0259a1",
+        "aura_xperia_app_1b1bdc0259a1",
+        "aura_razr_app_1b1bdc0259a1"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.microsoft.xboxone.smartglass",
+      "label": "XBOX",
+      "key": "app_612ccad05cfd",
+      "resources": [
+        "aura_nothing_app_612ccad05cfd",
+        "aura_sense_app_612ccad05cfd",
+        "aura_touchwiz_app_612ccad05cfd",
+        "aura_optimus_app_612ccad05cfd",
+        "aura_xperia_app_612ccad05cfd",
+        "aura_razr_app_612ccad05cfd"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.midea.ai.overseas",
+      "label": "SmartHome",
+      "key": "app_b86c4271745d",
+      "resources": [
+        "aura_nothing_app_b86c4271745d",
+        "aura_sense_app_b86c4271745d",
+        "aura_touchwiz_app_b86c4271745d",
+        "aura_optimus_app_b86c4271745d",
+        "aura_xperia_app_b86c4271745d",
+        "aura_razr_app_b86c4271745d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.moonfrog.ludo.club",
+      "label": "Ludo Club",
+      "key": "app_62ca2d9f9d16",
+      "resources": [
+        "aura_nothing_app_62ca2d9f9d16",
+        "aura_sense_app_62ca2d9f9d16",
+        "aura_touchwiz_app_62ca2d9f9d16",
+        "aura_optimus_app_62ca2d9f9d16",
+        "aura_xperia_app_62ca2d9f9d16",
+        "aura_razr_app_62ca2d9f9d16"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.audiorecorder",
+      "label": "Grabadora",
+      "key": "app_45b6628ecc76",
+      "resources": [
+        "aura_nothing_app_45b6628ecc76",
+        "aura_sense_app_45b6628ecc76",
+        "aura_touchwiz_app_45b6628ecc76",
+        "aura_optimus_app_45b6628ecc76",
+        "aura_xperia_app_45b6628ecc76",
+        "aura_razr_app_45b6628ecc76"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.camera3",
+      "label": "Cámara",
+      "key": "app_6f492c85ac91",
+      "resources": [
+        "aura_nothing_app_6f492c85ac91",
+        "aura_sense_app_6f492c85ac91",
+        "aura_touchwiz_app_6f492c85ac91",
+        "aura_optimus_app_6f492c85ac91",
+        "aura_xperia_app_6f492c85ac91",
+        "aura_razr_app_6f492c85ac91"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.ccc.notification",
+      "label": "Hello You",
+      "key": "app_2a0858d6ee57",
+      "resources": [
+        "aura_nothing_app_2a0858d6ee57",
+        "aura_sense_app_2a0858d6ee57",
+        "aura_touchwiz_app_2a0858d6ee57",
+        "aura_optimus_app_2a0858d6ee57",
+        "aura_xperia_app_2a0858d6ee57",
+        "aura_razr_app_2a0858d6ee57"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.dolby.dolbyui",
+      "label": "Dolby Atmos",
+      "key": "app_981d21171bb3",
+      "resources": [
+        "aura_nothing_app_981d21171bb3",
+        "aura_sense_app_981d21171bb3",
+        "aura_touchwiz_app_981d21171bb3",
+        "aura_optimus_app_981d21171bb3",
+        "aura_xperia_app_981d21171bb3",
+        "aura_razr_app_981d21171bb3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.gamemode",
+      "label": "Juegos",
+      "key": "app_07e680873538",
+      "resources": [
+        "aura_nothing_app_07e680873538",
+        "aura_sense_app_07e680873538",
+        "aura_touchwiz_app_07e680873538",
+        "aura_optimus_app_07e680873538",
+        "aura_xperia_app_07e680873538",
+        "aura_razr_app_07e680873538"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.genie",
+      "label": "Ayuda del dispositivo",
+      "key": "app_b92633b3d191",
+      "resources": [
+        "aura_nothing_app_b92633b3d191",
+        "aura_sense_app_b92633b3d191",
+        "aura_touchwiz_app_b92633b3d191",
+        "aura_optimus_app_b92633b3d191",
+        "aura_xperia_app_b92633b3d191",
+        "aura_razr_app_b92633b3d191"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.help",
+      "label": "Comentarios",
+      "key": "app_956ce4e384e8",
+      "resources": [
+        "aura_nothing_app_956ce4e384e8",
+        "aura_sense_app_956ce4e384e8",
+        "aura_touchwiz_app_956ce4e384e8",
+        "aura_optimus_app_956ce4e384e8",
+        "aura_xperia_app_956ce4e384e8",
+        "aura_razr_app_956ce4e384e8"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.livewallpaper3",
+      "label": "Fondos interactivos",
+      "key": "app_d8cfa8a31dcc",
+      "resources": [
+        "aura_nothing_app_d8cfa8a31dcc",
+        "aura_sense_app_d8cfa8a31dcc",
+        "aura_touchwiz_app_d8cfa8a31dcc",
+        "aura_optimus_app_d8cfa8a31dcc",
+        "aura_xperia_app_d8cfa8a31dcc",
+        "aura_razr_app_d8cfa8a31dcc"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.mobiledesktop",
+      "label": "Smart Connect",
+      "key": "app_ab4dc60e8ee7",
+      "resources": [
+        "aura_nothing_app_ab4dc60e8ee7",
+        "aura_sense_app_ab4dc60e8ee7",
+        "aura_touchwiz_app_ab4dc60e8ee7",
+        "aura_optimus_app_ab4dc60e8ee7",
+        "aura_xperia_app_ab4dc60e8ee7",
+        "aura_razr_app_ab4dc60e8ee7"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.moto",
+      "label": "Moto",
+      "key": "app_bbb5dacf8f5e",
+      "resources": [
+        "aura_nothing_app_bbb5dacf8f5e",
+        "aura_sense_app_bbb5dacf8f5e",
+        "aura_touchwiz_app_bbb5dacf8f5e",
+        "aura_optimus_app_bbb5dacf8f5e",
+        "aura_xperia_app_bbb5dacf8f5e",
+        "aura_razr_app_bbb5dacf8f5e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.motobuds",
+      "label": "Moto Buds",
+      "key": "app_d74f9725e791",
+      "resources": [
+        "aura_nothing_app_d74f9725e791",
+        "aura_sense_app_d74f9725e791",
+        "aura_touchwiz_app_d74f9725e791",
+        "aura_optimus_app_d74f9725e791",
+        "aura_xperia_app_d74f9725e791",
+        "aura_razr_app_d74f9725e791"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.om",
+      "label": "Moto Unplugged",
+      "key": "app_f4158158000a",
+      "resources": [
+        "aura_nothing_app_f4158158000a",
+        "aura_sense_app_f4158158000a",
+        "aura_touchwiz_app_f4158158000a",
+        "aura_optimus_app_f4158158000a",
+        "aura_xperia_app_f4158158000a",
+        "aura_razr_app_f4158158000a"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.securevault",
+      "label": "Carpeta segura",
+      "key": "app_3396915f2154",
+      "resources": [
+        "aura_nothing_app_3396915f2154",
+        "aura_sense_app_3396915f2154",
+        "aura_touchwiz_app_3396915f2154",
+        "aura_optimus_app_3396915f2154",
+        "aura_xperia_app_3396915f2154",
+        "aura_razr_app_3396915f2154"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.securityhub",
+      "label": "Moto Secure",
+      "key": "app_e37c1546282c",
+      "resources": [
+        "aura_nothing_app_e37c1546282c",
+        "aura_sense_app_e37c1546282c",
+        "aura_touchwiz_app_e37c1546282c",
+        "aura_optimus_app_e37c1546282c",
+        "aura_xperia_app_e37c1546282c",
+        "aura_razr_app_e37c1546282c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.spaces",
+      "label": "Family Space",
+      "key": "app_150eed2a3f9f",
+      "resources": [
+        "aura_nothing_app_150eed2a3f9f",
+        "aura_sense_app_150eed2a3f9f",
+        "aura_touchwiz_app_150eed2a3f9f",
+        "aura_optimus_app_150eed2a3f9f",
+        "aura_xperia_app_150eed2a3f9f",
+        "aura_razr_app_150eed2a3f9f"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.stylus",
+      "label": "Notas",
+      "key": "app_5cb7d22e2dcb",
+      "resources": [
+        "aura_nothing_app_5cb7d22e2dcb",
+        "aura_sense_app_5cb7d22e2dcb",
+        "aura_touchwiz_app_5cb7d22e2dcb",
+        "aura_optimus_app_5cb7d22e2dcb",
+        "aura_xperia_app_5cb7d22e2dcb",
+        "aura_razr_app_5cb7d22e2dcb"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.motorola.touchshare",
+      "label": "Ventana de entrega rápida",
+      "key": "app_c3eb6f8a361b",
+      "resources": [
+        "aura_nothing_app_c3eb6f8a361b",
+        "aura_sense_app_c3eb6f8a361b",
+        "aura_touchwiz_app_c3eb6f8a361b",
+        "aura_optimus_app_c3eb6f8a361b",
+        "aura_xperia_app_c3eb6f8a361b",
+        "aura_razr_app_c3eb6f8a361b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.nextcloud.client",
+      "label": "Nextcloud",
+      "key": "app_12589325d45e",
+      "resources": [
+        "aura_nothing_app_12589325d45e",
+        "aura_sense_app_12589325d45e",
+        "aura_touchwiz_app_12589325d45e",
+        "aura_optimus_app_12589325d45e",
+        "aura_xperia_app_12589325d45e",
+        "aura_razr_app_12589325d45e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.nianticlabs.pokemongo",
+      "label": "Pokémon GO",
+      "key": "app_d65be7c7b483",
+      "resources": [
+        "aura_nothing_app_d65be7c7b483",
+        "aura_sense_app_d65be7c7b483",
+        "aura_touchwiz_app_d65be7c7b483",
+        "aura_optimus_app_d65be7c7b483",
+        "aura_xperia_app_d65be7c7b483",
+        "aura_razr_app_d65be7c7b483"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.openai.chatgpt",
+      "label": "ChatGPT",
+      "key": "app_74dfcb5a9d58",
+      "resources": [
+        "aura_nothing_app_74dfcb5a9d58",
+        "aura_sense_app_74dfcb5a9d58",
+        "aura_touchwiz_app_74dfcb5a9d58",
+        "aura_optimus_app_74dfcb5a9d58",
+        "aura_xperia_app_74dfcb5a9d58",
+        "aura_razr_app_74dfcb5a9d58"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.pcloud.pcloud",
+      "label": "pCloud",
+      "key": "app_9e284b647248",
+      "resources": [
+        "aura_nothing_app_9e284b647248",
+        "aura_sense_app_9e284b647248",
+        "aura_touchwiz_app_9e284b647248",
+        "aura_optimus_app_9e284b647248",
+        "aura_xperia_app_9e284b647248",
+        "aura_razr_app_9e284b647248"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.pedidosya",
+      "label": "PedidosYa",
+      "key": "app_3ee01c7620a3",
+      "resources": [
+        "aura_nothing_app_3ee01c7620a3",
+        "aura_sense_app_3ee01c7620a3",
+        "aura_touchwiz_app_3ee01c7620a3",
+        "aura_optimus_app_3ee01c7620a3",
+        "aura_xperia_app_3ee01c7620a3",
+        "aura_razr_app_3ee01c7620a3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.peqconsultores.lipigas",
+      "label": "LipiApp MiCilindro",
+      "key": "app_2667ac63299d",
+      "resources": [
+        "aura_nothing_app_2667ac63299d",
+        "aura_sense_app_2667ac63299d",
+        "aura_touchwiz_app_2667ac63299d",
+        "aura_optimus_app_2667ac63299d",
+        "aura_xperia_app_2667ac63299d",
+        "aura_razr_app_2667ac63299d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.pinterest",
+      "label": "Pinterest",
+      "key": "app_8da44b20e4d8",
+      "resources": [
+        "aura_nothing_app_8da44b20e4d8",
+        "aura_sense_app_8da44b20e4d8",
+        "aura_touchwiz_app_8da44b20e4d8",
+        "aura_optimus_app_8da44b20e4d8",
+        "aura_xperia_app_8da44b20e4d8",
+        "aura_razr_app_8da44b20e4d8"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.qh.Happylight",
+      "label": "HappyLighting",
+      "key": "app_d8bca55d5c9e",
+      "resources": [
+        "aura_nothing_app_d8bca55d5c9e",
+        "aura_sense_app_d8bca55d5c9e",
+        "aura_touchwiz_app_d8bca55d5c9e",
+        "aura_optimus_app_d8bca55d5c9e",
+        "aura_xperia_app_d8bca55d5c9e",
+        "aura_razr_app_d8bca55d5c9e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.qubits.fw3.doggis",
+      "label": "Doggis",
+      "key": "app_f51b13b77445",
+      "resources": [
+        "aura_nothing_app_f51b13b77445",
+        "aura_sense_app_f51b13b77445",
+        "aura_touchwiz_app_f51b13b77445",
+        "aura_optimus_app_f51b13b77445",
+        "aura_xperia_app_f51b13b77445",
+        "aura_razr_app_f51b13b77445"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.reddit.frontpage",
+      "label": "Reddit",
+      "key": "app_f66ef52c2021",
+      "resources": [
+        "aura_nothing_app_f66ef52c2021",
+        "aura_sense_app_f66ef52c2021",
+        "aura_touchwiz_app_f66ef52c2021",
+        "aura_optimus_app_f66ef52c2021",
+        "aura_xperia_app_f66ef52c2021",
+        "aura_razr_app_f66ef52c2021"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.roblox.client",
+      "label": "Roblox",
+      "key": "app_393a62ff4823",
+      "resources": [
+        "aura_nothing_app_393a62ff4823",
+        "aura_sense_app_393a62ff4823",
+        "aura_touchwiz_app_393a62ff4823",
+        "aura_optimus_app_393a62ff4823",
+        "aura_xperia_app_393a62ff4823",
+        "aura_razr_app_393a62ff4823"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.shopee.cl",
+      "label": "Shopee",
+      "key": "app_8417685f88aa",
+      "resources": [
+        "aura_nothing_app_8417685f88aa",
+        "aura_sense_app_8417685f88aa",
+        "aura_touchwiz_app_8417685f88aa",
+        "aura_optimus_app_8417685f88aa",
+        "aura_xperia_app_8417685f88aa",
+        "aura_razr_app_8417685f88aa"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.sonda.wiu",
+      "label": "Red",
+      "key": "app_c2d36270414d",
+      "resources": [
+        "aura_nothing_app_c2d36270414d",
+        "aura_sense_app_c2d36270414d",
+        "aura_touchwiz_app_c2d36270414d",
+        "aura_optimus_app_c2d36270414d",
+        "aura_xperia_app_c2d36270414d",
+        "aura_razr_app_c2d36270414d"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.sony.songpal.mdr",
+      "label": "Sound Connect",
+      "key": "app_6293f06dfc04",
+      "resources": [
+        "aura_nothing_app_6293f06dfc04",
+        "aura_sense_app_6293f06dfc04",
+        "aura_touchwiz_app_6293f06dfc04",
+        "aura_optimus_app_6293f06dfc04",
+        "aura_xperia_app_6293f06dfc04",
+        "aura_razr_app_6293f06dfc04"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.sony.songpal",
+      "label": "Music Center",
+      "key": "app_08c71d335fc1",
+      "resources": [
+        "aura_nothing_app_08c71d335fc1",
+        "aura_sense_app_08c71d335fc1",
+        "aura_touchwiz_app_08c71d335fc1",
+        "aura_optimus_app_08c71d335fc1",
+        "aura_xperia_app_08c71d335fc1",
+        "aura_razr_app_08c71d335fc1"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.spotify.music",
+      "label": "Spotify",
+      "key": "app_be0ca2873621",
+      "resources": [
+        "aura_nothing_app_be0ca2873621",
+        "aura_sense_app_be0ca2873621",
+        "aura_touchwiz_app_be0ca2873621",
+        "aura_optimus_app_be0ca2873621",
+        "aura_xperia_app_be0ca2873621",
+        "aura_razr_app_be0ca2873621"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.suno.android",
+      "label": "Suno",
+      "key": "app_0eaae0eca2c9",
+      "resources": [
+        "aura_nothing_app_0eaae0eca2c9",
+        "aura_sense_app_0eaae0eca2c9",
+        "aura_touchwiz_app_0eaae0eca2c9",
+        "aura_optimus_app_0eaae0eca2c9",
+        "aura_xperia_app_0eaae0eca2c9",
+        "aura_razr_app_0eaae0eca2c9"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.tongyi.intl",
+      "label": "Qwen",
+      "key": "app_a60b799cf171",
+      "resources": [
+        "aura_nothing_app_a60b799cf171",
+        "aura_sense_app_a60b799cf171",
+        "aura_touchwiz_app_a60b799cf171",
+        "aura_optimus_app_a60b799cf171",
+        "aura_xperia_app_a60b799cf171",
+        "aura_razr_app_a60b799cf171"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.tottus",
+      "label": "TOTTUS",
+      "key": "app_8ef1ed299c25",
+      "resources": [
+        "aura_nothing_app_8ef1ed299c25",
+        "aura_sense_app_8ef1ed299c25",
+        "aura_touchwiz_app_8ef1ed299c25",
+        "aura_optimus_app_8ef1ed299c25",
+        "aura_xperia_app_8ef1ed299c25",
+        "aura_razr_app_8ef1ed299c25"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.ubercab.eats",
+      "label": "Uber Eats",
+      "key": "app_6be77b7eb4ae",
+      "resources": [
+        "aura_nothing_app_6be77b7eb4ae",
+        "aura_sense_app_6be77b7eb4ae",
+        "aura_touchwiz_app_6be77b7eb4ae",
+        "aura_optimus_app_6be77b7eb4ae",
+        "aura_xperia_app_6be77b7eb4ae",
+        "aura_razr_app_6be77b7eb4ae"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.ubercab",
+      "label": "Uber",
+      "key": "app_ef77033e8d6f",
+      "resources": [
+        "aura_nothing_app_ef77033e8d6f",
+        "aura_sense_app_ef77033e8d6f",
+        "aura_touchwiz_app_ef77033e8d6f",
+        "aura_optimus_app_ef77033e8d6f",
+        "aura_xperia_app_ef77033e8d6f",
+        "aura_razr_app_ef77033e8d6f"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.unoafpapp",
+      "label": "AFP UNO",
+      "key": "app_df7137f867fd",
+      "resources": [
+        "aura_nothing_app_df7137f867fd",
+        "aura_sense_app_df7137f867fd",
+        "aura_touchwiz_app_df7137f867fd",
+        "aura_optimus_app_df7137f867fd",
+        "aura_xperia_app_df7137f867fd",
+        "aura_razr_app_df7137f867fd"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.valvesoftware.android.steam.community",
+      "label": "Steam",
+      "key": "app_413fd1956af5",
+      "resources": [
+        "aura_nothing_app_413fd1956af5",
+        "aura_sense_app_413fd1956af5",
+        "aura_touchwiz_app_413fd1956af5",
+        "aura_optimus_app_413fd1956af5",
+        "aura_xperia_app_413fd1956af5",
+        "aura_razr_app_413fd1956af5"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.vivaldi.browser",
+      "label": "Vivaldi",
+      "key": "app_177b132a71b3",
+      "resources": [
+        "aura_nothing_app_177b132a71b3",
+        "aura_sense_app_177b132a71b3",
+        "aura_touchwiz_app_177b132a71b3",
+        "aura_optimus_app_177b132a71b3",
+        "aura_xperia_app_177b132a71b3",
+        "aura_razr_app_177b132a71b3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.waze",
+      "label": "Waze",
+      "key": "app_26dbf852bff4",
+      "resources": [
+        "aura_nothing_app_26dbf852bff4",
+        "aura_sense_app_26dbf852bff4",
+        "aura_touchwiz_app_26dbf852bff4",
+        "aura_optimus_app_26dbf852bff4",
+        "aura_xperia_app_26dbf852bff4",
+        "aura_razr_app_26dbf852bff4"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.wbd.stream",
+      "label": "HBO Max",
+      "key": "app_922e937f5bf2",
+      "resources": [
+        "aura_nothing_app_922e937f5bf2",
+        "aura_sense_app_922e937f5bf2",
+        "aura_touchwiz_app_922e937f5bf2",
+        "aura_optimus_app_922e937f5bf2",
+        "aura_xperia_app_922e937f5bf2",
+        "aura_razr_app_922e937f5bf2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.whatsapp",
+      "label": "WhatsApp",
+      "key": "app_04a1f5ddc4e1",
+      "resources": [
+        "aura_nothing_app_04a1f5ddc4e1",
+        "aura_sense_app_04a1f5ddc4e1",
+        "aura_touchwiz_app_04a1f5ddc4e1",
+        "aura_optimus_app_04a1f5ddc4e1",
+        "aura_xperia_app_04a1f5ddc4e1",
+        "aura_razr_app_04a1f5ddc4e1"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.wizconnected.wiz2",
+      "label": "WiZ V2",
+      "key": "app_11c753435791",
+      "resources": [
+        "aura_nothing_app_11c753435791",
+        "aura_sense_app_11c753435791",
+        "aura_touchwiz_app_11c753435791",
+        "aura_optimus_app_11c753435791",
+        "aura_xperia_app_11c753435791",
+        "aura_razr_app_11c753435791"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.worldcoin",
+      "label": "World App",
+      "key": "app_56222af12455",
+      "resources": [
+        "aura_nothing_app_56222af12455",
+        "aura_sense_app_56222af12455",
+        "aura_touchwiz_app_56222af12455",
+        "aura_optimus_app_56222af12455",
+        "aura_xperia_app_56222af12455",
+        "aura_razr_app_56222af12455"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.xiaomi.smarthome",
+      "label": "Xiaomi Home",
+      "key": "app_2f1c1c7de56e",
+      "resources": [
+        "aura_nothing_app_2f1c1c7de56e",
+        "aura_sense_app_2f1c1c7de56e",
+        "aura_touchwiz_app_2f1c1c7de56e",
+        "aura_optimus_app_2f1c1c7de56e",
+        "aura_xperia_app_2f1c1c7de56e",
+        "aura_razr_app_2f1c1c7de56e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.xiaomi.wearable",
+      "label": "Mi Fitness",
+      "key": "app_fa8865231a90",
+      "resources": [
+        "aura_nothing_app_fa8865231a90",
+        "aura_sense_app_fa8865231a90",
+        "aura_touchwiz_app_fa8865231a90",
+        "aura_optimus_app_fa8865231a90",
+        "aura_xperia_app_fa8865231a90",
+        "aura_razr_app_fa8865231a90"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.xuper.netxxus",
+      "label": "Xuper Hydra",
+      "key": "app_8a7448e1e1c2",
+      "resources": [
+        "aura_nothing_app_8a7448e1e1c2",
+        "aura_sense_app_8a7448e1e1c2",
+        "aura_touchwiz_app_8a7448e1e1c2",
+        "aura_optimus_app_8a7448e1e1c2",
+        "aura_xperia_app_8a7448e1e1c2",
+        "aura_razr_app_8a7448e1e1c2"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.zhiliaoapp.musically.go",
+      "label": "TikTok Lite",
+      "key": "app_76ff42251b85",
+      "resources": [
+        "aura_nothing_app_76ff42251b85",
+        "aura_sense_app_76ff42251b85",
+        "aura_touchwiz_app_76ff42251b85",
+        "aura_optimus_app_76ff42251b85",
+        "aura_xperia_app_76ff42251b85",
+        "aura_razr_app_76ff42251b85"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.zhiliaoapp.musically",
+      "label": "TikTok",
+      "key": "app_47f7aa1df82b",
+      "resources": [
+        "aura_nothing_app_47f7aa1df82b",
+        "aura_sense_app_47f7aa1df82b",
+        "aura_touchwiz_app_47f7aa1df82b",
+        "aura_optimus_app_47f7aa1df82b",
+        "aura_xperia_app_47f7aa1df82b",
+        "aura_razr_app_47f7aa1df82b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "com.zzkko",
+      "label": "SHEIN",
+      "key": "app_b85ca1860cc8",
+      "resources": [
+        "aura_nothing_app_b85ca1860cc8",
+        "aura_sense_app_b85ca1860cc8",
+        "aura_touchwiz_app_b85ca1860cc8",
+        "aura_optimus_app_b85ca1860cc8",
+        "aura_xperia_app_b85ca1860cc8",
+        "aura_razr_app_b85ca1860cc8"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "de.flixbus.app",
+      "label": "FlixBus",
+      "key": "app_6a838a8219a1",
+      "resources": [
+        "aura_nothing_app_6a838a8219a1",
+        "aura_sense_app_6a838a8219a1",
+        "aura_touchwiz_app_6a838a8219a1",
+        "aura_optimus_app_6a838a8219a1",
+        "aura_xperia_app_6a838a8219a1",
+        "aura_razr_app_6a838a8219a1"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "dev.senda.launcher.debug",
+      "label": "Aura Launcher",
+      "key": "app_e06f97d6bf04",
+      "resources": [
+        "aura_nothing_app_e06f97d6bf04",
+        "aura_sense_app_e06f97d6bf04",
+        "aura_touchwiz_app_e06f97d6bf04",
+        "aura_optimus_app_e06f97d6bf04",
+        "aura_xperia_app_e06f97d6bf04",
+        "aura_razr_app_e06f97d6bf04"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "hn.zip.unzip.compressfile.extractfile.compressfolder",
+      "label": "Zip Extractor",
+      "key": "app_607e5516e56e",
+      "resources": [
+        "aura_nothing_app_607e5516e56e",
+        "aura_sense_app_607e5516e56e",
+        "aura_touchwiz_app_607e5516e56e",
+        "aura_optimus_app_607e5516e56e",
+        "aura_xperia_app_607e5516e56e",
+        "aura_razr_app_607e5516e56e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "hr.dtakac.prognoza",
+      "label": "Prognoza",
+      "key": "app_5e926ea85b0e",
+      "resources": [
+        "aura_nothing_app_5e926ea85b0e",
+        "aura_sense_app_5e926ea85b0e",
+        "aura_touchwiz_app_5e926ea85b0e",
+        "aura_optimus_app_5e926ea85b0e",
+        "aura_xperia_app_5e926ea85b0e",
+        "aura_razr_app_5e926ea85b0e"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "io.instaleap.ecommerce.acuenta",
+      "label": "aCuenta",
+      "key": "app_5a97ec70937b",
+      "resources": [
+        "aura_nothing_app_5a97ec70937b",
+        "aura_sense_app_5a97ec70937b",
+        "aura_touchwiz_app_5a97ec70937b",
+        "aura_optimus_app_5a97ec70937b",
+        "aura_xperia_app_5a97ec70937b",
+        "aura_razr_app_5a97ec70937b"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "io.spck",
+      "label": "Editor Spck",
+      "key": "app_dfbb36dd5ae3",
+      "resources": [
+        "aura_nothing_app_dfbb36dd5ae3",
+        "aura_sense_app_dfbb36dd5ae3",
+        "aura_touchwiz_app_dfbb36dd5ae3",
+        "aura_optimus_app_dfbb36dd5ae3",
+        "aura_xperia_app_dfbb36dd5ae3",
+        "aura_razr_app_dfbb36dd5ae3"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "moe.shizuku.privileged.api",
+      "label": "Shizuku",
+      "key": "app_7927a90ec845",
+      "resources": [
+        "aura_nothing_app_7927a90ec845",
+        "aura_sense_app_7927a90ec845",
+        "aura_touchwiz_app_7927a90ec845",
+        "aura_optimus_app_7927a90ec845",
+        "aura_xperia_app_7927a90ec845",
+        "aura_razr_app_7927a90ec845"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "net.veritran.becl.prod",
+      "label": "BancoEstado",
+      "key": "app_c0558b75a900",
+      "resources": [
+        "aura_nothing_app_c0558b75a900",
+        "aura_sense_app_c0558b75a900",
+        "aura_touchwiz_app_c0558b75a900",
+        "aura_optimus_app_c0558b75a900",
+        "aura_xperia_app_c0558b75a900",
+        "aura_razr_app_c0558b75a900"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "org.chromium.webapk.a039497bc141738e5_v2",
+      "label": "TrackRetail",
+      "key": "app_69eb062cfba5",
+      "resources": [
+        "aura_nothing_app_69eb062cfba5",
+        "aura_sense_app_69eb062cfba5",
+        "aura_touchwiz_app_69eb062cfba5",
+        "aura_optimus_app_69eb062cfba5",
+        "aura_xperia_app_69eb062cfba5",
+        "aura_razr_app_69eb062cfba5"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "org.telegram.messenger",
+      "label": "Telegram",
+      "key": "app_c9d161436703",
+      "resources": [
+        "aura_nothing_app_c9d161436703",
+        "aura_sense_app_c9d161436703",
+        "aura_touchwiz_app_c9d161436703",
+        "aura_optimus_app_c9d161436703",
+        "aura_xperia_app_c9d161436703",
+        "aura_razr_app_c9d161436703"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    },
+    {
+      "package": "tv.twitch.android.app",
+      "label": "Twitch",
+      "key": "app_550a4594462c",
+      "resources": [
+        "aura_nothing_app_550a4594462c",
+        "aura_sense_app_550a4594462c",
+        "aura_touchwiz_app_550a4594462c",
+        "aura_optimus_app_550a4594462c",
+        "aura_xperia_app_550a4594462c",
+        "aura_razr_app_550a4594462c"
+      ],
+      "provenance": "Derived vector interpretation of the installed app icon",
+      "review": "pending optical review"
+    }
+  ]
+}

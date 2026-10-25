@@ -1,4 +1,8 @@
-# Aura Launcher 0.20.0-beta26
+# Aura Launcher 0.22.0-beta28
+
+## Nuevo en beta28
+
+Cobertura de176 apps del Motorola en seis temas (1.056 variantes), galería por app, recursos precalculados y ajustes visuales reversibles. [Entrega y límites de validación](docs/BETA28.md). El acabado histórico sigue en revisión.
 
 ## Nuevo en beta26
 

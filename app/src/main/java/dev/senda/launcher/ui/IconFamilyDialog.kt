@@ -26,6 +26,8 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
     val theme = LauncherTheme.valueOf(themeName)
     var light by rememberSaveable { mutableStateOf(false) }
     var size by rememberSaveable { mutableIntStateOf(42) }
+    var showInstalled by rememberSaveable { mutableStateOf(onPick == null) }
+    val installedRows = remember { installedArtworkEntries.chunked(3) }
     val rows = remember { FamilyIcon.entries.chunked(3) }
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text(if (onPick == null) "Familias de iconos" else "Elegir dibujo de Aura") }, text = {
         LazyColumn(Modifier.fillMaxWidth().heightIn(max = 470.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -37,7 +39,13 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
                 }
             }
             item(key = "explanation") {
-                Text(if (onPick == null) "32 funciones · arte original de Aura. Las apps sin equivalencia conservan su símbolo. Tus reemplazos y colecciones tienen prioridad." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
+                Text(if (onPick == null) "$installedArtworkCount apps del Motorola · seis reinterpretaciones por app, además de32 funciones. Tus reemplazos y colecciones tienen prioridad. Las apps instaladas después conservan su símbolo si no tienen equivalencia." else "Toca un dibujo para usarlo en esta app y este tema. Puedes explorar las seis familias. Normales sigue mostrando el icono de Android.", style = MaterialTheme.typography.bodySmall)
+            }
+            if (onPick == null) item(key = "catalog") {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(showInstalled, { showInstalled = true }, label = { Text("Apps · $installedArtworkCount") }, modifier = Modifier.heightIn(min = 48.dp))
+                    FilterChip(!showInstalled, { showInstalled = false }, label = { Text("Funciones ·32") }, modifier = Modifier.heightIn(min = 48.dp))
+                }
             }
             item(key = "sizes") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -47,7 +55,18 @@ internal fun IconFamilyDialog(initialTheme: LauncherTheme, onUse: (LauncherTheme
                 }
                 TextButton(onClick = { light = !light }, modifier = Modifier.heightIn(min = 48.dp)) { Text(if (light) "Ver sobre fondo oscuro" else "Ver sobre fondo claro") }
             }
-            items(rows, key = { it.first().name }) { row ->
+            if (showInstalled && onPick == null) items(installedRows, key = { "app:" + it.first().packageName }) { row ->
+                Row(Modifier.fillMaxWidth().background(if (light) Color(0xFFF0EDE4) else Color(0xFF121A21)).padding(vertical = 10.dp), verticalAlignment = Alignment.Top) {
+                    row.forEach { app ->
+                        Column(Modifier.weight(1f).heightIn(min = 80.dp).padding(horizontal = 2.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            renderInstalledAppArtwork(app.packageName, theme, Modifier.size(size.dp))
+                            Text(app.label, color = if (light) Color(0xFF252A2C) else Color(0xFFF1F3EA), style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
+                        }
+                    }
+                    repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
+            else items(rows, key = { it.first().name }) { row ->
                 Row(Modifier.fillMaxWidth().background(if (light) Color(0xFFF0EDE4) else Color(0xFF121A21)).padding(vertical = 10.dp), verticalAlignment = Alignment.Top) {
                     row.forEach { icon ->
                         Column(Modifier.weight(1f).heightIn(min = 80.dp).then(if (onPick != null) Modifier.clickable(role = Role.Button, onClickLabel = "Usar ${icon.label}") { onPick(icon, theme) } else Modifier).padding(horizontal = 2.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {

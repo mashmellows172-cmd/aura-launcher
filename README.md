@@ -12,7 +12,14 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: [Aura-0.21.0-beta27.apk](beta/Aura-0.21.0-beta27.apk), variante optimizada con R8. [Iconos beta26](docs/BETA26.md), [verificación](docs/QA-beta26.md).
+Beta actual: [Aura-0.22.0-beta28.apk](beta/Aura-0.22.0-beta28.apk), variante optimizada con R8. [Cobertura por app y evidencia](docs/BETA28.md).
+
+## Nuevo en beta28
+
+- 176 apps del inventario real del Motorola, seis variantes por app:1.056 recursos, además del catálogo de32 funciones. Cobertura completa de esa captura; el acabado histórico individual continúa en revisión.
+- SVG editables y WebP precalculado para evitar trazados pesados al desplazar la lista. [Muestra](artwork/installed-app-icons/preview.png).
+- Galería por app y tamaño, selector A–Z accesible, superficies y fondos por tema, protección de lectura del wallpaper y comparación visual reversible. Respaldo11/importación1–11.
+- Son reinterpretaciones derivadas de las identidades de las apps; no son1056 iconos oficiales históricos. Tus reemplazos y el modo Normales conservan prioridad.
 
 ## Nuevo en beta27
 

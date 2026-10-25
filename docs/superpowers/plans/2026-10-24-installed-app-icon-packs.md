@@ -23,3 +23,13 @@ User priority: every launchable application currently installed on the authorize
 ## Current checkpoint
 
 192 function variants remain implemented and delivered in beta27; they are not six complete packs for the Motorola inventory. Broader visual M2/M3 edits are pending in the worktree. Their compile failure was traced to a letter handler scoped inside the list branch and moved to Home scope; verify compile before further delivery. No inventory-based artwork completeness claim is allowed before the phone list is acquired.
+
+## Captured inventory and implemented baseline
+
+User supplied46735 endpoint; authorized serial verified. Captured176 MAIN/LAUNCHER components,176 packages; Android public-icon/label export matched the exact package set. Private archive is about3.9MB and its transfer hash matched. No app data or usage access.
+
+First coverage implementation:176 exact package mappings, six SVG masters each, all1056 WebP production resources generated. Ten explicit historical system-function counterparts in Sense/TouchWiz/LG/Xperia, recognizer-preserving modern interpretations elsewhere. Sources clearly labeled derived artwork. Long dot wordmarks receive selected compact identities. Personal overrides remain prior to this exact map; normal mode remains prior to all thematic paths.
+
+Ruling: automatic contour trace is a reproducible first coverage baseline, rather than a claim of1056 hand-authored historically official symbols. Source sheet review found foreground erasure and unreadable white marks; fixes and a wordmark pass applied. Broader per-app historical art refinement is still open, especially repeated generic frames and fine text. Do not mark the whole icon-polish request complete based on counts.
+
+Ruling: long contour XML caused1248 VectorPath warnings. Keep the editable SVG scenes; render lossless192px WebP at build time and omit optional verbose XML from production. This protects scroll performance without changing appearance; real-device frame metrics are still unmeasured.
