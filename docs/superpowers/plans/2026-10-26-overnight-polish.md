@@ -6,7 +6,7 @@ Principles: preserve Aura ergonomics (vertical apps/favorites, persistent search
 
 ## Milestones
 
-- [ ] H1: dedicated A–Z settings,7 distinct effects plusNONE, intensity/duration/bubble-size/hold controls and real interactive preview. Persist settings with version12 backups compatible1–12. Keep scrubbing, accessible letter jumps, cancellation of stale jumps, haptics throttle, reduced-motion/system animator behavior. Delegate storage to OpenCode with bounded files; primary owns visuals.
+- [x] H1: dedicated A–Z settings,7 distinct effects plusNONE, intensity/duration/bubble-size/hold controls and real interactive preview. Persist settings with version12 backups compatible1–12. Keep scrubbing, accessible letter jumps, cancellation of stale jumps, haptics throttle, reduced-motion/system animator behavior. Delegate storage to OpenCode with bounded files; primary owns visuals.
 - [ ] H2: remove unwanted circular plates from Nothing thematic app/function artwork while preserving recognizable silhouettes, dots and personal overrides. Optical review and theme identity consistency.
 - [ ] H3: refine theme container/shape coherence and focus/pressed states; provide missing PS4 font weights and inspect text clipping/large-type layouts. No console shell.
 - [ ] H4: professional list/menu transitions: eliminate discontinuities and conflicting gestures, bounded animations only while interacting, reduced motion and no permanent high-refresh lock. Prioritize perceptible effect choices over imperceptible sliders.

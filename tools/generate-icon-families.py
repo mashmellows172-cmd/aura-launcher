@@ -110,7 +110,6 @@ def make_icon(theme, name):
     s = Scene()
     if theme in ('nothing', 'razr'):
         if theme == 'nothing':
-            s.ellipse(32,32,29,29,'#171819', '#727574', .8)
             for y,row in enumerate(PIXELS[name]):
                 for x,bit in enumerate(row):
                     if bit == '1': s.ellipse(16+x*4,16+y*4,1.42,1.42,'#F5F4EA')

@@ -5,8 +5,8 @@
     "label": "Teléfono",
     "resource": "aura_nothing_phone",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "539824284fa78f154c810a66d6629e5e7234f08ecc42c27a771215a8dfbdaa96"
+    "version": 2,
+    "sha256": "c58b965a61c63c3400222a82dd68a5b009f2939f31ee426876c0228ee1154615"
   },
   {
     "theme": "nothing",
@@ -14,8 +14,8 @@
     "label": "Mensajes",
     "resource": "aura_nothing_message",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "6d3c52032cc8b494408f39e2c2442f9aa3a77223a6e56c54cf0890e0a22be2c5"
+    "version": 2,
+    "sha256": "f5790f233bdc5092fdb3a9ce5f7d614c7661f304094bac082a2cf70c09e8e726"
   },
   {
     "theme": "nothing",
@@ -23,8 +23,8 @@
     "label": "Cámara",
     "resource": "aura_nothing_camera",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "a1028145a5e26f255fed71dd71f6b1a63715ebe6edf8f459fd972638cf043774"
+    "version": 2,
+    "sha256": "03dd9bb5fccbf7247c72ca01a15b346ae730af38c08bbf172000557ce6c1870d"
   },
   {
     "theme": "nothing",
@@ -32,8 +32,8 @@
     "label": "Navegador",
     "resource": "aura_nothing_browser",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "024dafe726dc7e1bb3a7940b5d32ed586029e39090df58dc255041878f254691"
+    "version": 2,
+    "sha256": "dd3ce499a097274db267abc6f60fbcacb75302245a2d7cdd7137a1b252ff437c"
   },
   {
     "theme": "nothing",
@@ -41,8 +41,8 @@
     "label": "Música",
     "resource": "aura_nothing_music",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "220fbd9da8d6f4fc09ad6eb18e54aeeb242c431291f264ccf7f043c3ba41d6de"
+    "version": 2,
+    "sha256": "43d3a2ad844602da027fbdc83b331ea7ccf6acb5266baa0c8ee7001ae4faddf9"
   },
   {
     "theme": "nothing",
@@ -50,8 +50,8 @@
     "label": "Calendario",
     "resource": "aura_nothing_calendar",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "dab8546c7b74f2c91ed6f65b127243a488cffdeac47abc2bc44e7cd77ab5e514"
+    "version": 2,
+    "sha256": "44782f3eca979e6578240f77efe0c0d1a2096f0940fd9413715751449c48e4d7"
   },
   {
     "theme": "nothing",
@@ -59,8 +59,8 @@
     "label": "Ajustes",
     "resource": "aura_nothing_settings",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "aca87acc8258ab5cb53b7531114662a1c0a31271d033bccaf37e00e771dc5a52"
+    "version": 2,
+    "sha256": "9e204bd00518c7aa3006f77f37a3f34cd55acba5b8686956b210eddff0512c96"
   },
   {
     "theme": "nothing",
@@ -68,8 +68,8 @@
     "label": "Archivos",
     "resource": "aura_nothing_files",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "f39d96f6de30975a055ff9c3ee9121f467cc90fdee87285658630845b5d2ee89"
+    "version": 2,
+    "sha256": "5f53b4c332b19b1c5ecd266d5f22078fef0c995ea88c4f34ad7942b1b365cbae"
   },
   {
     "theme": "nothing",
@@ -77,8 +77,8 @@
     "label": "Contactos",
     "resource": "aura_nothing_contacts",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "b6fc07a4577bdd2512650a5a99c1a05c149f248f1465cf7a6ae79f4349405836"
+    "version": 2,
+    "sha256": "4b2c114336ef210dfdd2debef5cf26024f0585f7f749c2b648a549ec7ff53384"
   },
   {
     "theme": "nothing",
@@ -86,8 +86,8 @@
     "label": "Reloj",
     "resource": "aura_nothing_clock",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "af407e5d01413599af16bcdb25dc3708ae25ba4595fbfaee0950588a3dcb026d"
+    "version": 2,
+    "sha256": "f9f8b443805b10ad6070fea4157e9e855db3674689c75a66220f4ca03d86958b"
   },
   {
     "theme": "nothing",
@@ -95,8 +95,8 @@
     "label": "Galería",
     "resource": "aura_nothing_gallery",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "13bb09c71be610a913a3eb24b883e57213d8dcd525d697a4dd293b44d5597a15"
+    "version": 2,
+    "sha256": "2c820a2c0f8003b1a632fdb8893493baac8e05bc0d434953e7c25b035c9a7ed6"
   },
   {
     "theme": "nothing",
@@ -104,8 +104,8 @@
     "label": "Calculadora",
     "resource": "aura_nothing_calculator",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "0189a417cfd7f1636f84063b612071e651ecaf81279a53fe8504c7d4fff28358"
+    "version": 2,
+    "sha256": "377f4162e342f3d06281ce7343f42f61cd616fb0ddd62abde70e9c82ea2fb41c"
   },
   {
     "theme": "nothing",
@@ -113,8 +113,8 @@
     "label": "Correo",
     "resource": "aura_nothing_email",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "1dd81f35b8bc91e04cac718da89c816c35c1264abb8c2a205976489e9f6a2dc1"
+    "version": 2,
+    "sha256": "0e7a925c9f9c1b8972fa134ba00273cfe3f04e873e5e2125579ac2bc24001576"
   },
   {
     "theme": "nothing",
@@ -122,8 +122,8 @@
     "label": "Vídeo",
     "resource": "aura_nothing_video",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "76da83f6a4844a3d6f3b8acfe1784152460bd8ed678e2d4a69430eef52791ace"
+    "version": 2,
+    "sha256": "9332e08b5dc5d57bb6fa66a6d421e51c77f44510b8e340e771f14fefe9e915e5"
   },
   {
     "theme": "nothing",
@@ -131,8 +131,8 @@
     "label": "Tienda",
     "resource": "aura_nothing_store",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "349c4d57e0f7e6d7eaa30dc998dea7e9bb8da829a061d2b7f7166f104a8ddbba"
+    "version": 2,
+    "sha256": "24c4621dd3f69073cf0b3b51e09273ec8762c4b0fa5732b69bfe750c601eb43f"
   },
   {
     "theme": "nothing",
@@ -140,8 +140,8 @@
     "label": "Mapas",
     "resource": "aura_nothing_maps",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "12ca225b4a551720f2393d208ab15441c2e82d8a3001f1b8320218cae1f5e826"
+    "version": 2,
+    "sha256": "a3a067e11ce31e5e53e9e76523cdd15b67d46cf3ce5f7aa596dde8ed4ef655b7"
   },
   {
     "theme": "nothing",
@@ -149,8 +149,8 @@
     "label": "Notas",
     "resource": "aura_nothing_notes",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "4a434a2bbe907e0f9fbb4cf291eecb9ebc46d29b730d4f1632d68fb75bf61981"
+    "version": 2,
+    "sha256": "09ce7f593cb2a8b7d516dc699dc5902a7ca7b6374bd18480021b093d0f092287"
   },
   {
     "theme": "nothing",
@@ -158,8 +158,8 @@
     "label": "Grabadora",
     "resource": "aura_nothing_recorder",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "ad791aec407c91929b074377cf0dea47edf48e8c48c5e03e614c05197b6d55b6"
+    "version": 2,
+    "sha256": "37a3c011f17b0cf1444ac2108ba27b93658cadfecc60bdf316f29e70491908f9"
   },
   {
     "theme": "nothing",
@@ -167,8 +167,8 @@
     "label": "Radio",
     "resource": "aura_nothing_radio",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "f695579e4529c5611580a73c5deda133bb7dc9ae619a3f6a9db91608e3dd492a"
+    "version": 2,
+    "sha256": "ccb7cc01f03b1c287a19566d3ad3688462968ed5fe012238ba1b16cc918fbfb2"
   },
   {
     "theme": "nothing",
@@ -176,8 +176,8 @@
     "label": "Clima",
     "resource": "aura_nothing_weather",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "d8b01e9b3198bee7ade78a8a21f1d3765ee98215b4352f706bbbf2ccf8d9be01"
+    "version": 2,
+    "sha256": "d5b1415c0a30d3132efba28c2be1a0c903a7a4fbc33cc0448fbf666f0c566f79"
   },
   {
     "theme": "nothing",
@@ -185,8 +185,8 @@
     "label": "Descargas",
     "resource": "aura_nothing_downloads",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "54cc21524a7f5027261b8e6b882dd279ae2263719c71e84dd50c05339cec9f5e"
+    "version": 2,
+    "sha256": "be76019a18ce3731565c0465e24ebb03daad89cb884b5de568c2f423724f4044"
   },
   {
     "theme": "nothing",
@@ -194,8 +194,8 @@
     "label": "Juegos",
     "resource": "aura_nothing_games",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "311e7505413a0a5e709cd6ab4d88e674a5ee47c171c855102c9c9a60a2342170"
+    "version": 2,
+    "sha256": "88445c955ff2cef4af507f292574d7a42d6f9ae6d604318f1125dcdd24501aea"
   },
   {
     "theme": "nothing",
@@ -203,8 +203,8 @@
     "label": "Salud",
     "resource": "aura_nothing_health",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "fdf55bb48c7938ebd39408b65ea6b0d889e6abe92cec626b40849f46b71f30b8"
+    "version": 2,
+    "sha256": "1321a53754e280b71fff378865d7b5805324f8f1d44f075776937d16ed9b4f0c"
   },
   {
     "theme": "nothing",
@@ -212,8 +212,8 @@
     "label": "Navegación",
     "resource": "aura_nothing_navigation",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "04b6854d5673e59f3d57d4503913f94871e5a7e1b80bd8c183177c8f9ded1901"
+    "version": 2,
+    "sha256": "d2468148573c3bb220abe012b4171f4147bd6a05fbd57cde4fed54c8d644afc7"
   },
   {
     "theme": "nothing",
@@ -221,8 +221,8 @@
     "label": "Documentos",
     "resource": "aura_nothing_documents",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "a9783ab077ac6b1b007c3be1e6d306d43bbc12d55aa76ee7120f70dac8d4d167"
+    "version": 2,
+    "sha256": "0c061232b7f4545b1e5bdde1d769825dee69615e62f0afe71f4440236fa4de6a"
   },
   {
     "theme": "nothing",
@@ -230,8 +230,8 @@
     "label": "Lectura",
     "resource": "aura_nothing_reader",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "9f23560bb85fa7a6a7b82c655b4ae7d0bd4719751f55d1a23561073a70d59095"
+    "version": 2,
+    "sha256": "f156d7e12d9ff17285b606306cad7007c65af7d5c42a17c6d982e0568b69277e"
   },
   {
     "theme": "nothing",
@@ -239,8 +239,8 @@
     "label": "Nube",
     "resource": "aura_nothing_cloud",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "98f2918b16cbe1ed29eed07b04c752bad498deaa4909accbd9116a093766d54f"
+    "version": 2,
+    "sha256": "595165ecab1fcadd0aa227586c0bf0b4f045a64a7935b2ef127f3ef94b8eed25"
   },
   {
     "theme": "nothing",
@@ -248,8 +248,8 @@
     "label": "Seguridad",
     "resource": "aura_nothing_security",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "d6c31d246a68f600a89558458fbbf6eb9314e5fe18ae8055ceee42ecee87a673"
+    "version": 2,
+    "sha256": "a65e2ac0e902c4fc87449a56cf440513aab292d356dce3ac5470a8858db80c70"
   },
   {
     "theme": "nothing",
@@ -257,8 +257,8 @@
     "label": "Automatización",
     "resource": "aura_nothing_automation",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "f53123431b574a01c63f8be4a377c067639a41fad8164d6a05ed0a19266f3535"
+    "version": 2,
+    "sha256": "0223959b71d1846d227e255cc34b293bdae06c899bcfd17f19d253132db5ddeb"
   },
   {
     "theme": "nothing",
@@ -266,8 +266,8 @@
     "label": "Herramientas",
     "resource": "aura_nothing_tools",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "0dcd85de24af2f6adeb87934da98fe4f157a0b32b91d27fa6bc1521dee39c17f"
+    "version": 2,
+    "sha256": "81b10011117b9d1df9745efae99fa1e1c94f82d0264062449e079ad68fd02571"
   },
   {
     "theme": "nothing",
@@ -275,8 +275,8 @@
     "label": "Comunicación",
     "resource": "aura_nothing_communication",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "b573eae235f8eeaf62e174426de49f6092ec4676a6c375f36d55644504730329"
+    "version": 2,
+    "sha256": "1036412af0dc5d49995cda5075532b47bc0f929a0d4f5103224329cf68a667d2"
   },
   {
     "theme": "nothing",
@@ -284,8 +284,8 @@
     "label": "Fotografía",
     "resource": "aura_nothing_photography",
     "author": "Aura original",
-    "version": 1,
-    "sha256": "d01d838dd58dc4495d1ec65b42bbc562a44c6d56c0fc9ef548f34bd8c668b2bf"
+    "version": 2,
+    "sha256": "16a92b8947d883d24b856d1a3e454ed32dd16c86d44e5e99ab740752d4f27e22"
   },
   {
     "theme": "sense",

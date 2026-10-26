@@ -119,7 +119,6 @@ def color_art(scene, grid, theme):
 def make(theme, glyph, monochrome=None, brand=(30,70,95)):
     s=Scene()
     if theme=='nothing':
-        s.ellipse(32,32,29,29,'#111213','#747571',.65)
         identity = monochrome if monochrome is not None else glyph
         mask=identity.getchannel('A')
         threshold=105
