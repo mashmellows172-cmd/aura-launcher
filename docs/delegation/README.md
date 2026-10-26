@@ -9,3 +9,5 @@ Se ejecutó OpenCodeCLI v2.1.4 mediante opencode run --standalone, modelo gratui
 Agentes reutilizables en .opencode/agents: aura-review (solo lectura), aura-typography-fix (edición de esos4 archivos). Ambos bloquean shell, teléfono, acceso fuera del proyecto y publicación. No usan --auto. Las credenciales no se copiaron ni se publicaron. No se ejecutaron suites automáticas.
 
 La auditoría no debe usarse como lista de bugs confirmados. La validación del agente principal identifica cuáles se aceptaron, cuáles eran límites ya documentados y cuáles se descartaron. F1 no produjo cambios; F2 produjo la corrección de beta34.
+
+H5 nocturno: prompt2026-10-26-opencode-overnight-audit.md, informe2026-10-26-opencode-h5-findings.md y validación2026-10-26-opencode-h5-validation.md. F1/F3 aceptados; F2 rechazado con fuente AndroidX. Entrega beta37.

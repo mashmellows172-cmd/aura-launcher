@@ -11,6 +11,8 @@ Principles: preserve Aura ergonomics (vertical apps/favorites, persistent search
 - [x] H3: refine theme container/shape coherence and focus/pressed states; provide missing PS4 font weights and inspect text clipping/large-type layouts. No console shell.
 - [x] H4: professional list/menu transitions: eliminate discontinuities and conflicting gestures, bounded animations only while interacting, reduced motion and no permanent high-refresh lock. Prioritize perceptible effect choices over imperceptible sliders.
 - [x] H5: inspect icon contrast/optical sizes and package/cache behavior; apply only evidenced corrections. Use OpenCode audit where helpful, reject unverified findings.
-- [ ] H6: compile/lint, same-key APK, version/hash verification, install only if authorized Motorola available without settings/permission changes or forced navigation in other apps. Update CHANGELOG/BETA/CONTINUITY and private GitHub per delivery; no force push. Final checkpoint/report by deadline or quota guard.
+- [x] H6: compile/lint, same-key APK, version/hash verification, install only if authorized Motorola available without settings/permission changes or forced navigation in other apps. Update CHANGELOG/BETA/CONTINUITY and private GitHub per delivery; no force push. Final checkpoint/report by deadline or quota guard.
 
 Do not depend on phone while the user sleeps. Missing ADB is not a code-work blocker. Keep user messages quiet unless material progress/delivery/failure/action. No filler milestones once all approved work is complete.
+
+Closed26 October2026 after beta37 delivery, before deadline. Implementation/source/optical scope delivered; physical QA/FPS not claimed. Stop automation, no filler.

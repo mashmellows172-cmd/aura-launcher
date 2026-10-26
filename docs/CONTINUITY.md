@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.26.1-beta36/code36. Consultar BETA36.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA36.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.26.2-beta37/code37. Consultar BETA37.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 
@@ -25,3 +25,7 @@ No se afirma120fps, equivalencia total con PS4 ni fidelidad histórica de todos 
 Beta33: iconos PS4 en artwork/ps4/app-icons y Ps4AppArtwork.kt, tipografías en ThemeTypography.kt; procedencia en artwork/theme-fonts. No volver a fuentes genéricas compartidas ni a la pantalla de consola retirada. Catálogo176/176 de la captura, no garantía de cobertura de apps instaladas después. Se conservan Normales y reemplazos.
 
 Beta34: OpenCode auditó iconos/tipografías/ergonomía e implementó4 correcciones de herencia tipográfica, verificadas y compiladas por Codex. Prompts, agentes y validación en docs/delegation. No aplicar automáticamente las hipótesis del informe; F1/caché fue descartada.
+
+## Cierre nocturno26 de octubre
+
+H1–H6 entregados en beta35–37; consultar docs/superpowers/reports/2026-10-26-overnight-polish.md. Próximo trabajo útil: revisión física de A–Z/transiciones/texto grande, no repetir implementaciones. No afirmar FPS ni fidelidad100%. SIII sigue20/176 y156 pendientes.

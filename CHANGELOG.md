@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.26.2-beta37 · 26 de octubre de2026
+
+Formas coherentes para iconos temáticos/nativos y paneles RAZR; foco en tarjetas, diálogos por tema, filas de altura adaptable y pesos Noto reales en PS4. Transiciones con asentamiento suave, origen reiniciado y vista previa que respeta movimiento reducido. Refinamiento de clave de caché validado tras auditoría OpenCode; recomendación incorrecta sobre foco rechazada.
+
+Validación final: compilación/lint2m20s,0 errores/26 advertencias/3 avisos; firma, code37 e instalación/Descargas verificados por hash. Sin suites automáticas ni FPS medidos. Revisión física pendiente. [BETA37](docs/BETA37.md). Cierre del plan nocturno H1–H6 con sus límites documentados.
+
 ## 0.26.1-beta36 · 26 de octubre de2026
 
 Nothing:176 iconos de apps y32 funciones sin contenedor circular añadido. Siluetas dot-matrix de mayor tamaño y trazos más completos; fallback sin placa y contraste semántico en capas monocromas. Conserva iconos normales, packs, reemplazos y contenedores elegidos explícitamente. Otros temas sin cambios de recursos.
