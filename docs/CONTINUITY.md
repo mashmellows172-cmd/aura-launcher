@@ -36,4 +36,4 @@ H1–H6 entregados en beta35–37; consultar docs/superpowers/reports/2026-10-26
 
 ## Gemini
 
-Integración preparada; login Google pendiente. Leer docs/delegation/2026-10-26-gemini-integration.md. Tareas visual/preview con contexto limitado y herramientas denegadas. No atribuir análisis a Gemini hasta comprobar una respuesta real.
+Google autenticado. Gemini CLI rechazado por UNSUPPORTED_CLIENT; Antigravity CLI1.4.7 conecta, pero responde cuota individual agotada (~48h al comprobar). Leer docs/delegation/2026-10-26-gemini-integration.md. Usuario autorizó expresamente siete archivos de UI; respetar ese alcance. Runner original Gemini no sirve para agy: adaptar sus permisos antes de enviar contexto. Sin análisis completados, sin pagos ni reintentos continuos.
