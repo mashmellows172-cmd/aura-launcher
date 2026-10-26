@@ -31,6 +31,10 @@ data class VisualSettings(
     val railEffect: String = "MAGNET",
     val menuEffect: String = "SPRING",
     val railHaptics: Boolean = false,
+    val railIntensity: Int = 65,
+    val railDurationMs: Int = 220,
+    val railBubbleSize: Int = 56,
+    val railBubbleHoldMs: Int = 420,
 )
 
 /** Stores the user's favorites and appearance choice locally. */
@@ -46,6 +50,10 @@ class FavoritesStore(context: Context) {
     private val glowKey = booleanPreferencesKey("search_glow_enabled")
     private val glowStrengthKey = intPreferencesKey("search_glow_strength")
     private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
+    private val railIntensityKey = intPreferencesKey("rail_intensity")
+    private val railDurationKey = intPreferencesKey("rail_duration_ms")
+    private val railBubbleSizeKey = intPreferencesKey("rail_bubble_size")
+    private val railBubbleHoldKey = intPreferencesKey("rail_bubble_hold_ms")
     private val weatherPackageKey = stringPreferencesKey("weather_app_package")
 
     val retroEnabled: Flow<Map<String, Boolean>> = store.data.map { prefs ->
@@ -215,7 +223,7 @@ class FavoritesStore(context: Context) {
         .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }
         .map { prefs -> VisualSettings(
             motion = canonicalMotion(prefs[motionKey]),
-            railEffect = prefs[stringPreferencesKey("rail_effect")]?.takeIf { it in setOf("MAGNET", "SPRING", "FADE", "NONE") } ?: "MAGNET",
+            railEffect = prefs[stringPreferencesKey("rail_effect")]?.takeIf { it in RailEffects.ids } ?: "MAGNET",
             menuEffect = prefs[stringPreferencesKey("menu_effect")]?.takeIf { it in setOf("SPRING", "SLIDE", "FADE", "NONE") } ?: "SPRING",
             railHaptics = prefs[booleanPreferencesKey("rail_haptics")] ?: false,
             durationMs = (prefs[durationKey] ?: 360).coerceIn(150, 800),
@@ -223,12 +231,16 @@ class FavoritesStore(context: Context) {
             glowEnabled = prefs[glowKey] ?: true,
             glowStrength = (prefs[glowStrengthKey] ?: 65).coerceIn(10, 100),
             reduceMotion = prefs[reduceMotionKey] ?: false,
+            railIntensity = (prefs[railIntensityKey] ?: 65).coerceIn(0, 100),
+            railDurationMs = (prefs[railDurationKey] ?: 220).coerceIn(80, 600),
+            railBubbleSize = (prefs[railBubbleSizeKey] ?: 56).coerceIn(40, 84),
+            railBubbleHoldMs = (prefs[railBubbleHoldKey] ?: 420).coerceIn(0, 1000),
         ) }
 
     suspend fun setVisualSettings(settings: VisualSettings) {
         store.edit { prefs ->
             prefs[motionKey] = canonicalMotion(settings.motion)
-            prefs[stringPreferencesKey("rail_effect")] = settings.railEffect
+            prefs[stringPreferencesKey("rail_effect")] = RailEffects.canonical(settings.railEffect)
             prefs[stringPreferencesKey("menu_effect")] = settings.menuEffect
             prefs[booleanPreferencesKey("rail_haptics")] = settings.railHaptics
             prefs[durationKey] = settings.durationMs.coerceIn(150, 800)
@@ -236,6 +248,10 @@ class FavoritesStore(context: Context) {
             prefs[glowKey] = settings.glowEnabled
             prefs[glowStrengthKey] = settings.glowStrength.coerceIn(10, 100)
             prefs[reduceMotionKey] = settings.reduceMotion
+            prefs[railIntensityKey] = settings.railIntensity.coerceIn(0, 100)
+            prefs[railDurationKey] = settings.railDurationMs.coerceIn(80, 600)
+            prefs[railBubbleSizeKey] = settings.railBubbleSize.coerceIn(40, 84)
+            prefs[railBubbleHoldKey] = settings.railBubbleHoldMs.coerceIn(0, 1000)
         }
     }
 

@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.26.0-beta35 · 26 de octubre de2026
+
+Cambios: siete efectos A–Z y opción sin efecto; apartado dedicado con vista previa interactiva, intensidad, respuesta, tamaño/permanencia de burbuja y vibración. Dos columnas con texto grande. Persistencia y respaldo12 implementados por OpenCode y revisados; UI por Codex. Conserva ergonomía y ajustes personales.
+
+Validación: compilación/lint correctos;0 errores,26 advertencias,3 avisos. Instalación code35, firma y hashes local/transferencia/Descargas verificados. Sin suites ni medición FPS; revisión visual física pendiente. [Entrega](docs/BETA35.md).
+
 ## 0.25.1-beta34 · 26 de octubre de2026
 
 Cambios: corrección implementada por OpenCode tras auditoría delegada y validada por Codex. El mensaje del encabezado, las etiquetas de tarjetas, el título del audio y el reloj flip Sense heredan la tipografía del tema, eliminando familias genéricas que se imponían a las fuentes de beta33. Los iconos y la navegación de Aura se mantienen.

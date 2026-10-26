@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.25.1-beta34/code34. Consultar BETA34.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA34.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.26.0-beta35/code35. Consultar BETA35.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA35.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 

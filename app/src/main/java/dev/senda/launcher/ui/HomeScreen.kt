@@ -209,6 +209,7 @@ fun HomeScreen(
     var showLetterJump by rememberSaveable { mutableStateOf(false) }
     var showThemePicker by rememberSaveable { mutableStateOf(false) }
     var showVisualSettings by rememberSaveable { mutableStateOf(false) }
+    var showAlphabetSettings by rememberSaveable { mutableStateOf(false) }
     var showSoundSettings by rememberSaveable { mutableStateOf(false) }
     var showPersonalization by rememberSaveable { mutableStateOf(false) }
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
@@ -269,7 +270,7 @@ fun HomeScreen(
             showHiddenApps = false
             showLetterJump = false
             showThemePicker = false
-            showVisualSettings = false; showSoundSettings = false
+            showVisualSettings = false; showAlphabetSettings = false; showSoundSettings = false
             showPersonalization = false
             showWeatherPicker = false
             showWidgetPicker = false
@@ -393,6 +394,7 @@ fun HomeScreen(
             onLetterJump = { showLetterJump = true },
             letterJumpEnabled = state.query.isBlank() && groupLetters.isNotEmpty(),
             onVisualSettings = { showVisualSettings = true },
+            onAlphabetSettings = { showAlphabetSettings = true },
             onSoundSettings = { showSoundSettings = true },
             onPersonalization = { showPersonalization = true },
             onHomeSettings = { showHomeSettings = true },
@@ -500,7 +502,7 @@ fun HomeScreen(
                     AlphabetRail(
                         theme = state.theme,
                         letters = groupLetters,
-                        modifier = Modifier.width(if (compact) MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),
+                        modifier = Modifier.width(if (compact || LocalDensity.current.fontScale >= 1.4f) MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),
                         selectedLetter = activeLetter,
                         visualSettings = state.visualSettings,
                         onClick = onSelectLetter,
@@ -568,7 +570,9 @@ fun HomeScreen(
         current = state.visualSettings,
         onChange = viewModel::setVisualSettings,
         onDismiss = { showVisualSettings = false },
+        onAlphabetSettings = { showVisualSettings = false; showAlphabetSettings = true },
     )
+    if (showAlphabetSettings) AlphabetSettingsDialog(state.theme,state.visualSettings,viewModel::setVisualSettings){showAlphabetSettings=false}
     if (showWeatherPicker) WeatherAppDialog(
         apps = state.apps,
         selectedPackage = state.weatherPackage,
@@ -600,6 +604,7 @@ private fun Header(
     onLetterJump: () -> Unit,
     letterJumpEnabled: Boolean,
     onVisualSettings: () -> Unit,
+    onAlphabetSettings: () -> Unit,
     onSoundSettings: () -> Unit,
     onPersonalization: () -> Unit,
     onHomeSettings: () -> Unit,
@@ -669,6 +674,7 @@ private fun Header(
                 DropdownMenuItem(text = { Text("Inicio y gestos") }, onClick = { themeMenuExpanded = false; onHomeSettings() })
                 DropdownMenuItem(text = { Text("Personalización y respaldo") }, onClick = { themeMenuExpanded = false; onPersonalization() })
                 DropdownMenuItem(text = { Text("Sonidos y respuesta") }, onClick = { themeMenuExpanded = false; onSoundSettings() })
+                DropdownMenuItem(text = { Text("Barra A–Z · efectos y respuesta") }, onClick = { themeMenuExpanded = false; onAlphabetSettings() })
                 DropdownMenuItem(text = { Text("Movimiento y efectos") }, onClick = { themeMenuExpanded = false; onVisualSettings() })
                 DropdownMenuItem(text = { Text(if (weatherAppLabel == null) "Elegir app del clima" else "App del clima · $weatherAppLabel") }, onClick = { themeMenuExpanded = false; onChooseWeatherApp() })
                 DropdownMenuItem(text = { Text("Añadir widget") }, onClick = { themeMenuExpanded = false; onChooseWidgets() })

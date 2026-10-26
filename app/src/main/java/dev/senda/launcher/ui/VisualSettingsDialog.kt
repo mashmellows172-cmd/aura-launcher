@@ -17,7 +17,7 @@ import dev.senda.launcher.data.VisualSettings
 private object VisualTokens { val dialog = 560.dp; val gap = 10.dp; val target = 48.dp }
 
 @Composable
-fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> Unit, onDismiss: () -> Unit) {
+fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> Unit, onDismiss: () -> Unit, onAlphabetSettings: (() -> Unit)? = null) {
     var draft by remember(current) { mutableStateOf(current) }
     fun commit(value: VisualSettings) { draft = value; onChange(value) }
     val profiles = listOf("DEPTH" to "Profundidad", "FOLD" to "Pliegue 3D", "WAVE" to "Onda", "ORBIT" to "Órbita", "GLIDE" to "Deslizamiento", "NONE" to "Sin efecto")
@@ -47,9 +47,7 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                 onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion,
                 modifier = Modifier.semantics { contentDescription = "Duración de las transiciones" })
             HorizontalDivider()
-            EffectChoice("Índice A–Z", draft.railEffect, listOf("MAGNET" to "Imán", "SPRING" to "Resorte", "FADE" to "Suave", "NONE" to "Sin animación")) { commit(draft.copy(railEffect = it)) }
-            Text("La letra ampliada indica la sección elegida. Arrastra el índice para saltar directamente.", style = MaterialTheme.typography.bodySmall)
-            MotionToggle("Respuesta háptica del índice", draft.railHaptics) { commit(draft.copy(railHaptics = it)) }
+            if(onAlphabetSettings!=null) OutlinedButton(onClick=onAlphabetSettings,modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) { Text("Barra A–Z · efectos y respuesta") }
             EffectChoice("Entrada de los menús", draft.menuEffect, listOf("SPRING" to "Resorte 3D", "SLIDE" to "Deslizar", "FADE" to "Desvanecer", "NONE" to "Sin animación")) { commit(draft.copy(menuEffect = it)) }
             HorizontalDivider()
             MotionToggle("Glow del buscador", draft.glowEnabled) { commit(draft.copy(glowEnabled = it)) }
