@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.26.1-beta36 · 26 de octubre de2026
+
+Nothing:176 iconos de apps y32 funciones sin contenedor circular añadido. Siluetas dot-matrix de mayor tamaño y trazos más completos; fallback sin placa y contraste semántico en capas monocromas. Conserva iconos normales, packs, reemplazos y contenedores elegidos explícitamente. Otros temas sin cambios de recursos.
+
+Validación: lámina óptica de176 iconos y diff revisados; compilación/lint correctos,0 errores/26 advertencias/3 avisos. Firma, code36 y hashes de instalación/Descargas verificados. Sin suites ni FPS medidos; revisión visual física pendiente. [BETA36](docs/BETA36.md).
+
 ## 0.26.0-beta35 · 26 de octubre de2026
 
 Cambios: siete efectos A–Z y opción sin efecto; apartado dedicado con vista previa interactiva, intensidad, respuesta, tamaño/permanencia de burbuja y vibración. Dos columnas con texto grande. Persistencia y respaldo12 implementados por OpenCode y revisados; UI por Codex. Conserva ergonomía y ajustes personales.

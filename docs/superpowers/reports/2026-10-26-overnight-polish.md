@@ -23,3 +23,7 @@ Quota tool now reports0%/0% (fresh windows per tool); no reset consumed. Improve
 HomeScreen fallback removes default Nothing plate and uses full icon bounds; explicit custom holder and ORIGINAL paths preserved. Actual adaptive monochrome foreground alone gets semantic onSurface ink, included in cache key. Entire native color bitmap is NOT tint-filled (would turn opaque adaptive icons into blocks); normal bitmap keeps desaturation behavior. Personal image/pack priorities unchanged. Functional contact sheet regenerated without rewriting other theme masters.
 
 Version staged0.26.1-beta36/code36. assembleBeta/lintBeta running via exec session4786, log work/aura-beta36-build.log. Next: inspect final result (do not start duplicate build), sign same key, optional authorized-phone install/hash, write BETA36/CHANGELOG/continuity and push release checkpoint. No beta36 delivered yet, beta35 remains last installed. No automated suites run. H3 font weights and H4 transitions still pending.
+
+## H2 delivered — beta36
+
+Final build SUCCESSFUL2m40s; lint0 errors/26 warnings/3 hints. Same-key APK installed, serialZY22K88ZFL and code36 verified; local/transfer/Downloads hashes agree with BETA36.md. No settings/permission changes or forced navigation. H2 source/artwork complete with native visual review still pending. NEXT H3: missing PS4 medium/bold fonts (source/license verified), container/focus consistency and clipping; then H4 transitions and H5 audit. Do not repeat H1/H2. Update source ZIP/Git handoff after docs commit.

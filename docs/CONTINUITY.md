@@ -1,12 +1,12 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.26.0-beta35/code35. Consultar BETA35.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA35.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.26.1-beta36/code36. Consultar BETA36.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA36.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 
 1. Leer CHANGELOG.md y su apartado Pendiente antes de cambiar código.
 2. Revisar git status y actualizar sin sobrescribir cambios locales. Crear una rama por mejora.
-3. Corrección vigente del usuario: PS4 debe conservar la esencia y ergonomía de Aura. En beta32 se retiró Ps4Dashboard.kt; no restaurar el carrusel ni Biblioteca separada. Revisar en el Motorola. Nothing sin círculos y Razr siguen pendientes.
+3. Corrección vigente del usuario: PS4 debe conservar la esencia y ergonomía de Aura. En beta32 se retiró Ps4Dashboard.kt; no restaurar el carrusel ni Biblioteca separada. Revisar en el Motorola. Nothing sin placas predeterminadas implementado en beta36; revisión física y pulido Razr pendientes.
 4. Mantener iconos normales, reemplazos personales, favoritos, widgets, datos y firma de actualizaciones.
 5. Para SIII, usar artwork/touchwiz-s3/coverage.json:20/176,9 IA y11 equivalencias históricas;156 pendientes. No contar los antiguos círculos genéricos como restauración aprobada. Referencias y certeza en sus manifests.
 6. No conceder permisos del teléfono ni cambiar sus ajustes para validar. La ausencia de ADB no bloquea revisión de código.
