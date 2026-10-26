@@ -104,6 +104,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -1150,12 +1151,14 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val animatedRadius by animateDpAsState(holderRadius, tween(style.motionMillis), label = "icon-holder-shape")
     val holderShape = if (style.iconHolder == IconHolder.CIRCLE) CircleShape else RoundedCornerShape(animatedRadius)
     val monochrome = LocalIndustrialStyle.current.monochromeIcons
+    val bareNothing = familyTheme == dev.senda.launcher.data.LauncherTheme.NOTHING && !normal && !retro.customHolder
     val context = LocalContext.current
     val appearance = LocalAppearance.current
+    val monoInk = if (bareNothing) MaterialTheme.colorScheme.onSurface.toArgb() else android.graphics.Color.rgb(20, 20, 20)
     val pack = if (normal) null else LocalIconPack.current
     val sourceUri = if (normal) null else customIconUri ?: importedUri
     val preserveArtwork = sourceUri != null && !retro.customHolder
-    val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri"
+    val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri:$monoInk"
     val cached = remember(iconKey) { AppIconCache.get(iconKey) }
     val bitmap by key(iconKey, sourceUri) { produceState<ImageBitmap?>(initialValue = cached) {
         value = withContext(Dispatchers.IO) {
@@ -1165,7 +1168,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
             custom?.also { AppIconCache.put(iconKey, it) } ?: cached ?: runCatching {
                 val drawable = pack?.drawable(app) ?: onLoadIcon(app)
                 val nativeMono = if (monochrome && android.os.Build.VERSION.SDK_INT >= 33 && drawable is android.graphics.drawable.AdaptiveIconDrawable) drawable.monochrome else null
-                (nativeMono?.mutate()?.apply { setTint(android.graphics.Color.rgb(20, 20, 20)) } ?: drawable).toBitmap(width = 128, height = 128).asImageBitmap()
+                (nativeMono?.mutate()?.apply { setTint(monoInk) } ?: drawable).toBitmap(width = 128, height = 128).asImageBitmap()
             }
                 .getOrNull()?.also { AppIconCache.put(iconKey, it) }
         }
@@ -1173,14 +1176,14 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     }
     Box(
         modifier = Modifier.size(appearance.iconSize.dp).animateContentSize(tween(style.motionMillis))
-            .background(if (normal || preserveArtwork) androidx.compose.ui.graphics.Color.Transparent else if (monochrome) IndustrialTokens.iconBackground else MaterialTheme.colorScheme.surfaceVariant, holderShape)
+            .background(if (normal || preserveArtwork || bareNothing) androidx.compose.ui.graphics.Color.Transparent else if (monochrome) IndustrialTokens.iconBackground else MaterialTheme.colorScheme.surfaceVariant, holderShape)
             .then(if (retro.enabled && !normal && !monochrome && !preserveArtwork) Modifier.background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), holderShape).border(.8.dp, MaterialTheme.colorScheme.outline, holderShape) else Modifier),
         contentAlignment = Alignment.Center,
     ) {
         bitmap?.let { loadedBitmap ->
-            androidx.compose.foundation.Image(loadedBitmap, contentDescription = null, modifier = Modifier.size((appearance.iconSize * if (normal || preserveArtwork) 1f else 30f / 42f).dp), contentScale = ContentScale.Fit,
+            androidx.compose.foundation.Image(loadedBitmap, contentDescription = null, modifier = Modifier.size((appearance.iconSize * if (normal || preserveArtwork || bareNothing) 1f else 30f / 42f).dp), contentScale = ContentScale.Fit,
                 colorFilter = if (monochrome) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0f) }) else null)
-        } ?: Text(app.label.take(1).uppercase(LocalConfiguration.current.locales[0]), color = if (monochrome) IndustrialTokens.iconInk else MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+        } ?: Text(app.label.take(1).uppercase(LocalConfiguration.current.locales[0]), color = if (bareNothing) MaterialTheme.colorScheme.onSurface else if (monochrome) IndustrialTokens.iconInk else MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
     }
 }
 

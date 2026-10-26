@@ -120,20 +120,35 @@ def make(theme, glyph, monochrome=None, brand=(30,70,95)):
     s=Scene()
     if theme=='nothing':
         identity = monochrome if monochrome is not None else glyph
-        mask=identity.getchannel('A')
-        threshold=105
-        if ImageStat.Stat(mask).mean[0] > 225 or monochrome is None and ImageStat.Stat(mask).mean[0] > 170:
-            luminance=ImageOps.grayscale(identity)
-            edge=list(luminance.crop((0,0,luminance.width,1)).getdata())
-            if sum(edge)/max(1,len(edge)) > 220:luminance=ImageOps.invert(luminance)
-            visible_values=[luminance.getpixel((x,y)) for y in range(identity.height) for x in range(identity.width) if identity.getpixel((x,y))[3]>160]
-            if visible_values:threshold=(min(visible_values)+max(visible_values))//2
-            mask=ImageChops.multiply(mask,luminance)
-        mask.thumbnail((19,19),Image.Resampling.LANCZOS)
-        mx=(64-mask.width*2.15)/2;my=(64-mask.height*2.15)/2
+        mask = identity.getchannel('A')
+        bounds = mask.point(lambda value: 255 if value >= 64 else 0).getbbox()
+        if bounds:
+            cropped = mask.crop(bounds)
+            occupancy = sum(value >= 128 for value in cropped.getdata()) / (cropped.width * cropped.height)
+            # Some Android monochrome layers are solid adaptive masks, not logos.
+            if monochrome is not None and occupancy > .80:
+                identity = glyph
+                mask = identity.getchannel('A')
+        if ImageStat.Stat(mask).mean[0] > 170:
+            luminance = ImageOps.grayscale(identity)
+            edge = list(luminance.crop((0,0,luminance.width,1)).getdata())
+            if sum(edge) / max(1,len(edge)) > 220:
+                luminance = ImageOps.invert(luminance)
+            visible = [luminance.getpixel((x,y)) for y in range(identity.height) for x in range(identity.width) if identity.getpixel((x,y))[3] > 160]
+            threshold = (min(visible) + max(visible)) / 2 if visible else 128
+            mask = ImageChops.multiply(mask, luminance.point(lambda value: 255 if value >= threshold else 0))
+        bounds = mask.point(lambda value: 255 if value >= 48 else 0).getbbox()
+        if bounds:
+            mask = mask.crop(bounds)
+        # Sample coverage, rather than hard luminance, so thin strokes survive.
+        mask.thumbnail((23,23), Image.Resampling.LANCZOS)
+        pitch = 2.0
+        mx = (64 - mask.width * pitch) / 2
+        my = (64 - mask.height * pitch) / 2
         for y in range(mask.height):
             for x in range(mask.width):
-                if mask.getpixel((x,y))>=max(45,threshold):s.ellipse(mx+x*2.15+1.075,my+y*2.15+1.075,.79,.79,'#F4F3ED')
+                if mask.getpixel((x,y)) >= 64:
+                    s.ellipse(mx+x*pitch+1, my+y*pitch+1, .78, .78, '#F4F3ED')
         return s
     if theme=='sense':
         s.rect(5,6,54,52,s.gradient('base','#B8C1BC','#515D58'),8,'#18221D',1)
