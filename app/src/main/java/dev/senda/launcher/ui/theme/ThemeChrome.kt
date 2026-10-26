@@ -6,6 +6,9 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,5 +59,24 @@ internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherThem
         Text(count.toString(), Modifier.background(MaterialTheme.colorScheme.surfaceVariant, profile.chromeShape())
             .padding(horizontal = 9.dp, vertical = 3.dp), style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+/** One holder silhouette for both generated artwork and native/custom drawables. */
+@Composable
+internal fun animatedIconHolderShape(holder: IconHolder, durationMs: Int): Shape {
+    val reduced = dev.senda.launcher.ui.LocalMotionSettings.current.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val target = when (holder) {
+        IconHolder.SQUIRCLE -> 15.dp
+        IconHolder.ROUNDED -> 12.dp
+        IconHolder.BEVELED -> 5.dp
+        else -> 21.dp
+    }
+    val radius by animateDpAsState(target, tween(if (reduced) 0 else durationMs), label = "shared-icon-holder")
+    return when (holder) {
+        IconHolder.CIRCLE -> androidx.compose.foundation.shape.CircleShape
+        IconHolder.PILL -> RoundedCornerShape(50)
+        IconHolder.BEVELED -> CutCornerShape(radius)
+        else -> RoundedCornerShape(radius)
     }
 }

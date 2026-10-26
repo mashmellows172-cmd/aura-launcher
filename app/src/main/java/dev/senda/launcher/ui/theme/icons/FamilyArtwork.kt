@@ -30,13 +30,7 @@ fun FamilyArtwork(icon: FamilyIcon, theme: LauncherTheme, modifier: Modifier = M
 @Composable
 private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boolean) {
     val style = LocalSkinStyle.current
-    val shape = when (style.iconHolder) {
-        IconHolder.CIRCLE -> CircleShape
-        IconHolder.PILL -> RoundedCornerShape(50)
-        IconHolder.BEVELED -> CutCornerShape(5.dp)
-        IconHolder.SQUIRCLE -> RoundedCornerShape(16.dp)
-        IconHolder.ROUNDED -> RoundedCornerShape(10.dp)
-    }
+    val shape = dev.senda.launcher.ui.theme.animatedIconHolderShape(style.iconHolder, style.motionMillis)
     Box(modifier.then(if (customHolder) Modifier.background(Color(0xFF353C43), shape) else Modifier), contentAlignment = Alignment.Center) {
         Image(painterResource(resource), contentDescription = null,
             modifier = Modifier.fillMaxSize(if (customHolder) .82f else 1f), contentScale = ContentScale.Fit)

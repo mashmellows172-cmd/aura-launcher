@@ -1141,15 +1141,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
         dev.senda.launcher.data.LocalRetroAssets.current?.icon(app.packageName, dev.senda.launcher.ui.theme.glyphFor(app.packageName)?.name) else null
     val familyTheme = if (LocalIndustrialStyle.current.enabled) dev.senda.launcher.data.LauncherTheme.NOTHING else retro.theme
     if (importedUri == null && familyTheme != null && !LocalAppearance.current.highContrast && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null && renderFamilyAppIcon(app, familyTheme, retro.customHolder)) return
-    val holderRadius = when (style.iconHolder) {
-        IconHolder.SQUIRCLE -> 15.dp
-        IconHolder.CIRCLE -> 21.dp
-        IconHolder.ROUNDED -> 12.dp
-        IconHolder.BEVELED -> 5.dp
-        IconHolder.PILL -> 21.dp
-    }
-    val animatedRadius by animateDpAsState(holderRadius, tween(style.motionMillis), label = "icon-holder-shape")
-    val holderShape = if (style.iconHolder == IconHolder.CIRCLE) CircleShape else RoundedCornerShape(animatedRadius)
+    val holderShape = dev.senda.launcher.ui.theme.animatedIconHolderShape(style.iconHolder, style.motionMillis)
     val monochrome = LocalIndustrialStyle.current.monochromeIcons
     val bareNothing = familyTheme == dev.senda.launcher.data.LauncherTheme.NOTHING && !normal && !retro.customHolder
     val context = LocalContext.current
@@ -1158,7 +1150,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val pack = if (normal) null else LocalIconPack.current
     val sourceUri = if (normal) null else customIconUri ?: importedUri
     val preserveArtwork = sourceUri != null && !retro.customHolder
-    val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri:$monoInk"
+    val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri:${if (monochrome) monoInk else 0}"
     val cached = remember(iconKey) { AppIconCache.get(iconKey) }
     val bitmap by key(iconKey, sourceUri) { produceState<ImageBitmap?>(initialValue = cached) {
         value = withContext(Dispatchers.IO) {
