@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -80,7 +79,6 @@ fun ThemedAudioWidget(
                     }, style = MaterialTheme.typography.labelSmall, color = scheme.onSurfaceVariant,
                         fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(title, style = MaterialTheme.typography.titleSmall,
-                        fontFamily = if (theme == LauncherTheme.RAZR || theme == LauncherTheme.NOTHING) FontFamily.Monospace else FontFamily.SansSerif,
                         fontWeight = if (theme == LauncherTheme.XPERIA) FontWeight.Light else FontWeight.Medium,
                         color = scheme.onSurface, maxLines = if (compact) 1 else 2, overflow = TextOverflow.Ellipsis)
                     if (!compact) Text(if (info.generic) "Modo básico · tocar para configurar" else listOfNotNull(info.artist, info.appLabel).distinct().joinToString(" · "),

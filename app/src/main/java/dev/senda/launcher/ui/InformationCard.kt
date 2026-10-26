@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +32,6 @@ internal fun InformationCard(label:String,value:String,kind:HomeBlock,onClick:()
             InformationGlyph(kind, scheme.primary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, style = MaterialTheme.typography.labelSmall, fontSize = 12.sp,
-                    fontFamily = if (theme == LauncherTheme.RAZR) FontFamily.Monospace else FontFamily.SansSerif,
                     color = scheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(value, style = MaterialTheme.typography.bodyMedium, fontSize = style.textSize.sp,
                     lineHeight = (style.textSize * 1.3f).sp, maxLines = lineCount,

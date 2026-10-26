@@ -2,6 +2,14 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.25.1-beta34 · 26 de octubre de2026
+
+Cambios: corrección implementada por OpenCode tras auditoría delegada y validada por Codex. El mensaje del encabezado, las etiquetas de tarjetas, el título del audio y el reloj flip Sense heredan la tipografía del tema, eliminando familias genéricas que se imponían a las fuentes de beta33. Los iconos y la navegación de Aura se mantienen.
+
+Validación: diff revisado, compilación/lint correctos (0 errores,26 advertencias,3 avisos); firma, instalación code34 y hashes del APK/Descargas verificados. Sin suites automáticas ni afirmaciones de revisión visual de todos los temas. Informe del revisor contrastado; alerta de caché descartada por no corresponder al flujo real.
+
+Fuente: [BETA34.md](docs/BETA34.md) y [trabajo delegado](docs/delegation/README.md).
+
 ## 0.25.0-beta33 · 26 de octubre de2026
 
 Cambios: catálogo PS4 de176 apps inventariadas con placas azules e identidades blancas/azul hielo, recursos precalculados y prioridad de modos Normales/packs/reemplazos conservada. Tipografías locales distintas para las siete familias principales, aplicadas a los15 roles de interfaz. Droid Sans y Roboto de época; alternativas libres identificadas para LG, RAZR y PS4. La estructura y gestos de Aura de beta32 se mantienen.

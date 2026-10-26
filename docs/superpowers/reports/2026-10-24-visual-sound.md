@@ -60,3 +60,8 @@ Se retira la pantalla PS4 separada, carrusel y rutas PSN. Inicio común, listas 
 ## Beta33 · iconos PS4 y tipografía por familia · 26 de octubre de2026
 
 176 escenas SVG/recursos192px PS4:72 monocromos válidos,98 identidades capturadas y6 contrapartes Sony. Revisión corrigió máscaras sólidas, símbolos pequeños y pérdida de contraste de marcas saturadas. Tipografía de15 roles por tema con fuentes locales/licencias; no se afirma identidad con fuentes propietarias. Build/lint1m52s,0 errores/26 advertencias/3 avisos. Firma anterior, instalación Success code33 y hash de Descargas comprobados. SHA2562e0c5779e21c6a1528ef4e0dec55e5bd483a89a41c0196306468a6995318729b. Sin suites; QA física de todos los temas pendiente, teléfono en otra aplicación y sin navegación forzada.
+
+
+## Beta34 · trabajo delegado a OpenCode · 26 de octubre de2026
+
+Dos ejecuciones reales OpenCodeCLI2.1.4, modelo gratuito nemotron-3.5-super-vl-free: auditoría y corrección de4 archivos. Diff revisado por Codex; F2 confirmado y F1/caché descartado. Build/lint2m22s,0 errores/26 advertencias/3 avisos. Firma previa, instalación Success code34 y hash de Descargas comprobados. SHA256cc9f394103f17b22eeda1c67402800abdc030eb9d877be65850b61af969220c5. Sin suites ni navegación forzada en el teléfono. Trazabilidad en docs/delegation y agentes acotados en .opencode/agents.

@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ internal fun ThemedHeaderCaption(theme: LauncherTheme, message: String, reduced:
     val paper = theme == LauncherTheme.OPTIMUS && !highContrast
     val ink = if (paper) profile!!.ink else MaterialTheme.colorScheme.onBackground
     val style = MaterialTheme.typography.labelSmall.copy(
-        fontFamily = if (theme == LauncherTheme.NOTHING || theme == LauncherTheme.RAZR) FontFamily.Monospace else FontFamily.SansSerif,
         fontWeight = when (theme) { LauncherTheme.XPERIA -> FontWeight.Light; LauncherTheme.SENSE -> FontWeight.Medium; else -> FontWeight.Normal },
         letterSpacing = if (theme == LauncherTheme.XPERIA) .6.sp else .1.sp,
     )

@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +62,7 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
                             drawLine(Color.White.copy(alpha = .8f), Offset(0f, middle + 1.dp.toPx()), Offset(size.width, middle + 1.dp.toPx()), .6.dp.toPx())
                             drawRoundRect(Color(0xFF7B837A), cornerRadius = CornerRadius(4.dp.toPx()), style = Stroke(.7.dp.toPx()))
                         }.padding(horizontal = 7.dp, vertical = 2.dp)) {
-                        Text(digits, color = Color(0xFF242A24), fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold, fontSize = font, maxLines = 1)
+                        Text(digits, style = MaterialTheme.typography.headlineLarge, color = Color(0xFF242A24), fontWeight = FontWeight.Bold, fontSize = font, maxLines = 1)
                     }
                 }
             }
