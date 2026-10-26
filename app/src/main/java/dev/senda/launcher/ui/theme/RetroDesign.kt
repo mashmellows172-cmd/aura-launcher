@@ -30,38 +30,7 @@ fun retroShapes(theme: LauncherTheme): Shapes {
     val radius = (historicalProfile(theme)?.radius ?: 4).dp
     return Shapes(extraSmall = RoundedCornerShape(3.dp), small = RoundedCornerShape(radius / 2), medium = RoundedCornerShape(radius), large = RoundedCornerShape(radius), extraLarge = RoundedCornerShape(radius + 4.dp))
 }
-fun retroTypography(theme: LauncherTheme): Typography {
-    val base = Typography()
-    if (theme == LauncherTheme.PS4) {
-        val font = FontFamily(
-            androidx.compose.ui.text.font.Font(dev.senda.launcher.R.font.noto_sans_regular, FontWeight.Normal),
-            androidx.compose.ui.text.font.Font(dev.senda.launcher.R.font.noto_sans_light, FontWeight.Light))
-        return base.copy(
-            displayLarge=base.displayLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            displayMedium=base.displayMedium.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            displaySmall=base.displaySmall.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            headlineLarge=base.headlineLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            headlineMedium=base.headlineMedium.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            headlineSmall=base.headlineSmall.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            titleLarge=base.titleLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
-            titleMedium=base.titleMedium.copy(fontFamily=font),titleSmall=base.titleSmall.copy(fontFamily=font),
-            bodyLarge=base.bodyLarge.copy(fontFamily=font),bodyMedium=base.bodyMedium.copy(fontFamily=font),bodySmall=base.bodySmall.copy(fontFamily=font),
-            labelLarge=base.labelLarge.copy(fontFamily=font),labelMedium=base.labelMedium.copy(fontFamily=font),labelSmall=base.labelSmall.copy(fontFamily=font))
-    }
-    if(theme==LauncherTheme.RAZR) return base.copy(
-        titleLarge=base.titleLarge.copy(fontFamily=FontFamily.Monospace,fontWeight=FontWeight.Medium),
-        titleMedium=base.titleMedium.copy(fontFamily=FontFamily.Monospace),
-        labelLarge=base.labelLarge.copy(fontFamily=FontFamily.Monospace),
-        labelSmall=base.labelSmall.copy(fontFamily=FontFamily.Monospace))
-    val weight = if (theme == LauncherTheme.SENSE) FontWeight.Medium else if(theme==LauncherTheme.XPERIA || theme==LauncherTheme.PS4)FontWeight.Light else FontWeight.Normal
-    return base.copy(
-        titleLarge = base.titleLarge.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
-        titleMedium = base.titleMedium.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
-        headlineSmall = base.headlineSmall.copy(fontFamily = FontFamily.SansSerif, fontWeight = weight),
-        labelSmall = base.labelSmall.copy(fontFamily = FontFamily.SansSerif,fontWeight=weight,letterSpacing=if(theme==LauncherTheme.XPERIA)1.sp else .4.sp),
-        bodyLarge = base.bodyLarge.copy(fontFamily = FontFamily.SansSerif),
-    )
-}
+fun retroTypography(theme: LauncherTheme): Typography = historicalTypography(theme)
 
 enum class RetroGlyph { PHONE, CAMERA, BROWSER, MUSIC, VIDEO, MESSAGE, CONTACTS, CLOCK, CALENDAR, SETTINGS, FILES, GALLERY, CALCULATOR, STORE, EMAIL, MAPS, NOTES }
 /** Legacy category lookup for an explicitly enabled personal collection, never default artwork. */

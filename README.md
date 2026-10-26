@@ -12,9 +12,15 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: **0.24.1-beta32**, variante optimizada con R8. [Entrega y límites](docs/BETA32.md). Los APK y claves de firma quedan fuera del repositorio.
+Beta actual: **0.25.0-beta33**, variante optimizada con R8. [Entrega y límites](docs/BETA33.md). Los APK y claves de firma quedan fuera del repositorio.
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
+
+## Nuevo en beta33
+
+- 176 iconos PS4 derivados del inventario real, con placas azules y símbolos blancos/azul hielo.
+- Tipografías propias de cada familia aplicadas en listas, buscador, menús y encabezados.
+- [Muestra de iconos](artwork/ps4/app-icons/preview.png) y [muestra tipográfica/procedencia](artwork/theme-fonts/README.md).
 
 ## Nuevo en beta32
 

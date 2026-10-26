@@ -55,3 +55,8 @@ Build final assembleBeta/lintBeta correcto en2m21s:0 errores,16 advertencias,3 a
 ## Beta32 · corrección de ergonomía · 26 de octubre de2026
 
 Se retira la pantalla PS4 separada, carrusel y rutas PSN. Inicio común, listas verticales, apertura directa, búsqueda, A–Z, gestos y widgets restaurados; índices cuentan cada favorita. Acabado PS4 conservado. Compilación/lint2m31s,0 errores/25 advertencias/3 avisos. Firma original y versión32 verificadas. APK SHA256a1b07677292177a60a9dfc16c87f4e6404c6df05e67273d127e11e19f870a722. No instalado: Motorola ausente; dirección solicitada una vez. QA física pendiente, revisión estática en QA-beta32.md. Sin suites automáticas.
+
+
+## Beta33 · iconos PS4 y tipografía por familia · 26 de octubre de2026
+
+176 escenas SVG/recursos192px PS4:72 monocromos válidos,98 identidades capturadas y6 contrapartes Sony. Revisión corrigió máscaras sólidas, símbolos pequeños y pérdida de contraste de marcas saturadas. Tipografía de15 roles por tema con fuentes locales/licencias; no se afirma identidad con fuentes propietarias. Build/lint1m52s,0 errores/26 advertencias/3 avisos. Firma anterior, instalación Success code33 y hash de Descargas comprobados. SHA2562e0c5779e21c6a1528ef4e0dec55e5bd483a89a41c0196306468a6995318729b. Sin suites; QA física de todos los temas pendiente, teléfono en otra aplicación y sin navegación forzada.

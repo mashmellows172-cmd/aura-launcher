@@ -2,6 +2,14 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.25.0-beta33 · 26 de octubre de2026
+
+Cambios: catálogo PS4 de176 apps inventariadas con placas azules e identidades blancas/azul hielo, recursos precalculados y prioridad de modos Normales/packs/reemplazos conservada. Tipografías locales distintas para las siete familias principales, aplicadas a los15 roles de interfaz. Droid Sans y Roboto de época; alternativas libres identificadas para LG, RAZR y PS4. La estructura y gestos de Aura de beta32 se mantienen.
+
+Validación: revisión óptica de iconos/fuentes, compilación y lint correctos (0 errores,26 advertencias,3 avisos). Instalación code33 y hashes de APK/Descargas verificados. Revisión física de todos los temas y medición de FPS pendientes. Recursos modernos son interpretaciones, no pack oficial Sony ni certificación de fuentes propietarias idénticas.
+
+Fuente: [BETA33.md](docs/BETA33.md).
+
 ## 0.24.1-beta32 · 26 de octubre de2026
 
 Cambios: PS4 recupera la estructura común de Aura: favoritas y apps verticales, búsqueda permanente, A–Z y gestos. Se retiran el carrusel, la Biblioteca separada y las acciones PSN. Apertura con un toque, objetivos de toque más amplios y foco visible. Se conservan el acabado azul, las ondas y Noto Sans. Índices alfabéticos corregidos para contar cada favorita.

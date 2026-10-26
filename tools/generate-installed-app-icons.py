@@ -229,6 +229,7 @@ private val installedArtwork = mapOf(
 )
 
 @DrawableRes fun installedAppArtwork(packageName: String, theme: LauncherTheme): Int? {
+    if (theme == LauncherTheme.PS4) return ps4AppArtwork(packageName)
     if (theme == LauncherTheme.TOUCHWIZ) return s3AppArtwork(packageName)
     val slot = when (theme) {
         LauncherTheme.NOTHING -> 0; LauncherTheme.SENSE -> 1; LauncherTheme.TOUCHWIZ -> 2

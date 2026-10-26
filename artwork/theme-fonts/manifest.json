@@ -1,0 +1,85 @@
+[
+  {
+    "file": "droid_sans_regular.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-2.3.7_r1/data/fonts/DroidSans.ttf",
+    "sha256": "f51b88945f4c1b236f44b8d55a2d304316869127e95248c435c23f1e4142a7db",
+    "bytes": 190776
+  },
+  {
+    "file": "droid_sans_bold.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-2.3.7_r1/data/fonts/DroidSans-Bold.ttf",
+    "sha256": "2f529a3e60c007979d95d29794c3660694217fb882429fb33919d2245fe969e9",
+    "bytes": 194488
+  },
+  {
+    "file": "roboto_ics_regular.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-4.0.4_r2.1/data/fonts/Roboto-Regular.ttf",
+    "sha256": "e7fc7282c9e0d97642126fde016b0a6ce3a2b1b1305913468485824e9a11d6d8",
+    "bytes": 79396
+  },
+  {
+    "file": "roboto_ics_bold.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-4.0.4_r2.1/data/fonts/Roboto-Bold.ttf",
+    "sha256": "cc68fedb4680c11fcbc889ebe3cc18c4e482ad4e5a0291d889906bb357218525",
+    "bytes": 79620
+  },
+  {
+    "file": "roboto_condensed_regular.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-4.3_r3.1/data/fonts/RobotoCondensed-Regular.ttf",
+    "sha256": "a654c5782e77a49b63c5d8bbb06a5788733e39eadb82d44f994cb906ef84ef8c",
+    "bytes": 114568
+  },
+  {
+    "file": "lato_regular.ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Regular.ttf",
+    "sha256": "d636e4683231f931eda222d588e944d082bfd3bdba02f928bee461c0f185b251",
+    "bytes": 656568
+  },
+  {
+    "file": "lato_bold.ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Bold.ttf",
+    "sha256": "8a0aace75d33794eece4b28187bfc1df0bbd2888b5d8a56e01788c8d65d16be1",
+    "bytes": 656544
+  },
+  {
+    "file": "share_tech_mono.ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/sharetechmono/ShareTechMono-Regular.ttf",
+    "sha256": "9ceab1f87414829af259c0f537573ae03ef7dd3147c0b27a36a1a0beb6732677",
+    "bytes": 43272
+  },
+  {
+    "file": "app/src/main/res/font/roboto_condensed_bold.ttf",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-4.3_r3.1/data/fonts/RobotoCondensed-Bold.ttf",
+    "sha256": "d0cf2560f6423ab683cc21711301eab4df7ff5c4b11b4721207c6e2197b3cf6f",
+    "bytes": 115036
+  },
+  {
+    "file": "artwork/theme-fonts/LATO-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lato/OFL.txt",
+    "sha256": "74ba064d03f1f1c4a952da936c3eb71866c34404916734de3cae73b34357e59e",
+    "bytes": 4407
+  },
+  {
+    "file": "artwork/theme-fonts/SHARE-TECH-MONO-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/sharetechmono/OFL.txt",
+    "sha256": "9d96f445b6e9c701428811d0177f894874f8d6f07ecc30d568c506542368f3ff",
+    "bytes": 4429
+  },
+  {
+    "file": "artwork/theme-fonts/AOSP-DROID-NOTICE.txt",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-2.3.7_r1/data/fonts/NOTICE",
+    "sha256": "38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a",
+    "bytes": 10695
+  },
+  {
+    "file": "artwork/theme-fonts/AOSP-ROBOTO-NOTICE.txt",
+    "source": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-4.0.4_r2.1/data/fonts/NOTICE",
+    "sha256": "38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a",
+    "bytes": 10695
+  },
+  {
+    "file": "APACHE-2.0.txt",
+    "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+]

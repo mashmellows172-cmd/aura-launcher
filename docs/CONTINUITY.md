@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.24.1-beta32/code32. Consultar BETA32.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA32.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.25.0-beta33/code33. Consultar BETA33.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA33.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 
@@ -21,3 +21,5 @@
 - Plan previo: superpowers/plans/2026-10-25-s3-ps4.md; registro: superpowers/reports/2026-10-24-visual-sound.md.
 
 No se afirma120fps, equivalencia total con PS4 ni fidelidad histórica de todos los recursos. Verificar esas afirmaciones antes de documentarlas como logradas.
+
+Beta33: iconos PS4 en artwork/ps4/app-icons y Ps4AppArtwork.kt, tipografías en ThemeTypography.kt; procedencia en artwork/theme-fonts. No volver a fuentes genéricas compartidas ni a la pantalla de consola retirada. Catálogo176/176 de la captura, no garantía de cobertura de apps instaladas después. Se conservan Normales y reemplazos.

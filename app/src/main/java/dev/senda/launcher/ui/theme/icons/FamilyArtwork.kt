@@ -46,6 +46,7 @@ private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boo
 /** True only for a known system function; modern/unmatched applications keep their actual drawable. */
 @Composable
 fun renderFamilyAppIcon(app: LaunchableApp, theme: LauncherTheme, customHolder: Boolean): Boolean {
+    if (theme == LauncherTheme.PS4) return renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
     if (theme !in iconFamilyThemes) return false
     if (renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)) return true
     if (theme == LauncherTheme.TOUCHWIZ) return false
