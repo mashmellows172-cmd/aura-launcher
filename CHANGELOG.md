@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.27.0-beta38 · 26 de octubre de2026 · rama de validación
+
+Editor de temas con Memento (50 pasos), Undo/Redo agrupado por gesto, variantes y borrador Room, copia privada de fondos y vista previa reutilizando componentes reales. Revisión SIII a tamaño Inicio:20 candidatos existentes/156 pendientes; no se generaron ni activaron iconos nuevos. Módulos Macrobenchmark/Baseline Profiles y protocolo de reposo añadidos.
+
+Compilación beta/performance, módulos de medición y lint correctos:3m9s;0 errores,30 advertencias,3 avisos. APK firmado con certificado original. **Sin instalación ni mediciones físicas; perfiles propios pendientes de generar.** Rama codex/phase1-theme-editor, sin fusionar a main. Fase2 no iniciada. [BETA38](docs/BETA38.md).
+
 ## 0.26.2-beta37 · 26 de octubre de2026
 
 Formas coherentes para iconos temáticos/nativos y paneles RAZR; foco en tarjetas, diálogos por tema, filas de altura adaptable y pesos Noto reales en PS4. Transiciones con asentamiento suave, origen reiniciado y vista previa que respeta movimiento reducido. Refinamiento de clave de caché validado tras auditoría OpenCode; recomendación incorrecta sobre foco rechazada.

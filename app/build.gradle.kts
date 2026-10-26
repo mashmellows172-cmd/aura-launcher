@@ -1,4 +1,6 @@
 plugins {
+    id("androidx.baselineprofile")
+    id("com.google.devtools.ksp")
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
 }
@@ -11,8 +13,8 @@ android {
         applicationId = "dev.senda.launcher"
         minSdk = 29
         targetSdk = 37
-        versionCode = 37
-        versionName = "0.26.2-beta37"
+        versionCode = 38
+        versionName = "0.27.0-beta38"
     }
 
     buildTypes {
@@ -24,6 +26,13 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("performance") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".benchmark"
+            isDebuggable = false
+            signingConfig = getByName("debug").signingConfig
+            matchingFallbacks += listOf("release")
         }
         create("beta") {
             initWith(getByName("release"))
@@ -50,7 +59,16 @@ composeCompiler {
     }
 }
 
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+
+baselineProfile { automaticGenerationDuringBuild = false }
+
 dependencies {
+    baselineProfile(project(":baselineprofile"))
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
     val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)

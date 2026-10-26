@@ -78,7 +78,7 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
     val reading=if(connected)controller.weatherReading else null
     Box(Modifier.width(104.dp).heightIn(min=72.dp).combinedClickable(onClick=if(reading!=null)onOpen else onConfigure,onLongClick=onConfigure)
         .semantics(mergeDescendants=true){contentDescription=if(reading!=null)"Clima de ${reading.place}: ${reading.temperature}. Datos de $sourceLabel" else "Configurar clima de $sourceLabel";role=Role.Button},contentAlignment=Alignment.Center){
-        if(connected) key(id){
+        if(connected && !LocalThemePreview.current) key(id){
             Box(Modifier.size(1.dp).clearAndSetSemantics{}) {
             AndroidView(factory={context->controller.host.createView(context,id,info).apply{visibility=android.view.View.INVISIBLE;importantForAccessibility=android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
                 @Suppress("DEPRECATION") updateAppWidgetSize(null,120,90,120,90)}},

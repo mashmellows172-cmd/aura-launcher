@@ -101,6 +101,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
@@ -348,7 +350,7 @@ fun HomeScreen(
     }
 
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController) {
-    Box(Modifier.fillMaxSize().homeGestures(executeGesture).pointerInput(state.lockGesture) {
+    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures(executeGesture).pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
     }) {
         if (wallpaperBitmap != null && !state.appearance.highContrast) {
@@ -503,7 +505,7 @@ fun HomeScreen(
                     AlphabetRail(
                         theme = state.theme,
                         letters = groupLetters,
-                        modifier = Modifier.width(if (compact || LocalDensity.current.fontScale >= 1.4f) MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),
+                        modifier = Modifier.testTag("aura-alphabet-rail").width(if (compact || LocalDensity.current.fontScale >= 1.4f) MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),
                         selectedLetter = activeLetter,
                         visualSettings = state.visualSettings,
                         onClick = onSelectLetter,
@@ -559,7 +561,7 @@ fun HomeScreen(
             onDismiss = { showHiddenApps = false },
         )
     }
-    if (showThemePicker) ThemeEditorDialog(state, viewModel) { showThemePicker = false }
+    if (showThemePicker) ThemeEditorDialog(state, viewModel, widgetController) { showThemePicker = false }
     if (showHomeSettings) HomeSettingsDialog(state, viewModel, onRequestCalendar, onAppPermissions, { showNotificationHelp = true }) { showHomeSettings = false }
     if (showNotificationHelp) AuraAlertDialog(
         onDismissRequest = { showNotificationHelp = false }, title = { Text("Gestos del dispositivo") },
@@ -584,7 +586,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Header(
+internal fun Header(
     theme: LauncherTheme,
     clockTime: String,
     avatarUri: String?,
@@ -917,7 +919,7 @@ private fun DefaultHomeCard(onChooseHome: () -> Unit) {
 }
 
 @Composable
-private fun AppSections(
+internal fun AppSections(
     modifier: Modifier = Modifier,
     widgetController: WidgetController,
     dashboardState: HomeUiState,
@@ -942,7 +944,7 @@ private fun AppSections(
     val locale = LocalConfiguration.current.locales[0]
     val collator = remember(locale) { Collator.getInstance(locale) }
     LazyColumn(
-        modifier = modifier.fillMaxSize().nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
+        modifier = modifier.fillMaxSize().testTag("aura-app-list").nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
         state = listState,
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),

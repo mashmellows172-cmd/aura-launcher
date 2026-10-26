@@ -39,3 +39,10 @@ internal fun historicalTypography(theme:LauncherTheme):Typography=when(theme) {
     LauncherTheme.PS4->ps4Type
     else->Typography()
 }
+
+internal fun variantTypography(choice:String):Typography? = when(choice) {
+    "NOTO" -> ps4Type
+    "MONO" -> razrType
+    "CONDENSED" -> xperiaType
+    else -> null
+}

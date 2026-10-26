@@ -49,6 +49,16 @@ fun WidgetPickerDialog(controller: WidgetController, onDismiss: () -> Unit) {
 
 @Composable
 fun WidgetShelf(controller: WidgetController) {
+    if (dev.senda.launcher.ui.LocalThemePreview.current) {
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            controller.widgets.forEach { widget ->
+                Surface(Modifier.fillMaxWidth().height(widget.heightDp.dp), color=MaterialTheme.colorScheme.surfaceVariant) {
+                    Box(contentAlignment=Alignment.Center) { Text("Widget · vista previa pasiva") }
+                }
+            }
+        }
+        return
+    }
     var editing by rememberSaveable { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {

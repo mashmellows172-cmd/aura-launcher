@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
         updateHomeState()
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            androidx.activity.compose.ReportDrawnWhen { !uiState.isLoading && !uiState.iconPackLoading }
             val systemIsDark = isSystemInDarkTheme()
             val darkTheme = uiState.theme.isDarkSkin(systemIsDark)
             SideEffect {
@@ -73,10 +74,10 @@ class MainActivity : ComponentActivity() {
             }
             CompositionLocalProvider(dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
-            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion) {
+            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice) {
                 HomeScreen(
                     viewModel = viewModel,
-                    isDefaultHome = isDefaultHome,
+                    isDefaultHome = isDefaultHome || packageName.endsWith(".benchmark"),
                     onChooseHome = ::requestHomeRole,
                     widgetController = widgets,
                     onRequestCalendar = { calendarPermission.launch(Manifest.permission.READ_CALENDAR) },

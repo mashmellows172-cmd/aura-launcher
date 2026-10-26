@@ -8,3 +8,5 @@ dependencyResolutionManagement {
 rootProject.name = "AuraLauncher"
 include(":app")
 if (providers.gradleProperty("includeQaProbe").isPresent) include(":qa-probe")
+
+include(":macrobenchmark", ":baselineprofile")

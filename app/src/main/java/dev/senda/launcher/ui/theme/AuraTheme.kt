@@ -70,7 +70,7 @@ internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, 
 }
 
 @Composable
-fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, content: @Composable () -> Unit) {
+fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, fontChoice: String = "THEME", content: @Composable () -> Unit) {
     val (presetStyle, presetScheme) = skin(theme, systemIsDark)
     val requested = finish.accent.argb?.let { Color(it) }
     val adjusted = ensureReadableAccent(requested ?: presetStyle.accent, listOf(presetScheme.background, presetStyle.backgroundTop, presetStyle.backgroundBottom, presetScheme.surface, presetScheme.surfaceVariant))
@@ -115,7 +115,7 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
     ) else scheme.copy(primary = accent, secondary = accent, background = bottom)
     val animatedStyle = style.copy(accent = accent, backgroundTop = top, backgroundBottom = bottom)
     MaterialTheme(colorScheme = animatedScheme,
-        typography = if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
+        typography = variantTypography(fontChoice) ?: if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
         shapes = if (industrial) IndustrialShapes else if (retro.enabled) retroShapes(theme) else androidx.compose.material3.Shapes(), content = {
         CompositionLocalProvider(LocalHistoricalProfile provides historicalProfile(theme).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
             LocalIconTreatment provides finish.icons, LocalRetroStyle provides if (highContrast) RetroStyle() else retro,

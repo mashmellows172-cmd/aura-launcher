@@ -25,6 +25,8 @@ import dev.senda.launcher.data.mergeEditedFavorites
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -40,6 +42,7 @@ data class HomeUiState(
     val soundSettings: SoundSettings = SoundSettings(),
     val weatherPackage: String? = null,
     val query: String = "",
+    val fontChoice: String = "THEME",
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val homeRequest: Int = 0,
@@ -77,7 +80,15 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private val favoritesStore = FavoritesStore(application)
     private val audioMonitor = AudioPlaybackMonitor(application)
     private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val variantDao = dev.senda.launcher.themeeditor.ThemeDatabase.get(application).themes()
+    val uiState: StateFlow<HomeUiState> = kotlinx.coroutines.flow.combine(_uiState, variantDao.active().catch { emit(null) }) { base, entity ->
+        val snapshot = entity?.takeIf { it.payloadVersion == 1 }?.let { runCatching { dev.senda.launcher.themeeditor.ThemeSnapshot.parse(it.snapshotJson) }.getOrNull() }
+        if (snapshot == null) base else {
+            val rendered = snapshot.applyTo(base)
+            val mapping = withContext(Dispatchers.IO) { previewIconPack(snapshot.pack) }
+            rendered.copy(iconMapping = mapping)
+        }
+    }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, HomeUiState())
 
     private var refreshJob: Job? = null
     private var iconJob: Job? = null
@@ -213,7 +224,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun setTheme(theme: LauncherTheme) {
-        viewModelScope.launch { favoritesStore.setTheme(theme) }
+        viewModelScope.launch { favoritesStore.setTheme(theme); variantDao.setActive(dev.senda.launcher.themeeditor.ActiveVariantEntity(variantId = null)) }
     }
 
     fun setLockGesture(value: LockGesture) { viewModelScope.launch { favoritesStore.setLockGesture(value) } }
@@ -260,10 +271,13 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
 
-    fun setAppearance(value: AppearanceSettings) { viewModelScope.launch { favoritesStore.setAppearance(value) } }
+    fun setAppearance(value: AppearanceSettings) { viewModelScope.launch {
+        if (!variantDao.updateAppearance(value.textSize,value.iconSize,value.rowSpacing)) favoritesStore.setAppearance(value)
+        else favoritesStore.setAppearance(_uiState.value.appearance.copy(highContrast=value.highContrast))
+    } }
     fun setIconPack(packageName: String?) {
-        val theme = _uiState.value.theme
-        viewModelScope.launch { favoritesStore.setIconPack(theme, packageName) }
+        val theme = uiState.value.theme
+        viewModelScope.launch { if (!variantDao.updatePack(packageName)) favoritesStore.setIconPack(theme, packageName) }
     }
 
     private fun refreshIconPacks() {
@@ -301,6 +315,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         backupOperation {
             val settings = backup.materialize(prepared)
             favoritesStore.restore(settings)
+            variantDao.setActive(dev.senda.launcher.themeeditor.ActiveVariantEntity(variantId = null))
             cancelRestore()
             "Ajustes restaurados."
         }
@@ -402,8 +417,8 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     suspend fun previewIconPack(packageName: String?): IconPackMapping? {
         val pack = _uiState.value.availableIconPacks.firstOrNull { it.packageName == packageName } ?: return null
-        return try { cachedMapping?.takeIf { it.pack == pack } ?: packRepository.read(pack) }
-        catch (error: Exception) { if (error is CancellationException) throw error; null }
+        return withContext(Dispatchers.IO) { try { cachedMapping?.takeIf { it.pack == pack } ?: packRepository.read(pack).also { cachedMapping = it } }
+        catch (error: Exception) { if (error is CancellationException) throw error; null } }
     }
 
     suspend fun applyTheme(theme: LauncherTheme, finish: ThemeFinish, pack: String?, wallpaper: String?, retroEnabled: Boolean = false): Boolean {

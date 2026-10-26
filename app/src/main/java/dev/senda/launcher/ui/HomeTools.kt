@@ -63,10 +63,11 @@ fun HomeInformation(state: HomeUiState, onCalendarPermission: () -> Unit, block:
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val info = state.headerInfo
     val format = remember(locale, DateFormat.is24HourFormat(context)) { DateTimeFormatter.ofPattern(if (DateFormat.is24HourFormat(context)) "EEE HH:mm" else "EEE h:mm a", locale) }
+    val preview = LocalThemePreview.current
     val entries = mutableListOf<Triple<HomeBlock,String, () -> Unit>>()
     if (state.headerSettings.showAlarm && (block == null || block == dev.senda.launcher.data.HomeBlock.ALARM)) {
         val label = info.alarmAt?.let { format.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())) } ?: "Sin alarmas programadas"
-        entries += Triple(HomeBlock.ALARM,label) { openNextAlarm(context) }
+        entries += Triple(HomeBlock.ALARM,label) { if(!preview) openNextAlarm(context) }
     }
     if (state.headerSettings.showCalendar && (block == null || block == dev.senda.launcher.data.HomeBlock.AGENDA)) {
         val event = info.event
@@ -81,7 +82,7 @@ fun HomeInformation(state: HomeUiState, onCalendarPermission: () -> Unit, block:
                 "$time · ${event.title}"
             }
         }
-        entries += Triple(HomeBlock.AGENDA,text) { if (!info.calendarPermission) onCalendarPermission() else openAgenda(context, event) }
+        entries += Triple(HomeBlock.AGENDA,text) { if (!preview) { if (!info.calendarPermission) onCalendarPermission() else openAgenda(context, event) } }
     }
     if (entries.isNotEmpty()) {
         if (androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {

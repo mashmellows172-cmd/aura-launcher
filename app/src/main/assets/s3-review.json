@@ -1,0 +1,1766 @@
+{
+  "schema": 1,
+  "total": 176,
+  "entries": [
+    {
+      "package": "ai.perplexity.app.android",
+      "label": "Perplexity",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "ai.qwenlm.chat.android",
+      "label": "Qwen Studio",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "ai.x.grok",
+      "label": "Grok",
+      "resource": "aura_s3_ai_grok",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "1a36082e87d921aaeac999e90590a6e32fc6dcf5eb74d5e7f0c557ae037f75eb"
+    },
+    {
+      "package": "app.aksports.live",
+      "label": "AK47Sports",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "bitpit.launcher",
+      "label": "Niagara Launcher",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cajalosandes.cla",
+      "label": "Caja Los Andes",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.bancochile.mi_banco",
+      "label": "Mi Banco",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.bancochile.mi_pass2",
+      "label": "Mi Pass",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.bancoestado.cirrus.prod",
+      "label": "Rutpay",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.buk.app",
+      "label": "Buk",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.cencosud.giftcard",
+      "label": "Mi Gift Card",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.com.papajohns",
+      "label": "Papa Johns",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.coopeuchdale",
+      "label": "Dale Coopeuch",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.copec.PagoClick",
+      "label": "Copec",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.entel.appswlsdesa",
+      "label": "Entel",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.metromuv.app",
+      "label": "MetroMuv",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.narki.sbpay",
+      "label": "Salcobrand",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.ripley.rapp",
+      "label": "Ripley",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.sodimac",
+      "label": "Sodimac",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.tapp",
+      "label": "Tapp",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.transbank.onepay",
+      "label": "Onepay",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.walmart.liderapp",
+      "label": "Lider",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "cl.wom.transformacion.appwommobile",
+      "label": "WOM",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "co.shopney.productosdelujo",
+      "label": "Productos de Lujo",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.adeeteya.classipod",
+      "label": "Classipod",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.adidas.app",
+      "label": "adidas",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.adobe.scan.android",
+      "label": "Adobe Scan",
+      "resource": "aura_s3_ai_adobe_scan",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "b8e85abf97896665bf0127d7242523817d221c089102ade6b6e6196db8d40635"
+    },
+    {
+      "package": "com.agc.gcam91",
+      "label": "Cámara",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.alibaba.aliexpresshd",
+      "label": "AliExpress",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.amazon.clouddrive.photos",
+      "label": "Amazon Photos",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.amazon.dee.app",
+      "label": "Amazon Alexa",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.amazon.mp3",
+      "label": "Amazon Music",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.amazon.storm.lightning.client.aosp",
+      "label": "Fire TV",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.amipass.app",
+      "label": "Amipass",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.android.chrome",
+      "label": "Chrome",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.android.settings",
+      "label": "Ajustes",
+      "resource": "aura_s3_original_settings",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "artwork/touchwiz-s3/historical-manifest.json",
+      "confidence": "Visual period candidate; independent launch-era screenshot verification pending",
+      "sha256": "4fdc120ca4cb386d69a3b5741c8d043e3fd65c4bb6e7244bae008c19eb24e1dd"
+    },
+    {
+      "package": "com.android.vending",
+      "label": "Play Store",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.anthropic.claude",
+      "label": "Claude",
+      "resource": "aura_s3_ai_claude",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "c205036c5bb7125979334c121bf1843469ff500ffd3cf7364c624b99f4fac712"
+    },
+    {
+      "package": "com.apprecio.appreciochile",
+      "label": "Apprecio Chile",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.arjonasoftware.babycam",
+      "label": "BabyCam",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.arlosoft.macrodroid.connectivityhelper",
+      "label": "Asistente de Conexión MD",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.betano.sportsbook",
+      "label": "Betano",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.betterlife.connect",
+      "label": "betterlife connect",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.box.android",
+      "label": "Box",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.brother.mfc.brprint",
+      "label": "iPrint&Scan",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.brother.mfc.mobileconnect",
+      "label": "Mobile Connect",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.brother.printservice",
+      "label": "Brother Print Service Plugin",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.canva.editor",
+      "label": "Canva",
+      "resource": "aura_s3_ai_canva",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "ae6240bca619ce38f325c7b7ddb92962d131acd8a5d0a130e332c1c00747f297"
+    },
+    {
+      "package": "com.cencosud.cl.sisa",
+      "label": "Santa Isabel",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.cencosud.parisapp.android",
+      "label": "Paris App",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.cheaf.app",
+      "label": "Cheaf",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.collabora.libreoffice",
+      "label": "Collabora Office",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.como.prod774620191210",
+      "label": "Carl's Jr",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.crazycake.burgerkingchile",
+      "label": "Burger King CL",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.cruzverde.cl.ecommerce",
+      "label": "Cruz Verde",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.cxinventor.file.explorer",
+      "label": "Cx Explorador de Archivos",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.degoo.android",
+      "label": "Degoo",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.discord",
+      "label": "Discord",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.disney.disneyplus",
+      "label": "Disney+",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.dropbox.android",
+      "label": "Dropbox",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.einnovation.temu",
+      "label": "Temu",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.facebook.katana",
+      "label": "Facebook",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.facebook.orca",
+      "label": "Messenger",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.facebook.stella",
+      "label": "Meta AI",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.falabella.falabellaApp",
+      "label": "Falabella",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.gasconnect",
+      "label": "Gasco",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.getjusto.apps.tarragonacl",
+      "label": "Tarragona",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.goodmealspa.goodmeal",
+      "label": "GoodMeal",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.adm",
+      "label": "Localizador",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.authenticator2",
+      "label": "Autenticador",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.bard",
+      "label": "Gemini",
+      "resource": "aura_s3_ai_gemini",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "0e1c0c70d6d907f515b2aef6c666780b58cc8e09ff65aba9fbc8bd5559276fe4"
+    },
+    {
+      "package": "com.google.android.apps.chromecast.app",
+      "label": "Home",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.docs",
+      "label": "Drive",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.googleassistant",
+      "label": "Asistente",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.maps",
+      "label": "Maps",
+      "resource": "aura_s3_period_maps",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "f2848d31db976253352db5526a622c53eb734f16206fdd62f1772b82cbea54ab"
+    },
+    {
+      "package": "com.google.android.apps.messaging",
+      "label": "Mensajes",
+      "resource": "aura_s3_period_message",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "0e8d3e362963b2706a675515e491961338d66ea4dadc2887716d13e7a6a4f736"
+    },
+    {
+      "package": "com.google.android.apps.nbu.files",
+      "label": "Files",
+      "resource": "aura_s3_period_files",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "6d1027688a815aea3c350ce851cf8042f7009eab131ca6240fa6750ce980c087"
+    },
+    {
+      "package": "com.google.android.apps.photos",
+      "label": "Fotos",
+      "resource": "aura_s3_ai_google_photos",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "41ff0719329f1a41ac9c37f52ecffca730d126f372769c62d9c2bd312b413c29"
+    },
+    {
+      "package": "com.google.android.apps.subscriptions.red",
+      "label": "Google One",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.tachyon",
+      "label": "Meet",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.walletnfcrel",
+      "label": "Billetera",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.apps.youtube.music",
+      "label": "YT Music",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.calculator",
+      "label": "Calculadora",
+      "resource": "aura_s3_period_calculator",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "2aa5a6ca909e1abbb8bdaa3b44c4b5fffd9bde2b1250217d65614be67db38a33"
+    },
+    {
+      "package": "com.google.android.calendar",
+      "label": "Calendario",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.contacts",
+      "label": "Contactos",
+      "resource": "aura_s3_period_contacts",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "a482f0a82026f8c551bc76e016e785edaa816910b1dda6d83c2b49b98886cc0b"
+    },
+    {
+      "package": "com.google.android.deskclock",
+      "label": "Reloj",
+      "resource": "aura_s3_period_clock",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "419a6f323c169aace11872b0dd15f58dc7d0672678558fb7a0d94653edb8bc86"
+    },
+    {
+      "package": "com.google.android.dialer",
+      "label": "Teléfono",
+      "resource": "aura_s3_original_phone",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "artwork/touchwiz-s3/historical-manifest.json",
+      "confidence": "Visual period candidate; independent launch-era screenshot verification pending",
+      "sha256": "a664591d299492d1866d0f7821e96217c554c0216c2df7940393c62a2895966b"
+    },
+    {
+      "package": "com.google.android.gm",
+      "label": "Gmail",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.googlequicksearchbox",
+      "label": "Google",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.videos",
+      "label": "Google TV",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.android.youtube",
+      "label": "YouTube",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.google.ar.lens",
+      "label": "Lens",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.grability.rappi",
+      "label": "Rappi",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.handmark.expressweather",
+      "label": "1Weather",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.hihonor.magichome",
+      "label": "Espacio de Honor AI",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.hp.printercontrol",
+      "label": "HP",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.igg.android.doomsdaylastsurvivors",
+      "label": "Doomsday",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.inmobi.weather",
+      "label": "Weather",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.instagram.android",
+      "label": "Instagram",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.kfcecuador.kfc",
+      "label": "KFC APP",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.kick.mobile",
+      "label": "Kick",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.krealo.tenpo",
+      "label": "Tenpo",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.lenovo.qira",
+      "label": "Motorola Qira",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.lgeha.nuts",
+      "label": "LG ThinQ",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.linkedin.android",
+      "label": "LinkedIn",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.mcdo.mcdonalds",
+      "label": "McDonald's",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.mercadolibre",
+      "label": "Mercado Libre",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.mercadopago.wallet",
+      "label": "Mercado Pago",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.miclaro.app",
+      "label": "Mi Claro",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.microsoft.copilot",
+      "label": "Copilot (heredado)",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.microsoft.xboxone.smartglass",
+      "label": "XBOX",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.midea.ai.overseas",
+      "label": "SmartHome",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.moonfrog.ludo.club",
+      "label": "Ludo Club",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.audiorecorder",
+      "label": "Grabadora",
+      "resource": "aura_s3_period_recorder",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "2c6b17e303f26af6032f476f6d3537ae0f44777300f97ce3c4979c39e0b6aa03"
+    },
+    {
+      "package": "com.motorola.camera3",
+      "label": "Cámara",
+      "resource": "aura_s3_original_camera",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "artwork/touchwiz-s3/historical-manifest.json",
+      "confidence": "Visual period candidate; independent launch-era screenshot verification pending",
+      "sha256": "2205ca525a211ac5fb3e4f9f16d2bf80b6f6f72e691802c2441c598c77670339"
+    },
+    {
+      "package": "com.motorola.ccc.notification",
+      "label": "Hello You",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.dolby.dolbyui",
+      "label": "Dolby Atmos",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.gamemode",
+      "label": "Juegos",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.genie",
+      "label": "Ayuda del dispositivo",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.help",
+      "label": "Comentarios",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.livewallpaper3",
+      "label": "Fondos interactivos",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.mobiledesktop",
+      "label": "Smart Connect",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.moto",
+      "label": "Moto",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.motobuds",
+      "label": "Moto Buds",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.om",
+      "label": "Moto Unplugged",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.securevault",
+      "label": "Carpeta segura",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.securityhub",
+      "label": "Moto Secure",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.spaces",
+      "label": "Family Space",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.motorola.stylus",
+      "label": "Notas",
+      "resource": "aura_s3_period_notes",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "HISTORICAL_ROLE",
+      "reference": "https://galaxyyarchive.blogspot.com/2012/12/samsung-galaxy-s3-complete-icon-pack-v5.html",
+      "confidence": "2012-06-08 third-party SIII extracted/resized pack for GalaxyY; period evidence, not OEM byte-exact certification",
+      "sha256": "1a500f6aa01e9da34ba964d579f45aee057199f80997da75575e1b75758d79d1"
+    },
+    {
+      "package": "com.motorola.touchshare",
+      "label": "Ventana de entrega rápida",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.nextcloud.client",
+      "label": "Nextcloud",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.nianticlabs.pokemongo",
+      "label": "Pokémon GO",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.openai.chatgpt",
+      "label": "ChatGPT",
+      "resource": "aura_s3_ai_chatgpt",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "532e88d9961b9907a98b3862665547d237dabcd2fabf108fd399ab1b52eddca3"
+    },
+    {
+      "package": "com.pcloud.pcloud",
+      "label": "pCloud",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.pedidosya",
+      "label": "PedidosYa",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.peqconsultores.lipigas",
+      "label": "LipiApp MiCilindro",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.pinterest",
+      "label": "Pinterest",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.qh.Happylight",
+      "label": "HappyLighting",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.qubits.fw3.doggis",
+      "label": "Doggis",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.reddit.frontpage",
+      "label": "Reddit",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.roblox.client",
+      "label": "Roblox",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.shopee.cl",
+      "label": "Shopee",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.sonda.wiu",
+      "label": "Red",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.sony.songpal.mdr",
+      "label": "Sound Connect",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.sony.songpal",
+      "label": "Music Center",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.spotify.music",
+      "label": "Spotify",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.suno.android",
+      "label": "Suno",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.tongyi.intl",
+      "label": "Qwen",
+      "resource": "aura_s3_ai_qwen",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "8c03badb9173ef7c93c494be8ecfbd1738db8a29d460d8abd8574dbcdec8aede"
+    },
+    {
+      "package": "com.tottus",
+      "label": "TOTTUS",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.ubercab.eats",
+      "label": "Uber Eats",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.ubercab",
+      "label": "Uber",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.unoafpapp",
+      "label": "AFP UNO",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.valvesoftware.android.steam.community",
+      "label": "Steam",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.vivaldi.browser",
+      "label": "Vivaldi",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.waze",
+      "label": "Waze",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.wbd.stream",
+      "label": "HBO Max",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.whatsapp",
+      "label": "WhatsApp",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.wizconnected.wiz2",
+      "label": "WiZ V2",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.worldcoin",
+      "label": "World App",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.xiaomi.smarthome",
+      "label": "Xiaomi Home",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.xiaomi.wearable",
+      "label": "Mi Fitness",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.xuper.netxxus",
+      "label": "Xuper Hydra",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.zhiliaoapp.musically.go",
+      "label": "TikTok Lite",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.zhiliaoapp.musically",
+      "label": "TikTok",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "com.zzkko",
+      "label": "SHEIN",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "de.flixbus.app",
+      "label": "FlixBus",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "dev.senda.launcher.debug",
+      "label": "Aura Launcher",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "hn.zip.unzip.compressfile.extractfile.compressfolder",
+      "label": "Zip Extractor",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "hr.dtakac.prognoza",
+      "label": "Prognoza",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "io.instaleap.ecommerce.acuenta",
+      "label": "aCuenta",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "io.spck",
+      "label": "Editor Spck",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "moe.shizuku.privileged.api",
+      "label": "Shizuku",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "net.veritran.becl.prod",
+      "label": "BancoEstado",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "org.chromium.webapk.a039497bc141738e5_v2",
+      "label": "TrackRetail",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    },
+    {
+      "package": "org.telegram.messenger",
+      "label": "Telegram",
+      "resource": "aura_s3_ai_telegram",
+      "status": "EXISTING_CANDIDATE",
+      "kind": "AI",
+      "reference": "artwork/touchwiz-s3/ai",
+      "confidence": "AI period interpretation; not original Samsung",
+      "sha256": "a1a090ded34490c332f93ca9c5b7d66b15ac2db201c680f99f213d54e16b9e71"
+    },
+    {
+      "package": "tv.twitch.android.app",
+      "label": "Twitch",
+      "resource": null,
+      "status": "PENDING",
+      "kind": "UNASSIGNED",
+      "reference": "",
+      "confidence": "Requires verified references and manual optical review",
+      "sha256": null
+    }
+  ]
+}

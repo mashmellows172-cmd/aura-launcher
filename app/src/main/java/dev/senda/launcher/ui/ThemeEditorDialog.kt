@@ -3,192 +3,114 @@ package dev.senda.launcher.ui
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.*
-import dev.senda.launcher.ui.theme.*
+import dev.senda.launcher.themeeditor.*
+import dev.senda.launcher.widgets.WidgetController
 import kotlin.math.roundToInt
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
-private object ThemeEditorSize {
-    val height = 520.dp; val preview = 174.dp; val controls = 210.dp
-    val gap = 8.dp; val padding = 12.dp; val swatch = 48.dp; val radius = 16.dp
-}
 
 @Composable
-fun ThemeEditorDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismiss: () -> Unit) {
-    var themeName by rememberSaveable { mutableStateOf(state.theme.name) }
-    val theme = LauncherTheme.valueOf(themeName)
-    var accentName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).accent.name) }
-    var shapeName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).shape.name) }
-    var iconsName by rememberSaveable { mutableStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).icons.name) }
-    var wallpaperDim by rememberSaveable { mutableIntStateOf((state.themeFinishes[themeName] ?: ThemeFinish()).wallpaperDim) }
-    var pack by rememberSaveable { mutableStateOf(state.iconPacks[themeName]) }
-    var wallpaper by rememberSaveable { mutableStateOf(state.skinWallpapers[themeName]) }
-    var useRetro by rememberSaveable { mutableStateOf(state.retroEnabled[themeName] == true) }
-    var section by rememberSaveable { mutableIntStateOf(0) }
-    var chooseTheme by remember { mutableStateOf(false) }
-    var showIdentity by rememberSaveable { mutableStateOf(false) }
-    var showIconFamilies by rememberSaveable { mutableStateOf(false) }
-    val finish = ThemeFinish(AccentChoice.valueOf(accentName), ShapeChoice.valueOf(shapeName), IconTreatment.valueOf(iconsName), wallpaperDim)
-    val scope = rememberCoroutineScope()
-    val bodyScroll = rememberScrollState()
-    val compact = androidx.compose.ui.platform.LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) wallpaper = uri.toString() }
-    val libraryPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(viewModel::importRetroLibrary) }
-    val library = state.retroLibrary[themeName]
-    val activeLibrary = library?.takeIf { useRetro }
-    val iconPreview by produceState<Pair<Boolean, IconPackMapping?>>(true to null, pack, state.availableIconPacks) {
-        value = true to null
-        value = false to viewModel.previewIconPack(pack)
+fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetController:WidgetController,onDismiss:()->Unit) {
+    val editor:ThemeEditorViewModel=viewModel(key="aura-theme-editor")
+    val draft by editor.draft.collectAsStateWithLifecycle()
+    val undo by editor.canUndo.collectAsStateWithLifecycle();val redo by editor.canRedo.collectAsStateWithLifecycle()
+    val busy by editor.busy.collectAsStateWithLifecycle();val error by editor.error.collectAsStateWithLifecycle()
+    val variants by editor.variants.collectAsStateWithLifecycle()
+    var name by rememberSaveable{mutableStateOf("Mi variante")}
+    var section by rememberSaveable{mutableIntStateOf(0)}
+    var fullPreview by rememberSaveable{mutableStateOf(false)}
+    var showS3 by rememberSaveable{mutableStateOf(false)}
+    val context=LocalContext.current
+    LaunchedEffect(Unit){editor.open(ThemeSnapshot.from(state))}
+    val picker=rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()){uri->
+        if(uri!=null){runCatching{context.contentResolver.takePersistableUriPermission(uri,android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)};draft?.let{editor.edit(it.copy(wallpaper=uri.toString()))}}
     }
-    fun selectTheme(candidate: LauncherTheme) {
-        themeName = candidate.name; accentName = (state.themeFinishes[themeName] ?: ThemeFinish()).accent.name
-        shapeName = (state.themeFinishes[themeName] ?: ThemeFinish()).shape.name
-        iconsName = (state.themeFinishes[themeName] ?: ThemeFinish()).icons.name
-        wallpaperDim = (state.themeFinishes[themeName] ?: ThemeFinish()).wallpaperDim
-        pack = state.iconPacks[themeName]; wallpaper = state.skinWallpapers[themeName]
-        useRetro = state.retroEnabled[themeName] == true
-        viewModel.clearThemeError(); chooseTheme = false
-    }
-    AuraAlertDialog(onDismissRequest = { if (!state.themeSaveBusy) onDismiss() }, title = { Text("Temas de Aura") }, text = {
-        Column(Modifier.heightIn(max = ThemeEditorSize.height).then(if (compact) Modifier.verticalScroll(bodyScroll) else Modifier), verticalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
-            Box {
-                OutlinedButton(onClick = { chooseTheme = true }, enabled = !state.themeSaveBusy, modifier = Modifier.fillMaxWidth()) { Text("${theme.title} ▾", maxLines = 1) }
-                DropdownMenu(chooseTheme, { chooseTheme = false }, Modifier.heightIn(max = ThemeEditorSize.controls)) {
-                    LauncherTheme.entries.forEach { candidate -> DropdownMenuItem(text = { Text(candidate.title) }, onClick = { selectTheme(candidate) }) }
+    val libraryPicker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){it?.let(viewModel::importRetroLibrary)}
+    Dialog(onDismissRequest={if(!busy)editor.cancel(onDismiss)},properties=DialogProperties(usePlatformDefaultWidth=false)) {
+        Surface(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+                Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
+                    TextButton(onClick={editor.cancel(onDismiss)},enabled=!busy){Text("Cancelar")}
+                    TextButton(onClick=editor::undo,enabled=undo&&!busy){Text("Deshacer")}
+                    TextButton(onClick=editor::redo,enabled=redo&&!busy){Text("Rehacer")}
+                    TextButton(onClick={fullPreview=!fullPreview}){Text(if(fullPreview)"Controles" else "Ampliar")}
                 }
-            }
-            Text("Vista previa · Inicio cambia al aplicar", style = MaterialTheme.typography.labelSmall)
-            AuraTheme(theme, isSystemInDarkTheme(), state.appearance.highContrast, finish, reduceMotion = state.visualSettings.reduceMotion) {
-                CompositionLocalProvider(LocalIconPack provides iconPreview.second, LocalAppearance provides AppearanceSettings(iconSize = 32), LocalRetroAssets provides activeLibrary) {
-                    ThemePreview(theme, wallpaper ?: activeLibrary?.wallpapers?.firstOrNull()?.uri, state, viewModel, wallpaperDim)
-                }
-            }
-            TabRow(section) {
-                listOf("Acabado", "Iconos", "Fondo").forEachIndexed { index, label -> Tab(section == index, onClick = { section = index }, modifier = Modifier.heightIn(min = 48.dp)) { Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
-            }
-            Column(Modifier.heightIn(max = ThemeEditorSize.controls).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
-                when (section) {
-                    0 -> {
-                        TextButton(onClick = { showIdentity = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar identidad y clima") }
-                        Text(theme.subtitle, style = MaterialTheme.typography.bodySmall)
-                        if (themeName in RetroAssets.themes) {
-                            RetroLibraryToggle(library, useRetro, state.retroImportBusy || state.themeSaveBusy, { useRetro = it }, { libraryPicker.launch(arrayOf("application/zip", "application/x-zip-compressed", "application/octet-stream")) })
-                            state.retroImportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-                        }
-                        TextButton(onClick = { accentName = AccentChoice.DEFAULT.name; shapeName = ShapeChoice.DEFAULT.name; iconsName = IconTreatment.AUTO.name; pack = null; wallpaper = null; useRetro = false; wallpaperDim = 64 }, enabled = !state.themeSaveBusy) { Text(if (theme == LauncherTheme.NOTHING) "Restablecer estilo Nothing" else "Restablecer estilo del tema") }
-                        Text("Acento: ${finish.accent.label}", style = MaterialTheme.typography.labelLarge)
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
-                            items(AccentChoice.entries) { accent ->
-                                Box(Modifier.size(ThemeEditorSize.swatch).background(accent.argb?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                                    .clickable(enabled = !state.themeSaveBusy) { accentName = accent.name }
-                                    .semantics { contentDescription = "Acento ${accent.label}"; selected = finish.accent == accent }, contentAlignment = Alignment.Center) {
-                                    if (finish.accent == accent) Text("✓", color = if (accent.argb == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black)
+                val value=draft
+                if(value==null){Box(Modifier.weight(1f)){CircularProgressIndicator()}}
+                else {
+                    Box(Modifier.weight(1f).fillMaxWidth()) { ThemeLivePreview(value,state,viewModel,widgetController) }
+                    if(!fullPreview) {
+                        TabRow(section){listOf("Estilo","Iconos","Fondo","Variantes").forEachIndexed{i,label->Tab(selected=section==i,onClick={editor.finishGesture();section=i},modifier=Modifier.heightIn(min=48.dp)){Text(label,style=MaterialTheme.typography.labelSmall)}}}
+                        Column(Modifier.fillMaxWidth().heightIn(max=240.dp).verticalScroll(rememberScrollState()).padding(horizontal=16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
+                            when(section){
+                                0->{
+                                    EditorChoice("Tema base",value.theme,LauncherTheme.entries.map{it.name to it.title},!busy){editor.edit(ThemeSnapshot.from(state,LauncherTheme.valueOf(it)))}
+                                    EditorChoice("Acento",value.accent,AccentChoice.entries.map{it.name to it.label},!busy){editor.edit(value.copy(accent=it))}
+                                    EditorChoice("Contenedor",value.shape,ShapeChoice.entries.map{it.name to it.label},!busy){editor.edit(value.copy(shape=it))}
+                                    EditorChoice("Tipografía",value.font,listOf("THEME" to "Del tema","NOTO" to "Noto Sans","MONO" to "Monoespaciada","CONDENSED" to "Condensada"),!busy){editor.edit(value.copy(font=it))}
+                                    EditorSlider("Texto",value.textSize,14..24,!busy,{editor.edit(value.copy(textSize=it),false)},editor::finishGesture)
+                                    EditorSlider("Espacio entre filas",value.spacing,0..20,!busy,{editor.edit(value.copy(spacing=it),false)},editor::finishGesture)
+                                }
+                                1->{
+                                    EditorChoice("Tratamiento",value.icons,IconTreatment.entries.map{it.name to it.label},!busy){editor.edit(value.copy(icons=it))}
+                                    EditorChoice("Paquete",value.pack?:"",listOf("" to "Recursos del tema")+state.availableIconPacks.map{it.packageName to it.label},!busy&&value.icons!="ORIGINAL"){editor.edit(value.copy(pack=it.ifBlank{null}))}
+                                    EditorSlider("Tamaño del icono",value.iconSize,32..60,!busy,{editor.edit(value.copy(iconSize=it),false)},editor::finishGesture)
+                                    if(value.theme==LauncherTheme.TOUCHWIZ.name)TextButton(onClick={showS3=true}){Text("Revisar catálogo Galaxy SIII")}
+                                    if(value.theme in RetroAssets.themes){
+                                        Row{Switch(value.retro,{editor.edit(value.copy(retro=it))},enabled=!busy&&state.retroLibrary[value.theme]!=null);Text("Usar mi colección importada")}
+                                        TextButton(onClick={libraryPicker.launch(arrayOf("application/zip","application/octet-stream"))},enabled=!busy){Text("Importar colección")}
+                                    }
+                                }
+                                2->{
+                                    TextButton(onClick={picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))},enabled=!busy){Text("Elegir fondo")}
+                                    TextButton(onClick={editor.edit(value.copy(wallpaper=null))},enabled=!busy){Text("Fondo del tema")}
+                                    EditorSlider("Protección de lectura",value.dim,60..90,!busy,{editor.edit(value.copy(dim=it),false)},editor::finishGesture)
+                                    Text("La imagen se copia al guardar. La configuración base se conserva.",style=MaterialTheme.typography.bodySmall)
+                                }
+                                else->{
+                                    OutlinedTextField(name,{name=it.take(60)},label={Text("Nombre de la variante")},singleLine=true,enabled=!busy)
+                                    TextButton(onClick={editor.useBase(onDismiss)},enabled=!busy){Text("Volver al tema base")}
+                                    variants.forEach{variant->TextButton(onClick={editor.load(variant)},enabled=!busy){Text(variant.name)}}
+                                    if(variants.isEmpty())Text("Aún no hay variantes guardadas")
                                 }
                             }
-                        }
-                        Text("Forma del contenedor", style = MaterialTheme.typography.labelLarge)
-                        ShapeChoice.entries.forEach { shape ->
-                            TextButton(onClick = { shapeName = shape.name }, enabled = !state.themeSaveBusy, modifier = Modifier.fillMaxWidth()) {
-                                RadioButton(shapeName == shape.name, null); Text(shape.label, Modifier.weight(1f))
-                            }
+                            error?.let{Text(it,color=MaterialTheme.colorScheme.error)}
                         }
                     }
-                    1 -> {
-                        TextButton(onClick = { showIconFamilies = true }, enabled = theme != LauncherTheme.PS4, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Explorar familias de iconos") }
-                        Text("Estilo de iconos", style = MaterialTheme.typography.labelLarge)
-                        IconTreatment.entries.forEach { choice ->
-                            TextButton(onClick = { iconsName = choice.name }, enabled = !state.themeSaveBusy) { RadioButton(iconsName == choice.name, null); Text(choice.label) }
-                        }
-                        Text("Temáticos: acabado de ${theme.title}. Normales: iconos de cada aplicación, sin recolor ni máscara. Se guarda por tema.", style = MaterialTheme.typography.bodySmall)
-                        Text("Recursos para iconos temáticos", style = MaterialTheme.typography.labelLarge)
-                        val resourceLabel = if (activeLibrary == null) "Recursos de Aura y Android" else "Mi colección y recursos de Aura"
-                        TextButton(onClick = { pack = null }, enabled = !state.themeSaveBusy && finish.icons != IconTreatment.ORIGINAL) { Text(if (pack == null) "✓ $resourceLabel" else resourceLabel) }
-                        if (activeLibrary != null) Text("Los iconos importados conservan sus proporciones y transparencia. Las apps sin equivalencia usan el acabado de Aura. Normales muestra los iconos actuales de las apps.", style = MaterialTheme.typography.bodySmall)
-                        state.availableIconPacks.forEach { option ->
-                            TextButton(onClick = { pack = option.packageName }, enabled = !state.themeSaveBusy && finish.icons != IconTreatment.ORIGINAL) { Text(if (pack == option.packageName) "✓ ${option.label}" else option.label) }
-                        }
-                        if (state.availableIconPacks.isEmpty()) Text("No hay paquetes compatibles instalados.", style = MaterialTheme.typography.bodySmall)
-                        if (iconPreview.first) LinearProgressIndicator(Modifier.fillMaxWidth())
-                        else if (pack != null && iconPreview.second == null) Text("Paquete no disponible o no compatible. La vista previa usa los originales.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                    }
-                    else -> {
-                        if (activeLibrary != null) RetroWallpaperGallery(activeLibrary, wallpaper) { wallpaper = it }
-                        TextButton(onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !state.themeSaveBusy) { Text("Elegir imagen de fondo") }
-                        TextButton(onClick = { wallpaper = null }, enabled = !state.themeSaveBusy) { Text("Usar fondo del tema") }
-                        Text("Protección de lectura: $wallpaperDim %", style = MaterialTheme.typography.labelLarge)
-                        Slider(value = wallpaperDim.toFloat(), onValueChange = { wallpaperDim = it.roundToInt().coerceIn(60, 90) },
-                            valueRange = 60f..90f, steps = 29, enabled = !state.themeSaveBusy && !state.appearance.highContrast,
-                            modifier = Modifier.semantics { contentDescription = "Protección de lectura del fondo" })
-                        Text("Regula el velo sobre tu imagen. El fondo original se conserva; el cambio se guarda al aplicar.", style = MaterialTheme.typography.bodySmall)
-                        Text("El fondo elegido se copia al almacenamiento privado al aplicar. Cancelar conserva tu configuración anterior.", style = MaterialTheme.typography.bodySmall)
+                    Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween){
+                        TextButton(onClick={editor.finishGesture();editor.save(name,false,onDismiss)},enabled=!busy){Text("Guardar copia")}
+                        Button(onClick={editor.finishGesture();editor.save(name,true,onDismiss)},enabled=!busy&&!state.isLoading){Text(if(busy)"Guardando…" else "Guardar y usar")}
                     }
                 }
-                if (state.appearance.highContrast) Text("El alto contraste global sustituye colores y fondos en la vista previa y en Inicio.", style = MaterialTheme.typography.bodySmall)
-                state.themeSaveError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             }
         }
-    }, confirmButton = {
-        TextButton(onClick = { scope.launch { if (viewModel.applyTheme(theme, finish, pack, wallpaper, useRetro)) onDismiss() } }, enabled = !state.themeSaveBusy && !state.retroImportBusy && !iconPreview.first && !state.isLoading) { Text(if (state.themeSaveBusy) "Aplicando…" else "Aplicar tema") }
-    }, dismissButton = { TextButton(onClick = onDismiss, enabled = !state.themeSaveBusy) { Text("Cancelar") } })
-    if (showIconFamilies) IconFamilyDialog(theme, onUse = { candidate ->
-        if (candidate != theme) selectTheme(candidate)
-        iconsName = IconTreatment.AUTO.name; pack = null; useRetro = false
-        showIconFamilies = false
-    }, onDismiss = { showIconFamilies = false })
-    if (showIdentity) ThemeIdentityDialog(theme, finish, state.visualSettings.reduceMotion, state.appearance.highContrast) { showIdentity = false }
+    }
+    if(showS3)S3ReviewDialog(iconSize=draft?.iconSize?:42,onDismiss={showS3=false})
 }
 
 @Composable
-private fun ThemePreview(theme: LauncherTheme, wallpaper: String?, state: HomeUiState, viewModel: LauncherViewModel, wallpaperDim: Int) {
-    val context = LocalContext.current
-    val bitmap = rememberLocalImage(wallpaper, 480)
-    val style = LocalSkinStyle.current
-    val highContrast = state.appearance.highContrast
-    val apps = remember(state.apps, state.favoritePackages) { state.favoritePackages.mapNotNull { name -> state.apps.firstOrNull { it.packageName == name } }.ifEmpty { state.apps }.take(3) }
-    Box(Modifier.fillMaxWidth().height(ThemeEditorSize.preview).clip(RoundedCornerShape(ThemeEditorSize.radius)).background(style.wallpaper).semantics { contentDescription = "Vista previa de ${theme.title}" }) {
-        if (bitmap != null && !highContrast) Image(bitmap!!, null, Modifier.matchParentSize(), contentScale = ContentScale.Crop)
-        Box(Modifier.matchParentSize().background(if (bitmap != null && !highContrast) wallpaperReadabilityScrim(wallpaperDim, MaterialTheme.colorScheme.onBackground) else style.wallpaper).then(if (bitmap == null && !highContrast) Modifier.skinPattern(style) else Modifier))
-        Column(Modifier.padding(ThemeEditorSize.padding), verticalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
-            if (LocalIndustrialStyle.current.enabled) DotClock("09:41", Modifier.width(140.dp).height(30.dp)) else if (LocalRetroStyle.current.enabled) RetroClock("09:41", compact = true) else Text("Aura · 09:41", style = MaterialTheme.typography.titleSmall)
-            apps.forEach { app ->
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(ThemeEditorSize.gap)) {
-                    AppIcon(app, state.skinIcons["${theme.name}_${app.packageName}"], viewModel::icon)
-                    Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-            if (apps.isEmpty()) Text("Tus aplicaciones aparecerán aquí", style = MaterialTheme.typography.bodySmall)
-        }
+private fun EditorChoice(label:String,value:String,options:List<Pair<String,String>>,enabled:Boolean,onSelect:(String)->Unit){
+    var expanded by remember{mutableStateOf(false)}
+    Box{OutlinedButton(onClick={expanded=true},enabled=enabled,modifier=Modifier.fillMaxWidth()){Text("$label: ${options.firstOrNull{it.first==value}?.second?:value}")}
+        DropdownMenu(expanded,{expanded=false},Modifier.heightIn(max=280.dp)){options.forEach{(key,title)->DropdownMenuItem(text={Text(title)},onClick={expanded=false;onSelect(key)})}}
     }
+}
+@Composable
+private fun EditorSlider(label:String,value:Int,range:IntRange,enabled:Boolean,onChange:(Int)->Unit,onFinish:()->Unit){
+    Text("$label: $value",style=MaterialTheme.typography.labelLarge)
+    Slider(value.toFloat(),{onChange(it.roundToInt().coerceIn(range))},enabled=enabled,valueRange=range.first.toFloat()..range.last.toFloat(),steps=(range.last-range.first-1).coerceAtLeast(0),onValueChangeFinished=onFinish)
 }
