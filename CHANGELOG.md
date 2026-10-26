@@ -6,7 +6,7 @@ Documento de texto principal para continuar el proyecto desde cualquier equipo. 
 
 Cambios: PS4 recupera la estructura común de Aura: favoritas y apps verticales, búsqueda permanente, A–Z y gestos. Se retiran el carrusel, la Biblioteca separada y las acciones PSN. Apertura con un toque, objetivos de toque más amplios y foco visible. Se conservan el acabado azul, las ondas y Noto Sans. Índices alfabéticos corregidos para contar cada favorita.
 
-Validación: compilación/lint y entrega se detallan en [BETA32.md](docs/BETA32.md). Estado de instalación explícito en esa ficha. Datos y preferencias conservados por diseño; no se afirma revisión nativa si el teléfono está ausente.
+Validación: compilación/lint y entrega se detallan en [BETA32.md](docs/BETA32.md). Instalación posterior por ADB inalámbrico confirmada:Success, code32 y hashes de APK/Descargas coincidentes. Datos y preferencias conservados por diseño; no se afirma revisión nativa si el teléfono está ausente.
 
 ## 0.24.0-beta31 · 25 de octubre de2026
 

@@ -1,6 +1,6 @@
 # Aura0.24.1-beta32 · PS4 con la ergonomía de Aura
 
-Fecha:26 de octubre de2026. Estado: compilada y firmada; instalación y revisión física pendientes por ausencia del Motorola.
+Fecha:26 de octubre de2026. Estado: compilada, firmada e instalada por ADB inalámbrico en el Motorola. Revisión visual e interacciones físicas pendientes.
 
 ## Corrección principal
 
@@ -18,4 +18,4 @@ No se migran ni borran preferencias, iconos o datos. La corrección sustituye la
 
 ## Verificación
 
-No se ejecutan suites automáticas por preferencia del usuario. assembleBeta/lintBeta: BUILD SUCCESSFUL en2m31s,0 errores/25 advertencias/3 avisos (incluyen recursos de consola que ya no se usan). APK code32/0.24.1-beta32 verificado con aapt; firma con el mismo certificado que betas anteriores. SHA256: `a1b07677292177a60a9dfc16c87f4e6404c6df05e67273d127e11e19f870a722`. Teléfono ausente de ADB; no se instaló ni se cambiaron sus ajustes. Ver QA-beta32.md para revisión estática y comprobaciones físicas pendientes. No se afirman FPS medidos ni equivalencia exacta con una consola.
+No se ejecutan suites automáticas por preferencia del usuario. assembleBeta/lintBeta: BUILD SUCCESSFUL en2m31s,0 errores/25 advertencias/3 avisos (incluyen recursos de consola que ya no se usan). APK code32/0.24.1-beta32 verificado con aapt; firma con el mismo certificado que betas anteriores. SHA256: `a1b07677292177a60a9dfc16c87f4e6404c6df05e67273d127e11e19f870a722`. Instalación posterior autorizada: pm install -r devolvió Success; PackageManager confirmó0.24.1-beta32/code32. Se verificaron los hashes de transferencia y de la copia en Descargas. No se cambiaron permisos ni ajustes del teléfono. Ver QA-beta32.md para revisión estática y comprobaciones físicas pendientes. No se afirman FPS medidos ni equivalencia exacta con una consola.

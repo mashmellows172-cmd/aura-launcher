@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Último checkpoint compilable:0.24.1-beta32/code32. Última instalación confirmada:beta31; consultar BETA32.md para la entrega actual. Ver [historial](../CHANGELOG.md), [validación](BETA32.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.24.1-beta32/code32. Consultar BETA32.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA32.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 
