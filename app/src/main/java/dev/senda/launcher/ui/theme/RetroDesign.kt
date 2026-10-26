@@ -32,6 +32,22 @@ fun retroShapes(theme: LauncherTheme): Shapes {
 }
 fun retroTypography(theme: LauncherTheme): Typography {
     val base = Typography()
+    if (theme == LauncherTheme.PS4) {
+        val font = FontFamily(
+            androidx.compose.ui.text.font.Font(dev.senda.launcher.R.font.noto_sans_regular, FontWeight.Normal),
+            androidx.compose.ui.text.font.Font(dev.senda.launcher.R.font.noto_sans_light, FontWeight.Light))
+        return base.copy(
+            displayLarge=base.displayLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            displayMedium=base.displayMedium.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            displaySmall=base.displaySmall.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            headlineLarge=base.headlineLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            headlineMedium=base.headlineMedium.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            headlineSmall=base.headlineSmall.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            titleLarge=base.titleLarge.copy(fontFamily=font,fontWeight=FontWeight.Light),
+            titleMedium=base.titleMedium.copy(fontFamily=font),titleSmall=base.titleSmall.copy(fontFamily=font),
+            bodyLarge=base.bodyLarge.copy(fontFamily=font),bodyMedium=base.bodyMedium.copy(fontFamily=font),bodySmall=base.bodySmall.copy(fontFamily=font),
+            labelLarge=base.labelLarge.copy(fontFamily=font),labelMedium=base.labelMedium.copy(fontFamily=font),labelSmall=base.labelSmall.copy(fontFamily=font))
+    }
     if(theme==LauncherTheme.RAZR) return base.copy(
         titleLarge=base.titleLarge.copy(fontFamily=FontFamily.Monospace,fontWeight=FontWeight.Medium),
         titleMedium=base.titleMedium.copy(fontFamily=FontFamily.Monospace),

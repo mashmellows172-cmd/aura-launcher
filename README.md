@@ -12,9 +12,15 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Beta actual: **0.23.1-beta30**, variante optimizada con R8. [Entrega y límites](docs/BETA30.md). Los APK y claves de firma quedan fuera del repositorio.
+Beta actual: **0.24.0-beta31**, variante optimizada con R8. [Entrega y límites](docs/BETA31.md). Los APK y claves de firma quedan fuera del repositorio.
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
+
+## Nuevo en beta31
+
+- Pantalla PS4 independiente: funciones, carrusel horizontal, Biblioteca con búsqueda y menú rápido lateral.
+- Noto Sans, iconos de la guía Sony, selección ampliada y fondo azul-negro con ondas.
+- [Procedencia y límites de fidelidad](artwork/ps4/README.md); los recursos oficiales disponibles no constituyen un kit HD.
 
 ## Nuevo en beta30
 

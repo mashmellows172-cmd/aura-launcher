@@ -43,8 +43,8 @@ import kotlin.math.sin
 internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier) {
     val phase = rememberHistoricalPhase(LauncherTheme.PS4, true, reduced)
     Box(modifier.drawWithCache {
-        val backdrop = Brush.verticalGradient(listOf(Color(0xFF1057C4), Color(0xFF07358A), Color(0xFF031B58)))
-        val wash = Brush.verticalGradient(listOf(Color(0xFF8AD8FF).copy(alpha = .10f), Color.Transparent))
+        val backdrop = Brush.verticalGradient(listOf(Color(0xFF003087), Color(0xFF003087), Color(0xFF060F26)))
+        val wash = Brush.verticalGradient(listOf(Color(0xFF0070D1).copy(alpha = .16f), Color.Transparent))
         val paths = List(4) { Path() }
         val contour = Stroke(.8.dp.toPx())
         onDrawBehind {

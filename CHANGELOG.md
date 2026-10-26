@@ -2,9 +2,17 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.24.0-beta31 · 25 de octubre de2026
+
+Cambios: pantalla PS4 independiente con funciones horizontales, carrusel con selección ampliada, Biblioteca y búsqueda, menú rápido lateral, perfil/hora, Noto Sans y recursos originales de la guía Sony. Fondo de ondas azul-negro y énfasis de350ms. Accesos reales; funciones PSN remiten a PlayStation App. Skill ps4-theme-fidelity instalada localmente.
+
+Validación: compilación/lint correctos (0 errores,16 advertencias,3 avisos); firma, hash e instalación code31 comprobados. Revisión visual nativa pendiente de desbloqueo. No es una certificación de equivalencia exacta con firmware9.x; los PNG de Sony no son HD.
+
+Fuente: [BETA31.md](docs/BETA31.md).
+
 ## Pendiente · próxima actualización
 
-- Prioridad alta: PlayStation más fiel en distribución, tarjetas, tipografía y navegación.
+- PlayStation: revisión visual física de beta31 y recursos oficiales de mayor resolución; comprobar referencias identificadas de firmware9.x.
 - Nothing: iconos con silueta nativa, monocromáticos y sin contenedores circulares; conservar lectura dot-matrix.
 - Moto Razr: pulido profundo, metal/LCD y guiños al formato plegable, sin mezclar arbitrariamente generaciones. El tema actual parte del RAZR V3; cualquier evolución moderna debe quedar documentada.
 - SIII: completar156 apps pendientes con recursos de época comprobados o IA identificada; conservar evidencia por icono.

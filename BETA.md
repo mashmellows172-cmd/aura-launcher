@@ -1,6 +1,6 @@
-# Aura Launcher 0.23.1-beta30
+# Aura Launcher 0.24.0-beta31
 
-Estado actual y limitaciones: [beta30](docs/BETA30.md). Configuración de otro equipo: [desarrollo](docs/DEVELOPMENT.md).
+Estado actual y limitaciones: [beta31](docs/BETA31.md). Configuración de otro equipo: [desarrollo](docs/DEVELOPMENT.md).
 
 ## Nuevo en beta28
 

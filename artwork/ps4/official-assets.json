@@ -1,0 +1,119 @@
+[
+  {
+    "name": "download",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_download.png",
+    "size": [
+      19,
+      21
+    ],
+    "sha256": "a668fdb46ec6efe765fc725638d3764d2db36243b3568de4c23f6a6bf93deca5"
+  },
+  {
+    "name": "events",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_events.png",
+    "size": [
+      25,
+      22
+    ],
+    "sha256": "08e06b6f6941ea9d68bfeb8736ad26d89120ae1a618a32a0bb1123659ce5ac68"
+  },
+  {
+    "name": "friends",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_friends.png",
+    "size": [
+      23,
+      22
+    ],
+    "sha256": "56464e6e5c92abd8dec1e39ab7848877f264c56891e2ffdf1e7ea11a75f52bf4"
+  },
+  {
+    "name": "library",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_library.png",
+    "size": [
+      22,
+      21
+    ],
+    "sha256": "292266d303810c930710196c7476c3c11532aa6b329d3124646a94b72ae1e69c"
+  },
+  {
+    "name": "messages",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_messages.png",
+    "size": [
+      27,
+      23
+    ],
+    "sha256": "436c82793239173544c21c702384473cb7634a7acc3be512facd65e1b5bf286c"
+  },
+  {
+    "name": "notification",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_notification.png",
+    "size": [
+      22,
+      22
+    ],
+    "sha256": "419920239718170ae0473232927c75517906a61e902290de58c42aa50f285d90"
+  },
+  {
+    "name": "party",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_party.png",
+    "size": [
+      21,
+      22
+    ],
+    "sha256": "a0832677fb5c6181b8eda594fd3c2c1ebcbcefc126759c59c5133466a96ed1c9"
+  },
+  {
+    "name": "ps_store_c",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_ps_store_c.png",
+    "size": [
+      17,
+      22
+    ],
+    "sha256": "111aa31025db0afc6d370204115d8128c05739e469c032e51fc67e66b3fbdf9a"
+  },
+  {
+    "name": "settings",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_settings.png",
+    "size": [
+      27,
+      20
+    ],
+    "sha256": "38afcd380d54dc8c83226ff4df513abfe12c68552bf938e7ddabce0084ffe23e"
+  },
+  {
+    "name": "trophies",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_trophies.png",
+    "size": [
+      25,
+      22
+    ],
+    "sha256": "1674f96e7af57d79e9855773d374d3663da5c9fe299e2688d52e2f7c9e988242"
+  },
+  {
+    "name": "upload",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_upload.png",
+    "size": [
+      19,
+      21
+    ],
+    "sha256": "efcee2fd4157ffc4736ed72f92a1a2ba92482b8fdf389a54f5415359c013628a"
+  },
+  {
+    "name": "usbmusicplayer",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_usbmusicplayer.png",
+    "size": [
+      22,
+      21
+    ],
+    "sha256": "6638c409d165a554bd5debcc928aab8eec95332127919e2430d892fa3b7b31ad"
+  },
+  {
+    "name": "power",
+    "source": "https://manuals.playstation.net/document/imgps4/icon_power.png",
+    "size": [
+      21,
+      22
+    ],
+    "sha256": "c625dee54e3165d311ebfde922d1d36aeaadae3fe3d6942781d6bda2bef4813b"
+  }
+]

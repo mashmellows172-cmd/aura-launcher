@@ -343,7 +343,7 @@ fun HomeScreen(
     }
 
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController) {
-    Box(Modifier.fillMaxSize().homeGestures(executeGesture).pointerInput(state.lockGesture) {
+    Box(Modifier.fillMaxSize().then(if (state.theme == LauncherTheme.PS4) Modifier else Modifier.homeGestures(executeGesture)).pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
     }) {
         if (wallpaperBitmap != null && !state.appearance.highContrast) {
@@ -356,6 +356,42 @@ fun HomeScreen(
         }
         val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
         if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize())
+        if (state.theme == LauncherTheme.PS4) {
+            val openPlayStation: () -> Unit = {
+                val psApp = state.apps.firstOrNull { it.packageName == "com.scee.psxandroid" }
+                if (psApp != null) viewModel.launch(psApp) else runCatching {
+                    context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://www.playstation.com/playstation-app/")))
+                }.onFailure { android.widget.Toast.makeText(context,"No hay una app para abrir este enlace.",android.widget.Toast.LENGTH_SHORT).show() }
+            }
+            Ps4Dashboard(
+                apps=visibleApps, favorites=favoriteApps, overrides=state.skinIcons, avatarUri=state.avatarUri,
+                clock=clockTime, reduced=state.visualSettings.reduceMotion || state.appearance.highContrast,
+                query=state.query, onQuery=viewModel::setQuery,
+                onLaunch={ soundFeedback.play(SoundEvent.LAUNCH); viewModel.launch(it) }, onLoadIcon=viewModel::icon,
+                onAvatar={showAvatar=true},onSettings={showPersonalization=true},onTheme={showThemePicker=true},
+                onFavorites={showFavoritesEditor=true},onNotifications={if(!NotificationShadeService.open())showNotificationHelp=true},
+                onMusic={
+                    if(state.audioInfo.sessionId != null) viewModel.openAudioApp() else runCatching {
+                        context.startActivity(android.content.Intent.makeMainSelectorActivity(android.content.Intent.ACTION_MAIN,android.content.Intent.CATEGORY_APP_MUSIC))
+                    }.onFailure { android.widget.Toast.makeText(context,"Abre tu aplicación de música desde Biblioteca.",android.widget.Toast.LENGTH_SHORT).show() }
+                },onCalendar={openCalendar(context)},onPlayStation=openPlayStation,
+                onStore={runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://store.playstation.com/"))) }
+                    .onFailure { android.widget.Toast.makeText(context,"No hay una app para abrir la tienda.",android.widget.Toast.LENGTH_SHORT).show() }},
+                onSound={showSoundSettings=true},onWidgets={showWidgetPicker=true},onHomeSettings={showHomeSettings=true},
+                onLock=lockDevice,onChooseIcon={pkg->visibleApps.firstOrNull{it.packageName==pkg}?.let(onChooseIcon)},
+                onSelection={soundFeedback.play(SoundEvent.SELECT)},
+                dashboard={
+                    Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                        if(!isDefaultHome) DefaultHomeCard(onChooseHome)
+                        state.errorMessage?.let { ErrorBanner(it,viewModel::refreshApps) }
+                        if(state.headerSettings.showAudioWidget) ThemedAudioWidget(
+                            audioInfo=state.audioInfo,theme=state.theme,reduceMotion=state.visualSettings.reduceMotion,
+                            onOpenAudio=viewModel::openAudioApp,onPause=viewModel::pauseAudio,onPrevious=viewModel::previousAudio,
+                            onNext=viewModel::nextAudio,onEnableAccess={showHomeSettings=true})
+                        BlockAnchor.entries.forEach { anchor -> DashboardGroup(state,widgetController,anchor){showHomeSettings=true} }
+                    }
+                })
+        } else {
         Column(
         modifier = Modifier
             .fillMaxSize()
@@ -511,6 +547,8 @@ fun HomeScreen(
         }
         }
     }
+
+    } // Non-console layout
 
     } // Motion controller provider
 
