@@ -123,7 +123,11 @@ internal fun GraphicsLayerScope.applyAuraMotion(position: Float, velocity: Float
     if (settings.reduceMotion || settings.motion == "NONE" || abs(velocity) < MotionTokens.idleEpsilon) return
     val p = position.coerceIn(-1f, 1f)
     val distance = abs(p)
-    val energy = sqrt(abs(velocity).coerceAtMost(1f)) * settings.scrollIntensity / 100f
+    val speed = abs(velocity).coerceAtMost(1f)
+    // Fade the final low-speed tail instead of snapping a nonzero transform to rest.
+    val tail = ((speed - MotionTokens.idleEpsilon) / .06f).coerceIn(0f, 1f)
+    val settle = tail * tail * (3f - 2f * tail)
+    val energy = sqrt(speed) * settle * settings.scrollIntensity / 100f
     val direction = if (velocity < 0f) -1f else 1f
     cameraDistance = max(size.width, size.height).coerceAtLeast(1f) * MotionTokens.cameraDistanceFactor
     when (settings.motion) {
@@ -204,6 +208,7 @@ fun AuraAlertDialog(
     AlertDialog(onDismissRequest, confirmButton, modifier.graphicsLayer {
         val p = progress.value
         scaleX = 1f; scaleY = 1f; rotationX = 0f; translationY = 0f; translationX = 0f
+        transformOrigin = TransformOrigin.Center
         alpha = p.coerceIn(0f, 1f)
         if (settings.menuEffect == "SPRING" && !noMotion) {
             when (profile?.motion) {
@@ -219,7 +224,7 @@ fun AuraAlertDialog(
         }
         if (settings.menuEffect == "SLIDE" && !noMotion) translationY = (1f - p) * MotionTokens.menuTravel.toPx()
     }, dismissButton = dismissButton, title = title, text = text,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = profile?.chromeShape() ?: MaterialTheme.shapes.extraLarge,
         containerColor = container,
         tonalElevation = 0.dp,
         titleContentColor = ink,
@@ -233,9 +238,10 @@ fun MotionPreview(settings: VisualSettings) {
     val pulse = remember { Animatable(0f) }
     var replay by remember { mutableIntStateOf(0) }
     var dragging by remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(replay, settings.motion, settings.scrollIntensity, settings.reduceMotion) {
+    val noMotion = settings.reduceMotion || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
+    LaunchedEffect(replay, settings.motion, settings.scrollIntensity, noMotion, settings.durationMs) {
         pulse.snapTo(0f)
-        if (!settings.reduceMotion && settings.motion != "NONE") {
+        if (!noMotion && settings.motion != "NONE") {
             pulse.animateTo(-.8f, tween(250))
             pulse.animateTo(.8f, tween(650))
             pulse.animateTo(0f, tween(settings.durationMs))
@@ -244,12 +250,12 @@ fun MotionPreview(settings: VisualSettings) {
     Column {
         Box(Modifier.fillMaxWidth().height(MotionTokens.previewHeight)
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(MotionTokens.previewRadius))
-            .pointerInput(Unit) { detectVerticalDragGestures(onDragEnd = { dragging = 0f }, onDragCancel = { dragging = 0f }) { change, amount -> change.consume(); dragging = (amount / 35f).coerceIn(-1f, 1f) } }
+            .pointerInput(noMotion) { if (noMotion) return@pointerInput; detectVerticalDragGestures(onDragEnd = { dragging = 0f }, onDragCancel = { dragging = 0f }) { change, amount -> change.consume(); dragging = (amount / 35f).coerceIn(-1f, 1f) } }
             .padding(MotionTokens.previewPadding)) {
             Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
                 listOf("Mensajes", "Cámara", "Calendario", "Música").forEachIndexed { index, name ->
                     Row(Modifier.fillMaxWidth().height(MotionTokens.previewRow).graphicsLayer {
-                        val v = if (dragging != 0f) dragging else pulse.value
+                        val v = if (noMotion) 0f else if (dragging != 0f) dragging else pulse.value
                         applyAuraMotion((index - 1.5f) / 1.7f, v, settings)
                     }, verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(MotionTokens.previewIcon).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(MotionTokens.previewIconRadius)))
@@ -258,6 +264,6 @@ fun MotionPreview(settings: VisualSettings) {
                 }
             }
         }
-        TextButton(onClick = { replay++ }) { Text("Reproducir vista previa") }
+        TextButton(onClick = { replay++ }, enabled = !noMotion && settings.motion != "NONE") { Text("Reproducir vista previa") }
     }
 }

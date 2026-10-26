@@ -8,7 +8,7 @@ Principles: preserve Aura ergonomics (vertical apps/favorites, persistent search
 
 - [x] H1: dedicated A–Z settings,7 distinct effects plusNONE, intensity/duration/bubble-size/hold controls and real interactive preview. Persist settings with version12 backups compatible1–12. Keep scrubbing, accessible letter jumps, cancellation of stale jumps, haptics throttle, reduced-motion/system animator behavior. Delegate storage to OpenCode with bounded files; primary owns visuals.
 - [x] H2: remove unwanted circular plates from Nothing thematic app/function artwork while preserving recognizable silhouettes, dots and personal overrides. Optical review and theme identity consistency.
-- [ ] H3: refine theme container/shape coherence and focus/pressed states; provide missing PS4 font weights and inspect text clipping/large-type layouts. No console shell.
+- [x] H3: refine theme container/shape coherence and focus/pressed states; provide missing PS4 font weights and inspect text clipping/large-type layouts. No console shell.
 - [ ] H4: professional list/menu transitions: eliminate discontinuities and conflicting gestures, bounded animations only while interacting, reduced motion and no permanent high-refresh lock. Prioritize perceptible effect choices over imperceptible sliders.
 - [ ] H5: inspect icon contrast/optical sizes and package/cache behavior; apply only evidenced corrections. Use OpenCode audit where helpful, reject unverified findings.
 - [ ] H6: compile/lint, same-key APK, version/hash verification, install only if authorized Motorola available without settings/permission changes or forced navigation in other apps. Update CHANGELOG/BETA/CONTINUITY and private GitHub per delivery; no force push. Final checkpoint/report by deadline or quota guard.
