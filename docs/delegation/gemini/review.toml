@@ -1,0 +1,5 @@
+[[rule]]
+toolName = "*"
+decision = "deny"
+priority = 999
+denyMessage = "Review only the explicitly supplied source context; tools and edits are disabled."

@@ -33,3 +33,7 @@ Beta34: OpenCode auditó iconos/tipografías/ergonomía e implementó4 correccio
 ## Cierre nocturno26 de octubre
 
 H1–H6 entregados en beta35–37; consultar docs/superpowers/reports/2026-10-26-overnight-polish.md. Próximo trabajo útil: revisión física de A–Z/transiciones/texto grande, no repetir implementaciones. No afirmar FPS ni fidelidad100%. SIII sigue20/176 y156 pendientes.
+
+## Gemini
+
+Integración preparada; login Google pendiente. Leer docs/delegation/2026-10-26-gemini-integration.md. Tareas visual/preview con contexto limitado y herramientas denegadas. No atribuir análisis a Gemini hasta comprobar una respuesta real.
