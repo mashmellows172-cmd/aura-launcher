@@ -1,0 +1,29 @@
+{
+  "visual": [
+    "app/src/main/java/dev/senda/launcher/ui/ThemeLivePreview.kt",
+    "app/src/main/java/dev/senda/launcher/ui/ThemeEditorDialog.kt",
+    "app/src/main/java/dev/senda/launcher/ui/theme/AuraTheme.kt",
+    "app/src/main/java/dev/senda/launcher/ui/theme/ThemeTypography.kt",
+    "app/src/main/java/dev/senda/launcher/ui/HomeScreen.kt",
+    "app/src/main/java/dev/senda/launcher/ui/S3ReviewDialog.kt"
+  ],
+  "variants": [
+    "app/src/main/java/dev/senda/launcher/themeeditor/ThemeSnapshot.kt",
+    "app/src/main/java/dev/senda/launcher/themeeditor/ThemeDatabase.kt",
+    "app/src/main/java/dev/senda/launcher/themeeditor/ThemeEditorViewModel.kt",
+    "app/src/main/java/dev/senda/launcher/LauncherViewModel.kt",
+    "app/src/main/java/dev/senda/launcher/data/SettingsBackup.kt"
+  ],
+  "performance": [
+    "macrobenchmark/src/main/java/dev/senda/launcher/benchmark/LauncherBenchmarks.kt",
+    "baselineprofile/src/main/java/dev/senda/launcher/baselineprofile/BaselineProfileGenerator.kt",
+    "app/build.gradle.kts",
+    "macrobenchmark/build.gradle.kts",
+    "baselineprofile/build.gradle.kts",
+    "tools/performance/compare.py",
+    "app/src/main/java/dev/senda/launcher/LauncherViewModel.kt",
+    "app/src/main/java/dev/senda/launcher/MainActivity.kt",
+    "app/src/main/java/dev/senda/launcher/ui/ThemeLivePreview.kt",
+    "docs/PERFORMANCE.md"
+  ]
+}
