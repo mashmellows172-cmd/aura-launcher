@@ -1,0 +1,21 @@
+<!-- Raw AI output. Not an approved bug list. See validation.md. -->
+
+## Revisión de diferenciación visual (Nothing, TouchWiz SIII, Sense, Optimus, Xperia, Razr, PS4)
+
+| # | Severidad | Archivo :Línea | Evidencia concreta | Tipo | Propuesta | Criterio de aceptación | Esfuerzo | Incertidumbre |
+|---|-----------|----------------|--------------------|------|-----------|------------------------|----------|----------------|
+| 1 | **Crítica** | `ThemeTypography.kt:12‑35` | `TouchWiz` usa `natureFont` (Roboto) – misma tipografía que el estilo “genérico” Android, sin referencia a la identidad Samsung. | Defecto | Añadir una tipografía propia de Samsung (p. ej. **SamsungOne**) y mapearla en `historicalTypography` para `LauncherTheme.TOUCHWIZ`. | En la previsualización y en la app real, el tema TouchWiz muestra la nueva fuente y el resto de temas mantienen sus fuentes actuales. | M (modificar recursos de fuente y tabla de mapeo) | Baja |
+| 2 | **Alta** | `AuraTheme.kt:58` | `LauncherTheme.NOTHING` establece `IconHolder.CIRCLE`. Todos los OEM usan formas más distintivas (SQUIRCLE, ROUNDED, BEVELED). | Limitación intencional | Evaluar si el tema “Nothing” debe mantener un estilo neutro o adoptar una forma de icono diferenciada (p. ej. **ROUNDED**). Si se decide cambiar, actualizar `SkinStyle` y los tests visuales. | El icono del tema Nothing muestra la forma acordada y es perceptible como distinta respecto a los demás. | S (cambio de valor en código) | Media (dependerá de decisión de branding) |
+| 3 | **Media** | `ThemeLivePreview.kt:66‑73` | La consola PS4 sólo se muestra cuando `bitmap == null && !state.appearance.highContrast`. Si el usuario elige “alto contraste” con wallpaper vacío, el fondo queda negro sin la consola, pese a la regla “PS4 no debe recuperar el carrusel rechazado”. | Defecto | Extender la condición a `|| state.appearance.highContrast` y siempre dibujar `Ps4Wallpaper` cuando falte bitmap, garantizando un fondo constante. | En todas las combinaciones (con/sin wallpaper, con/sin alto contraste) el preview de PS4 muestra la consola o su sustituto, sin áreas vacías. | M (ajuste de lógica en composable) | Baja |
+| 4 | **Baja** | `ThemeTypography.kt:43‑48` | Los valores de `choice` (“NOTO”, “MONO”, “CONDENSED”) están codificados como *strings*; no existe ningún tipo seguro ni documentación centralizada. | Hipótesis | Reemplazar los *strings* por un `enum class FontVariant { NOTO, MONO, CONDENSED }` y exponer un map estático. Añadir pruebas unitarias que verifiquen la correspondencia. | La API pública sólo acepta valores del enum; compilación falla al pasar un valor inválido. | M (creación de enum y refactor de llamadas) | Media |
+| 5 | **Media** | `AuraTheme.kt:101‑115` | `motionMillis` de `SkinStyle` se usa sólo para animar `accent`, `backgroundTop` y `backgroundBottom`. Otros componentes (AlphabetRail, AppSections, transiciones de pantalla) siguen usando valores predeterminados, lo que rompe la cohesión de movimiento entre temas. | Hipótesis | Propagar `style.motionMillis` a los `AnimatedVisibility` / `animate*AsState` de los demás composables (p. ej. `AlphabetRail`, `AppSections`). Añadir un `MotionTokens` central que lea este valor. | Todas las animaciones perceptibles respetan el mismo tiempo de movimiento definido por el tema. | L (refactor amplio de UI) | Alta (requiere revisión de varios módulos) |
+
+### Orden recomendado para una entrega pequeña
+
+1. **[#1] Tipografía distinta para TouchWiz** – alta prioridad por impacto de marca y facilidad de implementación.  
+2. **[#3] Fondo de consola PS4 bajo alto contraste** – corrige una regresión visual visible.  
+3. **[#2] Forma de icono para “Nothing”** – depende de decisión de producto; se puede implementar rápidamente si se opta por cambiar.  
+4. **[#4] Uso de enum para variantes tipográficas** – mejora la robustez del código y evita errores futuros.  
+5. **[#5] Consistencia del `motionMillis`** – mejora de calidad que puede quedar para una fase posterior dado su mayor esfuerzo.
+
+> **Nota**: Cada hallazgo ha sido clasificado según la evidencia presente en los extractos de código suministrados. No se han introducido suposiciones externas ni se han medido rendimientos reales.

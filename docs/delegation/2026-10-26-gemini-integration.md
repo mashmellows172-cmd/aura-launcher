@@ -39,3 +39,7 @@ Official documentation: https://geminicli.com/docs/get-started/authentication/ ;
 - A no-source READY connection probe via agy returned individual quota exhausted (HTTP429), zero input/output tokens, no response; reset message47h46m11s at probe time. This confirms the authenticated service was reached, not successful model execution.
 - Do not retry continuously or switch credentials/tier to evade quota. Wait for normal provider availability. No automation created and no promise of unattended execution.
 - Supported-runner work remaining: do not blindly reuse Gemini CLI policy flags with agy. Read its current CLI help/permission docs, enforce the selected-file scope and tool restrictions, then record a real model response and primary review before claiming activation complete.
+
+## Correction: quota is model-specific
+
+The user requested available Sonnet/OpenAI models. agy models listed claude-sonnet-4-6 and gpt-oss-120b-medium; both returned READY and completed bounded reviews. The earlier default-model quota response did not block these models. Runner now defaults to Antigravity with an explicit allowed model, runs from an isolated temporary directory, and validates final status/action step types. See antigravity/execution.json and antigravity/validation.md for real evidence and primary acceptance/rejections. Old Gemini CLI route remains unsupported for this account. No model output is automatically applied.

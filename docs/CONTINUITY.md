@@ -37,3 +37,7 @@ H1–H6 entregados en beta35–37; consultar docs/superpowers/reports/2026-10-26
 ## Gemini
 
 Google autenticado. Gemini CLI rechazado por UNSUPPORTED_CLIENT; Antigravity CLI1.4.7 conecta, pero responde cuota individual agotada (~48h al comprobar). Leer docs/delegation/2026-10-26-gemini-integration.md. Usuario autorizó expresamente siete archivos de UI; respetar ese alcance. Runner original Gemini no sirve para agy: adaptar sus permisos antes de enviar contexto. Sin análisis completados, sin pagos ni reintentos continuos.
+
+## Antigravity operativo con otros modelos
+
+Corrección: cuota agotada era del modelo anterior, no de todo Antigravity. Sonnet4.6 y GPT-OSS120B respondieron y terminaron revisiones reales. Leer docs/delegation/antigravity/validation.md antes de aplicar propuestas: varias se rechazaron. Runner tools/gemini/delegate-review.py requiere --model explícito para Antigravity. Solo siete archivos UI autorizados para compartir; no extender alcance. Sin cambios de app ni nueva beta en esta revisión.
