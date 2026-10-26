@@ -1,3 +1,7 @@
+# Current direction · beta32
+
+PS4 now preserves Aura's vertical list, persistent search and alphabet navigation. The separate console shell and PSN actions described below belong to beta31 and have been retired after user feedback. Published Sony PNGs remain as source references; release resource shrinking excludes unused assets. Noto Sans, native waves and the avatar motif remain active.
+
 # PS4 resources and fidelity
 
 Sony published PNG glyphs are preserved byte-for-byte; provenance, dimensions and hashes: official-assets.json. They are copyrighted Sony resources referenced for this private personal theme, not Aura originals and not covered by the code MIT license. Their native dimensions are17–27px: these are NOT an HD icon kit. Runtime tint makes the guide glyphs legible against the dark console background. Native app identities and personal overrides remain the content covers.

@@ -17,3 +17,5 @@ Conservar datos, iconos normales, packs/reemplazos personales y recursos del usu
 No añadir ni ejecutar suites automáticas sin nueva petición explícita del usuario. Usar compilación/lint y revisión visual/source con límites claros. No cambiar permisos ni ajustes del teléfono sin autorización específica.
 
 Prioridades visuales vigentes: PlayStation primero; Nothing con siluetas propias sin círculos; pulido Razr; continuar reconstrucción SIII con evidencia individual. Leer los pendientes actuales antes de implementarlas.
+
+Corrección del26 de octubre: PS4 debe conservar la estructura y ergonomía de Aura (lista vertical, búsqueda, A–Z, apertura con un toque). La imitación del menú de consola de beta31 fue rechazada. Esta instrucción prevalece sobre las recomendaciones de replicar el layout completo de la skill ps4-theme-fidelity.

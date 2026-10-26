@@ -20,7 +20,7 @@ data class RetroStyle(val theme: LauncherTheme? = null, val customHolder: Boolea
         LauncherTheme.OPTIMUS -> "AURA FLOW / OPTIMUS"
         LauncherTheme.XPERIA -> "AURA HORIZON / FLOW"
         LauncherTheme.RAZR -> "AURA ALLOY / V3"
-        LauncherTheme.PS4 -> "AURA / DYNAMIC MENU"
+        LauncherTheme.PS4 -> "AURA / ORBIT"
         else -> "AURA"
     }
 }

@@ -1,5 +1,8 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.focus.onFocusChanged
+
 import dev.senda.launcher.widgets.WidgetController
 import dev.senda.launcher.widgets.WidgetPickerDialog
 import dev.senda.launcher.widgets.WidgetShelf
@@ -325,7 +328,7 @@ fun HomeScreen(
     }
     val starts = remember(groupLetters, groups, favoriteApps, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
-        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, if (state.theme == LauncherTheme.PS4 && favoriteApps.isNotEmpty()) 1 else favoriteApps.size, false).mapValues { it.value + dashboardSections }
+        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections }
     }
     val activeLetter by remember(listState, starts) {
         derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
@@ -343,7 +346,7 @@ fun HomeScreen(
     }
 
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController) {
-    Box(Modifier.fillMaxSize().then(if (state.theme == LauncherTheme.PS4) Modifier else Modifier.homeGestures(executeGesture)).pointerInput(state.lockGesture) {
+    Box(Modifier.fillMaxSize().homeGestures(executeGesture).pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
     }) {
         if (wallpaperBitmap != null && !state.appearance.highContrast) {
@@ -356,42 +359,6 @@ fun HomeScreen(
         }
         val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
         if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize())
-        if (state.theme == LauncherTheme.PS4) {
-            val openPlayStation: () -> Unit = {
-                val psApp = state.apps.firstOrNull { it.packageName == "com.scee.psxandroid" }
-                if (psApp != null) viewModel.launch(psApp) else runCatching {
-                    context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://www.playstation.com/playstation-app/")))
-                }.onFailure { android.widget.Toast.makeText(context,"No hay una app para abrir este enlace.",android.widget.Toast.LENGTH_SHORT).show() }
-            }
-            Ps4Dashboard(
-                apps=visibleApps, favorites=favoriteApps, overrides=state.skinIcons, avatarUri=state.avatarUri,
-                clock=clockTime, reduced=state.visualSettings.reduceMotion || state.appearance.highContrast,
-                query=state.query, onQuery=viewModel::setQuery,
-                onLaunch={ soundFeedback.play(SoundEvent.LAUNCH); viewModel.launch(it) }, onLoadIcon=viewModel::icon,
-                onAvatar={showAvatar=true},onSettings={showPersonalization=true},onTheme={showThemePicker=true},
-                onFavorites={showFavoritesEditor=true},onNotifications={if(!NotificationShadeService.open())showNotificationHelp=true},
-                onMusic={
-                    if(state.audioInfo.sessionId != null) viewModel.openAudioApp() else runCatching {
-                        context.startActivity(android.content.Intent.makeMainSelectorActivity(android.content.Intent.ACTION_MAIN,android.content.Intent.CATEGORY_APP_MUSIC))
-                    }.onFailure { android.widget.Toast.makeText(context,"Abre tu aplicación de música desde Biblioteca.",android.widget.Toast.LENGTH_SHORT).show() }
-                },onCalendar={openCalendar(context)},onPlayStation=openPlayStation,
-                onStore={runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://store.playstation.com/"))) }
-                    .onFailure { android.widget.Toast.makeText(context,"No hay una app para abrir la tienda.",android.widget.Toast.LENGTH_SHORT).show() }},
-                onSound={showSoundSettings=true},onWidgets={showWidgetPicker=true},onHomeSettings={showHomeSettings=true},
-                onLock=lockDevice,onChooseIcon={pkg->visibleApps.firstOrNull{it.packageName==pkg}?.let(onChooseIcon)},
-                onSelection={soundFeedback.play(SoundEvent.SELECT)},
-                dashboard={
-                    Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                        if(!isDefaultHome) DefaultHomeCard(onChooseHome)
-                        state.errorMessage?.let { ErrorBanner(it,viewModel::refreshApps) }
-                        if(state.headerSettings.showAudioWidget) ThemedAudioWidget(
-                            audioInfo=state.audioInfo,theme=state.theme,reduceMotion=state.visualSettings.reduceMotion,
-                            onOpenAudio=viewModel::openAudioApp,onPause=viewModel::pauseAudio,onPrevious=viewModel::previousAudio,
-                            onNext=viewModel::nextAudio,onEnableAccess={showHomeSettings=true})
-                        BlockAnchor.entries.forEach { anchor -> DashboardGroup(state,widgetController,anchor){showHomeSettings=true} }
-                    }
-                })
-        } else {
         Column(
         modifier = Modifier
             .fillMaxSize()
@@ -435,9 +402,6 @@ fun HomeScreen(
             onChooseWidgets = { showWidgetPicker = true },
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
         )
-        if (state.theme == LauncherTheme.PS4) Ps4FunctionBar(
-            onAvatar = { showAvatar = true }, onFavorites = { showFavoritesEditor = true },
-            onLibrary = { showLetterJump = true }, onTheme = { showThemePicker = true })
         if (state.headerSettings.showAudioWidget) {
             ThemedAudioWidget(
                 audioInfo = state.audioInfo,
@@ -547,8 +511,6 @@ fun HomeScreen(
         }
         }
     }
-
-    } // Non-console layout
 
     } // Motion controller provider
 
@@ -981,10 +943,7 @@ private fun AppSections(
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (favoriteApps.isNotEmpty()) {
             item(key = "favorites-heading", contentType = "heading") { SectionHeading("Tus favoritas", favoriteApps.size, LauncherTheme.valueOf(skinName)) }
-            if (skinName == LauncherTheme.PS4.name) item(key = "ps4-favorites", contentType = "console-ribbon") {
-                Ps4Favorites(favoriteApps, skinIcons, visualSettings.reduceMotion || LocalAppearance.current.highContrast, onLaunch, onLoadIcon)
-            }
-            else items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
+            items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
                 AppRow(app, isFavorite = true, skinName = skinName, skinTitle = skinTitle, customIconUri = skinIcons["${skinName}_${app.packageName}"], listState = listState, visualSettings = visualSettings, rowKey = "favorite-${app.packageName}", modifier = Modifier.animateItem(fadeInSpec = if (visualSettings.reduceMotion) null else tween(160), placementSpec = if (visualSettings.reduceMotion) null else spring(stiffness = 700f, dampingRatio = .9f), fadeOutSpec = if (visualSettings.reduceMotion) null else tween(100)), onLaunch = { onLaunch(app) }, onToggleFavorite = { onToggleFavorite(app) }, onHide = { onHide(app) }, onChooseIcon = { onChooseIcon(app) }, onResetIcon = { onResetIcon(app) }, onLoadIcon = onLoadIcon)
             }
         }
@@ -1098,6 +1057,11 @@ private fun AppRow(
 ) {
     var actionsExpanded by remember(app.packageName) { mutableStateOf(false) }
     val appearance = LocalAppearance.current
+    val console = skinName == LauncherTheme.PS4.name
+    val rowInteractions = remember(app.packageName) { MutableInteractionSource() }
+    val pressed by rowInteractions.collectIsPressedAsState()
+    var rowFocused by remember { mutableStateOf(false) }
+    val consoleShape = RoundedCornerShape(4.dp)
     Row(
         modifier = modifier.fillMaxWidth().height(appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,
@@ -1105,8 +1069,13 @@ private fun AppRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.heightIn(min = 48.dp)
-                .combinedClickable(onClick = onLaunch, onLongClick = { actionsExpanded = true })
-                .padding(start = 4.dp),
+                .then(if (console) Modifier.fillMaxWidth()
+                    .background(if (pressed || rowFocused) MaterialTheme.colorScheme.primary.copy(alpha=.16f) else androidx.compose.ui.graphics.Color.Transparent, consoleShape)
+                    .border(1.dp,if(rowFocused)MaterialTheme.colorScheme.onSurface else androidx.compose.ui.graphics.Color.Transparent,consoleShape) else Modifier)
+                .onFocusChanged { rowFocused = it.hasFocus }
+                .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
+                    onClick = onLaunch, onLongClick = { actionsExpanded = true })
+                .padding(start = if(console)8.dp else 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AppIcon(app, customIconUri, onLoadIcon)

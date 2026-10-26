@@ -50,3 +50,8 @@ assembleBeta/lintBeta completados (3m36s,0 errores de lint). APK code30 instalad
 Pantalla dedicada Ps4Dashboard con funciones, carrusel, selección de350ms, biblioteca, menú rápido y perfil/hora. Noto Sans OFL y13 PNG publicados por Sony con metadatos; no se presentan como kit HD. Funciones PSN remiten explícitamente a PlayStation App. Se instaló ps4-theme-fidelity desde scratch; se contrastaron sus afirmaciones con las capturas oficiales.
 
 Build final assembleBeta/lintBeta correcto en2m21s:0 errores,16 advertencias,3 avisos. Certificado anterior conservado. Instalación Success, versión31 confirmada; APK y copia Descargas SHA25606b6bf259f303a3ffe2c9939aa8b19e206de1abd28d2cdebf71dd3b04aabfb45. Revisión nativa pendiente porque el teléfono se bloqueó; se solicitó desbloqueo sin cambiar ajustes. No se ejecutaron suites automáticas. SIII sigue20/176; Nothing y Razr pendientes.
+
+
+## Beta32 · corrección de ergonomía · 26 de octubre de2026
+
+Se retira la pantalla PS4 separada, carrusel y rutas PSN. Inicio común, listas verticales, apertura directa, búsqueda, A–Z, gestos y widgets restaurados; índices cuentan cada favorita. Acabado PS4 conservado. Compilación/lint2m31s,0 errores/25 advertencias/3 avisos. Firma original y versión32 verificadas. APK SHA256a1b07677292177a60a9dfc16c87f4e6404c6df05e67273d127e11e19f870a722. No instalado: Motorola ausente; dirección solicitada una vez. QA física pendiente, revisión estática en QA-beta32.md. Sin suites automáticas.
