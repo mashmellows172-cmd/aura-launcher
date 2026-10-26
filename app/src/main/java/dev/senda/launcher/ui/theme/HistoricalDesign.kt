@@ -1,5 +1,9 @@
 package dev.senda.launcher.ui.theme
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -108,6 +112,7 @@ fun HistoricalPanel(
             IconHolder.BEVELED -> androidx.compose.foundation.shape.CutCornerShape(6.dp)
         }
         profile == null -> MaterialTheme.shapes.large
+        profile.material == HistoricalMaterial.LCD -> androidx.compose.foundation.shape.CutCornerShape(4.dp)
         else -> RoundedCornerShape(profile.radius.dp)
     }
     val top = profile?.top ?: scheme.surface
@@ -115,7 +120,10 @@ fun HistoricalPanel(
     val foreground = profile?.ink ?: scheme.onSurface
     val muted = profile?.muted ?: scheme.onSurfaceVariant
     val accent = profile?.readableAccent(LocalSkinStyle.current.accent) ?: scheme.primary
-    val frame = if (selected) accent else profile?.frame ?: scheme.outline
+    val interactions = remember { MutableInteractionSource() }
+    val focused by interactions.collectIsFocusedAsState()
+    val highlighted = selected || (onClick != null && focused)
+    val frame = if (highlighted) accent else profile?.frame ?: scheme.outline
     val panelScheme = profile?.let { historicalColors(it, scheme, accent) } ?: scheme
     val inner: @Composable () -> Unit = {
         MaterialTheme(colorScheme = panelScheme) {
@@ -154,7 +162,7 @@ fun HistoricalPanel(
             }
         }
     }
-    if (onClick == null) Surface(modifier, shape, bottom, foreground, border = BorderStroke(if (selected) 2.dp else 1.dp, frame), content = inner)
-    else Surface(onClick = onClick, modifier = modifier, shape = shape, color = bottom, contentColor = foreground,
-        border = BorderStroke(if (selected) 2.dp else 1.dp, frame), content = inner)
+    if (onClick == null) Surface(modifier, shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
+    else Surface(onClick = onClick, interactionSource = interactions, modifier = modifier, shape = shape, color = bottom, contentColor = foreground,
+        border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
 }

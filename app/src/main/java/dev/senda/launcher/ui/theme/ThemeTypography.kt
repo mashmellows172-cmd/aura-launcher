@@ -13,7 +13,7 @@ private val natureFont=FontFamily(Font(R.font.roboto_ics_regular),Font(R.font.ro
 private val optimusFont=FontFamily(Font(R.font.lato_regular),Font(R.font.lato_bold,FontWeight.Bold))
 private val xperiaFont=FontFamily(Font(R.font.roboto_condensed_regular),Font(R.font.roboto_condensed_bold,FontWeight.Bold))
 private val razrFont=FontFamily(Font(R.font.share_tech_mono))
-private val ps4Font=FontFamily(Font(R.font.noto_sans_regular),Font(R.font.noto_sans_light,FontWeight.Light))
+private val ps4Font=FontFamily(Font(R.font.noto_sans_regular),Font(R.font.noto_sans_light,FontWeight.Light),Font(R.font.noto_sans_medium,FontWeight.Medium),Font(R.font.noto_sans_semibold,FontWeight.SemiBold),Font(R.font.noto_sans_bold,FontWeight.Bold))
 
 private fun themedTypography(font:FontFamily,heading:FontWeight=FontWeight.Normal):Typography {
     val b=Typography()

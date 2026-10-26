@@ -81,5 +81,23 @@
     "file": "APACHE-2.0.txt",
     "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
     "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "file": "noto_sans_medium.ttf",
+    "source": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Medium.ttf",
+    "sha256": "7bbe267354704c6ad18bde24b1dbc756c8e4380ca1c3f3c25c45ec5c4471510b",
+    "bytes": 566428
+  },
+  {
+    "file": "noto_sans_semibold.ttf",
+    "source": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-SemiBold.ttf",
+    "sha256": "87a8b90ece1e89746b544e4e086f85a3710e41485a8078f9be874837dfad45d5",
+    "bytes": 572924
+  },
+  {
+    "file": "noto_sans_bold.ttf",
+    "source": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Bold.ttf",
+    "sha256": "c976e4b1b99edc88775377fcc21692ca4bfa46b6d6ca6522bfda505b28ff9d6a",
+    "bytes": 575740
   }
 ]

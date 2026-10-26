@@ -1070,7 +1070,7 @@ private fun AppRow(
     var rowFocused by remember { mutableStateOf(false) }
     val consoleShape = RoundedCornerShape(4.dp)
     Row(
-        modifier = modifier.fillMaxWidth().height(appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
+        modifier = modifier.fillMaxWidth().heightIn(min = appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
