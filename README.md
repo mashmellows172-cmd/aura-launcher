@@ -12,13 +12,13 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
 
-Última beta instalada: **0.26.2-beta37**, variante optimizada con R8. [Entrega y límites](docs/BETA37.md). Los APK y claves de firma quedan fuera del repositorio.
+Última beta instalada: **0.27.0-beta38**, variante optimizada con R8. [Entrega y límites](docs/BETA38.md). Los APK y claves de firma quedan fuera del repositorio.
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
 
 ## Rama de validación beta38
 
-Editor seguro con Undo/Redo y Room, revisión SIII y módulos de rendimiento. [Estado y límites](docs/BETA38.md). Rama `codex/phase1-theme-editor`; no instalada ni fusionada a main. Medición física pendiente.
+Editor seguro con Undo/Redo y Room, revisión SIII y módulos de rendimiento. [Estado y límites](docs/BETA38.md). Rama `codex/phase1-theme-editor`; instalada, no fusionada a main. Medición física pendiente.
 
 ## Nuevo en beta34
 

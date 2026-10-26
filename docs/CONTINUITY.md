@@ -1,10 +1,10 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.26.2-beta37/code37. Consultar BETA37.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
+Última entrega instalada y verificada:0.27.0-beta38/code38. Consultar BETA38.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
 
 ## Checkpoint Phase1 beta38
 
-Código y APK preparado en codex/phase1-theme-editor; ver BETA38.md y PERFORMANCE.md. No instalado, no fusionado a main; beta37 sigue siendo la última instalación verificada. Medición física y perfiles propios pendientes. Editor/Room/pipeline manual SIII implementados,156 iconos aún pendientes. Variantes fuera del respaldo JSON existente. Reanudar con revisión física y benchmark, no repetir infraestructura ni iniciar Fase2 sin aprobación.
+Código y APK preparado en codex/phase1-theme-editor; ver BETA38.md y PERFORMANCE.md. Instalado y versión/hash verificados; no fusionado a main. Medición física y perfiles propios pendientes. Editor/Room/pipeline manual SIII implementados,156 iconos aún pendientes. Variantes fuera del respaldo JSON existente. Reanudar con revisión física y benchmark, no repetir infraestructura ni iniciar Fase2 sin aprobación.
 
 ## Retomar
 

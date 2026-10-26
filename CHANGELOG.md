@@ -6,7 +6,7 @@ Documento de texto principal para continuar el proyecto desde cualquier equipo. 
 
 Editor de temas con Memento (50 pasos), Undo/Redo agrupado por gesto, variantes y borrador Room, copia privada de fondos y vista previa reutilizando componentes reales. Revisión SIII a tamaño Inicio:20 candidatos existentes/156 pendientes; no se generaron ni activaron iconos nuevos. Módulos Macrobenchmark/Baseline Profiles y protocolo de reposo añadidos.
 
-Compilación beta/performance, módulos de medición y lint correctos:3m9s;0 errores,30 advertencias,3 avisos. APK firmado con certificado original. **Sin instalación ni mediciones físicas; perfiles propios pendientes de generar.** Rama codex/phase1-theme-editor, sin fusionar a main. Fase2 no iniciada. [BETA38](docs/BETA38.md).
+Compilación beta/performance, módulos de medición y lint correctos:3m9s;0 errores,30 advertencias,3 avisos. APK firmado con certificado original. Instalada mediante actualización; versión38 y hashes verificados en Motorola y Descargas. **Sin mediciones físicas; perfiles propios pendientes de generar.** Rama codex/phase1-theme-editor, sin fusionar a main. Fase2 no iniciada. [BETA38](docs/BETA38.md).
 
 ## 0.26.2-beta37 · 26 de octubre de2026
 

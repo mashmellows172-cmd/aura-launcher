@@ -1,6 +1,6 @@
 # Aura0.27.0-beta38 — Fase1
 
-26 de octubre de2026. Código38, paquete diario dev.senda.launcher.debug. APK preparado; no instalado. Rama codex/phase1-theme-editor, base0714c7c. No fusionar a main hasta validar rendimiento en Motorola.
+26 de octubre de2026. Código38, paquete diario dev.senda.launcher.debug. APK instalado por actualización en el Motorola Edge50Ultra autorizado. Rama codex/phase1-theme-editor, base0714c7c. No fusionar a main hasta validar rendimiento en Motorola.
 
 ## Implementado
 
@@ -21,7 +21,7 @@ Certificado SHA256:729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a
 
 ## Pendiente
 
-Generar perfiles propios y medir referencia/candidato en Motorola disponible; revisión física del editor/rotación/reinicio/Undo/Redo, alto contraste e iconos personales. No FPS, energía ni mejora cuantificada. Sin instalar ni tocar ajustes del teléfono durante esta entrega.
+Generar perfiles propios y medir referencia/candidato en Motorola disponible; revisión física del editor/rotación/reinicio/Undo/Redo, alto contraste e iconos personales. No FPS, energía ni mejora cuantificada. Instalación posterior autorizada: pm install -r Success; PackageManager confirmó code38/version0.27.0-beta38. SHA256 local, transferencia y copia en Descargas coinciden. No se cambiaron ajustes ni permisos. Esto no sustituye la validación visual o de rendimiento.
 
 Variantes locales no incluidas aún en el respaldo JSON anterior (avisado en UI). Borrador persiste; historial Undo/Redo solo vive durante la sesión. Catálogo156 pendiente no significa packs completos. Fase2 requiere confirmación.
 
