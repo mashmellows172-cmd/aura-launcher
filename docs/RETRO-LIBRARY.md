@@ -2,6 +2,18 @@
 
 Aura permite importar una colección local de imágenes sin incluir recursos de fabricantes en su APK o código fuente. El código de Aura conserva su licencia MIT; las imágenes que añade el usuario conservan sus propios derechos.
 
+## Editor desde beta39
+
+En el editor abre **Fondo → Explorar fondos y colecciones**. Busca por nombre, tema o colección; usa **Todos** para revisar la biblioteca completa. Toca una miniatura para ampliarla y pulsa **Usar este fondo**. Guarda la variante para aplicar la selección. **Mis imágenes** abre el selector del sistema; **Importar colección de fondos (ZIP)** conserva la importación local.
+
+La selección de un fondo importado no activa sus iconos. La imagen personal actual aparece aunque no pertenezca al catálogo. Si faltan recursos, se muestra un estado de error; no se inventan imágenes OEM. El predeterminado es el diseño procedural de Aura o el primer fondo de una colección ya activada, identificado como tal.
+
+El lector admite ahora NOTHING, SENSE, TOUCHWIZ, OPTIMUS, XPERIA, RAZR y PS4; conserva formato `aura-retro-library`, versión1 y sus límites de seguridad. El preparador existente sigue usando las cuatro carpetas históricas documentadas abajo; para las otras familias puede prepararse un manifiesto compatible con imágenes propias. Un ZIP nuevo con familias adicionales requiere beta39 o posterior.
+
+Respaldo de ajustes13 compatible con1–13. Las variantes Room y sus fondos privados todavía requieren una futura exportación de variantes; no confundirlas con ajustes/fondos guardados por el flujo anterior. La colección se conserva en su ZIP separado.
+
+Las instrucciones y formatos anteriores de esta guía son referencia histórica del primer importador.
+
 ## Preparar la colección
 
 Requiere Python 3 y Pillow. El preparador lee los originales sin modificarlos:

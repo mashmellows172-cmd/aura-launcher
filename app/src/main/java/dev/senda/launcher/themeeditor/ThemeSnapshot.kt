@@ -38,7 +38,7 @@ data class ThemeSnapshot(
             val f=state.themeFinishes[theme.name] ?: ThemeFinish()
             return ThemeSnapshot(theme.name, accent=f.accent.name,shape=f.shape.name,icons=f.icons.name,
                 pack=state.iconPacks[theme.name],wallpaper=state.skinWallpapers[theme.name],retro=state.retroEnabled[theme.name]==true,
-                dim=f.wallpaperDim,iconSize=state.appearance.iconSize,textSize=state.appearance.textSize,spacing=state.appearance.rowSpacing,font=state.fontChoice)
+                dim=f.wallpaperDim,iconSize=state.appearance.iconSize,textSize=state.appearance.textSize,spacing=state.appearance.rowSpacing,font=if(theme==state.theme)state.fontChoice else "THEME")
         }
         fun parse(text: String): ThemeSnapshot {
             require(text.length <= 16384); val j=JSONObject(text);require(j.getInt("schema")==1)

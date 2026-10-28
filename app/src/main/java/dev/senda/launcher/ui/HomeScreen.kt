@@ -70,7 +70,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.AlertDialog
@@ -129,6 +128,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -1077,40 +1077,37 @@ private fun AppRow(
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
-            modifier = Modifier.heightIn(min = 48.dp)
-                .then(if (console) Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .then(if (console) Modifier
                     .background(if (pressed || rowFocused) MaterialTheme.colorScheme.primary.copy(alpha=.16f) else androidx.compose.ui.graphics.Color.Transparent, consoleShape)
                     .border(1.dp,if(rowFocused)MaterialTheme.colorScheme.onSurface else androidx.compose.ui.graphics.Color.Transparent,consoleShape) else Modifier)
                 .onFocusChanged { rowFocused = it.hasFocus }
+                .semantics(mergeDescendants = true) {
+                    stateDescription = if (isFavorite) "Favorita" else "No favorita"
+                    customActions = listOf(androidx.compose.ui.semantics.CustomAccessibilityAction(
+                        if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas"
+                    ) { onToggleFavorite(); true })
+                }
                 .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
-                    onClick = onLaunch, onLongClick = { actionsExpanded = true })
+                    onClick = onLaunch, onLongClickLabel = "Opciones de ${app.label}", onLongClick = { actionsExpanded = true })
                 .padding(start = if(console)8.dp else 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AppIcon(app, customIconUri, onLoadIcon)
             Text(
                 text = app.label,
-                modifier = Modifier.padding(start = 14.dp, end = 8.dp),
+                modifier = Modifier.weight(1f).padding(start = 14.dp, end = 8.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = appearance.textSize.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            if (isFavorite) {
+                // The section already identifies favorites; this quiet mark also works in A–Z/search.
+                Box(Modifier.padding(end = 12.dp).size(5.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape))
+            }
         }
-        }
-        IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
-            val favoriteDescription = if (isFavorite) "Quitar ${app.label} de favoritas" else "Añadir ${app.label} a favoritas"
-            if (LocalIndustrialStyle.current.enabled) {
-                val ink = if (isFavorite) LocalSkinStyle.current.accent else MaterialTheme.colorScheme.outline
-                Canvas(Modifier.size(20.dp).semantics { contentDescription = favoriteDescription }) {
-                    drawCircle(ink, radius = size.minDimension * .38f, style = Stroke(1.5.dp.toPx()))
-                    if (isFavorite) drawCircle(ink, radius = size.minDimension * .19f)
-                }
-            } else Icon(
-                imageVector = Icons.Filled.Star,
-                contentDescription = favoriteDescription,
-                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
         DropdownMenu(expanded = actionsExpanded, onDismissRequest = { actionsExpanded = false }) {
             DropdownMenuItem(

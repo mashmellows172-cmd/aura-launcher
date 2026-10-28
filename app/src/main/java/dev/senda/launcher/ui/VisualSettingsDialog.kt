@@ -20,9 +20,10 @@ private object VisualTokens { val dialog = 560.dp; val gap = 10.dp; val target =
 fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> Unit, onDismiss: () -> Unit, onAlphabetSettings: (() -> Unit)? = null) {
     var draft by remember(current) { mutableStateOf(current) }
     fun commit(value: VisualSettings) { draft = value; onChange(value) }
-    val profiles = listOf("DEPTH" to "Profundidad", "FOLD" to "Pliegue 3D", "WAVE" to "Onda", "ORBIT" to "Órbita", "GLIDE" to "Deslizamiento", "NONE" to "Sin efecto")
+    val profiles = listOf("DEPTH" to "Profundidad", "FOLD" to "Pliegue 3D", "WAVE" to "Onda", "ORBIT" to "Órbita", "GLIDE" to "Deslizamiento", "CASCADE" to "Cascada", "TILT" to "Abanico", "NONE" to "Sin efecto")
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Movimiento y efectos") }, text = {
         Column(Modifier.heightIn(max = VisualTokens.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(VisualTokens.gap)) {
+            Text("Siete despliegues por tema: puntos, pliegue, gota, capas, onda, bisagra y foco. Reloj, clima y widgets usan el estilo del tema; movimiento reducido los desactiva.",style=MaterialTheme.typography.bodySmall)
             Text("El efecto sigue la velocidad real del desplazamiento y vuelve suavemente al reposo.", style = MaterialTheme.typography.bodySmall)
             Row(Modifier.fillMaxWidth()) {
                 TextButton(onClick = { commit(draft.copy(motion = "DEPTH", scrollIntensity = 65, durationMs = 340, railEffect = "MAGNET", menuEffect = "SPRING", reduceMotion = false)) }, Modifier.weight(1f)) { Text("Equilibrado") }
@@ -34,6 +35,8 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                 "WAVE" -> "Una onda lateral recorre las filas mientras deslizas."
                 "ORBIT" -> "Las aplicaciones siguen un arco con giro lateral."
                 "GLIDE" -> "Desplazamiento lateral y atenuación contenidos."
+                "CASCADE" -> "Las filas se escalonan en profundidad vertical al recorrer los bordes."
+                "TILT" -> "Las tarjetas se abren en abanico alrededor del borde de lectura."
                 "NONE" -> "Desplazamiento nativo, sin transformación de filas."
                 else -> "Las filas se alejan y giran al aproximarse a los bordes."
             }, style = MaterialTheme.typography.bodySmall)

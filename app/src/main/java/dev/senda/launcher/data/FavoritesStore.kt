@@ -16,6 +16,7 @@ import java.io.IOException
 private val Context.settingsStore by preferencesDataStore(name = "senda_settings")
 
 fun canonicalMotion(value: String?): String = when(value) {
+    "CASCADE" -> "CASCADE"; "TILT" -> "TILT"
     "NONE" -> "NONE"; "FOLD", "CUBE" -> "FOLD"; "WAVE", "RIPPLE", "ZOOM" -> "WAVE"
     "ORBIT", "WOBBLE", "ELASTIC" -> "ORBIT"; "GLIDE", "FADE", "PARALLAX" -> "GLIDE"
     else -> "DEPTH"

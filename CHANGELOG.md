@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.28.0-beta39 · 27 de octubre de2026 · rama de validación
+
+Favoritas con indicador discreto en vez de estrellas repetidas; siete efectos de lista+Sin efecto; siete despliegues por tema para reloj/clima/reproductor/widgets. PS4 separa su clima/visualizador de Xperia. Pesos de fuentes corregidos y galería de fondos con filtros, búsqueda y ampliación; colecciones de siete familias. Respaldo13 compatible con1–13.
+
+Compilación/lint correctos en3m34s:0 errores,30 advertencias,3 avisos. APK firmado con clave original y hash verificado; no instalado por ausencia del Motorola. Siete revisiones locales por tema tras bloqueo de cuota de Antigravity. Sin métricas físicas ni promoción a main. [BETA39](docs/BETA39.md).
+
 ## 0.27.0-beta38 · 26 de octubre de2026 · rama de validación
 
 Editor de temas con Memento (50 pasos), Undo/Redo agrupado por gesto, variantes y borrador Room, copia privada de fondos y vista previa reutilizando componentes reales. Revisión SIII a tamaño Inicio:20 candidatos existentes/156 pendientes; no se generaron ni activaron iconos nuevos. Módulos Macrobenchmark/Baseline Profiles y protocolo de reposo añadidos.

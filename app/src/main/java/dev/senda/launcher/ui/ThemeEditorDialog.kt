@@ -34,6 +34,7 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
     var section by rememberSaveable{mutableIntStateOf(0)}
     var fullPreview by rememberSaveable{mutableStateOf(false)}
     var showS3 by rememberSaveable{mutableStateOf(false)}
+    var showWallpapers by rememberSaveable{mutableStateOf(false)}
     val context=LocalContext.current
     LaunchedEffect(Unit){editor.open(ThemeSnapshot.from(state))}
     val picker=rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()){uri->
@@ -76,8 +77,11 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                                     }
                                 }
                                 2->{
-                                    TextButton(onClick={picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))},enabled=!busy){Text("Elegir fondo")}
-                                    TextButton(onClick={editor.edit(value.copy(wallpaper=null))},enabled=!busy){Text("Fondo del tema")}
+                                    Button(onClick={showWallpapers=true},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text("Explorar fondos y colecciones")}
+                                    TextButton(onClick={picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))},enabled=!busy){Text("Elegir imagen de mi galería")}
+                                    TextButton(onClick={editor.edit(value.copy(wallpaper=null))},enabled=!busy){Text("Restablecer fondo predeterminado")}
+                                    if(value.theme in RetroAssets.themes)TextButton(onClick={libraryPicker.launch(arrayOf("application/zip","application/octet-stream"))},enabled=!busy&&!state.retroImportBusy){Text(if(state.retroImportBusy)"Importando colección…" else "Importar colección de fondos (ZIP)")}
+                                    state.retroImportMessage?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
                                     EditorSlider("Protección de lectura",value.dim,60..90,!busy,{editor.edit(value.copy(dim=it),false)},editor::finishGesture)
                                     Text("La imagen se copia al guardar. La configuración base se conserva.",style=MaterialTheme.typography.bodySmall)
                                 }
@@ -98,6 +102,12 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                 }
             }
         }
+    }
+    if(showWallpapers)draft?.let { value ->
+        ThemeWallpaperGallery(LauncherTheme.valueOf(value.theme),state.retroLibrary,value.wallpaper,value.retro,
+            onSelect={uri->editor.finishGesture();editor.edit(value.copy(wallpaper=uri))},
+            onChoosePhoto={showWallpapers=false;picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))},
+            onDismiss={showWallpapers=false})
     }
     if(showS3)S3ReviewDialog(iconSize=draft?.iconSize?:42,onDismiss={showS3=false})
 }

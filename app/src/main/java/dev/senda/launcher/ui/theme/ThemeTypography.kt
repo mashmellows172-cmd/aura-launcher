@@ -15,21 +15,21 @@ private val xperiaFont=FontFamily(Font(R.font.roboto_condensed_regular),Font(R.f
 private val razrFont=FontFamily(Font(R.font.share_tech_mono))
 private val ps4Font=FontFamily(Font(R.font.noto_sans_regular),Font(R.font.noto_sans_light,FontWeight.Light),Font(R.font.noto_sans_medium,FontWeight.Medium),Font(R.font.noto_sans_semibold,FontWeight.SemiBold),Font(R.font.noto_sans_bold,FontWeight.Bold))
 
-private fun themedTypography(font:FontFamily,heading:FontWeight=FontWeight.Normal):Typography {
+private fun themedTypography(font:FontFamily,heading:FontWeight=FontWeight.Normal,strong:FontWeight=FontWeight.Bold):Typography {
     val b=Typography()
     return b.copy(
         displayLarge=b.displayLarge.copy(fontFamily=font,fontWeight=heading),displayMedium=b.displayMedium.copy(fontFamily=font,fontWeight=heading),displaySmall=b.displaySmall.copy(fontFamily=font,fontWeight=heading),
         headlineLarge=b.headlineLarge.copy(fontFamily=font,fontWeight=heading),headlineMedium=b.headlineMedium.copy(fontFamily=font,fontWeight=heading),headlineSmall=b.headlineSmall.copy(fontFamily=font,fontWeight=heading),
-        titleLarge=b.titleLarge.copy(fontFamily=font,fontWeight=heading),titleMedium=b.titleMedium.copy(fontFamily=font),titleSmall=b.titleSmall.copy(fontFamily=font),
+        titleLarge=b.titleLarge.copy(fontFamily=font,fontWeight=heading),titleMedium=b.titleMedium.copy(fontFamily=font,fontWeight=strong),titleSmall=b.titleSmall.copy(fontFamily=font,fontWeight=strong),
         bodyLarge=b.bodyLarge.copy(fontFamily=font),bodyMedium=b.bodyMedium.copy(fontFamily=font),bodySmall=b.bodySmall.copy(fontFamily=font),
-        labelLarge=b.labelLarge.copy(fontFamily=font),labelMedium=b.labelMedium.copy(fontFamily=font),labelSmall=b.labelSmall.copy(fontFamily=font))
+        labelLarge=b.labelLarge.copy(fontFamily=font,fontWeight=strong),labelMedium=b.labelMedium.copy(fontFamily=font,fontWeight=FontWeight.Normal),labelSmall=b.labelSmall.copy(fontFamily=font,fontWeight=FontWeight.Normal))
 }
 private val senseType=themedTypography(senseFont,FontWeight.Bold)
 private val natureType=themedTypography(natureFont)
 private val optimusType=themedTypography(optimusFont)
 private val xperiaType=themedTypography(xperiaFont)
-private val razrType=themedTypography(razrFont)
-private val ps4Type=themedTypography(ps4Font,FontWeight.Light)
+private val razrType=themedTypography(razrFont,strong=FontWeight.Normal)
+private val ps4Type=themedTypography(ps4Font,FontWeight.Light,strong=FontWeight.Medium)
 internal fun historicalTypography(theme:LauncherTheme):Typography=when(theme) {
     LauncherTheme.SENSE->senseType
     LauncherTheme.TOUCHWIZ->natureType

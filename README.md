@@ -16,6 +16,10 @@ En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta prueb
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
 
+## Beta39 preparada
+
+Favoritas sin estrellas repetidas, siete efectos de lista y siete despliegues por tema, fuentes refinadas y galería de fondos recuperada. Compilación/lint/firma verificados; instalación y revisión física pendientes. [Entrega y límites](docs/BETA39.md).
+
 ## Rama de validación beta38
 
 Editor seguro con Undo/Redo y Room, revisión SIII y módulos de rendimiento. [Estado y límites](docs/BETA38.md). Rama `codex/phase1-theme-editor`; instalada, no fusionada a main. Medición física pendiente.

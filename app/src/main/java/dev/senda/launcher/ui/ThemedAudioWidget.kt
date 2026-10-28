@@ -51,11 +51,12 @@ fun ThemedAudioWidget(
     var retained by remember { mutableStateOf(audioInfo) }
     if (audioInfo.isPlaying) SideEffect { retained = audioInfo }
     val info = if (audioInfo.isPlaying) audioInfo else retained
-    val duration = if (reduceMotion) 0 else historicalProfile(theme)?.durationMs ?: 240
+    val motionDisabled = reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || preview || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val duration = if (motionDisabled) 0 else historicalProfile(theme)?.durationMs ?: 240
     AnimatedVisibility(audioInfo.isPlaying, modifier = modifier,
         enter = fadeIn(tween(duration)) + expandVertically(tween(duration)),
         exit = fadeOut(tween(duration.coerceAtMost(200))) + shrinkVertically(tween(duration.coerceAtMost(240)))) {
-        HistoricalPanel(theme, Modifier.fillMaxWidth(), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
+        HistoricalPanel(theme, Modifier.fillMaxWidth().themeReveal(theme, info.sessionId ?: info.appLabel, motionDisabled), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
             val scheme = MaterialTheme.colorScheme
             val compact = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE || LocalDensity.current.fontScale > 1.5f
             var menu by remember { mutableStateOf(false) }
@@ -65,7 +66,7 @@ fun ThemedAudioWidget(
                 Box(Modifier.size(if (compact) 40.dp else 48.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
                     val art = info.artwork?.takeUnless { it.isRecycled }
                     if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    else ThemedAudioVisualizer(theme, scheme.primary, reduceMotion, Modifier.fillMaxSize())
+                    else ThemedAudioVisualizer(theme, scheme.primary, motionDisabled, Modifier.fillMaxSize())
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(if (info.generic) "REPRODUCCIÓN DETECTADA" else when (theme) {
@@ -79,7 +80,7 @@ fun ThemedAudioWidget(
                     }, style = MaterialTheme.typography.labelSmall, color = scheme.onSurfaceVariant,
                         fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(title, style = MaterialTheme.typography.titleSmall,
-                        fontWeight = if (theme == LauncherTheme.XPERIA) FontWeight.Light else FontWeight.Medium,
+                        fontWeight = when(theme) { LauncherTheme.PS4->FontWeight.Medium; LauncherTheme.SENSE,LauncherTheme.TOUCHWIZ,LauncherTheme.OPTIMUS->FontWeight.Bold; else->FontWeight.Normal },
                         color = scheme.onSurface, maxLines = if (compact) 1 else 2, overflow = TextOverflow.Ellipsis)
                     if (!compact) Text(if (info.generic) "Modo básico · tocar para configurar" else listOfNotNull(info.artist, info.appLabel).distinct().joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -131,6 +132,7 @@ private fun ThemedAudioVisualizer(theme: LauncherTheme, accent: Color, reduceMot
             LauncherTheme.OPTIMUS -> drawOptimusVisualizer(angle, accent)
             LauncherTheme.XPERIA -> drawXperiaVisualizer(angle, accent)
             LauncherTheme.RAZR -> drawRazrVisualizer(angle, accent)
+            LauncherTheme.PS4 -> drawPs4Visualizer(angle, accent)
             else -> drawDefaultVisualizer(angle, accent)
         }
     }
@@ -256,5 +258,15 @@ private fun DrawScope.drawDefaultVisualizer(phase: Float, accent: Color) {
             size = Size(barWidth, h),
             cornerRadius = CornerRadius(2.dp.toPx(), 2.dp.toPx())
         )
+    }
+}
+
+/** Console light-wave bars, distinct from Xperia's orbital visualizer. */
+private fun DrawScope.drawPs4Visualizer(phase:Float,accent:Color) {
+    for(i in 0..3){
+        val path=Path();val y=size.height*(.25f+i*.17f)
+        path.moveTo(0f,y)
+        path.cubicTo(size.width*.3f,y+sin(phase+i)*size.height*.14f,size.width*.65f,y-sin(phase+i)*size.height*.14f,size.width,y)
+        drawPath(path,accent.copy(alpha=.35f+i*.15f),style=Stroke((1f+i*.25f).dp.toPx()))
     }
 }

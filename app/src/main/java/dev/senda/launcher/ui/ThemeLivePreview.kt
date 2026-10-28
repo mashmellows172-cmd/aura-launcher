@@ -82,7 +82,7 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
             Spacer(Modifier.height(8.dp))
             Row(Modifier.weight(1f).fillMaxWidth()) {
                 AppSections(modifier=Modifier.weight(1f),widgetController=widgets,dashboardState=state,onCalendarPermission={},favoriteApps=favorites,allApps=apps,groups=groups,groupLetters=letters,favoritePackages=state.favoritePackages.toSet(),skinName=state.theme.name,skinTitle=state.theme.title,skinIcons=state.skinIcons,visualSettings=state.visualSettings,listState=list,onLaunch={},onToggleFavorite={},onHide={},onLoadIcon=viewModel::icon,onChooseIcon={},onResetIcon={})
-                AlphabetRail(letters=letters,theme=state.theme,modifier=Modifier.width(MotionTokens.railPortrait).fillMaxHeight(),selectedLetter=letters.firstOrNull(),visualSettings=state.visualSettings,onClick={},onScrub={})
+                AlphabetRail(letters=letters,theme=state.theme,modifier=Modifier.width(if(compact||LocalDensity.current.fontScale>=1.4f)MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),selectedLetter=letters.firstOrNull(),visualSettings=state.visualSettings,onClick={},onScrub={})
             }
         }
     }

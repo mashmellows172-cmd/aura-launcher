@@ -1,0 +1,51 @@
+[
+  {
+    "theme": "NOTHING",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m2s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "SENSE",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m7s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "TOUCHWIZ",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m7s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "OPTIMUS",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m6s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "XPERIA",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m3s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "RAZR",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m2s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  },
+  {
+    "theme": "PS4",
+    "externalStatus": "ERROR",
+    "error": "Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 71h45m6s.",
+    "localFallback": "completed",
+    "implementation": "ThemeReveal + existing condition-aware/clock renderers"
+  }
+]

@@ -30,9 +30,9 @@ class RetroAssets(private val context: Context) {
     private val pointer get() = AtomicFile(File(root, "active"))
 
     companion object {
-        val themes = setOf("SENSE", "TOUCHWIZ", "OPTIMUS", "XPERIA")
+        val themes = setOf("NOTHING", "SENSE", "TOUCHWIZ", "OPTIMUS", "XPERIA", "RAZR", "PS4")
         private val categories = setOf("PHONE", "CAMERA", "BROWSER", "MUSIC", "VIDEO", "MESSAGE", "CONTACTS", "CLOCK", "CALENDAR", "SETTINGS", "FILES", "GALLERY", "CALCULATOR", "STORE", "EMAIL", "MAPS", "NOTES", "WEATHER", "RADIO", "RECORDER")
-        private val imagePath = Regex("(?:SENSE|TOUCHWIZ|OPTIMUS|XPERIA)/(?:icons|wallpapers)/[A-Za-z0-9_-]+\\.(?:png|jpg|webp)")
+        private val imagePath = Regex("(?:NOTHING|SENSE|TOUCHWIZ|OPTIMUS|XPERIA|RAZR|PS4)/(?:icons|wallpapers)/[A-Za-z0-9_-]+\\.(?:png|jpg|webp)")
         private val packageName = Regex("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)+")
     }
 
@@ -120,7 +120,7 @@ class RetroAssets(private val context: Context) {
         val json = JSONObject(text)
         require(json.getString("format") == "aura-retro-library" && json.getInt("version") == 1) { "Formato de biblioteca no compatible" }
         val entries = json.getJSONObject("themes")
-        require(entries.length() in 1..4) { "Número de temas no válido" }
+        require(entries.length() in 1..themes.size) { "Número de temas no válido" }
         val used = mutableSetOf<String>()
         return entries.keys().asSequence().associateWith { theme ->
             require(theme in themes) { "Tema no compatible" }

@@ -68,6 +68,9 @@ internal object MotionTokens {
     val waveTravel = 44.dp
     val orbitTravel = 52.dp
     val glideTravel = 26.dp
+    val cascadeTravel = 34.dp
+    val tiltTravel = 18.dp
+    const val tiltDegrees = 11f
     val menuTravel = 28.dp
     val previewHeight = 170.dp
     val previewRow = 34.dp
@@ -89,12 +92,13 @@ fun rememberAuraMotion(list: LazyListState, settings: VisualSettings): AuraMotio
     val controller = remember(list) { AuraMotionController() }
     val density = LocalDensity.current.density
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(list, settings.reduceMotion, settings.motion, settings.durationMs, density, lifecycle) {
+    val highContrast = LocalAppearance.current.highContrast
+    LaunchedEffect(list, settings.reduceMotion, settings.motion, settings.durationMs, density, lifecycle, highContrast) {
         try {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 try {
                 snapshotFlow { list.isScrollInProgress }.collectLatest { active ->
-                    if (settings.reduceMotion || settings.motion == "NONE" || !ValueAnimator.areAnimatorsEnabled()) {
+                    if (settings.reduceMotion || highContrast || settings.motion == "NONE" || !ValueAnimator.areAnimatorsEnabled()) {
                         controller.reset()
                         return@collectLatest
                     }
@@ -155,6 +159,21 @@ internal fun GraphicsLayerScope.applyAuraMotion(position: Float, velocity: Float
             scaleX = 1f - distance * .045f * energy
             alpha = 1f - distance * .12f * energy
         }
+        "CASCADE" -> {
+            // Rows lag vertically near the viewport edges; no quantized steps or row timers.
+            val lag = .15f + .85f * distance * distance
+            translationY = direction * lag * MotionTokens.cascadeTravel.toPx() * energy
+            scaleX = 1f - distance * .06f * energy
+            scaleY = 1f - distance * .13f * energy
+            alpha = 1f - distance * .10f * energy
+        }
+        "TILT" -> {
+            // A flat card fan around the reading edge, distinct from the 3D orbit/fold.
+            transformOrigin = TransformOrigin(0f, .5f)
+            rotationZ = -p * MotionTokens.tiltDegrees * energy
+            translationX = -p * MotionTokens.tiltTravel.toPx() * energy
+            scaleX = 1f - distance * .04f * energy
+        }
         else -> {
             val scale = 1f - distance * MotionTokens.depthScale * energy
             scaleX = scale; scaleY = scale
@@ -168,12 +187,13 @@ internal fun GraphicsLayerScope.applyAuraMotion(position: Float, velocity: Float
 @Composable
 fun Modifier.auraListMotion(list: LazyListState?, key: String?, settings: VisualSettings): Modifier {
     val controller = LocalMotionController.current
+    val highContrast = LocalAppearance.current.highContrast
     return graphicsLayer {
         val info = list?.layoutInfo
         val item = info?.visibleItemsInfo?.firstOrNull { it.key == key }
         val center = if (info == null) 0f else (info.viewportStartOffset + info.viewportEndOffset) / 2f
         val position = if (item == null) 0f else (item.offset + item.size / 2f - center) / ((info!!.viewportEndOffset - info.viewportStartOffset) / 2f).coerceAtLeast(1f)
-        applyAuraMotion(position, controller?.velocity ?: 0f, settings)
+        applyAuraMotion(position, if (highContrast || !ValueAnimator.areAnimatorsEnabled()) 0f else controller?.velocity ?: 0f, settings)
     }
 }
 

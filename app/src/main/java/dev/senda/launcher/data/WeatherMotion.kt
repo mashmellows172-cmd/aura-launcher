@@ -10,12 +10,13 @@ data class WeatherMotionSettings(val mode:WeatherMotionMode=WeatherMotionMode.ON
     fun shouldAnimate(reduced:Boolean,hasReading:Boolean,systemEnabled:Boolean)=mode!=WeatherMotionMode.OFF&&!reduced&&hasReading&&systemEnabled
 }
 
-internal enum class WeatherTreatment { DOT_MATRIX, CLOUD_BANK, WATER_GLASS, COLOR_RIBBON, AURORA, LCD_SCAN }
+internal enum class WeatherTreatment { DOT_MATRIX, CLOUD_BANK, WATER_GLASS, COLOR_RIBBON, AURORA, LCD_SCAN, CONSOLE_WAVE }
 internal fun weatherTreatment(theme:LauncherTheme)=when(theme) {
     LauncherTheme.SENSE->WeatherTreatment.CLOUD_BANK
     LauncherTheme.TOUCHWIZ->WeatherTreatment.WATER_GLASS
     LauncherTheme.OPTIMUS->WeatherTreatment.COLOR_RIBBON
-    LauncherTheme.XPERIA, LauncherTheme.PS4->WeatherTreatment.AURORA
+    LauncherTheme.XPERIA->WeatherTreatment.AURORA
+    LauncherTheme.PS4->WeatherTreatment.CONSOLE_WAVE
     LauncherTheme.RAZR->WeatherTreatment.LCD_SCAN
     else->WeatherTreatment.DOT_MATRIX
 }

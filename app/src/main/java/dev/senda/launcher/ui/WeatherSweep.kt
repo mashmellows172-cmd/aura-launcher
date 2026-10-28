@@ -141,6 +141,18 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
             val color=if(i%2==0)accent else Color(0xFF75CDEB)
             drawPath(path,ink(color,.22f),style=Stroke(dp(1.5f+i)))
         }
+        WeatherTreatment.CONSOLE_WAVE -> {
+            for(i in 0..2) {
+                val y=size.height*(.28f+i*.18f)
+                val swing=sin(tau*(p*.55f+i*.22f))*size.height*.15f
+                val path=paths[i].apply{reset();moveTo(0f,y);cubicTo(size.width*.30f,y+swing,size.width*.68f,y-swing,size.width,y)}
+                drawPath(path,ink(Color(0xFFB8E7FF),.30f),style=Stroke(dp(.8f+i*.3f)))
+            }
+            for(i in 0..3) {
+                val x=wrap(p*.55f+i*.25f)*size.width;val y=size.height*(.18f+i*.19f)
+                drawRect(ink(Color.White,.20f),Offset(x,y),Size(dp(2f),dp(2f)),style=Stroke(dp(.7f)))
+            }
+        }
         WeatherTreatment.LCD_SCAN -> {
             for(i in 0..12)drawLine(ink(accent,.08f),Offset(0f,size.height*i/12),Offset(size.width,size.height*i/12),unit)
             for(i in 0..9)particle(wrap(p+i/10f)*size.width,size.height*(.2f+(i%3)*.3f),dp(1.5f),accent,.25f)

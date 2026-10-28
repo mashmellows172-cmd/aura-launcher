@@ -44,7 +44,7 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
     BoxWithConstraints {
         val availableWidth = maxWidth
         val font = minOf(if (compact) 26f else 48f, (maxWidth.value - 18f).coerceAtLeast(42f) / (2.9f * scale)).sp
-        val target = modifier.heightIn(min = 48.dp)
+        val target = modifier.themeReveal(theme, if(theme==LauncherTheme.SENSE) "clock" else time, reduced).heightIn(min = 48.dp)
         when (theme) {
             LauncherTheme.SENSE -> Row(target, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 listOf(hour, minute).forEach { digits ->
@@ -72,15 +72,15 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
                 drawOval(Color(0xFFB6E9F2).copy(alpha = (1f - p) * .35f), Offset(size.width * .05f, size.height * .65f), Size(size.width * (.55f + p * .4f), size.height * .3f), style = Stroke(1.dp.toPx()))
             }.padding(horizontal = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(hour, color = Color.White, fontSize = font, fontWeight = FontWeight.Normal, maxLines = 1)
-                Text(":", color = Color(0xFFD8F1FF), fontSize = font, fontWeight = FontWeight.Light, maxLines = 1)
-                Text(minute, color = Color.White, fontSize = font, fontWeight = FontWeight.Light, maxLines = 1)
+                Text(":", color = Color(0xFFD8F1FF), fontSize = font, fontWeight = FontWeight.Normal, maxLines = 1)
+                Text(minute, color = Color.White, fontSize = font, fontWeight = FontWeight.Normal, maxLines = 1)
             }
             LauncherTheme.OPTIMUS -> HistoricalPanel(theme, target.graphicsLayer {
                 translationY = if (reduced) 0f else (1f - change.value) * 5.dp.toPx()
             }) {
                 Row(Modifier.padding(horizontal = 10.dp, vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(hour, color = MaterialTheme.colorScheme.onSurface, fontSize = font, fontWeight = FontWeight.Medium, maxLines = 1)
-                    Text(":$minute", color = MaterialTheme.colorScheme.primary, fontSize = font, fontWeight = FontWeight.Light, maxLines = 1)
+                    Text(hour, color = MaterialTheme.colorScheme.onSurface, fontSize = font, fontWeight = FontWeight.Bold, maxLines = 1)
+                    Text(":$minute", color = MaterialTheme.colorScheme.primary, fontSize = font, fontWeight = FontWeight.Normal, maxLines = 1)
                 }
             }
             LauncherTheme.XPERIA -> Row(target.graphicsLayer {
@@ -90,7 +90,7 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
                 drawContent()
                 drawLine(Color(0xFFC8C2F5).copy(alpha = .3f), Offset(4.dp.toPx(), size.height - 1.dp.toPx()), Offset(size.width - 4.dp.toPx(), size.height - 1.dp.toPx()), .6.dp.toPx())
             }.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("$hour:$minute", color = Color(0xFFF4F1FF), fontSize = font, fontWeight = FontWeight.ExtraLight,
+                Text("$hour:$minute", color = Color(0xFFF4F1FF), fontSize = font, fontWeight = FontWeight.Normal,
                     letterSpacing = .9.sp, maxLines = 1)
             }
             LauncherTheme.RAZR -> HistoricalPanel(theme, target) {
@@ -114,6 +114,7 @@ fun RetroClock(time: String, modifier: Modifier = Modifier, compact: Boolean = f
                     for (y in listOf(12f, 27f)) drawRect(ink, Offset(49f * pitch, vertical + y * pitch), Size(2f * pitch, 2f * pitch))
                 }
             }
+            LauncherTheme.PS4 -> Text(time, target, fontSize = font, fontWeight = FontWeight.Light, color = MaterialTheme.colorScheme.onBackground, maxLines = 1)
             else -> Text(time, target, fontSize = font, color = MaterialTheme.colorScheme.onBackground, maxLines = 1)
         }
     }

@@ -40,6 +40,9 @@ import dev.senda.launcher.data.WeatherCondition
 import dev.senda.launcher.data.WeatherMotionSettings
 import dev.senda.launcher.data.WeatherMotionMode
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
+import dev.senda.launcher.ui.theme.themeReveal
+import dev.senda.launcher.ui.theme.LocalRetroStyle
+import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.LocalSkinStyle
 import dev.senda.launcher.widgets.WidgetController
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +88,7 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
                 modifier=Modifier.requiredSize(120.dp,90.dp).clearAndSetSemantics{})
             }
         }
-        Column(horizontalAlignment=Alignment.CenterHorizontally,modifier=Modifier.padding(4.dp)){
+        Column(horizontalAlignment=Alignment.CenterHorizontally,modifier=Modifier.themeReveal(if(LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme ?: LauncherTheme.NOTHING, reading?.temperature to reading?.conditionText, reduceMotion).padding(4.dp)){
             if(reading!=null){
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
                     reading.icon?.let { icon->Image(icon,null,Modifier.size(30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}

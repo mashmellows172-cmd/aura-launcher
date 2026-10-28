@@ -49,7 +49,7 @@ class SettingsBackup(private val context: Context) {
                         key.startsWith("skin_accent_") -> require(value in AccentChoice.entries.map { it.name }) { "Acento no válido" }
                         key.startsWith("skin_icons_") -> require(value in IconTreatment.entries.map { it.name }) { "Estilo de iconos no válido" }
                         key.startsWith("skin_shape_") -> require(value in ShapeChoice.entries.map { it.name }) { "Forma no válida" }
-                        key == "visual_motion" -> require(value in setOf("AURA_FLOW", "CUBE", "PRISM", "ORBIT", "RIPPLE", "GLIDE", "DEPTH", "FOLD", "WAVE", "NONE")) { "Perfil desconocido" }
+                        key == "visual_motion" -> require(value in setOf("AURA_FLOW", "CUBE", "PRISM", "ORBIT", "RIPPLE", "GLIDE", "DEPTH", "FOLD", "WAVE", "CASCADE", "TILT", "NONE")) { "Perfil desconocido" }
                         key in setOf("favorite_packages", "hidden_packages") -> require(value.split('\n').size <= 2000 && value.split('\n').all { it.isEmpty() || packagePattern.matches(it) }) { "Lista de apps inválida" }
                         key == "weather_app_package" || key.startsWith("icon_pack_") -> require(value.isEmpty() || packagePattern.matches(value)) { "Paquete inválido" }
                         imageKey(key) -> require(value == "asset:$key") { "Referencia de imagen inválida" }
@@ -72,7 +72,7 @@ class SettingsBackup(private val context: Context) {
                 assets.put(key, Base64.encodeToString(bytes, Base64.NO_WRAP)); values.put(key, "asset:$key")
             } else { validate(key, value); values.put(key, value) }
         }
-        val root = JSONObject().put("format", "aura-settings").put("version", 12).put("settings", values).put("assets", assets).put("skippedImages", skipped)
+        val root = JSONObject().put("format", "aura-settings").put("version", 13).put("settings", values).put("assets", assets).put("skippedImages", skipped)
         val bytes = root.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= LIMIT) { "El respaldo supera 24 MB" }
         context.contentResolver.openOutputStream(destination, "wt")?.use { it.write(bytes) } ?: error("No se pudo abrir el archivo de destino")
@@ -108,7 +108,7 @@ class SettingsBackup(private val context: Context) {
         }
         require(!quoted && depth == 0) { "Archivo JSON incompleto" }
         val root = JSONObject(text)
-        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..12) { "Formato o versión de respaldo no compatible" }
+        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..13) { "Formato o versión de respaldo no compatible" }
         val json = root.getJSONObject("settings"); require(json.length() <= 2500) { "Demasiados ajustes" }
         val values = json.keys().asSequence().associateWith { key -> json.get(key).also { validate(key, it) } }
         val jsonImages = root.getJSONObject("assets"); require(jsonImages.length() <= 2000) { "Demasiadas imágenes" }

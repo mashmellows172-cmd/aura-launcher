@@ -2,6 +2,10 @@
 
 Última entrega instalada y verificada:0.27.0-beta38/code38. Consultar BETA38.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
 
+## Beta39 preparada
+
+0.28.0-beta39/code39: compilada/lint y firma original verificados; APK preparado, no instalado porque el Motorola no aparece. Ver BETA39.md. Favoritas sin estrellas repetidas, siete efectos de lista+NONE, siete entradas por tema para widgets/reloj/clima/audio, galería de fondos con búsqueda/ampliación y siete familias de biblioteca. Preservado cambio previo S3 con correcciones de compatibilidad. Última instalación confirmada sigue siendo beta38. Rama de validación; no fusionar nuevos efectos a main sin evidencia física.
+
 ## Checkpoint Phase1 beta38
 
 Código y APK preparado en codex/phase1-theme-editor; ver BETA38.md y PERFORMANCE.md. Instalado y versión/hash verificados; no fusionado a main. Medición física y perfiles propios pendientes. Editor/Room/pipeline manual SIII implementados,156 iconos aún pendientes. Variantes fuera del respaldo JSON existente. Reanudar con revisión física y benchmark, no repetir infraestructura ni iniciar Fase2 sin aprobación.

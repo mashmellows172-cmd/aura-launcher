@@ -1,5 +1,7 @@
 package dev.senda.launcher.widgets
 
+import dev.senda.launcher.ui.theme.themeReveal
+
 import dev.senda.launcher.ui.AuraAlertDialog
 
 import androidx.compose.foundation.layout.*
@@ -53,7 +55,7 @@ fun WidgetShelf(controller: WidgetController) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             controller.widgets.forEach { widget ->
                 Surface(Modifier.fillMaxWidth().height(widget.heightDp.dp), color=MaterialTheme.colorScheme.surfaceVariant) {
-                    Box(contentAlignment=Alignment.Center) { Text("Widget � vista previa pasiva") }
+                    Box(contentAlignment=Alignment.Center) { Text("Widget · vista previa pasiva") }
                 }
             }
         }
@@ -68,7 +70,7 @@ fun WidgetShelf(controller: WidgetController) {
         controller.widgets.forEach { widget ->
             key(widget.id) {
                 val info = remember(widget.id, controller.providerRevision) { controller.manager.getAppWidgetInfo(widget.id) }
-                Card(Modifier.fillMaxWidth()) {
+                Card(Modifier.fillMaxWidth().themeReveal(dev.senda.launcher.ui.theme.LocalRetroStyle.current.theme ?: dev.senda.launcher.data.LauncherTheme.NOTHING, widget.id)) {
                     if (info == null) {
                         Column(Modifier.padding(12.dp)) {
                             Text("Widget no disponible. Su aplicación puede estar desactivada o desinstalada.")

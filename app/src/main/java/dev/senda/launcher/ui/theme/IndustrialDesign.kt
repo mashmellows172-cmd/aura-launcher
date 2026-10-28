@@ -81,7 +81,7 @@ fun DotClock(time: String, modifier: Modifier = Modifier, color: Color = Industr
     }.joinToString("") }
     val reduced = dev.senda.launcher.ui.LocalMotionSettings.current.reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast
     val reveal = rememberClockChange(normalized, dev.senda.launcher.data.LauncherTheme.NOTHING, reduced)
-    Canvas(modifier.height(56.dp).semantics { contentDescription = time }) {
+    Canvas(modifier.themeReveal(dev.senda.launcher.data.LauncherTheme.NOTHING, "clock-entry", reduced).height(56.dp).semantics { contentDescription = time }) {
         val columns = normalized.sumOf { if (it == ':') 4 else 6 } - 1
         val pitch = minOf(size.width / columns.coerceAtLeast(1), size.height / 7f)
         val top = (size.height - pitch * 7f) / 2f
