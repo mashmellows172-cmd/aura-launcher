@@ -160,6 +160,7 @@ import androidx.compose.foundation.layout.widthIn
 import dev.senda.launcher.ui.theme.LocalRetroStyle
 import dev.senda.launcher.ui.theme.LocalIconTreatment
 import dev.senda.launcher.ui.theme.RetroClock
+import dev.senda.launcher.ui.theme.themeReveal
 import dev.senda.launcher.ui.theme.icons.renderFamilyAppIcon
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
 import dev.senda.launcher.ui.theme.IndustrialTokens
@@ -646,7 +647,8 @@ internal fun Header(
                         if (LocalIndustrialStyle.current.enabled) BoxWithConstraints(Modifier.fillMaxWidth()) {
                             val clockWidth = minOf(maxWidth,62.dp*(27f/7f))
                             DotClock(clockTime,Modifier.width(clockWidth).height(62.dp).clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button })
-                        } else if(LocalRetroStyle.current.enabled) RetroClock(clockTime,Modifier.clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button })
+                        } else if(theme == LauncherTheme.PS4) Text(clockTime,Modifier.heightIn(min=48.dp).themeReveal(theme,clockTime,reduceMotion).clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button },fontSize=22.sp,fontWeight=FontWeight.Light)
+                        else if(LocalRetroStyle.current.enabled) RetroClock(clockTime,Modifier.clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button })
                         else Text(clockTime,Modifier.heightIn(min=48.dp).clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button },style=MaterialTheme.typography.headlineLarge)
                     }
                     HeaderWeather(widgetController,weatherPackage,weatherAppLabel ?: "Prognoza",reduceMotion,onOpenWeather,onWeatherConnection)
@@ -1066,21 +1068,35 @@ private fun AppRow(
 ) {
     var actionsExpanded by remember(app.packageName) { mutableStateOf(false) }
     val appearance = LocalAppearance.current
-    val console = skinName == LauncherTheme.PS4.name
+    val console = skinName == LauncherTheme.PS4.name && !appearance.highContrast
     val rowInteractions = remember(app.packageName) { MutableInteractionSource() }
     val pressed by rowInteractions.collectIsPressedAsState()
     var rowFocused by remember { mutableStateOf(false) }
-    val consoleShape = RoundedCornerShape(4.dp)
+    // The result changes once per focused item, not once per scroll pixel.
+    val centered by remember(listState, rowKey, console) { derivedStateOf {
+        if (!console || listState == null || rowKey == null) false else {
+            val layout = listState.layoutInfo
+            val center = layout.viewportStartOffset + (layout.viewportEndOffset-layout.viewportStartOffset)*.42f
+            layout.visibleItemsInfo.asSequence().filter {
+                val key = it.key.toString()
+                key.startsWith("favorite-") || key.startsWith("all-") || key.startsWith("result-")
+            }.minByOrNull { kotlin.math.abs(it.offset+it.size*.5f-center) }?.key == rowKey
+        }
+    } }
+    val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val focusProgress = animateFloatAsState(if (console && (centered || rowFocused || pressed)) 1f else 0f,
+        tween(if (still) 0 else 320, easing=androidx.compose.animation.core.FastOutSlowInEasing), label="ps4-row-focus")
     Row(
-        modifier = modifier.fillMaxWidth().heightIn(min = appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
+        modifier = modifier.fillMaxWidth().heightIn(min = if(console) maxOf(appearance.rowHeight, appearance.iconSize+28).dp else appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .then(if (console) Modifier
-                    .background(if (pressed || rowFocused) MaterialTheme.colorScheme.primary.copy(alpha=.16f) else androidx.compose.ui.graphics.Color.Transparent, consoleShape)
-                    .border(1.dp,if(rowFocused)MaterialTheme.colorScheme.onSurface else androidx.compose.ui.graphics.Color.Transparent,consoleShape) else Modifier)
+                .then(if (console) Modifier.graphicsLayer {
+                    val scale = if(still) 1f else 1f+focusProgress.value*.025f
+                    scaleX=scale; scaleY=scale
+                }.ps4FocusFrame { focusProgress.value } else Modifier)
                 .onFocusChanged { rowFocused = it.hasFocus }
                 .semantics(mergeDescendants = true) {
                     stateDescription = if (isFavorite) "Favorita" else "No favorita"
@@ -1090,15 +1106,30 @@ private fun AppRow(
                 }
                 .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
                     onClick = onLaunch, onLongClickLabel = "Opciones de ${app.label}", onLongClick = { actionsExpanded = true })
-                .padding(start = if(console)8.dp else 4.dp),
+                .padding(start = if(console)8.dp else 4.dp, top=if(console)8.dp else 0.dp, bottom=if(console)8.dp else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AppIcon(app, customIconUri, onLoadIcon)
+            if (console) {
+                Box(Modifier.size((appearance.iconSize+12).dp).graphicsLayer {
+                    val scale=if(still)1f else 1f+focusProgress.value*.08f
+                    scaleX=scale; scaleY=scale
+                }
+                    .background(Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF173C78).copy(alpha=.65f),androidx.compose.ui.graphics.Color(0xFF001538).copy(alpha=.7f))),RoundedCornerShape(2.dp))
+                    .border(.8.dp,androidx.compose.ui.graphics.Color.White.copy(alpha=.24f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
+                    AppIcon(app, customIconUri, onLoadIcon)
+                }
+            } else AppIcon(app, customIconUri, onLoadIcon)
             Text(
                 text = app.label,
-                modifier = Modifier.weight(1f).padding(start = 14.dp, end = 8.dp),
+                modifier = Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)
+                    .then(if(console)Modifier.graphicsLayer {
+                        transformOrigin=androidx.compose.ui.graphics.TransformOrigin(0f,.5f)
+                        val scale=if(still)1f else .82f+focusProgress.value*.18f
+                        scaleX=scale; scaleY=scale
+                    } else Modifier),
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = appearance.textSize.sp,
+                fontSize = (if(console) appearance.textSize+8 else appearance.textSize).sp,
+                fontWeight = if(console) FontWeight.Light else null,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -1139,7 +1170,10 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val importedUri = if (retro.enabled && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null)
         dev.senda.launcher.data.LocalRetroAssets.current?.icon(app.packageName, dev.senda.launcher.ui.theme.glyphFor(app.packageName)?.name) else null
     val familyTheme = if (LocalIndustrialStyle.current.enabled) dev.senda.launcher.data.LauncherTheme.NOTHING else retro.theme
-    if (importedUri == null && familyTheme != null && !LocalAppearance.current.highContrast && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null && renderFamilyAppIcon(app, familyTheme, retro.customHolder)) return
+    // PS4 reference uses recognizable full-colour app identities. Explicit packs/replacements win.
+    val consoleColour = familyTheme == LauncherTheme.PS4 && treatment == dev.senda.launcher.data.IconTreatment.AUTO && importedUri == null && customIconUri == null && LocalIconPack.current == null
+    val bareConsole = consoleColour && !retro.customHolder
+    if (!consoleColour && importedUri == null && familyTheme != null && !LocalAppearance.current.highContrast && treatment == dev.senda.launcher.data.IconTreatment.AUTO && customIconUri == null && LocalIconPack.current == null && renderFamilyAppIcon(app, familyTheme, retro.customHolder)) return
     val holderShape = dev.senda.launcher.ui.theme.animatedIconHolderShape(style.iconHolder, style.motionMillis)
     val monochrome = LocalIndustrialStyle.current.monochromeIcons
     val bareNothing = familyTheme == dev.senda.launcher.data.LauncherTheme.NOTHING && !normal && !retro.customHolder
@@ -1167,12 +1201,12 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     }
     Box(
         modifier = Modifier.size(appearance.iconSize.dp).animateContentSize(tween(style.motionMillis))
-            .background(if (normal || preserveArtwork || bareNothing) androidx.compose.ui.graphics.Color.Transparent else if (monochrome) IndustrialTokens.iconBackground else MaterialTheme.colorScheme.surfaceVariant, holderShape)
-            .then(if (retro.enabled && !normal && !monochrome && !preserveArtwork) Modifier.background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), holderShape).border(.8.dp, MaterialTheme.colorScheme.outline, holderShape) else Modifier),
+            .background(if (normal || preserveArtwork || bareNothing || bareConsole) androidx.compose.ui.graphics.Color.Transparent else if (monochrome) IndustrialTokens.iconBackground else MaterialTheme.colorScheme.surfaceVariant, holderShape)
+            .then(if (retro.enabled && !normal && !monochrome && !preserveArtwork && !bareConsole) Modifier.background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), holderShape).border(.8.dp, MaterialTheme.colorScheme.outline, holderShape) else Modifier),
         contentAlignment = Alignment.Center,
     ) {
         bitmap?.let { loadedBitmap ->
-            androidx.compose.foundation.Image(loadedBitmap, contentDescription = null, modifier = Modifier.size((appearance.iconSize * if (normal || preserveArtwork || bareNothing) 1f else 30f / 42f).dp), contentScale = ContentScale.Fit,
+            androidx.compose.foundation.Image(loadedBitmap, contentDescription = null, modifier = Modifier.size((appearance.iconSize * if (normal || preserveArtwork || bareNothing || bareConsole) 1f else 30f / 42f).dp), contentScale = ContentScale.Fit,
                 colorFilter = if (monochrome) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0f) }) else null)
         } ?: Text(app.label.take(1).uppercase(LocalConfiguration.current.locales[0]), color = if (bareNothing) MaterialTheme.colorScheme.onSurface else if (monochrome) IndustrialTokens.iconInk else MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
     }

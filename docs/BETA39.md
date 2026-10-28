@@ -1,6 +1,10 @@
 # Aura0.28.0-beta39 — favoritas, fondos y movimiento por tema
 
-27 de octubre de2026. Código39. Rama de validación codex/phase1-theme-editor. Instalación y validación física pendientes.
+Revalidación local del 28 de octubre de 2026: wrapper assembleBeta/lintBeta correcto en43s, lint0 errores/30 advertencias/3 avisos. JDK/SDK existentes y clave original del usuario. Certificado coincide con la entrega original; APK recompilado con hash distinto, conservado aparte en beta/Aura-0.28.0-beta39-local-20261028.apk: eba7aba0d765ca6415b3047eb33abb6cac61a2c27eba5cc711549fd24e33d832. No sustituye el artefacto del27 ni valida el teléfono. Instalación pendiente de conexión ADB. Ver LOCAL-DEVELOPMENT.md para comandos y recuperación de la variante cloud beta38 ausente.
+
+27 de octubre de2026. Código39. Rama de validación codex/phase1-theme-editor. Instalación local verificada el28 de octubre; validación visual y de rendimiento físicas pendientes.
+
+Instalación del28 de octubre: vinculación ADB completada con código temporal; identidad del Edge50Ultra autorizado comprobada. Certificados del APK instalado previamente y del candidato coincidentes con la clave original. `adb install -r` correcto; APK posterior extraído y verificado: versión0.28.0-beta39/code39, certificado original y SHA256 eba7aba0d765ca6415b3047eb33abb6cac61a2c27eba5cc711549fd24e33d832. No se desinstaló, limpiaron datos, concedieron permisos ni cambiaron ajustes. Las copias de comprobación permanecen privadas fuera del repositorio. Los apartados anteriores y posteriores que indican instalación pendiente describen el estado previo a esta comprobación.
 
 ## Cambios visibles
 

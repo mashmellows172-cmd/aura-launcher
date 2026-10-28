@@ -1,5 +1,7 @@
 # Desarrollo desde otro equipo
 
+Notebook Windows actual: consultar [rutas, configuración de sesión, compilación, firma y recuperación cloud](LOCAL-DEVELOPMENT.md). Ese registro distingue la beta38 local de la variante PS4 cloud aún no recuperada.
+
 ## Preparación
 
 Instala Git, Android Studio, JDK17, Android SDK Platform37 y los Build Tools solicitados por Gradle. Abre esta carpeta como proyecto Android y configura la ruta SDK mediante Android Studio o un local.properties local (sdk.dir). Nunca compartas ese archivo.

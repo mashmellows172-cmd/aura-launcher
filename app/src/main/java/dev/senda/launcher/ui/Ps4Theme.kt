@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -38,27 +39,50 @@ import dev.senda.launcher.ui.theme.rememberHistoricalPhase
 import kotlin.math.PI
 import kotlin.math.sin
 
+/** Finite focus cue. No blur, idle oscillator or changes to the row's hit target. */
+internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithCache {
+    val corner = CornerRadius(3.dp.toPx())
+    val fill = Brush.horizontalGradient(listOf(Color(0xFF0070D1).copy(alpha=.48f), Color(0xFF003087).copy(alpha=.12f)))
+    val glows = (4 downTo 1).map { it to Stroke((it * 3).dp.toPx()) }
+    onDrawBehind {
+        val p = progress().coerceIn(0f,1f)
+        if (p > .001f) {
+            drawRoundRect(fill, cornerRadius=corner, alpha=p)
+            glows.forEach { (index, stroke) ->
+                drawRoundRect(Color(0xFF008CFF).copy(alpha=p*.13f/index), cornerRadius=corner, style=stroke)
+            }
+            drawRoundRect(Color(0xFF42C8FF).copy(alpha=p), cornerRadius=corner, style=Stroke(3.dp.toPx()))
+            drawRoundRect(Color.White.copy(alpha=p), cornerRadius=corner, style=Stroke(1.dp.toPx()))
+        }
+    }
+}
+
 /** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
 @Composable
 internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier) {
     val phase = rememberHistoricalPhase(LauncherTheme.PS4, true, reduced)
     Box(modifier.drawWithCache {
-        val backdrop = Brush.verticalGradient(listOf(Color(0xFF003087), Color(0xFF003087), Color(0xFF060F26)))
-        val wash = Brush.verticalGradient(listOf(Color(0xFF0070D1).copy(alpha = .16f), Color.Transparent))
-        val paths = List(4) { Path() }
+        val backdrop = Brush.linearGradient(listOf(Color(0xFF003087), Color(0xFF00164B), Color(0xFF000C29)), end=Offset(size.width*.55f,size.height))
+        val wash = Brush.linearGradient(listOf(Color(0x000070D1), Color(0x990070D1), Color(0x330043BE)), end=Offset(size.width,size.height))
+        val glow = Brush.radialGradient(listOf(Color(0xFF0069EF).copy(alpha=.48f),Color.Transparent),center=Offset(size.width*.9f,size.height*.22f),radius=size.height*.65f)
+        val paths = List(6) { Path() }
         val contour = Stroke(.8.dp.toPx())
         onDrawBehind {
             drawRect(backdrop)
+            drawRect(glow)
             val time = phase.value * (2 * PI).toFloat()
             paths.forEachIndexed { index, path ->
-                val lift = sin(time + index * .6f) * size.height * .035f
-                val y = size.height * (.40f + index * .045f)
-                path.reset(); path.moveTo(-size.width * .2f, y + lift)
-                path.cubicTo(size.width * .28f, y - size.height * .15f - lift,
-                    size.width * .59f, y + size.height * .19f + lift,
-                    size.width * 1.2f, y - size.height * .08f + lift)
-                drawPath(path, Color(0xFFA9EAFF).copy(alpha = .12f + index * .035f), style = contour)
-                path.lineTo(size.width * 1.2f, size.height); path.lineTo(-size.width * .2f, size.height); path.close()
+                val lift = sin(time + index*.48f)*size.height*.026f
+                val base = size.height*(.82f+index*.022f)
+                val crest = size.height*(.18f+index*.031f)
+                val thickness = size.height*(.025f+index*.004f)
+                path.reset(); path.moveTo(-size.width*.12f,base+lift)
+                path.cubicTo(size.width*.68f,base+size.height*.22f-lift,
+                    size.width*.54f,crest+size.height*.07f+lift,size.width*1.12f,crest-lift)
+                drawPath(path,Color(0xFF43BEFF).copy(alpha=.17f+index*.025f),style=contour)
+                path.cubicTo(size.width*.58f,crest+thickness+lift,
+                    size.width*.72f,base+size.height*.22f+thickness-lift,-size.width*.12f,base+thickness+lift)
+                path.close()
                 drawPath(path, wash)
             }
             // Sparse controller geometry drifts with the same clock, no per-particle timer.

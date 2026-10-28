@@ -1,6 +1,10 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.27.0-beta38/code38. Consultar BETA38.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
+Última entrega:0.29.0-beta40/code40,28 de octubre. Instalada con firma/hash/versión verificados. PS4 vertical según referencia del usuario: nativos a color, placas, foco central320ms, tipografía ligera y cintas propias azules. Revisión física acotada confirmó cambio de foco al desplazar y A–Z; PiP limitó revisión del reproductor. Ver BETA40.md. Rama de validación: no promover a main sin métricas. No repetir esta implementación ni confundirla con la beta38 cloud aún ausente.
+
+Preparación local del 28 de octubre: ver LOCAL-DEVELOPMENT.md. Checkout reutilizado, herramientas y firma original verificadas; recompilación beta39/lint correcta. Vinculación ADB e instalación beta39 completadas; firma compatible, versión39 y hash del APK instalado verificados. Revisión visual y rendimiento pendientes. La beta38 del chat cloud que describe Ps4Carousel.kt es otra variante y no fue recuperada ni sobrescrita sobre beta39. No confundir con la beta38 del editor documentada aquí.
+
+Entrega anterior instalada y verificada:0.28.0-beta39/code39, el28 de octubre. Consultar BETA39.md. Ver [historial](../CHANGELOG.md), [validación actual](BETA40.md) y [configuración](DEVELOPMENT.md).
 
 ## Beta39 preparada
 

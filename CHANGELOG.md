@@ -2,6 +2,18 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.29.0-beta40 · 28 de octubre de 2026 · PS4 vertical
+
+Referencia visual del usuario aplicada: iconos nativos a color sobre placas cuadradas, foco central blanco/cian con escala finita320ms, títulos Noto Sans Light y fondo propio de cintas azules animadas. Conserva lista vertical, búsqueda, A–Z, un toque, widgets, gestos, packs y reemplazos. Revisor independiente detectó pérdida de contenedor explícito AUTO PS4; corregida y confirmada. No se restauró el menú horizontal ni se simuló la beta38 cloud ausente.
+
+Compilación/lint correctos en2m12s:0 errores/30 advertencias/3 avisos. Firma original e instalación code40 por actualización verificadas mediante APK posterior, versión y hash. Revisión visual limitada en Motorola confirmó foco al desplazar y sección A–Z; PiP cubrió parte del reproductor. Sin suites automáticas, FPS medidos ni equivalencia100% afirmada. [BETA40](docs/BETA40.md).
+
+## Preparación local · 28 de octubre de 2026 · sin nueva versión
+
+Instalación posterior completada: ADB vinculado, identidad Motorola autorizada verificada y certificados previo/candidato compatibles. `adb install -r` correcto; versión0.28.0-beta39/code39, firma original y hash del APK instalado verificados. Datos conservados mediante actualización, sin cambios de permisos ni ajustes; no se afirma aceptación visual o rendimiento.
+
+Reutilizado checkout Windows existente y herramientas instaladas. Configuración de sesión y local.properties privado preparados; clave original conservada fuera de Git. Recompilación local beta39 con assembleBeta/lintBeta correcta en43s, lint0 errores/30 advertencias/3 avisos y certificado original verificado. Sin suites automáticas ni cambios de interfaz. Conexión ADB e instalación pendientes de vinculación; no hay validación visual nueva. La variante beta38 del chat cloud con Ps4Carousel.kt no aparece en las ramas GitHub consultadas y debe transferirse, sin recrearla de memoria. Ver [instrucciones locales](docs/LOCAL-DEVELOPMENT.md).
+
 ## 0.28.0-beta39 · 27 de octubre de2026 · rama de validación
 
 Favoritas con indicador discreto en vez de estrellas repetidas; siete efectos de lista+Sin efecto; siete despliegues por tema para reloj/clima/reproductor/widgets. PS4 separa su clima/visualizador de Xperia. Pesos de fuentes corregidos y galería de fondos con filtros, búsqueda y ampliación; colecciones de siete familias. Respaldo13 compatible con1–13.

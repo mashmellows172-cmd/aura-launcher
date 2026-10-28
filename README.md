@@ -10,15 +10,19 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 .\gradlew.bat assembleDebug
 ```
 
-En este workspace, `./build-beta.ps1` usa el JDK y SDK existentes, ejecuta pruebas y lint, y firma con la clave de las betas anteriores. Evita desinstalar Aura para actualizar: usa `adb install -r` con el APK firmado.
+En este notebook, sigue [la configuración local verificada](docs/LOCAL-DEVELOPMENT.md) y ejecuta `./gradlew.bat assembleBeta lintBeta`. Los scripts antiguos pueden incluir pruebas o usar otra clave del entorno; no ejecutarlos por defecto. Evita desinstalar Aura para actualizar: usa `adb install -r` solo tras comparar firma y versión con la app instalada.
 
-Última beta instalada: **0.27.0-beta38**, variante optimizada con R8. [Entrega y límites](docs/BETA38.md). Los APK y claves de firma quedan fuera del repositorio.
+Última beta instalada y verificada: **0.29.0-beta40**, variante optimizada con R8, actualización local del28 de octubre. [Entrega y límites](docs/BETA40.md). Los APK y claves de firma quedan fuera del repositorio.
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
 
-## Beta39 preparada
+## Beta40 · PS4 vertical
 
-Favoritas sin estrellas repetidas, siete efectos de lista y siete despliegues por tema, fuentes refinadas y galería de fondos recuperada. Compilación/lint/firma verificados; instalación y revisión física pendientes. [Entrega y límites](docs/BETA39.md).
+Iconos nativos a color, placas cuadradas, Noto Sans Light, foco central animado y cintas azules. Compilación/lint, firma e instalación verificadas; revisión visual física acotada. [Entrega y límites](docs/BETA40.md). Sin equivalencia100% ni FPS medidos; rama de validación sin promover a main.
+
+## Beta39
+
+Favoritas sin estrellas repetidas, siete efectos de lista y siete despliegues por tema, fuentes refinadas y galería de fondos recuperada. Compilación/lint/firma e instalación verificados; revisión visual física y rendimiento pendientes. [Entrega y límites](docs/BETA39.md).
 
 ## Rama de validación beta38
 

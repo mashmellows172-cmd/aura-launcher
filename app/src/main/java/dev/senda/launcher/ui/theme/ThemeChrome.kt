@@ -33,6 +33,7 @@ internal fun HistoricalProfile?.chromeShape(): Shape = when (this?.material) {
 @Composable
 internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherTheme) {
     val profile = historicalProfile(theme).takeUnless { dev.senda.launcher.data.LocalAppearance.current.highContrast }
+    val console = theme == LauncherTheme.PS4 && profile != null
     val accent = MaterialTheme.colorScheme.primary
     val frame = MaterialTheme.colorScheme.outline.copy(alpha = .35f)
     Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 6.dp)
@@ -54,9 +55,9 @@ internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherThem
             }
         }.padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(title, Modifier.weight(1f).padding(end = 8.dp), style = MaterialTheme.typography.titleMedium,
-            fontWeight = if (profile?.material == HistoricalMaterial.FLOW) FontWeight.Normal else FontWeight.SemiBold)
-        Text(count.toString(), Modifier.background(MaterialTheme.colorScheme.surfaceVariant, profile.chromeShape())
+        Text(if(console && title=="Tus favoritas") "Favoritas" else title, Modifier.weight(1f).padding(end = 8.dp), style = if(console) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleMedium,
+            fontWeight = if(console) FontWeight.Light else if (profile?.material == HistoricalMaterial.FLOW) FontWeight.Normal else FontWeight.SemiBold)
+        Text(count.toString(), Modifier.background(if(console)Color.Transparent else MaterialTheme.colorScheme.surfaceVariant, profile.chromeShape())
             .padding(horizontal = 9.dp, vertical = 3.dp), style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
