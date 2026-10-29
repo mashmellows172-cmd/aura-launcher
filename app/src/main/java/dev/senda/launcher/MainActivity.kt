@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.view.WindowInsetsControllerCompat
 import dev.senda.launcher.ui.HomeScreen
+import dev.senda.launcher.ui.withLightMode
 import dev.senda.launcher.ui.theme.AuraTheme
 import dev.senda.launcher.ui.theme.isDarkSkin
 import dev.senda.launcher.ui.theme.statusBarColor
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel: LauncherViewModel by viewModels()
     private var isDefaultHome by mutableStateOf(false)
     private lateinit var unlockEvents: dev.senda.launcher.ui.UnlockEvents
+    private lateinit var diagnostics: dev.senda.launcher.ui.FrameDiagnostics
+    private var lightMode by mutableStateOf(false)
     private lateinit var widgets: WidgetController
     private lateinit var soundFeedback: dev.senda.launcher.audio.SoundFeedbackController
 
@@ -50,11 +53,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         unlockEvents = dev.senda.launcher.ui.UnlockEvents(this)
+        diagnostics = dev.senda.launcher.ui.FrameDiagnostics(this)
+        lightMode = getSharedPreferences("aura_performance", MODE_PRIVATE).getBoolean("light", false)
         soundFeedback = dev.senda.launcher.audio.SoundFeedbackController(applicationContext)
         widgets = WidgetController(this)
         updateHomeState()
         setContent {
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val storedUiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiState = storedUiState.withLightMode(lightMode)
             androidx.activity.compose.ReportDrawnWhen { !uiState.isLoading && !uiState.iconPackLoading }
             val systemIsDark = isSystemInDarkTheme()
             val darkTheme = uiState.theme.isDarkSkin(systemIsDark)
@@ -74,7 +80,12 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = !darkTheme
                 }
             }
-            CompositionLocalProvider(dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
+            CompositionLocalProvider(dev.senda.launcher.ui.LocalFrameDiagnostics provides diagnostics,
+                dev.senda.launcher.ui.LocalLightMode provides lightMode,
+                dev.senda.launcher.ui.LocalSetLightMode provides { enabled: Boolean ->
+                    lightMode = enabled
+                    getSharedPreferences("aura_performance", MODE_PRIVATE).edit().putBoolean("light", enabled).apply()
+                }, dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
             AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice) {
                 dev.senda.launcher.ui.UnlockEntry(unlockEvents.sequence, uiState.theme, uiState.visualSettings.reduceMotion || uiState.appearance.highContrast) {
@@ -115,7 +126,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() { super.onStart(); soundFeedback.setVisible(true); widgets.start(); viewModel.setHomeVisible(true) }
     override fun onStop() { soundFeedback.setVisible(false); viewModel.setHomeVisible(false); widgets.stop(); super.onStop() }
 
-    override fun onDestroy() { soundFeedback.close(); super.onDestroy() }
+    override fun onDestroy() { diagnostics.close(); soundFeedback.close(); super.onDestroy() }
 
     @Deprecated("Required by the public AppWidgetHost configuration API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

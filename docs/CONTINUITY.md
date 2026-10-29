@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta49 (0.35.0/code49),29oct2026: diagnóstico opt-in60s de frames y modo ligero reversible. Compilación/lint correctos, instalada con firma/versión/hash verificados. Revisión física pendiente; ver docs/BETA49.md.
+
 Beta48 (0.34.0/code48),29oct2026: foco PS4 compartido con luz/sonido, fondo con capa de dibujo independiente, comparación Original/Mi edición y reproductor con luz y carátula estable. Compilación/lint correctos, instalada con firma/versión/hash verificados. Comparación física pendiente; ver docs/BETA48.md.
 
 Beta47 (0.33.2/code47),29oct2026: volumen relativo hasta300%, niveles previos conservados y foco PS4 con menos trabajo repetido. Compilación/lint correctos e instalada con firma/versión/hash verificados. Comparación física posterior pendiente: NotificationShade cubre Aura. Ver docs/BETA47.md.

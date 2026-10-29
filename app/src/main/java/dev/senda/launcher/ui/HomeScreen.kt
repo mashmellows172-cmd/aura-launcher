@@ -197,7 +197,8 @@ fun HomeScreen(
     onAppPermissions: () -> Unit,
     onNotificationSettings: () -> Unit,
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val storedState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state = storedState.withLightMode(LocalLightMode.current)
     val soundFeedback = LocalSoundFeedback.current
     val locale = LocalConfiguration.current.locales[0]
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
@@ -584,12 +585,12 @@ fun HomeScreen(
         dismissButton = { TextButton(onClick = { showNotificationHelp = false }) { Text("Ahora no") } },
     )
     if (showVisualSettings) VisualSettingsDialog(
-        current = state.visualSettings,
+        current = storedState.visualSettings,
         onChange = viewModel::setVisualSettings,
         onDismiss = { showVisualSettings = false },
         onAlphabetSettings = { showVisualSettings = false; showAlphabetSettings = true },
     )
-    if (showAlphabetSettings) AlphabetSettingsDialog(state.theme,state.visualSettings,viewModel::setVisualSettings){showAlphabetSettings=false}
+    if (showAlphabetSettings) AlphabetSettingsDialog(state.theme,storedState.visualSettings,viewModel::setVisualSettings){showAlphabetSettings=false}
     if (showWeatherPicker) WeatherAppDialog(
         apps = state.apps,
         selectedPackage = state.weatherPackage,
@@ -635,6 +636,8 @@ internal fun Header(
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
     var unlockSettings by remember { mutableStateOf(false) }
+    var diagnosticsShown by remember { mutableStateOf(false) }
+    if (diagnosticsShown) FrameDiagnosticsDialog(LocalLightMode.current, LocalSetLightMode.current) { diagnosticsShown = false }
     if (unlockSettings) UnlockSettingsDialog(theme) { unlockSettings = false }
     val soundFeedback = LocalSoundFeedback.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
@@ -696,6 +699,7 @@ internal fun Header(
                 action("Barra A–Z", callback = onAlphabetSettings),
                 action("Movimiento y efectos", callback = onVisualSettings),
                 action("Entrada tras desbloquear", callback = { unlockSettings = true }),
+                action("Diagnóstico de fluidez", callback = { diagnosticsShown = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
             ), onDismiss = { themeMenuExpanded = false }, mediaContent = { quickMedia { themeMenuExpanded = false } })
         }
@@ -759,6 +763,7 @@ internal fun Header(
                 DropdownMenuItem(text = { Text("Sonidos y respuesta") }, onClick = { themeMenuExpanded = false; onSoundSettings() })
                 DropdownMenuItem(text = { Text("Barra A–Z · efectos y respuesta") }, onClick = { themeMenuExpanded = false; onAlphabetSettings() })
                 DropdownMenuItem(text = { Text("Entrada tras desbloquear") }, onClick = { themeMenuExpanded = false; unlockSettings = true })
+                DropdownMenuItem(text = { Text("Diagnóstico de fluidez") }, onClick = { themeMenuExpanded = false; diagnosticsShown = true })
                 DropdownMenuItem(text = { Text("Movimiento y efectos") }, onClick = { themeMenuExpanded = false; onVisualSettings() })
                 DropdownMenuItem(text = { Text(if (weatherAppLabel == null) "Elegir app del clima" else "App del clima · $weatherAppLabel") }, onClick = { themeMenuExpanded = false; onChooseWeatherApp() })
                 DropdownMenuItem(text = { Text("Añadir widget") }, onClick = { themeMenuExpanded = false; onChooseWidgets() })
