@@ -1,5 +1,8 @@
 # Continuidad del proyecto
 
+Checkpoint28 de octubre: beta42 (0.31.0/code42) compilada/lint y firma original verificados; NO instalada. Implementa header compacto PS4, Quick Menu y shortcuts, ver BETA42.md. Motorola reconectado, pero ahora tiene0.30.2-beta43/code43 con otra firma (2eb417c5…). Bloqueado antes de adb install. Git fetch no recuperó beta43. Pendiente origen/código y clave compatible; no incrementar versión a ciegas ni desinstalar. No validar visualmente beta42 sobre la beta43 ajena. Última instalación realizada por este checkout sigue siendo beta41.
+
+
 Última entrega:0.30.0-beta41/code41 instalada el28 de octubre, firma/hash/version verificados. Fondo PS4 reactivo dentro de Aura: cintas orgánicas, parallax y luz de foco; clock RESUMED/ahorro/reduceMotion. Ver BETA41.md para revisión visual acotada y pendiente de reproducción de una anomalía de encabezado en captura. No repetir beta40 ni promover a main sin métricas.
 
 Entrega anterior:0.29.0-beta40/code40,28 de octubre. Instalada con firma/hash/versión verificados. PS4 vertical según referencia del usuario: nativos a color, placas, foco central320ms, tipografía ligera y cintas propias azules. Revisión física acotada confirmó cambio de foco al desplazar y A–Z; PiP limitó revisión del reproductor. Ver BETA40.md. Rama de validación: no promover a main sin métricas. No repetir esta implementación ni confundirla con la beta38 cloud aún ausente.
@@ -51,3 +54,5 @@ Google autenticado. Gemini CLI rechazado por UNSUPPORTED_CLIENT; Antigravity CLI
 ## Antigravity operativo con otros modelos
 
 Corrección: cuota agotada era del modelo anterior, no de todo Antigravity. Sonnet4.6 y GPT-OSS120B respondieron y terminaron revisiones reales. Leer docs/delegation/antigravity/validation.md antes de aplicar propuestas: varias se rechazaron. Runner tools/gemini/delegate-review.py requiere --model explícito para Antigravity. Solo siete archivos UI autorizados para compartir; no extender alcance. Sin cambios de app ni nueva beta en esta revisión.
+
+Decisión del usuario: continuar esta rama sin recuperar beta43 por ahora. La instalación sobre el paquete actual sigue bloqueada por firma; no implica autorización para desinstalar o borrar datos.

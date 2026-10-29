@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.31.0-beta42 · 28 de octubre de2026 · candidato local, NO instalado
+
+Encabezado PS4 compacto con clima/fecha desplegables; Quick Menu lateral con audio; ficha de app con categoría Android y hasta5 shortcuts reales. Mantiene un toque para abrir y acceso TalkBack al bloqueo. Componentes delegados y revisión independiente, corrección de accesibilidad aplicada.
+
+assembleBeta/lintBeta final correcto en1m18s;0 errores/30 advertencias/3 avisos. APK con firma original. Instalación detenida: el Motorola ya contiene beta43/code43 con certificado diferente. Esa fuente no está en esta rama ni apareció tras fetch. Recuperar código y firma de esa entrega antes de integrar/actualizar; no degradar ni borrar datos. [BETA42](docs/BETA42.md).
+
 ## 0.30.0-beta41 · 28 de octubre de2026 · fondo vivo PS4
 
 Tres cintas luminosas independientes reemplazan las franjas paralelas. Parallax amortiguado ligado a la lista, energía durante scroll y pulso al cambiar foco. Clock en RESUMED, parada con ahorro/reduceMotion y geometría reutilizada. Skills PS4 Fidelity, UI/UX Pro Max, Deferring State Reads y Using Efficient Effects; revisión independiente sin hallazgos concretos.

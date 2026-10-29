@@ -70,6 +70,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.AlertDialog
@@ -102,6 +104,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
@@ -407,6 +410,15 @@ fun HomeScreen(
             onChooseWeatherApp = { showWeatherPicker = true },
             onChooseWidgets = { showWidgetPicker = true },
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
+            quickMedia = { closeMenu ->
+                if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
+                    audioInfo = state.audioInfo, theme = state.theme,
+                    reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
+                    onOpenAudio = { closeMenu(); viewModel.openAudioApp(it) }, onPause = viewModel::pauseAudio,
+                    onPrevious = viewModel::previousAudio, onNext = viewModel::nextAudio,
+                    onEnableAccess = { closeMenu(); showHomeSettings = true },
+                )
+            },
         )
         if (state.headerSettings.showAudioWidget) {
             ThemedAudioWidget(
@@ -617,12 +629,74 @@ internal fun Header(
     onChooseWeatherApp: () -> Unit,
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
+    quickMedia: @Composable (() -> Unit) -> Unit = {},
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
     val soundFeedback = LocalSoundFeedback.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+    if (theme == LauncherTheme.PS4) {
+        var detailsExpanded by rememberSaveable { mutableStateOf(false) }
+        Column(Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(48.dp).homeGestures(onGesture)
+                    .combinedClickable(onClick = onAvatar, onLongClick = onPersonalization, onDoubleClick = onDoubleTap)
+                    .semantics { contentDescription = "Cambiar avatar de Aura"; role = Role.Button
+                        customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
+                    }, contentAlignment = Alignment.Center) {
+                    val avatar = rememberLocalImage(avatarUri, 256)
+                    if (avatar != null) Image(avatar, null, Modifier.size(36.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
+                    else Ps4Mark()
+                }
+                Column(Modifier.weight(1f).heightIn(min = 56.dp)
+                    .clickable { detailsExpanded = !detailsExpanded }
+                    .semantics { stateDescription = if (detailsExpanded) "Clima y fecha expandidos" else "Clima y fecha contraídos" }
+                    .padding(start = 8.dp, top = 7.dp, bottom = 7.dp)) {
+                    Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
+                    Text(if (detailsExpanded) "Ocultar detalles ▴" else "Clima y fecha ▾", style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                Box(Modifier.widthIn(min = 60.dp).heightIn(min = 56.dp).clickable(onClick = onOpenAlarms)
+                    .semantics { contentDescription = "Abrir alarmas · $clockTime" }, contentAlignment = Alignment.Center) {
+                    Text(clockTime, fontSize = 20.sp, fontWeight = FontWeight.Light)
+                }
+                IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
+                    Icon(Icons.Filled.Settings, "Abrir menú rápido")
+                }
+            }
+            if (detailsExpanded) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, Modifier.weight(1f))
+                    HeaderWeather(widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", reduceMotion, onOpenWeather, onWeatherConnection)
+                }
+                if (showMotivationalHeader) Text(
+                    remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) },
+                    style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 8.dp))
+            }
+        }
+        if (themeMenuExpanded) {
+            fun action(label: String, enabled: Boolean = true, callback: () -> Unit) =
+                Ps4QuickAction(label, enabled) { themeMenuExpanded = false; callback() }
+            Ps4QuickMenu(listOf(
+                action("Tema visual", callback = onChooseTheme),
+                action("Saltar a una letra · A–Z", letterJumpEnabled, onLetterJump),
+                action("Organizar inicio", callback = onDashboard),
+                action("Añadir widget", callback = onChooseWidgets),
+                action("Editar favoritas", callback = onEditFavorites),
+                action("Clima en el reloj", callback = onWeatherConnection),
+                action("Elegir app del clima", callback = onChooseWeatherApp),
+                action("Cambiar avatar", callback = onAvatar),
+                action("Inicio y gestos", callback = onHomeSettings),
+                action("Personalización y respaldo", callback = onPersonalization),
+                action("Sonidos y respuesta", callback = onSoundSettings),
+                action("Barra A–Z", callback = onAlphabetSettings),
+                action("Movimiento y efectos", callback = onVisualSettings),
+                action("Apps ocultas", callback = onManageHiddenApps),
+            ), onDismiss = { themeMenuExpanded = false }, mediaContent = { quickMedia { themeMenuExpanded = false } })
+        }
+        return
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -1067,6 +1141,7 @@ private fun AppRow(
     onLoadIcon: (LaunchableApp) -> Drawable,
 ) {
     var actionsExpanded by remember(app.packageName) { mutableStateOf(false) }
+    var detailsShown by remember(app.packageName) { mutableStateOf(false) }
     val appearance = LocalAppearance.current
     val console = skinName == LauncherTheme.PS4.name && !appearance.highContrast
     val rowInteractions = remember(app.packageName) { MutableInteractionSource() }
@@ -1083,6 +1158,9 @@ private fun AppRow(
             }.minByOrNull { kotlin.math.abs(it.offset+it.size*.5f-center) }?.key == rowKey
         }
     } }
+    val category = if (console) rememberPs4AppCategory(app, centered || rowFocused, listState?.isScrollInProgress == true) else ""
+    if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon,
+        onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val focusProgress = animateFloatAsState(if (console && (centered || rowFocused || pressed)) 1f else 0f,
         tween(if (still) 0 else 320, easing=androidx.compose.animation.core.FastOutSlowInEasing), label="ps4-row-focus")
@@ -1119,9 +1197,10 @@ private fun AppRow(
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
             } else AppIcon(app, customIconUri, onLoadIcon)
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 4.dp)) {
             Text(
                 text = app.label,
-                modifier = Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)
+                modifier = Modifier.fillMaxWidth()
                     .then(if(console)Modifier.graphicsLayer {
                         transformOrigin=androidx.compose.ui.graphics.TransformOrigin(0f,.5f)
                         val scale=if(still)1f else .82f+focusProgress.value*.18f
@@ -1133,6 +1212,13 @@ private fun AppRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+                if (console) Text(if (centered || rowFocused) category else " ",
+                    style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            if (skinName == LauncherTheme.PS4.name) IconButton(onClick = { detailsShown = true }, modifier = Modifier.size(48.dp)) {
+                Icon(Icons.Filled.MoreVert, "Detalles y accesos de ${app.label}", modifier = Modifier.size(20.dp))
+            }
             if (isFavorite) {
                 // The section already identifies favorites; this quiet mark also works in A–Z/search.
                 Box(Modifier.padding(end = 12.dp).size(5.dp)
