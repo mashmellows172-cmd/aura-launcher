@@ -1,5 +1,8 @@
 # Continuidad del proyecto
 
+Beta45 candidata (0.33.0/code45),29oct2026: seis entradas tras desbloqueo, selector/preview/intensidad y multimedia adaptativo de beta44. Compilación/lint final3m14s,0 errores/31 advertencias/3 avisos; revisión fuente completada. APK firmado/hash en docs/BETA45.md. NO instalada por firma incompatible; sin métricas físicas ni promoción a main. Preferencias unlock aún fuera del respaldo JSON.
+
+
 Checkpoint28 de octubre: beta42 (0.31.0/code42) compilada/lint y firma original verificados; NO instalada. Implementa header compacto PS4, Quick Menu y shortcuts, ver BETA42.md. Motorola reconectado, pero ahora tiene0.30.2-beta43/code43 con otra firma (2eb417c5…). Bloqueado antes de adb install. Git fetch no recuperó beta43. Pendiente origen/código y clave compatible; no incrementar versión a ciegas ni desinstalar. No validar visualmente beta42 sobre la beta43 ajena. Última instalación realizada por este checkout sigue siendo beta41.
 
 

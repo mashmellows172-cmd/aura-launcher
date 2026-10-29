@@ -633,6 +633,8 @@ internal fun Header(
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
+    var unlockSettings by remember { mutableStateOf(false) }
+    if (unlockSettings) UnlockSettingsDialog(theme) { unlockSettings = false }
     val soundFeedback = LocalSoundFeedback.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
@@ -692,6 +694,7 @@ internal fun Header(
                 action("Sonidos y respuesta", callback = onSoundSettings),
                 action("Barra A–Z", callback = onAlphabetSettings),
                 action("Movimiento y efectos", callback = onVisualSettings),
+                action("Entrada tras desbloquear", callback = { unlockSettings = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
             ), onDismiss = { themeMenuExpanded = false }, mediaContent = { quickMedia { themeMenuExpanded = false } })
         }
@@ -754,6 +757,7 @@ internal fun Header(
                 DropdownMenuItem(text = { Text("Personalización y respaldo") }, onClick = { themeMenuExpanded = false; onPersonalization() })
                 DropdownMenuItem(text = { Text("Sonidos y respuesta") }, onClick = { themeMenuExpanded = false; onSoundSettings() })
                 DropdownMenuItem(text = { Text("Barra A–Z · efectos y respuesta") }, onClick = { themeMenuExpanded = false; onAlphabetSettings() })
+                DropdownMenuItem(text = { Text("Entrada tras desbloquear") }, onClick = { themeMenuExpanded = false; unlockSettings = true })
                 DropdownMenuItem(text = { Text("Movimiento y efectos") }, onClick = { themeMenuExpanded = false; onVisualSettings() })
                 DropdownMenuItem(text = { Text(if (weatherAppLabel == null) "Elegir app del clima" else "App del clima · $weatherAppLabel") }, onClick = { themeMenuExpanded = false; onChooseWeatherApp() })
                 DropdownMenuItem(text = { Text("Añadir widget") }, onClick = { themeMenuExpanded = false; onChooseWidgets() })

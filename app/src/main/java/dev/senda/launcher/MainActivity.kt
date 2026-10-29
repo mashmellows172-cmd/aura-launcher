@@ -31,6 +31,7 @@ import dev.senda.launcher.widgets.WidgetController
 class MainActivity : ComponentActivity() {
     private val viewModel: LauncherViewModel by viewModels()
     private var isDefaultHome by mutableStateOf(false)
+    private lateinit var unlockEvents: dev.senda.launcher.ui.UnlockEvents
     private lateinit var widgets: WidgetController
     private lateinit var soundFeedback: dev.senda.launcher.audio.SoundFeedbackController
 
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        unlockEvents = dev.senda.launcher.ui.UnlockEvents(this)
         soundFeedback = dev.senda.launcher.audio.SoundFeedbackController(applicationContext)
         widgets = WidgetController(this)
         updateHomeState()
@@ -75,6 +77,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
             AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice) {
+                dev.senda.launcher.ui.UnlockEntry(unlockEvents.sequence, uiState.theme, uiState.visualSettings.reduceMotion || uiState.appearance.highContrast) {
                 HomeScreen(
                     viewModel = viewModel,
                     isDefaultHome = isDefaultHome || packageName.endsWith(".benchmark"),
@@ -86,9 +89,15 @@ class MainActivity : ComponentActivity() {
                     onExportSettings = { exportSettings.launch("Aura-respaldo-${java.time.LocalDate.now()}.json") },
                     onImportSettings = { importSettings.launch(arrayOf("application/json", "application/octet-stream", "text/plain")) },
                 )
+                }
             }
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && ::unlockEvents.isInitialized) unlockEvents.consume()
     }
 
     override fun onResume() {

@@ -50,7 +50,7 @@
     {
       "id": "UNLOCK-04",
       "owner": "codex",
-      "status": "PLANNED",
+      "status": "COMPILED_PENDING_PHYSICAL_VALIDATION",
       "branch": "codex/phase1-theme-editor",
       "scope": [
         "Android events",
@@ -61,7 +61,9 @@
       ],
       "dependsOn": [
         "UNLOCK-03"
-      ]
+      ],
+      "executionAgent": "codex",
+      "note": "Implemented locally; external task contracts were not executed."
     }
   ],
   "budget": {
@@ -73,6 +75,11 @@
       "stopTargetPercent": 85,
       "maximumPercent": 90,
       "unknownQuotaBlocksInference": true
+    },
+    "codex": {
+      "internal90PercentCap": false,
+      "providerLimitsStillApply": true,
+      "reason": "Usuario retiró el límite de Codex el29oct2026"
     }
   },
   "projects": [
@@ -103,5 +110,6 @@
       "initialCommit": "6d168e2d7db602a24d33e7b388368e144b663d44",
       "githubBranchPublished": true
     }
-  ]
+  ],
+  "latestCheckpoint": "Beta45 compiled/lint and original signature/hash verified. Not installed: incompatible installed signing certificate. Physical validation pending."
 }

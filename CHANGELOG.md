@@ -1,5 +1,8 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta45 candidata (0.33.0/code45),29oct2026: seis entradas tras desbloqueo, selector/preview/intensidad y multimedia adaptativo de beta44. Compilación/lint final3m14s,0 errores/31 advertencias/3 avisos; revisión fuente completada. APK firmado/hash en docs/BETA45.md. NO instalada por firma incompatible; sin métricas físicas ni promoción a main. Preferencias unlock aún fuera del respaldo JSON.
+
+
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
 ## 0.31.0-beta42 · 28 de octubre de2026 · candidato local, NO instalado
