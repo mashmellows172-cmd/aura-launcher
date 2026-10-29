@@ -33,6 +33,8 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
     var name by rememberSaveable{mutableStateOf("Mi variante")}
     var section by rememberSaveable{mutableIntStateOf(0)}
     var fullPreview by rememberSaveable{mutableStateOf(false)}
+    val original = remember { ThemeSnapshot.from(state) }
+    var compareOriginal by rememberSaveable { mutableStateOf(false) }
     var showS3 by rememberSaveable{mutableStateOf(false)}
     var showWallpapers by rememberSaveable{mutableStateOf(false)}
     val context=LocalContext.current
@@ -53,7 +55,12 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                 val value=draft
                 if(value==null){Box(Modifier.weight(1f)){CircularProgressIndicator()}}
                 else {
-                    Box(Modifier.weight(1f).fillMaxWidth()) { ThemeLivePreview(value,state,viewModel,widgetController) }
+                    Row(Modifier.fillMaxWidth().padding(horizontal=16.dp), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                        FilterChip(selected=compareOriginal,onClick={compareOriginal=true},label={Text("Original")})
+                        FilterChip(selected=!compareOriginal,onClick={compareOriginal=false},label={Text("Mi edición")})
+                    }
+                    Text(if(compareOriginal) "Comparando con tu Inicio al abrir el estudio" else "Vista previa · los cambios aún no están aplicados", modifier=Modifier.padding(horizontal=16.dp),style=MaterialTheme.typography.bodySmall)
+                    Box(Modifier.weight(1f).fillMaxWidth()) { ThemeLivePreview(if(compareOriginal) original else value,state,viewModel,widgetController) }
                     if(!fullPreview) {
                         TabRow(section){listOf("Estilo","Iconos","Fondo","Variantes").forEachIndexed{i,label->Tab(selected=section==i,onClick={editor.finishGesture();section=i},modifier=Modifier.heightIn(min=48.dp)){Text(label,style=MaterialTheme.typography.labelSmall)}}}
                         Column(Modifier.fillMaxWidth().heightIn(max=240.dp).verticalScroll(rememberScrollState()).padding(horizontal=16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {

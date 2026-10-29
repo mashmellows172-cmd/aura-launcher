@@ -2,6 +2,9 @@ package dev.senda.launcher.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -61,18 +64,24 @@ fun ThemedAudioWidget(
     val expanded = audioInfo.isPlaying
     val motionDisabled = powerSaver || reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || preview || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val duration = if (motionDisabled) 0 else historicalProfile(theme)?.durationMs ?: 240
+    val heroAccent = MaterialTheme.colorScheme.primary
+    val heroLight = animateFloatAsState(if(expanded) 1f else 0f,
+        if(motionDisabled) tween(0) else spring(dampingRatio=1f,stiffness=300f),label="media-light")
     AnimatedVisibility(audioInfo.isPlaying || recentlyPlaying, modifier = modifier,
         enter = fadeIn(tween(duration)),
         exit = fadeOut(tween(duration.coerceAtMost(200))) + shrinkVertically(tween(duration.coerceAtMost(240)))) {
-        HistoricalPanel(theme, Modifier.fillMaxWidth().animateContentSize(tween(duration)), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
+        HistoricalPanel(theme, Modifier.fillMaxWidth().animateContentSize(if(motionDisabled) tween(0) else spring(dampingRatio=1f,stiffness=300f)), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
             val scheme = MaterialTheme.colorScheme
             val compact = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE || LocalDensity.current.fontScale > 1.5f
             var menu by remember { mutableStateOf(false) }
             val title = info.title ?: info.appLabel ?: "Contenido en reproducción"
-            Column {
+            Column(Modifier.drawWithCache {
+                val light = Brush.horizontalGradient(listOf(heroAccent.copy(alpha=.22f), Color.Transparent))
+                onDrawBehind { drawRect(light,alpha=heroLight.value) }
+            }) {
             Row(Modifier.fillMaxWidth().heightIn(min = if (expanded) 80.dp else 56.dp).padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Box(Modifier.size(if (!expanded) 36.dp else if (compact) 40.dp else 56.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(if (compact) 40.dp else 56.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
                     val art = info.artwork?.takeUnless { it.isRecycled }
                     if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     else ThemedAudioVisualizer(theme, scheme.primary, true, Modifier.fillMaxSize())
@@ -85,6 +94,7 @@ fun ThemedAudioWidget(
                         LauncherTheme.OPTIMUS -> "Tu momento musical"
                         LauncherTheme.XPERIA -> "En tu frecuencia"
                         LauncherTheme.RAZR -> "MEDIA PLAYER"
+                        LauncherTheme.PS4 -> "NOW PLAYING"
                         else -> "En reproducción"
                     }, style = MaterialTheme.typography.labelSmall, color = scheme.onSurfaceVariant,
                         fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)

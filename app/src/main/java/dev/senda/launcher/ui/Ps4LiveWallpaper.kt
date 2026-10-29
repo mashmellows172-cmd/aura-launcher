@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,8 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         onDispose { context.unregisterReceiver(receiver) }
     }
     val scene = remember { ConsoleScene() }
+    val focusedKey = LocalPs4FocusedKey.current
+    val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle, listState, disabled) {
@@ -67,17 +70,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                     scene.parallax += (target-scene.parallax)*(1f-exp(-dt*5f))
                     val moving = if(listState?.isScrollInProgress==true) 1f else 0f
                     scene.energy += (moving-scene.energy)*(1f-exp(-dt*4f))
-                    var focus: Any? = null
-                    var nearest = Float.MAX_VALUE
-                    if(info!=null) {
-                        val center=info.viewportStartOffset+(info.viewportEndOffset-info.viewportStartOffset)*.42f
-                        for(item in info.visibleItemsInfo) {
-                            if(item.contentType!="app") continue
-                            val distance=abs(item.offset+item.size*.5f-center)
-                            if(distance<nearest) { nearest=distance; focus=item.key }
-                        }
+                    val focus = focusedKey.value
+                    if(focus!=null && previousFocus!=null && focus!=previousFocus) {
+                        scene.focusLight=1f
+                        // Existing index opt-in and rate limiting also govern scene navigation.
+                        if(listState?.isScrollInProgress==true) feedback.play(dev.senda.launcher.data.SoundEvent.INDEX)
                     }
-                    if(focus!=null && previousFocus!=null && focus!=previousFocus) scene.focusLight=1f
                     previousFocus=focus
                     scene.focusLight *= exp(-dt*3.6f)
                     scene.phase=(scene.phase+dt*(2f*PI.toFloat()/24f)*(1f+scene.energy*.28f))%(2f*PI.toFloat())
@@ -85,7 +83,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             }
         }
     }
-    Box(modifier.drawWithCache {
+    Box(modifier.graphicsLayer().drawWithCache {
         val backdrop=Brush.linearGradient(listOf(Color(0xFF003FA6),Color(0xFF001D62),Color(0xFF000B2B)),end=Offset(size.width*.8f,size.height))
         val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.42f),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
         val ribbons=List(3) { ConsoleRibbon(it) }
