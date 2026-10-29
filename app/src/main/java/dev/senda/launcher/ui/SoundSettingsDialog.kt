@@ -31,8 +31,16 @@ internal fun SoundSettingsDialog(current: SoundSettings, theme: LauncherTheme, o
             SoundToggle("Activar sonidos de Aura", draft.enabled) { commit(draft.copy(enabled = it)) }
             EffectChoice("Familia sonora", draft.family.name, SoundFamily.entries.map { it.name to it.label }) { commit(draft.copy(family = SoundFamily.fromStored(it))) }
             Text("Volumen relativo · ${draft.volume}%")
-            Slider(draft.volume.toFloat(), { draft = draft.copy(volume = it.toInt()) }, valueRange = 0f..100f,
+            Slider(draft.volume.toFloat(), { draft = draft.copy(volume = it.toInt()) }, valueRange = 0f..SoundSettings.MAX_VOLUME.toFloat(),
                 onValueChangeFinished = { onChange(draft.bounded()) }, modifier = Modifier.semantics { contentDescription = "Volumen relativo de los sonidos" })
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                listOf("Suave" to 35, "Original" to 100, "Intenso" to 250).forEach { (label, volume) ->
+                    TextButton(onClick = { commit(draft.copy(volume = volume)) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(label)
+                    }
+                }
+            }
+            Text("100% conserva el nivel anterior. Hasta 300% amplifica el efecto; el volumen del sistema sigue siendo el límite. Ajusta y pulsa Escuchar muestra.", style = MaterialTheme.typography.bodySmall)
             OutlinedButton(onClick = {
                 val message = when (feedback.preview(theme)) {
                     SoundResult.SYSTEM_MUTED -> "El sistema está en silencio, No molestar o tiene desactivados los sonidos táctiles."
@@ -51,7 +59,7 @@ internal fun SoundSettingsDialog(current: SoundSettings, theme: LauncherTheme, o
             SoundToggle("Sonido al recorrer A–Z", draft.index) { commit(draft.copy(index = it)) }
             Text("El índice tiene un límite de frecuencia para evitar una ráfaga continua al arrastrar.", style = MaterialTheme.typography.bodySmall)
             SoundToggle("Silenciar durante reproducción", draft.muteDuringMedia) { commit(draft.copy(muteDuringMedia = it)) }
-            Text("Aura no sube el volumen, cambia modos del sistema ni solicita acceso al micrófono. La respuesta háptica se configura por separado en Movimiento y efectos.", style = MaterialTheme.typography.bodySmall)
+            Text("Aura no cambia el volumen ni los modos del sistema ni solicita acceso al micrófono. La respuesta háptica se configura por separado en Movimiento y efectos.", style = MaterialTheme.typography.bodySmall)
         }
     }, confirmButton = { TextButton(onClick = onDismiss, modifier = Modifier.heightIn(min = 48.dp)) { Text("Listo") } })
 }

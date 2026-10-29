@@ -36,7 +36,8 @@ class AuraMotionController {
     var velocity by mutableFloatStateOf(0f)
         private set
     private var pending = 0f
-    private var previousItems: Map<Any, Int> = emptyMap()
+    private var anchorKey: Any? = null
+    private var anchorOffset = 0
     val connection = object : NestedScrollConnection {
         override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
             pending += consumed.y
@@ -45,14 +46,18 @@ class AuraMotionController {
     }
     fun step(dt: Float, density: Float, active: Boolean, list: LazyListState, response: Float) {
         val items = list.layoutInfo.visibleItemsInfo
-        val fallback = items.firstNotNullOfOrNull { item -> previousItems[item.key]?.let { item.offset - it } }?.toFloat() ?: 0f
-        previousItems = items.associate { it.key to it.offset }
+        val anchor = items.firstOrNull { it.key == anchorKey }
+        val fallback = anchor?.let { (it.offset - anchorOffset).toFloat() } ?: 0f
+        // Reuse a center anchor across frames instead of allocating a map on every frame.
+        val nextAnchor = items.getOrNull(items.size / 2)
+        anchorKey = nextAnchor?.key
+        anchorOffset = nextAnchor?.offset ?: 0
         val speed = (if (pending != 0f) pending else fallback) / (density * dt * MotionTokens.speedDpPerSecond)
         pending = 0f
         val target = if (active) speed.coerceIn(-1f, 1f) else 0f
         velocity += (target - velocity) * (1f - exp(-dt * response))
     }
-    fun reset() { velocity = 0f; pending = 0f; previousItems = emptyMap() }
+    fun reset() { velocity = 0f; pending = 0f; anchorKey = null; anchorOffset = 0 }
 }
 
 internal object MotionTokens {
@@ -95,7 +100,7 @@ fun rememberAuraMotion(list: LazyListState, settings: VisualSettings): AuraMotio
     val highContrast = LocalAppearance.current.highContrast
     LaunchedEffect(list, settings.reduceMotion, settings.motion, settings.durationMs, density, lifecycle, highContrast) {
         try {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 try {
                 snapshotFlow { list.isScrollInProgress }.collectLatest { active ->
                     if (settings.reduceMotion || highContrast || settings.motion == "NONE" || !ValueAnimator.areAnimatorsEnabled()) {
@@ -189,11 +194,16 @@ fun Modifier.auraListMotion(list: LazyListState?, key: String?, settings: Visual
     val controller = LocalMotionController.current
     val highContrast = LocalAppearance.current.highContrast
     return graphicsLayer {
+        val velocity = controller?.velocity ?: 0f
+        if (highContrast || settings.reduceMotion || settings.motion == "NONE" || abs(velocity) < MotionTokens.idleEpsilon) {
+            applyAuraMotion(0f, 0f, settings)
+            return@graphicsLayer
+        }
         val info = list?.layoutInfo
         val item = info?.visibleItemsInfo?.firstOrNull { it.key == key }
         val center = if (info == null) 0f else (info.viewportStartOffset + info.viewportEndOffset) / 2f
         val position = if (item == null) 0f else (item.offset + item.size / 2f - center) / ((info!!.viewportEndOffset - info.viewportStartOffset) / 2f).coerceAtLeast(1f)
-        applyAuraMotion(position, if (highContrast || !ValueAnimator.areAnimatorsEnabled()) 0f else controller?.velocity ?: 0f, settings)
+        applyAuraMotion(position, if (!ValueAnimator.areAnimatorsEnabled()) 0f else velocity, settings)
     }
 }
 

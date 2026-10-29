@@ -205,6 +205,7 @@ fun HomeScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val motionController = rememberAuraMotion(listState, state.visualSettings)
+    val ps4FocusedKey = rememberPs4FocusedKey(listState, state.theme == LauncherTheme.PS4 && !state.appearance.highContrast)
     var alphabetJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     var previousWidgetCount by remember { mutableStateOf(widgetController.widgets.size) }
     LaunchedEffect(widgetController.widgets.size) {
@@ -353,7 +354,7 @@ fun HomeScreen(
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
 
-    androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey) {
     Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures(executeGesture).pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
     }) {
@@ -1152,22 +1153,16 @@ private fun AppRow(
     val pressed by rowInteractions.collectIsPressedAsState()
     var rowFocused by remember { mutableStateOf(false) }
     // The result changes once per focused item, not once per scroll pixel.
-    val centered by remember(listState, rowKey, console) { derivedStateOf {
-        if (!console || listState == null || rowKey == null) false else {
-            val layout = listState.layoutInfo
-            val center = layout.viewportStartOffset + (layout.viewportEndOffset-layout.viewportStartOffset)*.42f
-            layout.visibleItemsInfo.asSequence().filter {
-                val key = it.key.toString()
-                key.startsWith("favorite-") || key.startsWith("all-") || key.startsWith("result-")
-            }.minByOrNull { kotlin.math.abs(it.offset+it.size*.5f-center) }?.key == rowKey
-        }
-    } }
+    val focusedKey = LocalPs4FocusedKey.current
+    val centered by remember(focusedKey, rowKey, console) {
+        derivedStateOf { console && rowKey != null && focusedKey.value == rowKey }
+    }
     val category = if (console) rememberPs4AppCategory(app, centered || rowFocused, listState?.isScrollInProgress == true) else ""
     if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon,
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val focusProgress = animateFloatAsState(if (console && (centered || rowFocused || pressed)) 1f else 0f,
-        tween(if (still) 0 else 320, easing=androidx.compose.animation.core.FastOutSlowInEasing), label="ps4-row-focus")
+        if (still) tween(0) else spring(dampingRatio = 1f, stiffness = 380f), label="ps4-row-focus")
     Row(
         modifier = modifier.fillMaxWidth().heightIn(min = if(console) maxOf(appearance.rowHeight, appearance.iconSize+28).dp else appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,

@@ -1,4 +1,4 @@
-"""Original quiet UI cues, authored by synthesis. Never plays audio; no sampled brand ringtones."""
+"""Original UI cues with gain headroom. Never plays audio; no sampled brand ringtones."""
 from pathlib import Path
 import hashlib
 import json
@@ -12,6 +12,7 @@ THEMES = ('nothing','sense','touchwiz','optimus','xperia','razr','ps4')
 EVENTS = ('launch','menu','select','favorite','index')
 DURATIONS = (.105,.135,.085,.175,.045)
 RATE = 22050
+PEAK_LIMIT = .66  # Controller divides by 300: 100% preserves the original .22 peak.
 
 
 def synth(theme, event):
@@ -44,7 +45,7 @@ def synth(theme, event):
         if event=='favorite':value *= .7+.3*math.sin(math.pi*t/duration)
         samples.append(value*attack*release)
     peak=max(abs(x) for x in samples) or 1
-    return b''.join(struct.pack('<h',round(x/peak*.22*32767)) for x in samples)
+    return b''.join(struct.pack('<h',round(x/peak*PEAK_LIMIT*32767)) for x in samples)
 
 
 def main():
@@ -55,7 +56,7 @@ def main():
             name=f'aura_sound_{theme}_{event}';pcm=synth(theme,event);path=raw/f'{name}.wav'
             with wave.open(str(path),'wb') as stream:
                 stream.setnchannels(1);stream.setsampwidth(2);stream.setframerate(RATE);stream.writeframes(pcm)
-            records.append(dict(theme=theme,event=event,duration_ms=round(len(pcm)/2/RATE*1000),rate=RATE,channels=1,peak_limit=.22,sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+            records.append(dict(theme=theme,event=event,duration_ms=round(len(pcm)/2/RATE*1000),rate=RATE,channels=1,peak_limit=PEAK_LIMIT,sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
     folder=ROOT/'artwork/sounds';folder.mkdir(parents=True,exist_ok=True)
     (folder/'manifest.json').write_text(json.dumps(records,indent=2)+'\n',encoding='utf-8',newline='\n')
     rows=['        intArrayOf('+', '.join(f'R.raw.aura_sound_{theme}_{event}' for event in EVENTS)+'),' for theme in THEMES]

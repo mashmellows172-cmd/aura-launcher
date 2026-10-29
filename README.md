@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta47 (0.33.2/code47),29oct2026: volumen relativo hasta300%, niveles previos conservados y foco PS4 con menos trabajo repetido. Compilación/lint correctos e instalada con firma/versión/hash verificados. Comparación física posterior pendiente: NotificationShade cubre Aura. Ver docs/BETA47.md.
+
 Beta46 instalada29oct2026: familia PS4 con cinco señales originales, entradas de menor amplitud y menor sobre dibujo de fondo. Compilación/lint correctos; versión/firma/hash posterior verificados. Diagnóstico físico breve mejora pero conserva jank significativo; no afirmar fluidez completa. Ver docs/BETA46.md.
 
 

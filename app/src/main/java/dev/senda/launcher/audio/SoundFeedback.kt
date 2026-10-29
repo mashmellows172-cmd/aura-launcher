@@ -59,7 +59,8 @@ class SoundFeedbackController(context: Context) : SoundFeedback {
 
     private fun prepare() {
         if (pool != null || !visible) return
-        val current = SoundPool.Builder().setMaxStreams(2).setAudioAttributes(AudioAttributes.Builder()
+        // One short cue at a time: boosted signals cannot sum beyond the authored peak.
+        val current = SoundPool.Builder().setMaxStreams(1).setAudioAttributes(AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()).build()
         pool = current
         current.setOnLoadCompleteListener { source, id, status -> handler.post {
@@ -127,7 +128,8 @@ class SoundFeedbackController(context: Context) : SoundFeedback {
     }
 
     private fun start(id: Int): Int {
-        val volume = settings.volume / 100f
+        // PCM peak was raised from .22 to .66 (3x); divide by 300 to keep old settings unchanged.
+        val volume = settings.volume.toFloat() / SoundSettings.MAX_VOLUME
         return pool?.play(id, volume, volume, 1, 0, 1f) ?: 0
     }
 

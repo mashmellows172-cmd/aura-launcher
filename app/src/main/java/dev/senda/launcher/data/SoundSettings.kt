@@ -25,7 +25,9 @@ data class SoundSettings(
     val index: Boolean = false,
     val muteDuringMedia: Boolean = true,
 ) {
-    fun bounded() = copy(volume = volume.coerceIn(0, 100))
+    // 100 retains the original cue level; higher values opt into extra digital headroom.
+    companion object { const val MAX_VOLUME = 300 }
+    fun bounded() = copy(volume = volume.coerceIn(0, MAX_VOLUME))
     fun allows(event: SoundEvent) = when (event) {
         SoundEvent.LAUNCH -> launch; SoundEvent.MENU -> menu; SoundEvent.SELECT -> select
         SoundEvent.FAVORITE -> favorite; SoundEvent.INDEX -> index

@@ -39,6 +39,28 @@ import dev.senda.launcher.ui.theme.rememberHistoricalPhase
 import kotlin.math.PI
 import kotlin.math.sin
 
+/** Share the nearest app key across rows; only the two changed rows recompose. */
+internal val LocalPs4FocusedKey = staticCompositionLocalOf<State<Any?>> { mutableStateOf(null) }
+
+@Composable
+internal fun rememberPs4FocusedKey(list: androidx.compose.foundation.lazy.LazyListState, enabled: Boolean): State<Any?> =
+    remember(list, enabled) {
+        derivedStateOf {
+            if (!enabled) null else {
+                val layout = list.layoutInfo
+                val center = layout.viewportStartOffset + (layout.viewportEndOffset - layout.viewportStartOffset) * .42f
+                var nearest: Any? = null
+                var distance = Float.MAX_VALUE
+                for (item in layout.visibleItemsInfo) {
+                    if (item.contentType != "app") continue
+                    val candidate = kotlin.math.abs(item.offset + item.size * .5f - center)
+                    if (candidate < distance) { distance = candidate; nearest = item.key }
+                }
+                nearest
+            }
+        }
+    }
+
 /** Finite focus cue. No blur, idle oscillator or changes to the row's hit target. */
 internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithCache {
     val corner = CornerRadius(3.dp.toPx())

@@ -198,7 +198,7 @@ class FavoritesStore(context: Context) {
         .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }
         .map { prefs -> SoundSettings(
             enabled = prefs[booleanPreferencesKey("sound_enabled")] ?: false,
-            volume = (prefs[intPreferencesKey("sound_volume")] ?: 35).coerceIn(0, 100),
+            volume = (prefs[intPreferencesKey("sound_volume")] ?: 35).coerceIn(0, SoundSettings.MAX_VOLUME),
             family = SoundFamily.fromStored(prefs[stringPreferencesKey("sound_family")]),
             launch = prefs[booleanPreferencesKey("sound_launch")] ?: true,
             menu = prefs[booleanPreferencesKey("sound_menu")] ?: true,
