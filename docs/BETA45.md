@@ -18,3 +18,6 @@ No se instalaron paquetes nuevos: las APIs Compose/lifecycle existentes cubren a
 Revisión independiente final: corregidos encoding UTF-8, intensidad0%, vista previa automática y repetición por reanudación. Confirmación por fuente, no validación visual. Autonomía29oct hasta13:00 Santiago: terminar bloque actual antes del plazo, sin tareas de relleno.
 
 APK local: beta/Aura-0.33.0-beta45.apk. SHA256:250ad04b47b4d228c1f0d03253f404f81fbd4ee6fbe97691cdf7d99ca679c51c. Firma original verificada:729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c. NO instalado; revisión física pendiente. Cierre del bloque antes13:00, sin promover a main.
+
+## Migración autorizada29oct2026
+Usuario autorizó explícitamente desinstalar beta43 con pérdida de datos privados no exportados. APK anterior, respaldo actual y biblioteca retro guardados y comprobados fuera de Git. Reinstalada beta45; código45, certificado original y SHA256 del APK extraído posterior coinciden con candidato. Restauración de preferencias todavía pendiente: teléfono bloqueado/cortina al intentar acceder a Aura. No se concedieron permisos ni cambiaron ajustes del sistema. Validación visual pendiente.

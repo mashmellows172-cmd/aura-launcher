@@ -235,3 +235,6 @@ Antes de publicar una versión, añadir arriba una entrada con versión/código,
 
 ## Checkpoint29oct: beta44 sin entregar
 Widget multimedia activo/compacto y optimizaciones en fuente; validación final pendiente. Parada cuota89%. Leer docs/BETA44.md antes de continuar. No usar APK del proceso previo como entrega validada.
+
+## Migración beta45 instalada29oct2026
+Reinstalación explícitamente autorizada tras verificar respaldo/APK recuperación. Versión/firma/hash posterior confirmados. Restauración de preferencias pendiente de desbloquear Aura; no afirmar datos restaurados ni aceptación visual. Ver docs/BETA45.md.
