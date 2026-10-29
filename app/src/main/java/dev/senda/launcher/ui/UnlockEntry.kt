@@ -115,7 +115,7 @@ private fun UnlockSurface(sequence: Int, style: UnlockStyle, duration: Int, inte
         consumedSequence = sequence
         if (reduced || intensity <= 0f || style == UnlockStyle.NONE || !ValueAnimator.areAnimatorsEnabled()) return@LaunchedEffect
         progress.snapTo(0f)
-        progress.animateTo(1f, tween(duration, easing = FastOutSlowInEasing))
+        progress.animateTo(1f, tween(duration, easing = CubicBezierEasing(.16f, 1f, .3f, 1f)))
     }
     Box(Modifier.fillMaxSize().pointerInput(Unit) {
         awaitEachGesture {
@@ -129,18 +129,18 @@ private fun UnlockSurface(sequence: Int, style: UnlockStyle, duration: Int, inte
             val p = progress.value; val remaining = 1f-p
             alpha = 1f - remaining * .35f * intensity
             when(style) {
-                UnlockStyle.SLIDE -> translationX = -size.width * .12f * remaining * intensity
-                UnlockStyle.CRT -> { scaleY = 1f-(1f-max(.025f,p))*intensity; scaleX = 1f-.04f*(1f-p)*intensity }
-                UnlockStyle.FOLD -> { scaleX = 1f-.35f*(1f-p)*intensity; rotationY = remaining * -14f * intensity; cameraDistance = 24*density }
-                UnlockStyle.ORBITAL -> { scaleX=1f+.18f*remaining*intensity; scaleY=scaleX }
-                UnlockStyle.RIBBON -> translationY = size.height*.025f*remaining*intensity
+                UnlockStyle.SLIDE -> translationX = -size.width * .045f * remaining * intensity
+                UnlockStyle.CRT -> { scaleY = 1f-(1f-(.72f+.28f*p))*intensity; scaleX = 1f-.04f*(1f-p)*intensity }
+                UnlockStyle.FOLD -> { scaleX = 1f-.12f*(1f-p)*intensity; rotationY = remaining * -5f * intensity; cameraDistance = 24*density }
+                UnlockStyle.ORBITAL -> { scaleX=1f+.055f*remaining*intensity; scaleY=scaleX }
+                UnlockStyle.RIBBON -> translationY = size.height*.012f*remaining*intensity
                 else -> Unit
             }
         }.then(if(style == UnlockStyle.RIPPLE) Modifier.drawWithContent {
             val p = progress.value
             if(p>=1f) drawContent() else {
                 circle.reset()
-                val radius = hypot(size.width,size.height)*(1f-(1f-p)*intensity)
+                val radius = hypot(size.width,size.height)*(1f-(1f-p)*.65f*intensity)
                 circle.addOval(androidx.compose.ui.geometry.Rect(Offset(size.width*.5f,size.height*.85f),radius))
                 clipPath(circle) { this@drawWithContent.drawContent() }
             }

@@ -103,9 +103,9 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             ribbons.forEach { ribbon ->
                 ribbon.update(size.width,size.height,time,drift)
                 // Nested translucent surfaces approximate a soft cross-section without blur.
-                repeat(8) { layer ->
-                    ribbon.surface(1f-layer*.105f)
-                    drawPath(ribbon.fill,glass,alpha=.5f+light)
+                repeat(4) { layer ->
+                    ribbon.surface(1f-layer*.21f)
+                    drawPath(ribbon.fill,glass,alpha=.78f+light*.3f)
                 }
                 glowStrokes.forEachIndexed { index, stroke ->
                     drawPath(ribbon.crest,edge,alpha=(.035f+index*.025f+light*.12f),style=stroke)
@@ -125,7 +125,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
 
 /** Fixed buffers and paths: no per-frame geometry collections or bitmap allocations. */
 private class ConsoleRibbon(private val band: Int) {
-    companion object { const val STEPS=48 }
+    companion object { const val STEPS=32 }
     val fill=Path()
     val crest=Path()
     private val x=FloatArray(STEPS+1)

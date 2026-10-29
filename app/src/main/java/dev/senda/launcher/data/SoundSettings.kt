@@ -7,7 +7,7 @@ enum class SoundEvent(val label: String) {
 
 enum class SoundFamily(val label: String) {
     AUTO("Según el tema visual"), NOTHING("Nothing · pulso seco"), SENSE("Sense · madera y papel"),
-    TOUCHWIZ("TouchWiz · gotas"), OPTIMUS("LG · campana cálida"), XPERIA("Xperia · cristal"), RAZR("RAZR · tecla digital");
+    TOUCHWIZ("TouchWiz · gotas"), OPTIMUS("LG · campana cálida"), XPERIA("Xperia · cristal"), RAZR("RAZR · tecla digital"), PS4("PS4 · cristal y navegación");
 
     fun resolve(theme: LauncherTheme): LauncherTheme = if (this == AUTO) theme else LauncherTheme.valueOf(name)
     companion object { fun fromStored(value: String?) = entries.firstOrNull { it.name == value } ?: AUTO }

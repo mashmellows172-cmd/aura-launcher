@@ -1,5 +1,8 @@
 # Aura Launcher
 
+Beta46 instalada29oct2026: familia PS4 con cinco señales originales, entradas de menor amplitud y menor sobre dibujo de fondo. Compilación/lint correctos; versión/firma/hash posterior verificados. Diagnóstico físico breve mejora pero conserva jank significativo; no afirmar fluidez completa. Ver docs/BETA46.md.
+
+
 Beta45 candidata (0.33.0/code45),29oct2026: seis entradas tras desbloqueo, selector/preview/intensidad y multimedia adaptativo de beta44. Compilación/lint final3m14s,0 errores/31 advertencias/3 avisos; revisión fuente completada. APK firmado/hash en docs/BETA45.md. NO instalada por firma incompatible; sin métricas físicas ni promoción a main. Preferencias unlock aún fuera del respaldo JSON.
 
 
