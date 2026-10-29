@@ -14,3 +14,5 @@ Cada carpeta incluye instrucciones de entrada compartidas y docs/coordination. A
 No lanzar tres builds simultáneas: validación Android central en Codex evita competir por Gradle/CPU. No copiar local.properties ni claves al Git; configuración Android local según docs/LOCAL-DEVELOPMENT.md. Cada nueva tarea exige rama nueva y SHA base confirmado.
 
 Estado de preparación y conexión real se registran por separado en STATE.json. Preparar una carpeta y publicar una rama no significa haber autenticado un agente o ejecutado una tarea.
+
+Verificado29oct2026: tres clones creados, limpios y ramas publicadas con base6d168e2. No se ejecutaron modelos ni se registraron conexiones de runtime; ese paso queda explícitamente pendiente. La creación de proyecto Git no configura automáticamente la UI de cada aplicación.

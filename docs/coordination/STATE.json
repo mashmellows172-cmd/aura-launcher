@@ -16,7 +16,8 @@
       "scope": [
         "motion equations and Kotlin pseudocode only"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "baseCommit": "6d168e2d7db602a24d33e7b388368e144b663d44"
     },
     {
       "id": "UNLOCK-02",
@@ -27,7 +28,8 @@
       "scope": [
         "storyboards and accessibility report only"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "baseCommit": "6d168e2d7db602a24d33e7b388368e144b663d44"
     },
     {
       "id": "UNLOCK-03",
@@ -42,7 +44,8 @@
       "dependsOn": [
         "UNLOCK-01",
         "UNLOCK-02"
-      ]
+      ],
+      "baseCommit": "6d168e2d7db602a24d33e7b388368e144b663d44"
     },
     {
       "id": "UNLOCK-04",
@@ -76,20 +79,29 @@
     {
       "agent": "deepseek",
       "relativePath": "../aura-agents/deepseek",
-      "prepared": false,
-      "runtimeConnectionVerified": false
+      "prepared": true,
+      "runtimeConnectionVerified": false,
+      "branch": "agents/deepseek/unlock-01",
+      "initialCommit": "6d168e2d7db602a24d33e7b388368e144b663d44",
+      "githubBranchPublished": true
     },
     {
       "agent": "antigravity",
       "relativePath": "../aura-agents/antigravity",
-      "prepared": false,
-      "runtimeConnectionVerified": false
+      "prepared": true,
+      "runtimeConnectionVerified": false,
+      "branch": "agents/antigravity/unlock-02",
+      "initialCommit": "6d168e2d7db602a24d33e7b388368e144b663d44",
+      "githubBranchPublished": true
     },
     {
       "agent": "opencode",
       "relativePath": "../aura-agents/opencode",
-      "prepared": false,
-      "runtimeConnectionVerified": false
+      "prepared": true,
+      "runtimeConnectionVerified": false,
+      "branch": "agents/opencode/unlock-03",
+      "initialCommit": "6d168e2d7db602a24d33e7b388368e144b663d44",
+      "githubBranchPublished": true
     }
   ]
 }
