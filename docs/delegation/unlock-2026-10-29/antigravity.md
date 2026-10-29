@@ -1,0 +1,6 @@
+# Contrato de tarea: entradas tras desbloqueo de Aura
+No reemplazar Keyguard ni interceptar PIN/huella. Mantener lista vertical, un toque, A-Z, widgets y preferencias. No acceso a credenciales, respaldos ni teléfono. Sin cambios en main. No instalar ni ejecutar suites automáticas. Entregar propuesta acotada/diff para revisión del coordinador, nunca publicar automáticamente.
+
+Presupuesto: NO ejecutar inferencia sin cuota diaria total, consumo actual y límite máximo de la petición verificables. Reserva conservadora incluyendo entrada, salida, razonamiento, herramientas y reintentos; usados+reservados <=85% del total. Parada85%, límite absoluto90%. Una tarea activa por proveedor; sin reintentos automáticos ni cambiar cuentas/modelos para eludir límites. Stats locales no prueban cuota global. Estado inicial: PENDIENTE, no ejecutada.
+
+Responsable previsto: Antigravity. Diseñar seis storyboards temporales, validar legibilidad, ausencia de flashes y reducción de movimiento. Máximo dos capas principales animadas, entrada interrumpible sin gesto extra obligatorio. Priorizar PS4 Ribbon y Fold. Salida: tabla con fases y criterios de aceptación, máximo1200 tokens si backend permite imponerlo. Solo contrato; sin código privado ni herramientas autónomas.

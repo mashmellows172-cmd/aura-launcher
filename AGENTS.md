@@ -19,3 +19,7 @@ No añadir ni ejecutar suites automáticas sin nueva petición explícita del us
 Prioridades visuales vigentes: PlayStation primero; Nothing con siluetas propias sin círculos; pulido Razr; continuar reconstrucción SIII con evidencia individual. Leer los pendientes actuales antes de implementarlas.
 
 Corrección del26 de octubre: PS4 debe conservar la estructura y ergonomía de Aura (lista vertical, búsqueda, A–Z, apertura con un toque). La imitación del menú de consola de beta31 fue rechazada. Esta instrucción prevalece sobre las recomendaciones de replicar el layout completo de la skill ps4-theme-fidelity.
+
+## Coordinación entre agentes
+
+Leer [el centro de coordinación](docs/coordination/README.md), STATE.json y el contrato asignado. Contexto compartido en GitHub; una rama por tarea, entrega documentada y revisión antes de integrar. No asumir conexión activa por existir estos archivos.

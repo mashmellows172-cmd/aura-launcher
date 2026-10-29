@@ -185,3 +185,7 @@ Muestra beta17 con Pliegue 3D y bloqueo activo: 4/596 frames con retraso durante
 ## Recursos tipográficos
 
 El código Aura mantiene su licencia MIT. Geist y Geist Mono tienen licencia SIL OFL1.1; sus avisos completos se incluyen en `app/src/main/assets/licenses/`. No se redistribuyen tipografías propietarias de Nothing.
+
+## Coordinación entre agentes
+
+Leer [el centro de coordinación](docs/coordination/README.md), STATE.json y el contrato asignado. Contexto compartido en GitHub; una rama por tarea, entrega documentada y revisión antes de integrar. No asumir conexión activa por existir estos archivos.

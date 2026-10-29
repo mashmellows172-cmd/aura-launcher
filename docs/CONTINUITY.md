@@ -56,3 +56,6 @@ Google autenticado. Gemini CLI rechazado por UNSUPPORTED_CLIENT; Antigravity CLI
 Corrección: cuota agotada era del modelo anterior, no de todo Antigravity. Sonnet4.6 y GPT-OSS120B respondieron y terminaron revisiones reales. Leer docs/delegation/antigravity/validation.md antes de aplicar propuestas: varias se rechazaron. Runner tools/gemini/delegate-review.py requiere --model explícito para Antigravity. Solo siete archivos UI autorizados para compartir; no extender alcance. Sin cambios de app ni nueva beta en esta revisión.
 
 Decisión del usuario: continuar esta rama sin recuperar beta43 por ahora. La instalación sobre el paquete actual sigue bloqueada por firma; no implica autorización para desinstalar o borrar datos.
+
+## Coordinación remota29oct2026
+GitHub es fuente común; leer docs/coordination/README.md y STATE.json. Contratos unlock preparados; no confundirlos con tareas ejecutadas. DeepSeek instalado confirmado; el usuario retiró su límite interno90%, sin levantar límites de otros proveedores. No cambió la app ni su firma.

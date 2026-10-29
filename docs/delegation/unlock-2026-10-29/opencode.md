@@ -1,0 +1,6 @@
+# Contrato de tarea: entradas tras desbloqueo de Aura
+No reemplazar Keyguard ni interceptar PIN/huella. Mantener lista vertical, un toque, A-Z, widgets y preferencias. No acceso a credenciales, respaldos ni teléfono. Sin cambios en main. No instalar ni ejecutar suites automáticas. Entregar propuesta acotada/diff para revisión del coordinador, nunca publicar automáticamente.
+
+Presupuesto: NO ejecutar inferencia sin cuota diaria total, consumo actual y límite máximo de la petición verificables. Reserva conservadora incluyendo entrada, salida, razonamiento, herramientas y reintentos; usados+reservados <=85% del total. Parada85%, límite absoluto90%. Una tarea activa por proveedor; sin reintentos automáticos ni cambiar cuentas/modelos para eludir límites. Stats locales no prueban cuota global. Estado inicial: PENDIENTE, no ejecutada.
+
+Responsable previsto: OpenCode. Tras aprobación de diseño y cuota, implementar aislado UnlockMotionSpec.kt y UnlockTransition.kt: animación finita Compose, lecturas en graphicsLayer/draw, Canvas reutilizable, sin RenderEffect obligatorio, cancelación inmediata al interactuar, estado final accesible. No modificar MainActivity/HomeScreen: integración del coordinador. Renderizadores no duplican Home ni AndroidView/widgets. Compilación/lint a cargo del coordinador. Una entrega y una revisión, sin bucle autónomo.

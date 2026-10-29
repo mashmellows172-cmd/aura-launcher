@@ -7,3 +7,7 @@ Prioridad actual: revisión de identidad visual y fidelidad de la vista previa. 
 Preserva lista vertical, búsqueda, A-Z, un toque para abrir, iconos Normales y reemplazos. PS4 mantiene ergonomía de Aura. Nada de packs automáticos ni aprobación histórica automática. Fase2 requiere aprobación independiente. No añadas suites automáticas; las mediciones Macrobenchmark/Baseline Profiles sí tienen autorización específica, pero no las ejecutes desde una revisión.
 
 Entrega conclusiones verificables, incertidumbres y criterios de aceptación; no inventes compilaciones, pruebas, FPS ni fuentes. Codex revisa antes de integrar.
+
+## Coordinación entre agentes
+
+Leer [el centro de coordinación](docs/coordination/README.md), STATE.json y el contrato asignado. Contexto compartido en GitHub; una rama por tarea, entrega documentada y revisión antes de integrar. No asumir conexión activa por existir estos archivos.

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-29",
+  "integrationBranch": "codex/phase1-theme-editor",
+  "implementationBase": "9d028ed417e65a5962cff526949108cc51654278",
+  "coordinator": "codex",
+  "transport": "github-asynchronous",
+  "liveAgentConnectionsVerified": false,
+  "tasks": [
+    {
+      "id": "UNLOCK-01",
+      "owner": "deepseek-harness",
+      "status": "PENDING_CONNECTION",
+      "branch": "agents/deepseek/unlock-01",
+      "contract": "docs/delegation/unlock-2026-10-29/deepseek-harness.md",
+      "scope": [
+        "motion equations and Kotlin pseudocode only"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "UNLOCK-02",
+      "owner": "antigravity",
+      "status": "BLOCKED_QUOTA",
+      "branch": "agents/antigravity/unlock-02",
+      "contract": "docs/delegation/unlock-2026-10-29/antigravity.md",
+      "scope": [
+        "storyboards and accessibility report only"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "UNLOCK-03",
+      "owner": "opencode",
+      "status": "BLOCKED_DEPENDENCIES_AND_QUOTA",
+      "branch": "agents/opencode/unlock-03",
+      "contract": "docs/delegation/unlock-2026-10-29/opencode.md",
+      "scope": [
+        "UnlockMotionSpec.kt",
+        "UnlockTransition.kt"
+      ],
+      "dependsOn": [
+        "UNLOCK-01",
+        "UNLOCK-02"
+      ]
+    },
+    {
+      "id": "UNLOCK-04",
+      "owner": "codex",
+      "status": "PLANNED",
+      "branch": "codex/phase1-theme-editor",
+      "scope": [
+        "Android events",
+        "settings",
+        "integration",
+        "compile/lint",
+        "review"
+      ],
+      "dependsOn": [
+        "UNLOCK-03"
+      ]
+    }
+  ],
+  "budget": {
+    "deepseek": {
+      "internal90PercentCap": false,
+      "providerLimitsStillApply": true
+    },
+    "others": {
+      "stopTargetPercent": 85,
+      "maximumPercent": 90,
+      "unknownQuotaBlocksInference": true
+    }
+  },
+  "projects": [
+    {
+      "agent": "deepseek",
+      "relativePath": "../aura-agents/deepseek",
+      "prepared": false,
+      "runtimeConnectionVerified": false
+    },
+    {
+      "agent": "antigravity",
+      "relativePath": "../aura-agents/antigravity",
+      "prepared": false,
+      "runtimeConnectionVerified": false
+    },
+    {
+      "agent": "opencode",
+      "relativePath": "../aura-agents/opencode",
+      "prepared": false,
+      "runtimeConnectionVerified": false
+    }
+  ]
+}
