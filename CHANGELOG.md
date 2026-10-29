@@ -238,3 +238,6 @@ Widget multimedia activo/compacto y optimizaciones en fuente; validación final 
 
 ## Migración beta45 instalada29oct2026
 Reinstalación explícitamente autorizada tras verificar respaldo/APK recuperación. Versión/firma/hash posterior confirmados. Restauración de preferencias pendiente de desbloquear Aura; no afirmar datos restaurados ni aceptación visual. Ver docs/BETA45.md.
+
+## Restauración completada29oct2026
+Aura validó e importó el respaldo actual:7 favoritas,5 imágenes,96 ajustes; interfaz confirmó «Ajustes restaurados». Copia privada compatible cambia únicamente sound_family PS4→AUTO (temaPS4 conserva familia resueltaPS4); original intacto. Inicio observado con encabezado PS4 y menú rápido. Biblioteca retro ZIP preservada, importación independiente pendiente; widgets/permisos/rol HOME requieren reconfiguración. No se activaron permisos ni se cambió launcher predeterminado. Desbloqueos/reproductor no tienen aún aceptación visual física completa.

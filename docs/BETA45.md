@@ -21,3 +21,6 @@ APK local: beta/Aura-0.33.0-beta45.apk. SHA256:250ad04b47b4d228c1f0d03253f404f81
 
 ## Migración autorizada29oct2026
 Usuario autorizó explícitamente desinstalar beta43 con pérdida de datos privados no exportados. APK anterior, respaldo actual y biblioteca retro guardados y comprobados fuera de Git. Reinstalada beta45; código45, certificado original y SHA256 del APK extraído posterior coinciden con candidato. Restauración de preferencias todavía pendiente: teléfono bloqueado/cortina al intentar acceder a Aura. No se concedieron permisos ni cambiaron ajustes del sistema. Validación visual pendiente.
+
+## Restauración completada29oct2026
+Aura validó e importó el respaldo actual:7 favoritas,5 imágenes,96 ajustes; interfaz confirmó «Ajustes restaurados». Copia privada compatible cambia únicamente sound_family PS4→AUTO (temaPS4 conserva familia resueltaPS4); original intacto. Inicio observado con encabezado PS4 y menú rápido. Biblioteca retro ZIP preservada, importación independiente pendiente; widgets/permisos/rol HOME requieren reconfiguración. No se activaron permisos ni se cambió launcher predeterminado. Desbloqueos/reproductor no tienen aún aceptación visual física completa.
