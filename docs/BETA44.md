@@ -1,0 +1,5 @@
+# Beta44 — checkpoint NO entregado
+29 octubre2026. 0.32.0-beta44/code44 en fuente; no instalado ni validado como entrega.
+Widget expandido al reproducir, compacto2.5s al parar y salida; visualizador decorativo visible con carátula en siete temas. Path reutilizado Xperia/PS4; reloj RESUMED y parada en ahorro/movimiento reducido. Corrección de radio Nothing en franja baja.
+Revisión fuente independiente sin hallazgos adicionales; NO equivale a revisión física. Compilación/lint iniciadas, pero se modificó el radio después: hace falta nueva validación final aunque termine el proceso actual. No publicar su APK como validado. Sin suites automáticas ni métricas FPS/batería. Firma de app instalada incompatible: no instalar ni borrar datos.
+Parada por cuota Codex89%/5h,70% semanal. Usuario mantiene límite90% para Codex; excepción solo DeepSeek. Retomar: esperar proceso Gradle si sigue activo, assembleBeta/lintBeta, revisar geometría, firmar/verificar, documentar evidencia. Desbloqueos del plan anterior aún no implementados.

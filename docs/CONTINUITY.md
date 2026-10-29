@@ -59,3 +59,6 @@ Decisión del usuario: continuar esta rama sin recuperar beta43 por ahora. La in
 
 ## Coordinación remota29oct2026
 GitHub es fuente común; leer docs/coordination/README.md y STATE.json. Contratos unlock preparados; no confundirlos con tareas ejecutadas. DeepSeek instalado confirmado; el usuario retiró su límite interno90%, sin levantar límites de otros proveedores. No cambió la app ni su firma.
+
+## Checkpoint29oct: beta44 sin entregar
+Widget multimedia activo/compacto y optimizaciones en fuente; validación final pendiente. Parada cuota89%. Leer docs/BETA44.md antes de continuar. No usar APK del proceso previo como entrega validada.

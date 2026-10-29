@@ -27,7 +27,7 @@ fun rememberHistoricalPhase(theme: LauncherTheme, moving: Boolean, reduced: Bool
     }
     LaunchedEffect(lifecycle, theme, moving, reduced) {
         if (!moving || reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(.25f); return@LaunchedEffect }
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             while (ValueAnimator.areAnimatorsEnabled()) {
                 phase.snapTo(0f)
                 phase.animateTo(1f, tween(duration, easing = LinearEasing))
@@ -50,4 +50,25 @@ fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean): 
         phase.animateTo(1f, tween(historicalProfile(theme)?.durationMs ?: 240))
     }
     return phase.asState()
+}
+
+/** One subscription per widget; no polling and no timer while saving power. */
+@Composable
+fun rememberMotionPowerSaver(): Boolean {
+    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
+    val manager = remember(context) { context.getSystemService(android.os.PowerManager::class.java) }
+    var saving by remember(manager) { mutableStateOf(manager?.isPowerSaveMode == true) }
+    DisposableEffect(context, manager) {
+        val receiver = object : android.content.BroadcastReceiver() {
+            override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
+                saving = manager?.isPowerSaveMode == true
+            }
+        }
+        androidx.core.content.ContextCompat.registerReceiver(context, receiver,
+            android.content.IntentFilter(android.os.PowerManager.ACTION_POWER_SAVE_MODE_CHANGED),
+            androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
+        saving = manager?.isPowerSaveMode == true
+        onDispose { context.unregisterReceiver(receiver) }
+    }
+    return saving
 }

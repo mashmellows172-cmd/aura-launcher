@@ -229,3 +229,6 @@ La evolución anterior a beta14 y beta20 no se reconstruye como entrega independ
 ## Cómo registrar la siguiente entrega
 
 Antes de publicar una versión, añadir arriba una entrada con versión/código, fecha real, cambios visibles, correcciones, validación ejecutada, límites conocidos y enlace a su ficha. Si se instala, anotar resultado y hash del APK; si no se instala, decirlo. Mover aquí únicamente cambios completados desde Pendiente. Hacer commit de código, recursos y documentación juntos. No registrar tokens, claves, cuentas ni respaldos del teléfono.
+
+## Checkpoint29oct: beta44 sin entregar
+Widget multimedia activo/compacto y optimizaciones en fuente; validación final pendiente. Parada cuota89%. Leer docs/BETA44.md antes de continuar. No usar APK del proceso previo como entrega validada.
