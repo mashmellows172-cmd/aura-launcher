@@ -363,7 +363,7 @@ fun HomeScreen(
             )
         }
         val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
-        if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize())
+        if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize(), listState)
         Column(
         modifier = Modifier
             .fillMaxSize()

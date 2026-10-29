@@ -12,9 +12,13 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este notebook, sigue [la configuración local verificada](docs/LOCAL-DEVELOPMENT.md) y ejecuta `./gradlew.bat assembleBeta lintBeta`. Los scripts antiguos pueden incluir pruebas o usar otra clave del entorno; no ejecutarlos por defecto. Evita desinstalar Aura para actualizar: usa `adb install -r` solo tras comparar firma y versión con la app instalada.
 
-Última beta instalada y verificada: **0.29.0-beta40**, variante optimizada con R8, actualización local del28 de octubre. [Entrega y límites](docs/BETA40.md). Los APK y claves de firma quedan fuera del repositorio.
+Última beta instalada y verificada: **0.30.0-beta41**, variante optimizada con R8, actualización local del28 de octubre. [Entrega y límites](docs/BETA41.md). Los APK y claves de firma quedan fuera del repositorio.
 
 [Historial completo por actualización](CHANGELOG.md) · [Trabajar desde otro equipo](docs/DEVELOPMENT.md) · [Estado para continuar](docs/CONTINUITY.md).
+
+## Beta41 · fondo vivo PS4
+
+Cintas luminosas con movimiento orgánico, parallax ligado a la lista y luz reactiva al foco. Animación detenida en segundo plano, ahorro y movimiento reducido. Compilación/lint e instalación verificadas; [evidencia y límites](docs/BETA41.md).
 
 ## Beta40 · PS4 vertical
 

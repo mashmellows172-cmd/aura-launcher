@@ -57,51 +57,6 @@ internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithC
     }
 }
 
-/** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
-@Composable
-internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier) {
-    val phase = rememberHistoricalPhase(LauncherTheme.PS4, true, reduced)
-    Box(modifier.drawWithCache {
-        val backdrop = Brush.linearGradient(listOf(Color(0xFF003087), Color(0xFF00164B), Color(0xFF000C29)), end=Offset(size.width*.55f,size.height))
-        val wash = Brush.linearGradient(listOf(Color(0x000070D1), Color(0x990070D1), Color(0x330043BE)), end=Offset(size.width,size.height))
-        val glow = Brush.radialGradient(listOf(Color(0xFF0069EF).copy(alpha=.48f),Color.Transparent),center=Offset(size.width*.9f,size.height*.22f),radius=size.height*.65f)
-        val paths = List(6) { Path() }
-        val contour = Stroke(.8.dp.toPx())
-        onDrawBehind {
-            drawRect(backdrop)
-            drawRect(glow)
-            val time = phase.value * (2 * PI).toFloat()
-            paths.forEachIndexed { index, path ->
-                val lift = sin(time + index*.48f)*size.height*.026f
-                val base = size.height*(.82f+index*.022f)
-                val crest = size.height*(.18f+index*.031f)
-                val thickness = size.height*(.025f+index*.004f)
-                path.reset(); path.moveTo(-size.width*.12f,base+lift)
-                path.cubicTo(size.width*.68f,base+size.height*.22f-lift,
-                    size.width*.54f,crest+size.height*.07f+lift,size.width*1.12f,crest-lift)
-                drawPath(path,Color(0xFF43BEFF).copy(alpha=.17f+index*.025f),style=contour)
-                path.cubicTo(size.width*.58f,crest+thickness+lift,
-                    size.width*.72f,base+size.height*.22f+thickness-lift,-size.width*.12f,base+thickness+lift)
-                path.close()
-                drawPath(path, wash)
-            }
-            // Sparse controller geometry drifts with the same clock, no per-particle timer.
-            repeat(8) { index ->
-                val x = size.width * (index * .137f + sin(time + index) * .025f).coerceIn(.02f,.98f)
-                val y = size.height * (.12f + index * .096f) + sin(time + index) * 8.dp.toPx()
-                val r = (3 + index % 3).dp.toPx()
-                val ink = Color.White.copy(alpha = .08f)
-                when (index % 4) {
-                    0 -> drawCircle(ink, r, Offset(x,y), style = contour)
-                    1 -> drawRect(ink, Offset(x-r,y-r), Size(r*2,r*2), style = contour)
-                    2 -> { drawLine(ink, Offset(x-r,y-r), Offset(x+r,y+r), contour.width); drawLine(ink, Offset(x+r,y-r), Offset(x-r,y+r), contour.width) }
-                    else -> { val triangle = paths[0]; triangle.reset(); triangle.moveTo(x,y-r); triangle.lineTo(x+r,y+r); triangle.lineTo(x-r,y+r); triangle.close(); drawPath(triangle, ink, style = contour) }
-                }
-            }
-        }
-    })
-}
-
 /** Controller-button motif, decorative; the surrounding avatar retains its actual actions. */
 @Composable
 internal fun Ps4Mark() {

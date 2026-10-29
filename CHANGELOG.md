@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.30.0-beta41 · 28 de octubre de2026 · fondo vivo PS4
+
+Tres cintas luminosas independientes reemplazan las franjas paralelas. Parallax amortiguado ligado a la lista, energía durante scroll y pulso al cambiar foco. Clock en RESUMED, parada con ahorro/reduceMotion y geometría reutilizada. Skills PS4 Fidelity, UI/UX Pro Max, Deferring State Reads y Using Efficient Effects; revisión independiente sin hallazgos concretos.
+
+Compilación/lint2m24s:0 errores/30 advertencias/3 avisos. Instalada con firma original, code41 y hash posterior verificados. Revisión visual acotada de movimiento en reposo y desplazamiento; sin FPS/batería medidos. Observación intermitente de encabezado en una captura pendiente de reproducción. [BETA41](docs/BETA41.md).
+
 ## 0.29.0-beta40 · 28 de octubre de 2026 · PS4 vertical
 
 Referencia visual del usuario aplicada: iconos nativos a color sobre placas cuadradas, foco central blanco/cian con escala finita320ms, títulos Noto Sans Light y fondo propio de cintas azules animadas. Conserva lista vertical, búsqueda, A–Z, un toque, widgets, gestos, packs y reemplazos. Revisor independiente detectó pérdida de contenedor explícito AUTO PS4; corregida y confirmada. No se restauró el menú horizontal ni se simuló la beta38 cloud ausente.
