@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Última entrega instalada **0.35.1-beta50/code50**,2 de noviembre de2026. Migración autorizada, respaldo/restauración contrastados, corrección de Gboard y respaldo de desbloqueo/modo ligero. Fuente vigente codex/beta50-migration. [Evidencia y límites](docs/BETA50.md).
+
 Beta49 (0.35.0/code49),29oct2026: diagnóstico opt-in60s de frames y modo ligero reversible. Compilación/lint correctos, instalada con firma/versión/hash verificados. Revisión física pendiente; ver docs/BETA49.md.
 
 Beta48 (0.34.0/code48),29oct2026: foco PS4 compartido con luz/sonido, fondo con capa de dibujo independiente, comparación Original/Mi edición y reproductor con luz y carátula estable. Compilación/lint correctos, instalada con firma/versión/hash verificados. Comparación física pendiente; ver docs/BETA48.md.

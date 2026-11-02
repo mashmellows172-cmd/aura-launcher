@@ -238,6 +238,16 @@ fun HomeScreen(
     val context = LocalContext.current
     var clockTime by remember(locale) { mutableStateOf(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm", locale))) }
     val lifecycleOwner = LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) {
+                focusManager.clearFocus(force = true)
+                keyboard?.hide()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     LaunchedEffect(locale, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
           while (true) {
@@ -317,6 +327,7 @@ fun HomeScreen(
 
     BackHandler(enabled = true) {
         if (state.query.isNotEmpty()) viewModel.setQuery("")
+        focusManager.clearFocus(force = true)
         keyboard?.hide()
     }
 
@@ -356,7 +367,9 @@ fun HomeScreen(
     }
 
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey) {
-    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures(executeGesture).pointerInput(state.lockGesture) {
+    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
+        if (state.gestures[direction] != "SEARCH") executeGesture(direction)
+    }.pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
     }) {
         if (wallpaperBitmap != null && !state.appearance.highContrast) {
@@ -450,8 +463,8 @@ fun HomeScreen(
 
         ThemedSearchField(
             theme = state.theme, query = state.query, onQuery = viewModel::setQuery,
-            onClear = { viewModel.setQuery(""); keyboard?.hide() },
-            onSearch = { keyboard?.hide() }, focus = searchFocus,
+            onClear = { viewModel.setQuery(""); focusManager.clearFocus(force = true); keyboard?.hide() },
+            onSearch = { focusManager.clearFocus(force = true); keyboard?.hide() }, focus = searchFocus,
             interactions = searchInteractions, glow = { glowAlpha },
         )
 

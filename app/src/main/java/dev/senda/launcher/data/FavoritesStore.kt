@@ -39,7 +39,7 @@ data class VisualSettings(
 )
 
 /** Stores the user's favorites and appearance choice locally. */
-class FavoritesStore(context: Context) {
+class FavoritesStore(private val context: Context) {
     private val store = context.applicationContext.settingsStore
     private val favoritesKey = stringPreferencesKey("favorite_packages")
     private val hiddenPackagesKey = stringPreferencesKey("hidden_packages")
@@ -171,11 +171,14 @@ class FavoritesStore(context: Context) {
             .associate { it.key.name to it.value }.toMutableMap()
         // Export canonical values even when an older beta stored a legacy motion name.
         settings["visual_motion"] = visualSettings.first().motion
+        settings.putAll(BackupExtras.snapshot(context))
         return settings
     }
 
     /** Single DataStore transaction: readers never observe a half-restored configuration. */
     suspend fun restore(settings: Map<String, Any>) {
+        settings.filterKeys { it in BackupExtras.keys }.forEach { (key, value) -> BackupExtras.validate(key, value) }
+        BackupExtras.restore(context, settings)
         store.edit { prefs ->
             prefs.clear()
             settings.forEach { (key, value) -> when (value) {

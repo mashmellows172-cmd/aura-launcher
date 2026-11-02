@@ -27,6 +27,10 @@ class SettingsBackup(private val context: Context) {
         fun imageKey(key: String): Boolean = key == "profile_avatar" || themes.any { key == "skin_wallpaper_$it" || (key.startsWith("skin_icon_${it}_") && packagePattern.matches(key.removePrefix("skin_icon_${it}_"))) }
         fun allowed(key: String): Boolean = key in stringKeys || key in integerRanges || key in booleanKeys || imageKey(key) || themes.any { key == "icon_pack_$it" || key == "skin_accent_$it" || key == "skin_shape_$it" || key == "skin_icons_$it" }
         private fun validate(key: String, value: Any) {
+            if (key in BackupExtras.keys) {
+                BackupExtras.validate(key, value)
+                return
+            }
             require(key.length <= 256) { "Nombre de ajuste demasiado largo" }
             require(allowed(key)) { "El respaldo contiene un ajuste desconocido: $key" }
             when {
@@ -62,7 +66,7 @@ class SettingsBackup(private val context: Context) {
     fun export(settings: Map<String, Any>, destination: Uri): String {
         val values = JSONObject(); val assets = JSONObject(); var skipped = 0; var total = 0
         for ((key, value) in settings) {
-            if (!allowed(key)) continue
+            if (!allowed(key) && key !in BackupExtras.keys) continue
             if (imageKey(key)) {
                 val bitmap = loadLocalImage(context, Uri.parse(value as String), if (key.startsWith("skin_wallpaper_")) 1920 else 128)?.asAndroidBitmap()
                 if (bitmap == null) { skipped++; continue }
@@ -72,7 +76,7 @@ class SettingsBackup(private val context: Context) {
                 assets.put(key, Base64.encodeToString(bytes, Base64.NO_WRAP)); values.put(key, "asset:$key")
             } else { validate(key, value); values.put(key, value) }
         }
-        val root = JSONObject().put("format", "aura-settings").put("version", 13).put("settings", values).put("assets", assets).put("skippedImages", skipped)
+        val root = JSONObject().put("format", "aura-settings").put("version", 14).put("settings", values).put("assets", assets).put("skippedImages", skipped)
         val bytes = root.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= LIMIT) { "El respaldo supera 24 MB" }
         context.contentResolver.openOutputStream(destination, "wt")?.use { it.write(bytes) } ?: error("No se pudo abrir el archivo de destino")
@@ -108,7 +112,7 @@ class SettingsBackup(private val context: Context) {
         }
         require(!quoted && depth == 0) { "Archivo JSON incompleto" }
         val root = JSONObject(text)
-        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..13) { "Formato o versión de respaldo no compatible" }
+        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..14) { "Formato o versión de respaldo no compatible" }
         val json = root.getJSONObject("settings"); require(json.length() <= 2500) { "Demasiados ajustes" }
         val values = json.keys().asSequence().associateWith { key -> json.get(key).also { validate(key, it) } }
         val jsonImages = root.getJSONObject("assets"); require(jsonImages.length() <= 2000) { "Demasiadas imágenes" }

@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta50 (0.35.1/code50),2nov2026 instalada mediante migración autorizada de firma. Código vigente en codex/beta50-migration, base beta49/c715267. Fuente local Documents/Aura-development/beta50. Firma de nuevas actualizaciones2eb417c5… conservada con copia privada; no volver a firmar con una clave distinta. Respaldo14,101 ajustes y5 imágenes restaurados y contrastados por reexportación. Gboard corregido y verificación acotada. Permisos especiales/media y widgets pendientes de reconexión por el usuario. Ver BETA50.md. Beta45 del otro checkout es una línea anterior y no debe instalarse sobre esta.
+
 Beta49 (0.35.0/code49),29oct2026: diagnóstico opt-in60s de frames y modo ligero reversible. Compilación/lint correctos, instalada con firma/versión/hash verificados. Revisión física pendiente; ver docs/BETA49.md.
 
 Beta48 (0.34.0/code48),29oct2026: foco PS4 compartido con luz/sonido, fondo con capa de dibujo independiente, comparación Original/Mi edición y reproductor con luz y carátula estable. Compilación/lint correctos, instalada con firma/versión/hash verificados. Comparación física pendiente; ver docs/BETA48.md.

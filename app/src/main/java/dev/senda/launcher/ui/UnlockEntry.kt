@@ -182,7 +182,7 @@ internal fun UnlockSettingsDialog(theme: LauncherTheme, onDismiss: () -> Unit) {
                 }
             }
             TextButton(onClick={preview++}) { Text("Reproducir vista previa") }
-            Text("Ahorro y movimiento reducido muestran el estado final. Esta preferencia es local y aún no está incluida en el respaldo JSON.",style=MaterialTheme.typography.bodySmall)
+            Text("Ahorro y movimiento reducido muestran el estado final. Tu selección se incluye al exportar el respaldo.",style=MaterialTheme.typography.bodySmall)
         }
     },confirmButton={TextButton(onClick={prefs.edit().putString("style",selected.name).putInt("duration",duration.toInt()).putFloat("intensity",intensity).apply();onDismiss()}) {Text("Aplicar")}},dismissButton={TextButton(onClick=onDismiss){Text("Cancelar")}})
 }
