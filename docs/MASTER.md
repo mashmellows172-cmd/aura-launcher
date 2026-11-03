@@ -95,6 +95,16 @@ interacción. Selección actual y restauración de Cascada pendientes de verific
 No afirmar causalidad, ahorro ni arreglo con estas muestras. Evidencia privada
 local; sin nueva versión ni cambios de código.
 
+Comparación repetida con el usuario dejando el teléfono libre: selección
+Sin efecto confirmada por UI; cuatro swipes600ms:234frames,42janky(17,95%),
+mediana28ms,p9048ms. Cascada restaurada y confirmada por UI; mismo recorrido:
+219frames,41janky(18,72%),mediana29ms,p9048ms. La diferencia pequeña no permite
+atribuir el lag principal a Cascada. Se conserva Cascada al acabar. Muestras
+cortas, sin control de frecuencia/temperatura/actividad de fondo; no son un
+benchmark. Estado térmico global Android0 al consultar después. Pendiente
+aislar fondo estático frente a animado y revisar tiempos de dibujo; no hay
+corrección de código ni nueva versión acreditada en este diagnóstico.
+
 Actualizar este registro, CHANGELOG, README, CONTINUITY y BETAxx en el mismo
 commit de aplicación: fecha real, versión/código, archivos y cambios visibles,
 agentes/modelos y qué se aceptó/rechazó, validaciones, tamaño/firma/hash si se
