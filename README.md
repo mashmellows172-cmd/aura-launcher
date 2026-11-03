@@ -1,6 +1,6 @@
 # Aura Launcher
 
-Candidata **0.36.0-beta51/code51**,3 de noviembre de2026: centro de estado, movimiento adaptativo y transiciones accesibles. Compilación/lint y firma compatibles verificados. **No instalada aún: ADB desconectado.** Rama codex/beta51-adaptive-status. [Evidencia y pendientes](docs/BETA51.md).
+Instalada **0.36.0-beta51/code51**,3 de noviembre de2026: centro de estado, movimiento adaptativo y transiciones accesibles. Compilación/lint y firma compatibles verificados. **Instalada por ADB; versión y hash del teléfono verificados.** Rama codex/beta51-adaptive-status. [Evidencia y pendientes](docs/BETA51.md).
 
 Última entrega instalada **0.35.1-beta50/code50**,2 de noviembre de2026. Migración autorizada, respaldo/restauración contrastados, corrección de Gboard y respaldo de desbloqueo/modo ligero. Fuente vigente codex/beta50-migration. [Evidencia y límites](docs/BETA50.md).
 
@@ -28,7 +28,7 @@ Requiere Android Studio, JDK 17 y Android SDK Platform 37 / Build Tools.
 
 En este notebook, sigue [la configuración local verificada](docs/LOCAL-DEVELOPMENT.md) y ejecuta `./gradlew.bat assembleBeta lintBeta`. Los scripts antiguos pueden incluir pruebas o usar otra clave del entorno; no ejecutarlos por defecto. Evita desinstalar Aura para actualizar: usa `adb install -r` solo tras comparar firma y versión con la app instalada.
 
-Última beta instalada y verificada: **0.35.1-beta50**,2 de noviembre. [Entrega y límites](docs/BETA50.md). Los APK y claves de firma quedan fuera del repositorio.
+Última beta instalada y verificada: **0.36.0-beta51**,3 de noviembre. [Entrega y límites](docs/BETA51.md). Los APK y claves de firma quedan fuera del repositorio.
 
 Candidato local **0.31.0-beta42**: encabezado compacto PS4, Quick Menu y ficha con shortcuts. Compilación/lint correctos. **No instalado**: el teléfono contiene beta43 con otra firma; recuperar su código y clave antes de integrar. [Estado beta42](docs/BETA42.md).
 

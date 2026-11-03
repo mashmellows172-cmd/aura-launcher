@@ -47,13 +47,14 @@ Versión51/0.36.0-beta51 comprobada con aapt2. Certificado SHA256
 `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`,
 igual al APK beta50 extraído del Motorola en esta sesión.
 
-**No instalada todavía:** el teléfono se desconectó entre verificación e
-instalación; `adb install -r` respondió `no devices/emulators found`.
-Descubrimiento mDNS vacío y reconexión a la dirección anterior agotada.
-Última versión comprobada en el dispositivo:beta50. Se solicitó dirección
-actual de depuración inalámbrica. Pendientes: instalación y revisión visual
-en Motorola, comparación física de fluidez/reposo, batería y accesibilidad
-TalkBack. No hay FPS ni mejora porcentual acreditada.
+**Instalada el3 de noviembre de2026:** reconectado el Motorola con la dirección
+actual facilitada por el usuario. Identidad del dispositivo y beta50 previas
+comprobadas; `adb install -r` respondió Success, sin desinstalar ni borrar datos.
+Versión51/0.36.0-beta51 y SHA256 del APK instalado coinciden con el candidato.
+Aura abre; captura revisada con PS4, lista vertical, búsqueda, A–Z y siete
+favoritas visibles. Revisión acotada; pendientes comparación física de
+fluidez/reposo, batería y accesibilidad TalkBack. No hay FPS ni mejora
+porcentual acreditada. Evidencia privada fuera de Git.
 
 Los permisos especiales y widgets desconectados en la migración anterior
 continúan dependiendo de la reconexión elegida por el usuario. No se cambian
