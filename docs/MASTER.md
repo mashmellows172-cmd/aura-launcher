@@ -67,6 +67,24 @@ Fuentes: [Playwright](https://github.com/lackeyjb/playwright-skill),
 
 ## Regla para la siguiente entrega
 
+### Incidencia prioritaria abierta: lag durante swipe
+
+Reporte del usuario tras beta52: animación/transición durante swipe todavía
+se percibe con lag. El pulido visual NO resolvió la prioridad de fluidez.
+No cerrar esta incidencia por compilación correcta o por reducir dibujos.
+
+Hipótesis pendiente de aislar: beta52 aumentó la frecuencia del fondo y lo
+mantiene activo durante scroll; menos pasadas por actualización no implica
+menor carga por segundo. Revisadas además las transformaciones compartidas
+de AuraMotion y carga/caché de iconos: no se ha demostrado una causa única.
+
+Siguiente validación: mismo recorrido en Motorola, comparar fondo activo y
+estático, luego efectos de lista activos e inactivos mediante controles
+existentes; conservar/restaurar preferencias. Recoger frames y revisar el
+gesto visualmente. Sin suites automáticas ni cambios de ajustes del sistema.
+ADB y mDNS sin dispositivo al investigar este reporte; solicitada dirección
+actual. No se creó beta53 ni se aplicó otro ajuste visual a ciegas.
+
 Actualizar este registro, CHANGELOG, README, CONTINUITY y BETAxx en el mismo
 commit de aplicación: fecha real, versión/código, archivos y cambios visibles,
 agentes/modelos y qué se aceptó/rechazó, validaciones, tamaño/firma/hash si se
