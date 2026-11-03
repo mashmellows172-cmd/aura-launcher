@@ -1,7 +1,7 @@
 # Registro maestro de Aura Launcher
 
-Checkpoint: **beta53,0.36.2/code53,3 de noviembre de2026**, instalada y hash
-comprobado. Rama `codex/beta53-retained-ps4`. Leer este archivo y CONTINUITY.md
+Checkpoint: **beta54,0.36.3/code54,3 de noviembre de2026**, instalada y hash
+comprobado. Rama `codex/beta54-static-ps4`. Leer este archivo y CONTINUITY.md
 al retomar desde cualquier equipo. El historial completo está en
 [CHANGELOG](../CHANGELOG.md); cada BETA contiene evidencia y límites.
 
@@ -122,3 +122,7 @@ Indicio favorable, sin paridad con otros temas ni porcentaje de mejora estable.
 Captura revisada correcta; preferencias sin cambios. Ver BETA53.md.
 
 Instalada, versión53 y hash del teléfono comprobados; ver BETA53.md. Capa opaca con geometría retenida; comparación física pendiente, sin paridad con otros temas acreditada. Ponytail ya estaba instalada y se usó. DeepSeek local revisó134tokens, conclusión sobre reducir FPS rechazada. Sin agentes remotos adicionales. Ver THEME-FIDELITY.md para siete identidades, sonidos AUTO existentes y pendientes reales; no se afirma reconstrucción completa. Cuota90% no observable.
+
+## Beta54: prueba estática solicitada
+
+Fondo PS4 sin clock; demás efectos y preferencias conservados. Build/lint2m33s,0 errores/35 advertencias/3 avisos; instalada, versión54 y hash comprobados. Muestra inicial descartada: NotificationShade y cero frames. Solicitada pantalla Aura visible, pendiente respuesta. No hay mejora acreditada. Ver BETA54.md. Skills frontend-design y caveman aplicadas.

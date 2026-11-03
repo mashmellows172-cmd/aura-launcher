@@ -54,6 +54,8 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val adaptive = LocalAdaptiveMotion.current
+    // Static-background comparison requested by the user; list effects stay unchanged.
+    val staticWallpaper = true
     // Focus feedback follows navigation, independently of the decorative frame clock.
     LaunchedEffect(lifecycle, listState, disabled, feedback, focusedKey, adaptive) {
         if (disabled) return@LaunchedEffect
@@ -69,7 +71,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         }
     }
     LaunchedEffect(lifecycle, listState, disabled, adaptive) {
-        if (disabled) { scene.parallax=0f; scene.energy=0f; scene.focusLight=0f; return@LaunchedEffect }
+        if (disabled || staticWallpaper) { scene.parallax=0f; scene.energy=0f; scene.focusLight=0f; return@LaunchedEffect }
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             var previous = 0L
             while (ValueAnimator.areAnimatorsEnabled()) {
