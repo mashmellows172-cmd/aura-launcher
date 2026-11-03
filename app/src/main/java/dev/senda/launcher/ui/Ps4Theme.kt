@@ -64,17 +64,17 @@ internal fun rememberPs4FocusedKey(list: androidx.compose.foundation.lazy.LazyLi
 /** Finite focus cue. No blur, idle oscillator or changes to the row's hit target. */
 internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithCache {
     val corner = CornerRadius(3.dp.toPx())
-    val fill = Brush.horizontalGradient(listOf(Color(0xFF0070D1).copy(alpha=.48f), Color(0xFF003087).copy(alpha=.12f)))
-    val glows = (4 downTo 1).map { it to Stroke((it * 3).dp.toPx()) }
+    val fill = Brush.horizontalGradient(listOf(Color(0xFF0070D1).copy(alpha=.28f), Color(0xFF003087).copy(alpha=.08f)))
+    val halo = Stroke(5.dp.toPx())
+    val edge = Stroke(1.5.dp.toPx())
+    val highlight = Stroke(.65.dp.toPx())
     onDrawBehind {
         val p = progress().coerceIn(0f,1f)
         if (p > .001f) {
             drawRoundRect(fill, cornerRadius=corner, alpha=p)
-            glows.forEach { (index, stroke) ->
-                drawRoundRect(Color(0xFF008CFF).copy(alpha=p*.13f/index), cornerRadius=corner, style=stroke)
-            }
-            drawRoundRect(Color(0xFF42C8FF).copy(alpha=p), cornerRadius=corner, style=Stroke(3.dp.toPx()))
-            drawRoundRect(Color.White.copy(alpha=p), cornerRadius=corner, style=Stroke(1.dp.toPx()))
+            drawRoundRect(Color(0xFF008CFF).copy(alpha=p*.12f), cornerRadius=corner, style=halo)
+            drawRoundRect(Color(0xFF42C8FF).copy(alpha=p), cornerRadius=corner, style=edge)
+            drawRoundRect(Color.White.copy(alpha=p*.9f), cornerRadius=corner, style=highlight)
         }
     }
 }

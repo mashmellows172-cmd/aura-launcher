@@ -1222,10 +1222,7 @@ private fun AppRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .then(if (console) Modifier.graphicsLayer {
-                    val scale = if(still) 1f else 1f+focusProgress.value*.025f
-                    scaleX=scale; scaleY=scale
-                }.ps4FocusFrame { focusProgress.value } else Modifier)
+                .then(if (console) Modifier.ps4FocusFrame { focusProgress.value } else Modifier)
                 .onFocusChanged { rowFocused = it.hasFocus }
                 .semantics(mergeDescendants = true) {
                     stateDescription = if (isFavorite) "Favorita" else "No favorita"
@@ -1239,10 +1236,7 @@ private fun AppRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (console) {
-                Box(Modifier.size((appearance.iconSize+12).dp).graphicsLayer {
-                    val scale=if(still)1f else 1f+focusProgress.value*.08f
-                    scaleX=scale; scaleY=scale
-                }
+                Box(Modifier.size((appearance.iconSize+12).dp)
                     .background(Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF173C78).copy(alpha=.65f),androidx.compose.ui.graphics.Color(0xFF001538).copy(alpha=.7f))),RoundedCornerShape(2.dp))
                     .border(.8.dp,androidx.compose.ui.graphics.Color.White.copy(alpha=.24f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
@@ -1251,15 +1245,10 @@ private fun AppRow(
             Column(Modifier.weight(1f).padding(start = 14.dp, end = 4.dp)) {
             Text(
                 text = app.label,
-                modifier = Modifier.fillMaxWidth()
-                    .then(if(console)Modifier.graphicsLayer {
-                        transformOrigin=androidx.compose.ui.graphics.TransformOrigin(0f,.5f)
-                        val scale=if(still)1f else .82f+focusProgress.value*.18f
-                        scaleX=scale; scaleY=scale
-                    } else Modifier),
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = (if(console) appearance.textSize+8 else appearance.textSize).sp,
-                fontWeight = if(console) FontWeight.Light else null,
+                fontSize = (if(console) appearance.textSize+4 else appearance.textSize).sp,
+                fontWeight = if(console) FontWeight.Normal else null,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta52 (0.36.1/code52),3nov2026: pulido fiel PS4, títulos estables, foco/fondo con menos pasadas y menú240ms. Compilación/lint correctos,0 errores/35 advertencias/3 avisos; instalada por ADB, versión/hash verificados. Revisión visual final y comparación pendientes por desconexión. Registro maestro: [docs/MASTER.md](docs/MASTER.md).
+
 Instalada **0.36.0-beta51/code51**,3 de noviembre de2026: centro de estado, movimiento adaptativo y transiciones accesibles. Compilación/lint y firma compatibles verificados. **Instalada por ADB; versión y hash del teléfono verificados.** Rama codex/beta51-adaptive-status. [Evidencia y pendientes](docs/BETA51.md).
 
 Última entrega instalada **0.35.1-beta50/code50**,2 de noviembre de2026. Migración autorizada, respaldo/restauración contrastados, corrección de Gboard y respaldo de desbloqueo/modo ligero. Fuente vigente codex/beta50-migration. [Evidencia y límites](docs/BETA50.md).

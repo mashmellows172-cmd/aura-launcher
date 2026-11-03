@@ -62,7 +62,7 @@ internal fun FrameDiagnosticsDialog(
                     Text("Movimiento adaptativo", Modifier.weight(1f).padding(end = 8.dp))
                     Switch(checked = adaptive, onCheckedChange = null, enabled = !report.running)
                 }
-                Text("Prioriza la lista mientras deslizas y reduce los efectos con el ahorro de batería del sistema.", style = MaterialTheme.typography.bodySmall)
+                Text("Ajusta el ritmo del fondo a la pantalla y reduce los efectos con el ahorro de batería del sistema.", style = MaterialTheme.typography.bodySmall)
                 Row(
                     Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(lightMode, enabled = !report.running, role = Role.Switch, onValueChange = onLightMode),
                     verticalAlignment = Alignment.CenterVertically,

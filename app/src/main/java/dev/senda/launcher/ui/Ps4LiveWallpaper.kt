@@ -24,8 +24,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.LocalAppearance
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlin.math.*
 
 @Stable
@@ -75,16 +73,10 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             var previous = 0L
             while (ValueAnimator.areAnimatorsEnabled()) {
-                if (adaptive) {
-                    if (listState?.isScrollInProgress == true) {
-                        // Suspend until scrolling settles; no polling or decorative invalidations.
-                        snapshotFlow { listState.isScrollInProgress }.first { !it }
-                        previous = 0L
-                    }
-                    delay(32) // Limit idle scene updates; the list retains its native frame rate.
-                }
                 withFrameNanos { now ->
-                    if (adaptive && listState?.isScrollInProgress == true) { previous = 0L; return@withFrameNanos }
+                    // Frame-aligned updates retain continuity during gestures. At high refresh
+                    // rates the adaptive scene targets approximately 60 updates per second.
+                    if (adaptive && previous != 0L && now - previous < 16_000_000L) return@withFrameNanos
                     val dt = if(previous==0L) 0f else ((now-previous)/1_000_000_000f).coerceIn(0f,.05f)
                     previous=now
                     val info = listState?.layoutInfo
@@ -107,7 +99,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val ribbons=List(3) { ConsoleRibbon(it) }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
-        val glowStrokes=listOf(Stroke(20.dp.toPx()),Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
+        val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
         val hairline=Stroke(.65.dp.toPx())
         val foregroundShade=Brush.horizontalGradient(listOf(Color(0xFF000E30).copy(alpha=.24f),Color.Transparent))
         onDrawBehind {
@@ -119,12 +111,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             ribbons.forEach { ribbon ->
                 ribbon.update(size.width,size.height,time,drift)
                 // Nested translucent surfaces approximate a soft cross-section without blur.
-                repeat(4) { layer ->
-                    ribbon.surface(1f-layer*.21f)
+                repeat(2) { layer ->
+                    ribbon.surface(1f-layer*.42f)
                     drawPath(ribbon.fill,glass,alpha=.78f+light*.3f)
                 }
                 glowStrokes.forEachIndexed { index, stroke ->
-                    drawPath(ribbon.crest,edge,alpha=(.035f+index*.025f+light*.12f),style=stroke)
+                    drawPath(ribbon.crest,edge,alpha=(.06f+index*.025f+light*.12f),style=stroke)
                 }
                 drawPath(ribbon.crest,edge,alpha=.32f+light,style=hairline)
             }

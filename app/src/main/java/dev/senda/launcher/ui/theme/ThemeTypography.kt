@@ -33,11 +33,11 @@ private val razrType=themedTypography(razrFont,strong=FontWeight.Normal)
 private val ps4Base=themedTypography(ps4Font,FontWeight.Light,strong=FontWeight.Medium)
 // Noto is the bundled libre alternative, not Sony's licensed SST font.
 private val ps4Type=ps4Base.copy(
-    headlineLarge=ps4Base.headlineLarge.copy(fontSize=32.sp,lineHeight=40.sp,letterSpacing=(-.5).sp),
+    headlineLarge=ps4Base.headlineLarge.copy(fontSize=28.sp,lineHeight=36.sp,letterSpacing=(-.3).sp),
     titleLarge=ps4Base.titleLarge.copy(fontSize=26.sp,lineHeight=34.sp),
     titleMedium=ps4Base.titleMedium.copy(fontWeight=FontWeight.Light,fontSize=20.sp,lineHeight=28.sp),
-    bodyLarge=ps4Base.bodyLarge.copy(fontWeight=FontWeight.Light,fontSize=18.sp,lineHeight=26.sp),
-    labelLarge=ps4Base.labelLarge.copy(fontWeight=FontWeight.Normal))
+    bodyLarge=ps4Base.bodyLarge.copy(fontWeight=FontWeight.Normal,fontSize=18.sp,lineHeight=26.sp),
+    labelLarge=ps4Base.labelLarge.copy(fontWeight=FontWeight.Medium))
 internal fun historicalTypography(theme:LauncherTheme):Typography=when(theme) {
     LauncherTheme.SENSE->senseType
     LauncherTheme.TOUCHWIZ->natureType

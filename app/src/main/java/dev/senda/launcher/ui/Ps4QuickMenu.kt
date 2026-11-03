@@ -46,7 +46,7 @@ internal fun Ps4QuickMenu(
     val entrance = remember { Animatable(if (noMotion) 1f else 0f) }
     LaunchedEffect(noMotion) {
         if (noMotion) entrance.snapTo(1f)
-        else entrance.animateTo(1f, tween(320, easing = FastOutSlowInEasing))
+        else entrance.animateTo(1f, tween(240, easing = FastOutSlowInEasing))
     }
 
     val colors = MaterialTheme.colorScheme
@@ -91,7 +91,7 @@ internal fun Ps4QuickMenu(
                         .graphicsLayer {
                             val progress = entrance.value
                             alpha = progress
-                            translationX = -size.width * (1f - progress)
+                            translationX = -28.dp.toPx() * (1f - progress)
                         }
                         .semantics { paneTitle = "Menú rápido" },
                     shape = RectangleShape,
