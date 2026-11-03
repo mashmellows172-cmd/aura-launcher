@@ -114,4 +114,11 @@ automáticas ni cambiar ajustes/permisos del dispositivo sin autorización.
 
 ## Beta53: capa retenida y seguimiento de temas
 
+Comparación manual completada con autorización: dos muestras de cuatro swipes
+600ms. P90 beta53:34ms y27ms frente a48ms en muestra beta52 anterior;
+mediana21ms y16ms frente a29ms. Jank moderno15,84% y3,18% (legacy92,08%
+y69,36%); variabilidad alta, condiciones entre versiones no controladas.
+Indicio favorable, sin paridad con otros temas ni porcentaje de mejora estable.
+Captura revisada correcta; preferencias sin cambios. Ver BETA53.md.
+
 Instalada, versión53 y hash del teléfono comprobados; ver BETA53.md. Capa opaca con geometría retenida; comparación física pendiente, sin paridad con otros temas acreditada. Ponytail ya estaba instalada y se usó. DeepSeek local revisó134tokens, conclusión sobre reducir FPS rechazada. Sin agentes remotos adicionales. Ver THEME-FIDELITY.md para siete identidades, sonidos AUTO existentes y pendientes reales; no se afirma reconstrucción completa. Cuota90% no observable.
