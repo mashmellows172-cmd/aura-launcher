@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta53 (0.36.2/code53),3nov2026: fondo PS4 retenido, animado mediante capa gráfica para evitar reconstruir curvas cada frame. Compilación/lint0 errores; instalada y versión/hash comprobados. Comparación física y paridad de fluidez pendientes. Matriz de temas en docs/THEME-FIDELITY.md; registro en docs/MASTER.md.
+
 Beta52 (0.36.1/code52),3nov2026: pulido fiel PS4, títulos estables, foco/fondo con menos pasadas y menú240ms. Compilación/lint correctos,0 errores/35 advertencias/3 avisos; instalada por ADB, versión/hash verificados. Revisión visual final y comparación pendientes por desconexión. Registro maestro: [docs/MASTER.md](docs/MASTER.md).
 
 Beta51 instalada (0.36.0/code51),3nov2026: centro de estado con acciones reales, movimiento adaptativo PS4 reversible, entradas que no se repiten al volver, fundido reducido150ms y diálogos sin rebote. Respaldo15 conserva adaptación y actualiza preferencias al restaurar. DeepSeek local supervisado con propuestas defectuosas rechazadas. Compilación/lint correctos6m33s,0 errores/35 advertencias/3 avisos; sin suites automáticas. Firma compatible y hash verificados. Instalada por ADB tras reconexión; versión y hash verificados. Inicio PS4 y centro de estado comprobados; métricas pendientes. Ver docs/BETA51.md.

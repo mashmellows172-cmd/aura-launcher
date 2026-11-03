@@ -1,7 +1,7 @@
 # Registro maestro de Aura Launcher
 
-Checkpoint: **beta52,0.36.1/code52,3 de noviembre de2026**, instalada y hash
-comprobado. Rama `codex/beta52-ps4-fluidity`. Leer este archivo y CONTINUITY.md
+Checkpoint: **beta53,0.36.2/code53,3 de noviembre de2026**, instalada y hash
+comprobado. Rama `codex/beta53-retained-ps4`. Leer este archivo y CONTINUITY.md
 al retomar desde cualquier equipo. El historial completo está en
 [CHANGELOG](../CHANGELOG.md); cada BETA contiene evidencia y límites.
 
@@ -111,3 +111,7 @@ agentes/modelos y qué se aceptó/rechazó, validaciones, tamaño/firma/hash si 
 comprobaron, instalación real y pendientes. Nunca incluir secretos, claves,
 SDK, APK, respaldos ni evidencia privada del teléfono. No ejecutar suites
 automáticas ni cambiar ajustes/permisos del dispositivo sin autorización.
+
+## Beta53: capa retenida y seguimiento de temas
+
+Instalada, versión53 y hash del teléfono comprobados; ver BETA53.md. Capa opaca con geometría retenida; comparación física pendiente, sin paridad con otros temas acreditada. Ponytail ya estaba instalada y se usó. DeepSeek local revisó134tokens, conclusión sobre reducir FPS rechazada. Sin agentes remotos adicionales. Ver THEME-FIDELITY.md para siete identidades, sonidos AUTO existentes y pendientes reales; no se afirma reconstrucción completa. Cuota90% no observable.

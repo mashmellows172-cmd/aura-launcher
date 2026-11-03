@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta53 (0.36.2/code53),3nov2026: fondo PS4 retenido, animado mediante capa gráfica para evitar reconstruir curvas cada frame. Compilación/lint0 errores; instalada y versión/hash comprobados. Comparación física y paridad de fluidez pendientes. Matriz de temas en docs/THEME-FIDELITY.md; registro en docs/MASTER.md.
+
 Beta52 (0.36.1/code52),3nov2026: pulido fiel PS4, títulos estables, foco/fondo con menos pasadas y menú240ms. Compilación/lint correctos,0 errores/35 advertencias/3 avisos; instalada por ADB, versión/hash verificados. Revisión visual final y comparación pendientes por desconexión. Registro maestro: [docs/MASTER.md](docs/MASTER.md).
 
 Instalada **0.36.0-beta51/code51**,3 de noviembre de2026: centro de estado, movimiento adaptativo y transiciones accesibles. Compilación/lint y firma compatibles verificados. **Instalada por ADB; versión y hash del teléfono verificados.** Rama codex/beta51-adaptive-status. [Evidencia y pendientes](docs/BETA51.md).

@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta53 (0.36.2/code53),3nov2026: fondo PS4 retenido, animado mediante capa gráfica para evitar reconstruir curvas cada frame. Compilación/lint0 errores; instalada y versión/hash comprobados. Comparación física y paridad de fluidez pendientes. Matriz de temas en docs/THEME-FIDELITY.md; registro en docs/MASTER.md.
+
 Beta52 (0.36.1/code52),3nov2026: pulido fiel PS4, títulos estables, foco/fondo con menos pasadas y menú240ms. Compilación/lint correctos,0 errores/35 advertencias/3 avisos; instalada por ADB, versión/hash verificados. Revisión visual final y comparación pendientes por desconexión. Registro maestro: [MASTER.md](MASTER.md).
 
 Beta51 instalada (0.36.0/code51),3nov2026, rama codex/beta51-adaptive-status sobre beta50/df8dfb6. Centro de estado, movimiento adaptativo y entradas accesibles. Compilación/lint correctos6m33s;0 errores/35 advertencias/3 avisos. APK y firma compatible verificados; instalada por ADB tras reconexión, versión51 y hash comprobados en el teléfono. Leer BETA51.md y delegation/2026-11-03-local-motion.md antes de continuar. Fuente actual Documents/Aura-development/beta50; no usar el checkout beta40 del chat. Conservar clave2eb417c5… y actualizar con install -r, sin desinstalar. Inicio PS4 y centro de estado comprobados. Pendiente comparación de rendimiento; no afirmar ahorro ni fluidez medida.
