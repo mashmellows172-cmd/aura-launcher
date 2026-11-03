@@ -76,7 +76,7 @@ class SettingsBackup(private val context: Context) {
                 assets.put(key, Base64.encodeToString(bytes, Base64.NO_WRAP)); values.put(key, "asset:$key")
             } else { validate(key, value); values.put(key, value) }
         }
-        val root = JSONObject().put("format", "aura-settings").put("version", 14).put("settings", values).put("assets", assets).put("skippedImages", skipped)
+        val root = JSONObject().put("format", "aura-settings").put("version", 15).put("settings", values).put("assets", assets).put("skippedImages", skipped)
         val bytes = root.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= LIMIT) { "El respaldo supera 24 MB" }
         context.contentResolver.openOutputStream(destination, "wt")?.use { it.write(bytes) } ?: error("No se pudo abrir el archivo de destino")
@@ -112,7 +112,7 @@ class SettingsBackup(private val context: Context) {
         }
         require(!quoted && depth == 0) { "Archivo JSON incompleto" }
         val root = JSONObject(text)
-        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..14) { "Formato o versión de respaldo no compatible" }
+        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..15) { "Formato o versión de respaldo no compatible" }
         val json = root.getJSONObject("settings"); require(json.length() <= 2500) { "Demasiados ajustes" }
         val values = json.keys().asSequence().associateWith { key -> json.get(key).also { validate(key, it) } }
         val jsonImages = root.getJSONObject("assets"); require(jsonImages.length() <= 2000) { "Demasiadas imágenes" }

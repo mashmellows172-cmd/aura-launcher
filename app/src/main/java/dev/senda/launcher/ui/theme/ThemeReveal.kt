@@ -23,6 +23,8 @@ import dev.senda.launcher.data.LocalAppearance
 import dev.senda.launcher.ui.LocalMotionSettings
 import dev.senda.launcher.ui.LocalThemePreview
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlin.math.hypot
 import kotlin.math.sin
 
@@ -46,17 +48,27 @@ fun themeReveal(theme:LauncherTheme)=when(theme) {
 fun Modifier.themeReveal(theme:LauncherTheme,key:Any?,reduced:Boolean=false):Modifier {
     val effect=themeReveal(theme)
     val settings=LocalMotionSettings.current
-    val disabled=reduced||settings.reduceMotion||LocalAppearance.current.highContrast||LocalThemePreview.current||!ValueAnimator.areAnimatorsEnabled()
-    val progress=remember(theme){Animatable(if(disabled)1f else 0f)}
+    val gentle=reduced||settings.reduceMotion
+    val saving=rememberMotionPowerSaver()
+    val disabled=LocalAppearance.current.highContrast||LocalThemePreview.current||!ValueAnimator.areAnimatorsEnabled()||saving
+    val progress=remember(theme){Animatable(1f)}
     val lifecycle=LocalLifecycleOwner.current.lifecycle
-    val duration=(effect.duration*settings.durationMs/360).coerceIn(160,800)
+    val duration=if(gentle)150 else (effect.duration*settings.durationMs/360).coerceIn(160,800)
     val density=LocalDensity.current.density
     val ink=LocalSkinStyle.current.accent
-    LaunchedEffect(theme,key,disabled,lifecycle,duration) {
+    LaunchedEffect(theme,key,disabled,gentle,lifecycle,duration) {
         if(disabled){progress.snapTo(1f);return@LaunchedEffect}
-        progress.snapTo(0f)
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            progress.animateTo(1f,tween(duration,easing=FastOutSlowInEasing))
+        var played=false
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            if(!played) {
+                played=true
+                try {
+                    progress.snapTo(0f)
+                    progress.animateTo(1f,tween(duration,easing=FastOutSlowInEasing))
+                } finally {
+                    withContext(NonCancellable){progress.snapTo(1f)}
+                }
+            }
             awaitCancellation()
         }
     }
@@ -64,6 +76,8 @@ fun Modifier.themeReveal(theme:LauncherTheme,key:Any?,reduced:Boolean=false):Mod
         val p=if(disabled)1f else progress.value
         val q=1f-p
         alpha=if(disabled)1f else .15f+.85f*p
+        scaleX=1f;scaleY=1f;rotationX=0f;translationX=0f;translationY=0f
+        if(gentle)return@graphicsLayer
         transformOrigin=when(effect){ThemeReveal.FLIP->TransformOrigin(.5f,0f);ThemeReveal.HINGE->TransformOrigin(.5f,.5f);else->TransformOrigin.Center}
         cameraDistance=18f*density
         when(effect) {
@@ -77,7 +91,7 @@ fun Modifier.themeReveal(theme:LauncherTheme,key:Any?,reduced:Boolean=false):Mod
         }
     }.drawWithContent revealDraw@ {
         val p=if(disabled)1f else progress.value
-        if(p>=.999f){drawContent();return@revealDraw}
+        if(gentle||p>=.999f){drawContent();return@revealDraw}
         when(effect) {
             ThemeReveal.DOTS->{
                 // Staggered pixel bands reveal actual content rather than a generic fade.

@@ -218,15 +218,16 @@ fun AuraAlertDialog(
     text: (@Composable () -> Unit)? = null,
 ) {
     val settings = LocalMotionSettings.current
-    val progress = remember { Animatable(0f) }
+    val progress = remember { Animatable(1f) }
     val theme = if (LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme
     val profile = theme?.let(::historicalProfile)?.takeUnless { LocalAppearance.current.highContrast }
-    val noMotion = settings.reduceMotion || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
-    LaunchedEffect(settings.menuEffect, noMotion, profile?.motion) {
+    val gentle = settings.reduceMotion
+    val noMotion = gentle || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
+    LaunchedEffect(settings.menuEffect, noMotion, profile?.motion, settings.durationMs) {
         if (noMotion || settings.menuEffect == "NONE") progress.snapTo(1f)
         else {
             progress.snapTo(0f)
-            progress.animateTo(1f, if (settings.menuEffect == "SPRING") spring(dampingRatio = .78f, stiffness = 420f * (360f / settings.durationMs).pow(2)) else tween(settings.durationMs.coerceAtMost(450)))
+            progress.animateTo(1f, if (settings.menuEffect == "SPRING") spring(dampingRatio = 1f, stiffness = 420f * (360f / settings.durationMs).pow(2)) else tween(settings.durationMs.coerceAtMost(450)))
         }
     }
     val colors = MaterialTheme.colorScheme

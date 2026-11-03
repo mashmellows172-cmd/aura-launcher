@@ -24,6 +24,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.LocalAppearance
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlin.math.*
 
 @Stable
@@ -53,13 +55,36 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(lifecycle, listState, disabled) {
+    val adaptive = LocalAdaptiveMotion.current
+    // Focus feedback follows navigation, independently of the decorative frame clock.
+    LaunchedEffect(lifecycle, listState, disabled, feedback, focusedKey, adaptive) {
+        if (disabled) return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            var previousFocus: Any? = null
+            snapshotFlow { focusedKey.value }.collect { focus ->
+                if (focus != null && previousFocus != null && focus != previousFocus) {
+                    if (!adaptive || listState?.isScrollInProgress != true) scene.focusLight = 1f
+                    if (listState?.isScrollInProgress == true) feedback.play(dev.senda.launcher.data.SoundEvent.INDEX)
+                }
+                previousFocus = focus
+            }
+        }
+    }
+    LaunchedEffect(lifecycle, listState, disabled, adaptive) {
         if (disabled) { scene.parallax=0f; scene.energy=0f; scene.focusLight=0f; return@LaunchedEffect }
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             var previous = 0L
-            var previousFocus: Any? = null
             while (ValueAnimator.areAnimatorsEnabled()) {
+                if (adaptive) {
+                    if (listState?.isScrollInProgress == true) {
+                        // Suspend until scrolling settles; no polling or decorative invalidations.
+                        snapshotFlow { listState.isScrollInProgress }.first { !it }
+                        previous = 0L
+                    }
+                    delay(32) // Limit idle scene updates; the list retains its native frame rate.
+                }
                 withFrameNanos { now ->
+                    if (adaptive && listState?.isScrollInProgress == true) { previous = 0L; return@withFrameNanos }
                     val dt = if(previous==0L) 0f else ((now-previous)/1_000_000_000f).coerceIn(0f,.05f)
                     previous=now
                     val info = listState?.layoutInfo
@@ -70,13 +95,6 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                     scene.parallax += (target-scene.parallax)*(1f-exp(-dt*5f))
                     val moving = if(listState?.isScrollInProgress==true) 1f else 0f
                     scene.energy += (moving-scene.energy)*(1f-exp(-dt*4f))
-                    val focus = focusedKey.value
-                    if(focus!=null && previousFocus!=null && focus!=previousFocus) {
-                        scene.focusLight=1f
-                        // Existing index opt-in and rate limiting also govern scene navigation.
-                        if(listState?.isScrollInProgress==true) feedback.play(dev.senda.launcher.data.SoundEvent.INDEX)
-                    }
-                    previousFocus=focus
                     scene.focusLight *= exp(-dt*3.6f)
                     scene.phase=(scene.phase+dt*(2f*PI.toFloat()/24f)*(1f+scene.energy*.28f))%(2f*PI.toFloat())
                 }

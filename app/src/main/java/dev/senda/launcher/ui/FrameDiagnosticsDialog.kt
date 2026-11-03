@@ -52,6 +52,17 @@ internal fun FrameDiagnosticsDialog(
                     }
                 }
                 HorizontalDivider()
+                val adaptive = LocalAdaptiveMotion.current
+                val setAdaptive = LocalSetAdaptiveMotion.current
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                        .toggleable(adaptive, enabled = !report.running, role = Role.Switch, onValueChange = setAdaptive),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Movimiento adaptativo", Modifier.weight(1f).padding(end = 8.dp))
+                    Switch(checked = adaptive, onCheckedChange = null, enabled = !report.running)
+                }
+                Text("Prioriza la lista mientras deslizas y reduce los efectos con el ahorro de batería del sistema.", style = MaterialTheme.typography.bodySmall)
                 Row(
                     Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(lightMode, enabled = !report.running, role = Role.Switch, onValueChange = onLightMode),
                     verticalAlignment = Alignment.CenterVertically,

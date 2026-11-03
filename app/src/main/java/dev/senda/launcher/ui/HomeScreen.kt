@@ -198,7 +198,7 @@ fun HomeScreen(
     onNotificationSettings: () -> Unit,
 ) {
     val storedState by viewModel.uiState.collectAsStateWithLifecycle()
-    val state = storedState.withLightMode(LocalLightMode.current)
+    val state = storedState.withLightMode(LocalLightMode.current || (LocalAdaptiveMotion.current && LocalSystemPowerSaving.current))
     val soundFeedback = LocalSoundFeedback.current
     val locale = LocalConfiguration.current.locales[0]
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
@@ -224,6 +224,8 @@ fun HomeScreen(
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
     var showHomeSettings by rememberSaveable { mutableStateOf(false) }
+    var showStatusCenter by rememberSaveable { mutableStateOf(false) }
+    var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
     var showWeatherConnection by rememberSaveable { mutableStateOf(false) }
     var showDashboard by rememberSaveable { mutableStateOf(false) }
@@ -293,7 +295,8 @@ fun HomeScreen(
             showPersonalization = false
             showWeatherPicker = false
             showWidgetPicker = false
-            showHomeSettings = false; showAvatar = false; showWeatherConnection = false; showDashboard = false
+            showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
+            showAvatar = false; showWeatherConnection = false; showDashboard = false
             showNotificationHelp = false
             showIconSource = false
             showFamilyIconPicker = false
@@ -420,6 +423,7 @@ fun HomeScreen(
             onSoundSettings = { showSoundSettings = true },
             onPersonalization = { showPersonalization = true },
             onHomeSettings = { showHomeSettings = true },
+            onStatusCenter = { showStatusCenter = true },
             onGesture = executeGesture,
             onDoubleTap = if (state.lockGesture.onLogo) lockDevice else null,
             onChooseWeatherApp = { showWeatherPicker = true },
@@ -590,6 +594,33 @@ fun HomeScreen(
         )
     }
     if (showThemePicker) ThemeEditorDialog(state, viewModel, widgetController) { showThemePicker = false }
+    if (showStatusCenter) {
+        val saving = LocalSystemPowerSaving.current
+        fun statusAction(action: () -> Unit): () -> Unit = { showStatusCenter = false; action() }
+        StatusCenter(
+            items = listOf(
+                StatusItem("Inicio", if (isDefaultHome) "Aura es el inicio predeterminado" else "Otro inicio está seleccionado",
+                    "Elegir inicio", statusAction(onChooseHome)),
+                StatusItem("Reproductor", if (state.audioInfo.mediaAccess) "Acceso multimedia habilitado" else "Modo básico",
+                    "Configurar reproductor", statusAction { dev.senda.launcher.MediaAccessService.openSettings(context) }),
+                StatusItem("Clima", if (widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId) != null) "Widget conectado" else "Widget pendiente de conexión",
+                    "Conectar clima", statusAction { showWeatherConnection = true }),
+                StatusItem("Widgets", "${widgetController.widgets.size} configurados",
+                    "Organizar widgets", statusAction { showDashboard = true }),
+                StatusItem("Agenda", if (state.headerInfo.calendarPermission) "Permiso concedido" else "Permiso pendiente",
+                    "Configurar agenda", statusAction { showHomeSettings = true }),
+                StatusItem("Respaldo", state.backupMessage ?: "Exporta una copia para conservar tu configuración",
+                    "Abrir respaldo", statusAction { showPersonalization = true }),
+                StatusItem("Movimiento", if (LocalLightMode.current) "Modo ligero activo" else if (saving) "Ahorro del sistema activo" else "Preferencias visuales activas",
+                    "Movimiento y efectos", statusAction { showVisualSettings = true }),
+                StatusItem("Fluidez", "Muestra local de hasta 60 segundos",
+                    "Abrir diagnóstico", statusAction { showStatusDiagnostics = true }),
+            ),
+            movementStatus = "Conexiones y configuración de Aura",
+            onDismiss = { showStatusCenter = false },
+        )
+    }
+    if (showStatusDiagnostics) FrameDiagnosticsDialog(LocalLightMode.current, LocalSetLightMode.current) { showStatusDiagnostics = false }
     if (showHomeSettings) HomeSettingsDialog(state, viewModel, onRequestCalendar, onAppPermissions, { showNotificationHelp = true }) { showHomeSettings = false }
     if (showNotificationHelp) AuraAlertDialog(
         onDismissRequest = { showNotificationHelp = false }, title = { Text("Gestos del dispositivo") },
@@ -639,6 +670,7 @@ internal fun Header(
     onSoundSettings: () -> Unit,
     onPersonalization: () -> Unit,
     onHomeSettings: () -> Unit,
+    onStatusCenter: () -> Unit = {},
     onGesture: (GestureDirection) -> Unit,
     onDoubleTap: (() -> Unit)?,
     onChooseWeatherApp: () -> Unit,
@@ -712,6 +744,7 @@ internal fun Header(
                 action("Barra A–Z", callback = onAlphabetSettings),
                 action("Movimiento y efectos", callback = onVisualSettings),
                 action("Entrada tras desbloquear", callback = { unlockSettings = true }),
+                action("Centro de estado", callback = onStatusCenter),
                 action("Diagnóstico de fluidez", callback = { diagnosticsShown = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
             ), onDismiss = { themeMenuExpanded = false }, mediaContent = { quickMedia { themeMenuExpanded = false } })
@@ -776,6 +809,7 @@ internal fun Header(
                 DropdownMenuItem(text = { Text("Sonidos y respuesta") }, onClick = { themeMenuExpanded = false; onSoundSettings() })
                 DropdownMenuItem(text = { Text("Barra A–Z · efectos y respuesta") }, onClick = { themeMenuExpanded = false; onAlphabetSettings() })
                 DropdownMenuItem(text = { Text("Entrada tras desbloquear") }, onClick = { themeMenuExpanded = false; unlockSettings = true })
+                DropdownMenuItem(text = { Text("Centro de estado") }, onClick = { themeMenuExpanded = false; onStatusCenter() })
                 DropdownMenuItem(text = { Text("Diagnóstico de fluidez") }, onClick = { themeMenuExpanded = false; diagnosticsShown = true })
                 DropdownMenuItem(text = { Text("Movimiento y efectos") }, onClick = { themeMenuExpanded = false; onVisualSettings() })
                 DropdownMenuItem(text = { Text(if (weatherAppLabel == null) "Elegir app del clima" else "App del clima · $weatherAppLabel") }, onClick = { themeMenuExpanded = false; onChooseWeatherApp() })

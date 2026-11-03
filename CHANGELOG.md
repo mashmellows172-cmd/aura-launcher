@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta51 candidata (0.36.0/code51),3nov2026: centro de estado con acciones reales, movimiento adaptativo PS4 reversible, entradas que no se repiten al volver, fundido reducido150ms y diálogos sin rebote. Respaldo15 conserva adaptación y actualiza preferencias al restaurar. DeepSeek local supervisado con propuestas defectuosas rechazadas. Compilación/lint correctos6m33s,0 errores/35 advertencias/3 avisos; sin suites automáticas. Firma compatible y hash verificados. No instalada: ADB perdió conexión. Revisión física y métricas pendientes. Ver docs/BETA51.md.
+
 Beta50 (0.35.1/code50),2nov2026: migración de firma autorizada con respaldo verificado e instalación/restauración completadas. Respaldo14 añade desbloqueo/modo ligero, correcciones de foco Gboard y búsqueda por gesto acotada al avatar. Base beta49 conservada. Compilación/lint correctos,0 errores/33 advertencias/3 avisos. APK instalado verificado por versión/firma/hash. Exportación posterior coincide en101 ajustes y5 imágenes. Permisos especiales/widgets pueden requerir reconfiguración. Ver docs/BETA50.md.
 
 Beta49 (0.35.0/code49),29oct2026: diagnóstico opt-in60s de frames y modo ligero reversible. Compilación/lint correctos, instalada con firma/versión/hash verificados. Revisión física pendiente; ver docs/BETA49.md.
