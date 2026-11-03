@@ -18,4 +18,21 @@ Versión54/0.36.3-beta54 y hash del APK instalado comprobados:
 13779dbebf37127cd1318446e3098592fe1c75afbdd59af927f98730fd97a384.
 Medición estática pendiente: panel NotificationShade cubre Aura y se espera
 confirmación del usuario de pantalla disponible. No afirmar mejora.
+
+Medición completada tras confirmación del usuario; Aura en primer plano al
+inicio y final. Dos pasadas de cuatro swipes600ms idénticas a beta53:
+
+| Fondo | Pasada | Frames | Jank moderno | Mediana | P90 | P95 |
+|---|---|---:|---:|---:|---:|---:|
+| Animado beta53 | 1 | 303 | 15,84% | 21ms | 34ms | 40ms |
+| Animado beta53 | 2 | 346 | 3,18% | 16ms | 27ms | 30ms |
+| Estático beta54 | 1 | 285 | 14,74% | 20ms | 34ms | 40ms |
+| Estático beta54 | 2 | 392 | 3,57% | 16ms | 21ms | 25ms |
+
+Resultado mixto: primera pasada equivalente; segunda reduce cola de tiempos
+pero no el porcentaje de jank moderno. Legacy estático86,67%/72,19%, también
+alto. Sin control de frecuencia/temperatura/carga y pocas muestras: no afirmar
+causalidad ni mejora estable. El fondo no explica por sí solo todo el retraso.
+Se deja beta54 estática instalada para valoración del usuario, sin modificar
+preferencias de efectos. Evidencia cruda privada fuera de Git.
 Sin suites automáticas ni ajustes del sistema. Evidencia privada fuera de Git.

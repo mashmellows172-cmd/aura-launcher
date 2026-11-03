@@ -125,4 +125,11 @@ Instalada, versión53 y hash del teléfono comprobados; ver BETA53.md. Capa opac
 
 ## Beta54: prueba estática solicitada
 
-Fondo PS4 sin clock; demás efectos y preferencias conservados. Build/lint2m33s,0 errores/35 advertencias/3 avisos; instalada, versión54 y hash comprobados. Muestra inicial descartada: NotificationShade y cero frames. Solicitada pantalla Aura visible, pendiente respuesta. No hay mejora acreditada. Ver BETA54.md. Skills frontend-design y caveman aplicadas.
+Medición final: Aura visible comprobada. Estático primera pasada285frames,
+14,74%jank,mediana20ms,p9034ms; segunda392frames,3,57%jank,mediana16ms,p9021ms.
+Beta53 animado: primera p9034ms/15,84%jank; segunda p9027ms/3,18%jank.
+Mejora de cola en segunda pasada, sin reducción clara de jank; no demuestra
+que el fondo sea causa única. Se mantiene estático según prueba solicitada.
+Resultados y límites completos en BETA54.md; preferencias sin cambios.
+
+Fondo PS4 sin clock; demás efectos y preferencias conservados. Build/lint2m33s,0 errores/35 advertencias/3 avisos; instalada, versión54 y hash comprobados. Muestra inicial descartada: NotificationShade y cero frames. Usuario confirmó Aura visible; comparación completada. Sin mejora estable acreditada. Ver BETA54.md. Skills frontend-design y caveman aplicadas.
