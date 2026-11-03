@@ -85,6 +85,16 @@ gesto visualmente. Sin suites automáticas ni cambios de ajustes del sistema.
 ADB y mDNS sin dispositivo al investigar este reporte; solicitada dirección
 actual. No se creó beta53 ni se aplicó otro ajuste visual a ciegas.
 
+Reconexión posterior por mDNS: beta52 confirmada. Primera secuencia de cuatro
+swipes600ms:223frames,49janky(21,97%),mediana26ms,p9057ms. Se observó Cascada
+seleccionada y se tocó Sin efecto para comparar. Segunda muestra280frames,
+98janky(35%),mediana18ms,p9029ms; NO se considera comparación válida: al
+intentar restaurar, la ventana activa era otra app y la extracción UI falló.
+Gestos detenidos para evitar interferir; solicitada ventana de un minuto sin
+interacción. Selección actual y restauración de Cascada pendientes de verificar.
+No afirmar causalidad, ahorro ni arreglo con estas muestras. Evidencia privada
+local; sin nueva versión ni cambios de código.
+
 Actualizar este registro, CHANGELOG, README, CONTINUITY y BETAxx en el mismo
 commit de aplicación: fecha real, versión/código, archivos y cambios visibles,
 agentes/modelos y qué se aceptó/rechazó, validaciones, tamaño/firma/hash si se
