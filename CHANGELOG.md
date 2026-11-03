@@ -1,5 +1,9 @@
 # Historial de actualizaciones de Aura Launcher
 
+## 0.36.4-beta55 · 3 de noviembre de 2026 · comparación de foco PS4
+
+Foco visual asentado al terminar el desplazamiento, audio de navegación conservado. Build/lint3m11s, 0 errores/35 advertencias/3 avisos. Instalada y versión/hash verificados. Muestras13,50% y24,39% jank: no demuestran mejora; no considerar resuelto. [Evidencia](docs/BETA55.md).
+
 Beta54 estática (0.36.3/code54),3nov2026: reloj del fondo PS4 detenido para comparación solicitada, demás efectos conservados. Build/lint0 errores; instalación, versión/hash verificados. Medición pendiente por NotificationShade. Ver docs/BETA54.md y docs/MASTER.md.
 
 Beta53 (0.36.2/code53),3nov2026: fondo PS4 retenido, animado mediante capa gráfica para evitar reconstruir curvas cada frame. Compilación/lint0 errores; instalada y versión/hash comprobados. Comparación física y paridad de fluidez pendientes. Matriz de temas en docs/THEME-FIDELITY.md; registro en docs/MASTER.md.

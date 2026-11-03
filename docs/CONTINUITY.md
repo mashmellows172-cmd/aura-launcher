@@ -1,6 +1,8 @@
 # Continuidad del proyecto
 
-Beta54 estática (0.36.3/code54),3nov2026: reloj del fondo PS4 detenido para comparación solicitada, demás efectos conservados. Build/lint0 errores; instalación, versión/hash verificados. Medición pendiente por NotificationShade. Ver docs/BETA54.md y docs/MASTER.md.
+Beta55 (0.36.4/code55), 3nov2026: foco visual PS4 solo al terminar el swipe. Compilación/lint correctos e instalación/hash verificados. Dos muestras no confirman mejora; fluidez sigue pendiente. Ver docs/BETA55.md y docs/MASTER.md.
+
+Beta54 estática (0.36.3/code54),3nov2026: reloj del fondo PS4 detenido para comparación solicitada, demás efectos conservados. Build/lint0 errores; instalación, versión/hash verificados. Comparación completada: resultado mixto, sin solución demostrada. Ver docs/BETA54.md y docs/MASTER.md.
 
 Beta53 (0.36.2/code53),3nov2026: fondo PS4 retenido, animado mediante capa gráfica para evitar reconstruir curvas cada frame. Compilación/lint0 errores; instalada y versión/hash comprobados. Comparación física y paridad de fluidez pendientes. Matriz de temas en docs/THEME-FIDELITY.md; registro en docs/MASTER.md.
 

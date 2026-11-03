@@ -1206,8 +1206,9 @@ private fun AppRow(
     var rowFocused by remember { mutableStateOf(false) }
     // The result changes once per focused item, not once per scroll pixel.
     val focusedKey = LocalPs4FocusedKey.current
-    val centered by remember(focusedKey, rowKey, console) {
-        derivedStateOf { console && rowKey != null && focusedKey.value == rowKey }
+    val centered by remember(focusedKey, rowKey, console, listState) {
+        // Settle the visual focus after scrolling; navigation audio keeps its live key.
+        derivedStateOf { console && listState?.isScrollInProgress != true && rowKey != null && focusedKey.value == rowKey }
     }
     val category = if (console) rememberPs4AppCategory(app, centered || rowFocused, listState?.isScrollInProgress == true) else ""
     if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon,

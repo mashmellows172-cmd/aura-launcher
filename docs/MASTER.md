@@ -1,7 +1,7 @@
 # Registro maestro de Aura Launcher
 
-Checkpoint: **beta54,0.36.3/code54,3 de noviembre de2026**, instalada y hash
-comprobado. Rama `codex/beta54-static-ps4`. Leer este archivo y CONTINUITY.md
+Checkpoint: **beta55,0.36.4/code55,3 de noviembre de2026**, instalada y hash
+comprobado. Rama `codex/beta55-settled-focus`. Leer este archivo y CONTINUITY.md
 al retomar desde cualquier equipo. El historial completo está en
 [CHANGELOG](../CHANGELOG.md); cada BETA contiene evidencia y límites.
 
@@ -133,3 +133,7 @@ que el fondo sea causa única. Se mantiene estático según prueba solicitada.
 Resultados y límites completos en BETA54.md; preferencias sin cambios.
 
 Fondo PS4 sin clock; demás efectos y preferencias conservados. Build/lint2m33s,0 errores/35 advertencias/3 avisos; instalada, versión54 y hash comprobados. Muestra inicial descartada: NotificationShade y cero frames. Usuario confirmó Aura visible; comparación completada. Sin mejora estable acreditada. Ver BETA54.md. Skills frontend-design y caveman aplicadas.
+
+## Beta55: foco asentado, mejora no demostrada
+
+Ver [BETA55](BETA55.md). Instalada, código/hash verificados. Prioridad absoluta: regresión de swipe PS4. No añadir nuevos efectos hasta aislar el coste. OpenCode revisó fuente; Ollama revisó velocidad; Antigravity recibió solicitud sin respuesta recuperada. No dar sus hipótesis por hechos.
