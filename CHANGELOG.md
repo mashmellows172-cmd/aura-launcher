@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta56 candidata,0.37.0/code56,3nov2026: preferencia120Hz ligada a interacción y liberación al reposar/pausar/ahorro/modo ligero; fondo estático conservado. Compilación/lint correctos, instalación bloqueada por firma incompatible. Ver docs/BETA56.md.
+
 ## 0.36.4-beta55 · 3 de noviembre de 2026 · comparación de foco PS4
 
 Foco visual asentado al terminar el desplazamiento, audio de navegación conservado. Build/lint3m11s, 0 errores/35 advertencias/3 avisos. Instalada y versión/hash verificados. Muestras13,50% y24,39% jank: no demuestran mejora; no considerar resuelto. [Evidencia](docs/BETA55.md).

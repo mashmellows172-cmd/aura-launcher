@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
     private var isDefaultHome by mutableStateOf(false)
     private lateinit var unlockEvents: dev.senda.launcher.ui.UnlockEvents
     private lateinit var diagnostics: dev.senda.launcher.ui.FrameDiagnostics
+    private lateinit var refreshRatePolicy: dev.senda.launcher.ui.RefreshRatePolicy
     private lateinit var widgets: WidgetController
     private lateinit var soundFeedback: dev.senda.launcher.audio.SoundFeedbackController
 
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         unlockEvents = dev.senda.launcher.ui.UnlockEvents(this)
         diagnostics = dev.senda.launcher.ui.FrameDiagnostics(this)
+        refreshRatePolicy = dev.senda.launcher.ui.RefreshRatePolicy(window)
         soundFeedback = dev.senda.launcher.audio.SoundFeedbackController(applicationContext)
         widgets = WidgetController(this)
         updateHomeState()
@@ -66,6 +68,7 @@ class MainActivity : ComponentActivity() {
             val systemIsDark = isSystemInDarkTheme()
             val darkTheme = uiState.theme.isDarkSkin(systemIsDark)
             SideEffect {
+                refreshRatePolicy.configure(lightMode, powerSaving)
                 soundFeedback.configure(uiState.soundSettings, uiState.theme)
                 val orientation = when (uiState.rotation) {
                     HomeRotation.SYSTEM -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -113,11 +116,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        if (::refreshRatePolicy.isInitialized) refreshRatePolicy.focus(hasFocus)
         if (hasFocus && ::unlockEvents.isInitialized) unlockEvents.consume()
     }
 
     override fun onResume() {
         super.onResume()
+        refreshRatePolicy.resume()
         updateHomeState()
         viewModel.refreshApps()
         viewModel.refreshHeader()
@@ -131,7 +136,14 @@ class MainActivity : ComponentActivity() {
     override fun onStart() { super.onStart(); soundFeedback.setVisible(true); widgets.start(); viewModel.setHomeVisible(true) }
     override fun onStop() { soundFeedback.setVisible(false); viewModel.setHomeVisible(false); widgets.stop(); super.onStop() }
 
-    override fun onDestroy() { diagnostics.close(); soundFeedback.close(); super.onDestroy() }
+    override fun onPause() { refreshRatePolicy.pause(); super.onPause() }
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        if (::refreshRatePolicy.isInitialized) refreshRatePolicy.interaction()
+    }
+
+    override fun onDestroy() { refreshRatePolicy.close(); diagnostics.close(); soundFeedback.close(); super.onDestroy() }
 
     @Deprecated("Required by the public AppWidgetHost configuration API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

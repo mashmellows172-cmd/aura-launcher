@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta56 candidata en codex/beta56-delegated: controlador de refresco integrado por Codex sobre beta55, con auditoría improve-animations y revisión Ollama descartada. Build/lint correctos; Motorola conectado, instalación bloqueada por firma incompatible. Ver BETA56.md. No repetir la migración ni instalar con clave original antigua.
+
 Beta55 (0.36.4/code55), 3nov2026: foco visual PS4 solo al terminar el swipe. Compilación/lint correctos e instalación/hash verificados. Dos muestras no confirman mejora; fluidez sigue pendiente. Ver docs/BETA55.md y docs/MASTER.md.
 
 Beta54 estática (0.36.3/code54),3nov2026: reloj del fondo PS4 detenido para comparación solicitada, demás efectos conservados. Build/lint0 errores; instalación, versión/hash verificados. Comparación completada: resultado mixto, sin solución demostrada. Ver docs/BETA54.md y docs/MASTER.md.

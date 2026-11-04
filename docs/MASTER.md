@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Trabajo siguiente:beta56 candidata en codex/beta56-delegated; solicitud de refresco ligada a interacción, validación en BETA56.md. Beta55 sigue como última entrega física documentada. No se cierra incidencia swipe PS4 por esta solicitud de tasa.
+
 Checkpoint: **beta55,0.36.4/code55,3 de noviembre de2026**, instalada y hash
 comprobado. Rama `codex/beta55-settled-focus`. Leer este archivo y CONTINUITY.md
 al retomar desde cualquier equipo. El historial completo está en
