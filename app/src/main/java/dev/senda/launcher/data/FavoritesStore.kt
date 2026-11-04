@@ -111,7 +111,8 @@ class FavoritesStore(private val context: Context) {
         theme.name to ThemeFinish(AccentChoice.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_accent_${theme.name}")] } ?: AccentChoice.DEFAULT,
             ShapeChoice.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_shape_${theme.name}")] } ?: ShapeChoice.DEFAULT,
             IconTreatment.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_icons_${theme.name}")] } ?: IconTreatment.AUTO,
-            (prefs[intPreferencesKey("skin_dim_${theme.name}")] ?: 64).coerceIn(60, 90))
+            (prefs[intPreferencesKey("skin_dim_${theme.name}")] ?: 64).coerceIn(60, 90),
+            Ps4Palette.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_ps4_palette_${theme.name}")] } ?: Ps4Palette.CLASSIC)
     } }
     suspend fun setHeaderSettings(value: HeaderSettings) { store.edit {
         it[booleanPreferencesKey("header_show_alarm")] = value.showAlarm
@@ -133,6 +134,7 @@ class FavoritesStore(private val context: Context) {
         store.edit { prefs ->
             prefs[themeKey] = theme.name
             prefs[stringPreferencesKey("skin_accent_${theme.name}")] = finish.accent.name
+            prefs[stringPreferencesKey("skin_ps4_palette_${theme.name}")] = finish.ps4Palette.name
             prefs[stringPreferencesKey("skin_shape_${theme.name}")] = finish.shape.name
             prefs[stringPreferencesKey("skin_icons_${theme.name}")] = finish.icons.name
             prefs[intPreferencesKey("skin_dim_${theme.name}")] = finish.wallpaperDim.coerceIn(60, 90)

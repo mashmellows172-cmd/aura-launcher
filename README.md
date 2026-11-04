@@ -1,5 +1,9 @@
 # Aura Launcher
 
+Beta61 instalada,4nov2026,0.41.0/code61: favoritas por arrastre con Guardar/Cancelar, paletas PS4 Azul clásico/Medianoche/Blanco y borrador de sonidos con muestra. Build/lint2m18s,0 errores/35 advertencias/3 avisos; firma/versión/hash e instalación verificados. Revisión física de gestos/paletas pendiente. Ver docs/BETA61.md.
+
+Beta61 candidata,4nov2026,0.41.0/code61: favoritas por arrastre con borrador/Guardar/Cancelar, paletas PS4 completas y sonidos previsualizables. Compilación/lint en curso; no instalada. Última entrega física beta60. Ver docs/BETA61.md.
+
 Beta60 instalada el4 de noviembre de2026:0.40.0-beta60/code60. Build/lint2m37s,0 errores/35 advertencias/3 avisos; firma compatible, actualización ADB y versión/hash posterior verificados. Sin revisión visual ni mejora de fluidez acreditada. Ver docs/BETA60.md.
 
 Beta60 checkpoint de desarrollo,4nov2026,0.40.0/code60: Continuar PS4, avatar con Quick Menu, reproductor con carátula/controles y editor con acentos/intensidad/placas. Compilación/lint en curso; NO instalada. Ver docs/BETA60.md. Última instalada beta58; lag permanece abierto.

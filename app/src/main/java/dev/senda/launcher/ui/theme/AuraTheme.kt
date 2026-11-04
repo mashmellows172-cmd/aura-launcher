@@ -71,7 +71,11 @@ internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, 
 
 @Composable
 fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, fontChoice: String = "THEME", content: @Composable () -> Unit) {
-    val (presetStyle, presetScheme) = skin(theme, systemIsDark)
+    val (originalStyle, originalScheme) = skin(theme, systemIsDark)
+    val palette = ps4PaletteColors(finish.ps4Palette)
+    val consolePalette = theme == LauncherTheme.PS4 && !highContrast
+    val presetStyle = if (consolePalette) originalStyle.copy(accent=palette.accent,backgroundTop=palette.top,backgroundBottom=palette.bottom) else originalStyle
+    val presetScheme = if (consolePalette) originalScheme.copy(background=palette.bottom,onBackground=palette.ink,surface=palette.surface,onSurface=palette.ink,surfaceVariant=palette.raised,onSurfaceVariant=palette.muted,outline=palette.muted,inverseSurface=palette.ink,inverseOnSurface=palette.bottom,error=if(finish.ps4Palette == dev.senda.launcher.data.Ps4Palette.WHITE) Color(0xFFB3261E) else originalScheme.error,onError=if(finish.ps4Palette == dev.senda.launcher.data.Ps4Palette.WHITE) Color.White else originalScheme.onError) else originalScheme
     val requested = finish.accent.argb?.let { Color(it) }
     val adjusted = ensureReadableAccent(requested ?: presetStyle.accent, listOf(presetScheme.background, presetStyle.backgroundTop, presetStyle.backgroundBottom, presetScheme.surface, presetScheme.surfaceVariant))
     val baseStyle = presetStyle.copy(accent = adjusted,
@@ -117,7 +121,7 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
     MaterialTheme(colorScheme = animatedScheme,
         typography = variantTypography(fontChoice) ?: if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
         shapes = if (industrial) IndustrialShapes else if (retro.enabled) retroShapes(theme) else androidx.compose.material3.Shapes(), content = {
-        CompositionLocalProvider(LocalHistoricalProfile provides historicalProfile(theme).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
+        CompositionLocalProvider(LocalPs4Palette provides finish.ps4Palette, LocalHistoricalProfile provides historicalProfile(theme)?.withPs4Palette(finish.ps4Palette).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
             LocalIconTreatment provides finish.icons, LocalRetroStyle provides if (highContrast) RetroStyle() else retro,
             LocalIndustrialStyle provides IndustrialStyle(industrial, finish.icons == IconTreatment.MONOCHROME || (industrial && finish.icons == IconTreatment.AUTO)), content = content)
     })

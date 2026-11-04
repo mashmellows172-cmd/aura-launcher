@@ -25,7 +25,7 @@ class SettingsBackup(private val context: Context) {
         private val themes = LauncherTheme.entries.map { it.name }.toSet()
         private val packagePattern = Regex("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)+")
         fun imageKey(key: String): Boolean = key == "profile_avatar" || themes.any { key == "skin_wallpaper_$it" || (key.startsWith("skin_icon_${it}_") && packagePattern.matches(key.removePrefix("skin_icon_${it}_"))) }
-        fun allowed(key: String): Boolean = key in stringKeys || key in integerRanges || key in booleanKeys || imageKey(key) || themes.any { key == "icon_pack_$it" || key == "skin_accent_$it" || key == "skin_shape_$it" || key == "skin_icons_$it" }
+        fun allowed(key: String): Boolean = key in stringKeys || key in integerRanges || key in booleanKeys || imageKey(key) || themes.any { key == "icon_pack_$it" || key == "skin_ps4_palette_$it" || key == "skin_accent_$it" || key == "skin_shape_$it" || key == "skin_icons_$it" }
         private fun validate(key: String, value: Any) {
             if (key in BackupExtras.keys) {
                 BackupExtras.validate(key, value)
@@ -50,6 +50,7 @@ class SettingsBackup(private val context: Context) {
                         key == "menu_effect" -> require(value in setOf("SPRING", "SLIDE", "FADE", "NONE")) { "Efecto de menú no válido" }
                         key == "home_rotation" -> require(value in HomeRotation.entries.map { it.name }) { "Rotación no válida" }
                         key.startsWith("gesture_") -> require(GestureBindings.valid(value)) { "Gesto no válido" }
+                        key.startsWith("skin_ps4_palette_") -> require(value in Ps4Palette.entries.map { it.name }) { "Paleta PS4 no válida" }
                         key.startsWith("skin_accent_") -> require(value in AccentChoice.entries.map { it.name }) { "Acento no válido" }
                         key.startsWith("skin_icons_") -> require(value in IconTreatment.entries.map { it.name }) { "Estilo de iconos no válido" }
                         key.startsWith("skin_shape_") -> require(value in ShapeChoice.entries.map { it.name }) { "Forma no válida" }
@@ -76,7 +77,7 @@ class SettingsBackup(private val context: Context) {
                 assets.put(key, Base64.encodeToString(bytes, Base64.NO_WRAP)); values.put(key, "asset:$key")
             } else { validate(key, value); values.put(key, value) }
         }
-        val root = JSONObject().put("format", "aura-settings").put("version", 15).put("settings", values).put("assets", assets).put("skippedImages", skipped)
+        val root = JSONObject().put("format", "aura-settings").put("version", 16).put("settings", values).put("assets", assets).put("skippedImages", skipped)
         val bytes = root.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= LIMIT) { "El respaldo supera 24 MB" }
         context.contentResolver.openOutputStream(destination, "wt")?.use { it.write(bytes) } ?: error("No se pudo abrir el archivo de destino")
@@ -112,7 +113,7 @@ class SettingsBackup(private val context: Context) {
         }
         require(!quoted && depth == 0) { "Archivo JSON incompleto" }
         val root = JSONObject(text)
-        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..15) { "Formato o versión de respaldo no compatible" }
+        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..16) { "Formato o versión de respaldo no compatible" }
         val json = root.getJSONObject("settings"); require(json.length() <= 2500) { "Demasiados ajustes" }
         val values = json.keys().asSequence().associateWith { key -> json.get(key).also { validate(key, it) } }
         val jsonImages = root.getJSONObject("assets"); require(jsonImages.length() <= 2000) { "Demasiadas imágenes" }

@@ -1,5 +1,7 @@
 package dev.senda.launcher.ui
 
+import dev.senda.launcher.ui.theme.withPs4Palette
+
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -20,7 +22,7 @@ import java.util.Locale
 
 @Composable
 internal fun ThemedHeaderCaption(theme: LauncherTheme, message: String, reduced: Boolean) {
-    val profile = historicalProfile(theme)
+    val profile = historicalProfile(theme)?.withPs4Palette(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
     val highContrast = LocalAppearance.current.highContrast
     val paper = theme == LauncherTheme.OPTIMUS && !highContrast
     val ink = if (paper) profile!!.ink else MaterialTheme.colorScheme.onBackground

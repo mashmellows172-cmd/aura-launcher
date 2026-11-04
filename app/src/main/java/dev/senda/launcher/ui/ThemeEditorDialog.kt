@@ -63,19 +63,19 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                     Text(if(compareOriginal) "Comparando con tu Inicio al abrir el estudio" else "Vista previa · los cambios aún no están aplicados", modifier=Modifier.padding(horizontal=16.dp),style=MaterialTheme.typography.bodySmall)
                     Box(Modifier.weight(1f).fillMaxWidth()) { ThemeLivePreview(if(compareOriginal) original else value,state,viewModel,widgetController) }
                     if(!fullPreview) {
-                        TabRow(section){listOf("Estilo","Iconos","Fondo","Variantes").forEachIndexed{i,label->Tab(selected=section==i,onClick={editor.finishGesture();section=i},modifier=Modifier.heightIn(min=48.dp)){Text(label,style=MaterialTheme.typography.labelSmall)}}}
+                        TabRow(section){listOf("Estilo","Iconos","Fondo","Sonidos","Variantes").forEachIndexed{i,label->Tab(selected=section==i,onClick={editor.finishGesture();section=i},modifier=Modifier.heightIn(min=48.dp)){Text(label,style=MaterialTheme.typography.labelSmall)}}}
                         Column(Modifier.fillMaxWidth().heightIn(max=240.dp).verticalScroll(rememberScrollState()).padding(horizontal=16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
                             when(section){
                                 0->{
                                     EditorChoice("Tema base",value.theme,LauncherTheme.entries.map{it.name to it.title},!busy){editor.edit(ThemeSnapshot.from(state,LauncherTheme.valueOf(it)))}
                                     if(value.theme==LauncherTheme.PS4.name) {
-                                        Text("Acentos PS4", style=MaterialTheme.typography.titleSmall)
+                                        Text("Paleta PS4", style=MaterialTheme.typography.titleSmall)
                                         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                                            listOf(AccentChoice.DEFAULT to "Clásico", AccentChoice.BLUE to "Azul hielo", AccentChoice.WHITE to "Blanco").forEach { (accent, title) ->
-                                                FilterChip(selected=value.accent==accent.name, onClick={compareOriginal=false;editor.edit(value.copy(accent=accent.name))}, enabled=!busy, label={Text(title)})
+                                            listOf(Ps4Palette.CLASSIC to "Azul clásico", Ps4Palette.MIDNIGHT to "Medianoche", Ps4Palette.WHITE to "Blanco").forEach { (palette, title) ->
+                                                FilterChip(selected=value.ps4Palette==palette.name, onClick={compareOriginal=false;editor.edit(value.copy(ps4Palette=palette.name))}, enabled=!busy, label={Text(title)})
                                             }
                                         }
-                                        Text("Cambian el acento; tu fondo, iconos y sonidos se conservan.", style=MaterialTheme.typography.bodySmall)
+                                        Text("Vista previa de fondo, superficies y texto. Guarda y usa para aplicar.", style=MaterialTheme.typography.bodySmall)
                                         EditorSlider("Intensidad del fondo",(100-value.dim)*100/40,25..100,!busy,{editor.edit(value.copy(dim=100-it*40/100),false)},editor::finishGesture)
                                         EditorSlider("Tamaño de las placas",value.iconSize,32..60,!busy,{editor.edit(value.copy(iconSize=it),false)},editor::finishGesture)
                                     }
@@ -103,6 +103,11 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                                     state.retroImportMessage?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
                                     EditorSlider("Protección de lectura",value.dim,60..90,!busy,{editor.edit(value.copy(dim=it),false)},editor::finishGesture)
                                     Text("La imagen se copia al guardar. La configuración base se conserva.",style=MaterialTheme.typography.bodySmall)
+                                }
+                                3->{
+                                    ThemeSoundDraft(value.sound ?: state.soundSettings, LauncherTheme.valueOf(value.theme), !busy, onFinish=editor::finishGesture) { sound, commit ->
+                                        editor.edit(value.copy(sound=sound), commit)
+                                    }
                                 }
                                 else->{
                                     OutlinedTextField(name,{name=it.take(60)},label={Text("Nombre de la variante")},singleLine=true,enabled=!busy)

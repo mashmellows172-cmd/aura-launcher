@@ -52,10 +52,10 @@ internal fun Ps4QuickMenu(
     }
 
     val colors = MaterialTheme.colorScheme
-    val panel = if (highContrast) colors.surface else Color(0xF00A1628)
-    val ink = if (highContrast) colors.onSurface else Color.White
-    val muted = if (highContrast) colors.onSurfaceVariant else Color(0xFFAFC0CC)
-    val separator = if (highContrast) colors.outline else Color(0xFF0070D1)
+    val panel = colors.surface
+    val ink = colors.onSurface
+    val muted = colors.onSurfaceVariant
+    val separator = colors.outline
     val actionColors = ButtonDefaults.textButtonColors(
         contentColor = ink,
         disabledContentColor = muted,

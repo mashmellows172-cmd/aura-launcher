@@ -227,7 +227,7 @@ fun AuraAlertDialog(
     val settings = LocalMotionSettings.current
     val progress = remember { Animatable(1f) }
     val theme = if (LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme
-    val profile = theme?.let(::historicalProfile)?.takeUnless { LocalAppearance.current.highContrast }
+    val profile = theme?.let(::historicalProfile)?.withPs4Palette(LocalPs4Palette.current)?.takeUnless { LocalAppearance.current.highContrast }
     val gentle = settings.reduceMotion
     val noMotion = gentle || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
     LaunchedEffect(settings.menuEffect, noMotion, profile?.motion, settings.durationMs) {

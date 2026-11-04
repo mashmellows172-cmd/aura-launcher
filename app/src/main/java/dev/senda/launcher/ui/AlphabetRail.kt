@@ -48,7 +48,7 @@ fun AlphabetRail(
     if (letters.isEmpty()) return
     val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val highContrast = dev.senda.launcher.data.LocalAppearance.current.highContrast
-    val profile = historicalProfile(theme).takeUnless { highContrast }
+    val profile = historicalProfile(theme)?.withPs4Palette(dev.senda.launcher.ui.theme.LocalPs4Palette.current).takeUnless { highContrast }
     val markerShape = profile.chromeShape()
     val haptics = LocalHapticFeedback.current
     val effect = RailEffects.canonical(visualSettings.railEffect)

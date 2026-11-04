@@ -101,7 +101,7 @@ fun HistoricalPanel(
     selected: Boolean = false,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val profile = theme?.let(::historicalProfile)?.takeUnless { LocalAppearance.current.highContrast }
+    val profile = theme?.let(::historicalProfile)?.withPs4Palette(LocalPs4Palette.current)?.takeUnless { LocalAppearance.current.highContrast }
     val scheme = MaterialTheme.colorScheme
     val customShape = LocalRetroStyle.current.customHolder
     val shape = when {
@@ -165,4 +165,10 @@ fun HistoricalPanel(
     if (onClick == null) Surface(modifier, shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
     else Surface(onClick = onClick, interactionSource = interactions, modifier = modifier, shape = shape, color = bottom, contentColor = foreground,
         border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
+}
+
+internal fun HistoricalProfile.withPs4Palette(palette: dev.senda.launcher.data.Ps4Palette): HistoricalProfile {
+    if (material != HistoricalMaterial.CONSOLE) return this
+    val c = ps4PaletteColors(palette)
+    return copy(top=c.raised,bottom=c.surface,ink=c.ink,muted=c.muted,frame=c.muted,signal=c.accent)
 }

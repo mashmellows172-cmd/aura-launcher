@@ -583,7 +583,7 @@ fun HomeScreen(
     )
     if (showWidgetPicker) WidgetPickerDialog(widgetController) { showWidgetPicker = false }
     if (showFavoritesEditor) {
-        FavoritesEditorDialog(
+        FavoritesReorderDialog(
             favorites = favoriteApps,
             onSave = viewModel::setFavorites,
             onDismiss = { showFavoritesEditor = false },
@@ -952,67 +952,6 @@ private fun AuraMark() {
 }
 
 @Composable
-private fun FavoritesEditorDialog(
-    favorites: List<LaunchableApp>,
-    onSave: (List<String>) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    var orderedFavorites by remember(favorites) { mutableStateOf(favorites) }
-    AuraAlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Editar favoritas") },
-        text = {
-            if (orderedFavorites.isEmpty()) {
-                Text("Añade una app tocando su estrella en la lista.")
-            } else {
-                LazyColumn(Modifier.heightIn(max = 480.dp)) {
-                    itemsIndexed(orderedFavorites, key = { _, app -> app.packageName }) { index, app ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().height(56.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                app.label,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            IconButton(
-                                modifier = Modifier.semantics { contentDescription = "Subir ${app.label}" },
-                                enabled = index > 0,
-                                onClick = {
-                                    val updated = moveListItem(orderedFavorites, index, index - 1)
-                                    orderedFavorites = updated
-                                    onSave(updated.map(LaunchableApp::packageName))
-                                },
-                            ) { Text("â†‘", color = MaterialTheme.colorScheme.primary) }
-                            IconButton(
-                                modifier = Modifier.semantics { contentDescription = "Bajar ${app.label}" },
-                                enabled = index < orderedFavorites.lastIndex,
-                                onClick = {
-                                    val updated = moveListItem(orderedFavorites, index, index + 1)
-                                    orderedFavorites = updated
-                                    onSave(updated.map(LaunchableApp::packageName))
-                                },
-                            ) { Text("â†“", color = MaterialTheme.colorScheme.primary) }
-                            IconButton(
-                                modifier = Modifier.semantics { contentDescription = "Quitar ${app.label} de favoritas" },
-                                onClick = {
-                                    val updated = orderedFavorites.filterNot { it.packageName == app.packageName }
-                                    orderedFavorites = updated
-                                    onSave(updated.map(LaunchableApp::packageName))
-                                },
-                            ) { Text("×", color = MaterialTheme.colorScheme.error) }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Listo") } },
-    )
-}
-
-@Composable
 private fun HiddenAppsDialog(
     hiddenApps: List<LaunchableApp>,
     onShowApp: (LaunchableApp) -> Unit,
@@ -1262,8 +1201,8 @@ private fun AppRow(
         ) {
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
-                    .background(Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF173C78).copy(alpha=.72f),androidx.compose.ui.graphics.Color(0xFF001538).copy(alpha=.86f))),RoundedCornerShape(2.dp))
-                    .border(1.dp,androidx.compose.ui.graphics.Color.White.copy(alpha=.36f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
+                    .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant,MaterialTheme.colorScheme.surface)),RoundedCornerShape(2.dp))
+                    .border(1.dp,MaterialTheme.colorScheme.outline.copy(alpha=.6f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
             } else AppIcon(app, customIconUri, onLoadIcon)

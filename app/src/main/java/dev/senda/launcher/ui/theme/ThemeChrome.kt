@@ -32,7 +32,7 @@ internal fun HistoricalProfile?.chromeShape(): Shape = when (this?.material) {
 
 @Composable
 internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherTheme) {
-    val profile = historicalProfile(theme).takeUnless { dev.senda.launcher.data.LocalAppearance.current.highContrast }
+    val profile = historicalProfile(theme)?.withPs4Palette(dev.senda.launcher.ui.theme.LocalPs4Palette.current).takeUnless { dev.senda.launcher.data.LocalAppearance.current.highContrast }
     val console = theme == LauncherTheme.PS4 && profile != null
     val accent = MaterialTheme.colorScheme.primary
     val frame = MaterialTheme.colorScheme.outline.copy(alpha = .35f)

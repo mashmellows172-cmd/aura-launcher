@@ -82,8 +82,9 @@ internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithC
 /** Controller-button motif, decorative; the surrounding avatar retains its actual actions. */
 @Composable
 internal fun Ps4Mark() {
+    val ink = MaterialTheme.colorScheme.onSurface
     Canvas(Modifier.size(42.dp)) {
-        val w=size.width; val stroke=Stroke(1.5.dp.toPx()); val ink=Color.White
+        val w=size.width; val stroke=Stroke(1.5.dp.toPx())
         drawCircle(ink,w*.12f,Offset(w*.72f,w*.48f),style=stroke)
         drawRect(ink,Offset(w*.13f,w*.36f),Size(w*.23f,w*.23f),style=stroke)
         val triangle=Path().apply { moveTo(w*.5f,w*.10f);lineTo(w*.62f,w*.30f);lineTo(w*.38f,w*.30f);close() }
