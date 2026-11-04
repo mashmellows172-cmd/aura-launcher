@@ -69,7 +69,7 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
         awaitPointerEventScope { while(true) { awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() } } }
     }) {
         if(bitmap!=null&&!state.appearance.highContrast)Image(bitmap,null,Modifier.matchParentSize(),contentScale=ContentScale.Crop)
-        if(consoleBackground)Ps4Wallpaper(true,Modifier.matchParentSize())
+        if(consoleBackground)Ps4Wallpaper(true,Modifier.matchParentSize(), strength=(100-(state.themeFinishes[state.theme.name]?.wallpaperDim?:64))/40f)
         Column(Modifier.fillMaxSize().background(if(consoleBackground)androidx.compose.ui.graphics.Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color.Transparent,androidx.compose.ui.graphics.Color.Transparent)) else if(bitmap!=null&&!state.appearance.highContrast)wallpaperReadabilityScrim(state.themeFinishes[state.theme.name]?.wallpaperDim?:64,MaterialTheme.colorScheme.onBackground) else skin.wallpaper).then(if(bitmap==null&&!state.appearance.highContrast&&!consoleBackground)Modifier.skinPattern(skin)else Modifier).padding(horizontal=22.dp)) {
             Spacer(Modifier.height(if(compact)4.dp else 14.dp))
             Header(theme=state.theme,clockTime=time,avatarUri=state.avatarUri,widgetController=widgets,weatherPackage=state.weatherPackage?:"hr.dtakac.prognoza",reduceMotion=true,weatherMotion=state.headerSettings.weatherMotion,

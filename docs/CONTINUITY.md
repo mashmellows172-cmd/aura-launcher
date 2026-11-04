@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta60 checkpoint de desarrollo,4nov2026,0.40.0/code60: Continuar PS4, avatar con Quick Menu, reproductor con carátula/controles y editor con acentos/intensidad/placas. Compilación/lint en curso; NO instalada. Ver docs/BETA60.md. Última instalada beta58; lag permanece abierto.
+
 Beta59 candidata,4nov2026,0.39.1/code59: ajustes de caché, tiempos PS4 y centro de estado; aliases concretos de iconos. Build/lint2m37s,0 errores/35 advertencias/3 avisos. Firma compatible verificada; NO instalada por ADB offline. Lag y alcance completo pendientes. Ver docs/BETA59.md.
 
 Beta58 instalada el4 de noviembre de2026: 0.39.0-beta58/code58, fuente4aa155f recompilada en este equipo con firma compatible2eb417c5…; actualización ADB sin desinstalar. Build/lint3m1s,0 errores/35 advertencias/3 avisos; versión/hash del teléfono verificados. Fluidez y revisión visual pendientes. Ver docs/BETA58.md y docs/MASTER.md.

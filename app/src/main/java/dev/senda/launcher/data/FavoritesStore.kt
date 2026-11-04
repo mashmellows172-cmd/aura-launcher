@@ -42,6 +42,12 @@ data class VisualSettings(
 class FavoritesStore(private val context: Context) {
     private val store = context.applicationContext.settingsStore
     private val favoritesKey = stringPreferencesKey("favorite_packages")
+    // Local convenience only; not exported in configuration backups.
+    val lastLaunchedComponent: Flow<String?> = store.data.map { it[stringPreferencesKey("last_launched_component")] }
+    suspend fun setLastLaunchedComponent(value: String) {
+        store.edit { it[stringPreferencesKey("last_launched_component")] = value }
+    }
+
     private val hiddenPackagesKey = stringPreferencesKey("hidden_packages")
     private val themeKey = stringPreferencesKey("launcher_theme")
     private val wallpaperPrefix = "skin_wallpaper_"

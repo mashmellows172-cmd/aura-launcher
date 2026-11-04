@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 data class HomeUiState(
     val apps: List<LaunchableApp> = emptyList(),
     val favoritePackages: List<String> = emptyList(),
+    val lastLaunchedComponent: String? = null,
     val hiddenPackages: Set<String> = emptySet(),
     val theme: LauncherTheme = LauncherTheme.NOTHING,
     val skinWallpapers: Map<String, String> = emptyMap(),
@@ -118,6 +119,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             addAction(Intent.ACTION_PACKAGE_REPLACED)
             addDataScheme("package")
         }, ContextCompat.RECEIVER_EXPORTED)
+        viewModelScope.launch {
+            favoritesStore.lastLaunchedComponent.collect { component ->
+                _uiState.update { it.copy(lastLaunchedComponent = component) }
+            }
+        }
         viewModelScope.launch {
             favoritesStore.favorites.collect { packages ->
                 _uiState.update { it.copy(favoritePackages = packages) }
@@ -263,6 +269,14 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun launch(app: LaunchableApp) {
         runCatching { appsRepository.launch(app) }
+            .onSuccess {
+                val component = app.component.flattenToString()
+                _uiState.update { it.copy(lastLaunchedComponent = component) }
+                viewModelScope.launch {
+                    runCatching { favoritesStore.setLastLaunchedComponent(component) }
+                        .onFailure { error -> if (error is CancellationException) throw error }
+                }
+            }
             .onFailure { error ->
                 _uiState.update {
                     it.copy(errorMessage = error.localizedMessage ?: "No se pudo abrir ${app.label}.")

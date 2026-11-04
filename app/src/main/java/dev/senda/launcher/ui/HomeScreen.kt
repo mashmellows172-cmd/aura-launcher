@@ -350,9 +350,12 @@ fun HomeScreen(
     val lockDevice: () -> Unit = {
         if (!NotificationShadeService.lock()) showNotificationHelp = true
     }
-    val starts = remember(groupLetters, groups, favoriteApps, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
+    val recentApp = if (state.theme == LauncherTheme.PS4) visibleApps.firstOrNull {
+        it.component.flattenToString() == state.lastLaunchedComponent
+    } else null
+    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
-        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections }
+        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections + if (recentApp != null) 2 else 0 }
     }
     val activeLetter by remember(listState, starts) {
         derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
@@ -384,7 +387,7 @@ fun HomeScreen(
             )
         }
         val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
-        if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize(), listState)
+        if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize(), listState, strength = (100 - (state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64)) / 40f)
         Column(
         modifier = Modifier
             .fillMaxSize()
@@ -598,8 +601,8 @@ fun HomeScreen(
         val saving = LocalSystemPowerSaving.current
         val battery = context.getSystemService(android.os.BatteryManager::class.java)
             ?.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        val batteryStatus = battery?.takeIf { it in 0..100 }?.let { "Bater�a $it%" } ?: "Bater�a no disponible"
-        val playbackStatus = if (state.audioInfo.isPlaying) state.audioInfo.title ?: "Reproducci�n activa" else "Sin reproducci�n activa"
+        val batteryStatus = battery?.takeIf { it in 0..100 }?.let { "Batería $it%" } ?: "Batería no disponible"
+        val playbackStatus = if (state.audioInfo.isPlaying) state.audioInfo.title ?: "Reproducción activa" else "Sin reproducción activa"
         fun statusAction(action: () -> Unit): () -> Unit = { showStatusCenter = false; action() }
         StatusCenter(
             items = listOf(
@@ -695,7 +698,8 @@ internal fun Header(
         Column(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
-                    .combinedClickable(onClick = onAvatar, onLongClick = onPersonalization, onDoubleClick = onDoubleTap)
+                    .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
+                        onLongClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, onDoubleClick = onDoubleTap)
                     .semantics { contentDescription = "Cambiar avatar de Aura"; role = Role.Button
                         customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
                     }, contentAlignment = Alignment.Center) {
@@ -748,7 +752,7 @@ internal fun Header(
                 action("Inicio y gestos", callback = onHomeSettings),
                 action("Personalización y respaldo", callback = onPersonalization),
                 action("Sonidos y respuesta", callback = onSoundSettings),
-                action("Barra A–Z", callback = onAlphabetSettings),
+                action("Barra Aâ€“Z", callback = onAlphabetSettings),
                 action("Movimiento y efectos", callback = onVisualSettings),
                 action("Entrada tras desbloquear", callback = { unlockSettings = true }),
                 action("Centro de estado", callback = onStatusCenter),
@@ -898,7 +902,7 @@ private fun WeatherAppDialog(
                     }
                     items(apps.sortedBy { it.label.lowercase() }, key = { it.packageName }) { app ->
                         DropdownMenuItem(
-                            text = { Text(if (app.packageName == selectedPackage) "✓  ${app.label}" else app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            text = { Text(if (app.packageName == selectedPackage) "âœ“  ${app.label}" else app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             onClick = { onSelect(app.packageName) },
                         )
                     }
@@ -981,7 +985,7 @@ private fun FavoritesEditorDialog(
                                     orderedFavorites = updated
                                     onSave(updated.map(LaunchableApp::packageName))
                                 },
-                            ) { Text("↑", color = MaterialTheme.colorScheme.primary) }
+                            ) { Text("â†‘", color = MaterialTheme.colorScheme.primary) }
                             IconButton(
                                 modifier = Modifier.semantics { contentDescription = "Bajar ${app.label}" },
                                 enabled = index < orderedFavorites.lastIndex,
@@ -990,7 +994,7 @@ private fun FavoritesEditorDialog(
                                     orderedFavorites = updated
                                     onSave(updated.map(LaunchableApp::packageName))
                                 },
-                            ) { Text("↓", color = MaterialTheme.colorScheme.primary) }
+                            ) { Text("â†“", color = MaterialTheme.colorScheme.primary) }
                             IconButton(
                                 modifier = Modifier.semantics { contentDescription = "Quitar ${app.label} de favoritas" },
                                 onClick = {
@@ -1090,6 +1094,19 @@ internal fun AppSections(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
+        if (skinName == LauncherTheme.PS4.name) {
+            allApps.firstOrNull { it.component.flattenToString() == dashboardState.lastLaunchedComponent }?.let { app ->
+                item(key = "recent-heading", contentType = "heading") { SectionHeading("Continuar", 1, LauncherTheme.PS4) }
+                item(key = "recent-app", contentType = "app") {
+                    AppRow(app, isFavorite = app.packageName in favoritePackages, skinName = skinName,
+                        skinTitle = skinTitle, customIconUri = skinIcons["${skinName}_${app.packageName}"],
+                        listState = listState, visualSettings = visualSettings, rowKey = "recent-app",
+                        onLaunch = { onLaunch(app) }, onToggleFavorite = { onToggleFavorite(app) },
+                        onHide = { onHide(app) }, onChooseIcon = { onChooseIcon(app) },
+                        onResetIcon = { onResetIcon(app) }, onLoadIcon = onLoadIcon)
+                }
+            }
+        }
         if (favoriteApps.isNotEmpty()) {
             item(key = "favorites-heading", contentType = "heading") { SectionHeading("Tus favoritas", favoriteApps.size, LauncherTheme.valueOf(skinName)) }
             items(favoriteApps, key = { "favorite-${it.packageName}" }, contentType = { "app" }) { app ->
@@ -1268,7 +1285,7 @@ private fun AppRow(
                 Icon(Icons.Filled.MoreVert, "Detalles y accesos de ${app.label}", modifier = Modifier.size(20.dp))
             }
             if (isFavorite) {
-                // The section already identifies favorites; this quiet mark also works in A–Z/search.
+                // The section already identifies favorites; this quiet mark also works in Aâ€“Z/search.
                 Box(Modifier.padding(end = 12.dp).size(5.dp)
                     .background(MaterialTheme.colorScheme.primary, CircleShape))
             }

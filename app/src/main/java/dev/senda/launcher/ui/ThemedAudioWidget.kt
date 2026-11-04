@@ -99,6 +99,7 @@ fun ThemedAudioWidget(
             else -> ExitTransition.None
         }
     }
+    val console = theme == LauncherTheme.PS4
     val heroAccent = MaterialTheme.colorScheme.primary
     val heroLight = animateFloatAsState(if(expanded) 1f else 0f,
         if(motionDisabled) tween(0) else spring(dampingRatio=1f,stiffness=300f),label="media-light")
@@ -116,7 +117,7 @@ fun ThemedAudioWidget(
             }) {
             Row(Modifier.fillMaxWidth().heightIn(min = if (expanded) 80.dp else 56.dp).padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Box(Modifier.size(if (compact) 40.dp else 56.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(if (console) { if (compact) 56.dp else 80.dp } else if (compact) 40.dp else 56.dp).clip(RoundedCornerShape(if (theme == LauncherTheme.XPERIA || theme == LauncherTheme.RAZR) 2.dp else 8.dp)), contentAlignment = Alignment.Center) {
                     val art = info.artwork?.takeUnless { it.isRecycled }
                     if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     else ThemedAudioVisualizer(theme, scheme.primary, true, Modifier.fillMaxSize())
@@ -129,17 +130,17 @@ fun ThemedAudioWidget(
                         LauncherTheme.OPTIMUS -> "Tu momento musical"
                         LauncherTheme.XPERIA -> "En tu frecuencia"
                         LauncherTheme.RAZR -> "MEDIA PLAYER"
-                        LauncherTheme.PS4 -> "NOW PLAYING"
+                        LauncherTheme.PS4 -> "En reproducción"
                         else -> "En reproducción"
                     }, style = MaterialTheme.typography.labelSmall, color = scheme.onSurfaceVariant,
                         fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(title, style = MaterialTheme.typography.titleSmall,
+                    Text(title, style = if (console) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
                         fontWeight = when(theme) { LauncherTheme.PS4->FontWeight.Medium; LauncherTheme.SENSE,LauncherTheme.TOUCHWIZ,LauncherTheme.OPTIMUS->FontWeight.Bold; else->FontWeight.Normal },
                         color = scheme.onSurface, maxLines = if (compact) 1 else 2, overflow = TextOverflow.Ellipsis)
                     if (expanded && !compact) Text(if (info.generic) "Modo básico · tocar para configurar" else listOfNotNull(info.artist, info.appLabel).distinct().joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                if (expanded && !info.generic) {
+                if (expanded && !info.generic && !console) {
                     IconButton(onClick = { onPause(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPause,
                         modifier = Modifier.size(48.dp).semantics { contentDescription = "Pausar reproducción" }) {
                         MediaControlGlyph("pause", if (info.canPause) scheme.primary else scheme.onSurfaceVariant.copy(alpha = .4f))
@@ -160,7 +161,22 @@ fun ThemedAudioWidget(
                     }
                 }
             }
-            if (expanded) ThemedAudioVisualizer(theme, scheme.primary, motionDisabled,
+            if (expanded && console) {
+                if (!info.generic) Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                    horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    TextButton(onClick = { onPrevious(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPrevious,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Anterior") }
+                    FilledTonalButton(onClick = { onPause(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPause,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Pausar") }
+                    TextButton(onClick = { onNext(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canNext,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Siguiente") }
+                }
+                // Playback state owns the light; no decorative frame loop in the PS4 player.
+                Box(Modifier.fillMaxWidth().height(2.dp).drawWithCache {
+                    val strip = Brush.horizontalGradient(listOf(Color.Transparent, heroAccent, Color.Transparent))
+                    onDrawBehind { drawRect(strip, alpha = .35f + .4f * heroLight.value) }
+                })
+            } else if (expanded) ThemedAudioVisualizer(theme, scheme.primary, motionDisabled,
                 Modifier.fillMaxWidth().height(if (compact) 16.dp else 28.dp).padding(horizontal = 14.dp, vertical = 3.dp))
             }
         }

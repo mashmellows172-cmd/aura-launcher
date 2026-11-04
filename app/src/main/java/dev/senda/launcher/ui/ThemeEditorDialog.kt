@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -67,6 +68,17 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                             when(section){
                                 0->{
                                     EditorChoice("Tema base",value.theme,LauncherTheme.entries.map{it.name to it.title},!busy){editor.edit(ThemeSnapshot.from(state,LauncherTheme.valueOf(it)))}
+                                    if(value.theme==LauncherTheme.PS4.name) {
+                                        Text("Acentos PS4", style=MaterialTheme.typography.titleSmall)
+                                        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                                            listOf(AccentChoice.DEFAULT to "Clásico", AccentChoice.BLUE to "Azul hielo", AccentChoice.WHITE to "Blanco").forEach { (accent, title) ->
+                                                FilterChip(selected=value.accent==accent.name, onClick={compareOriginal=false;editor.edit(value.copy(accent=accent.name))}, enabled=!busy, label={Text(title)})
+                                            }
+                                        }
+                                        Text("Cambian el acento; tu fondo, iconos y sonidos se conservan.", style=MaterialTheme.typography.bodySmall)
+                                        EditorSlider("Intensidad del fondo",(100-value.dim)*100/40,25..100,!busy,{editor.edit(value.copy(dim=100-it*40/100),false)},editor::finishGesture)
+                                        EditorSlider("Tamaño de las placas",value.iconSize,32..60,!busy,{editor.edit(value.copy(iconSize=it),false)},editor::finishGesture)
+                                    }
                                     EditorChoice("Acento",value.accent,AccentChoice.entries.map{it.name to it.label},!busy){editor.edit(value.copy(accent=it))}
                                     EditorChoice("Contenedor",value.shape,ShapeChoice.entries.map{it.name to it.label},!busy){editor.edit(value.copy(shape=it))}
                                     EditorChoice("Tipografía",value.font,listOf("THEME" to "Del tema","NOTO" to "Noto Sans","MONO" to "Monoespaciada","CONDENSED" to "Condensada"),!busy){editor.edit(value.copy(font=it))}

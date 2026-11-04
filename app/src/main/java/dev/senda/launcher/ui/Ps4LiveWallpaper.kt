@@ -36,7 +36,8 @@ private class ConsoleScene {
 
 /** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
 @Composable
-internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listState: LazyListState? = null) {
+internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listState: LazyListState? = null, strength: Float = 1f) {
+    val decorationStrength = strength.coerceIn(0f, 1f)
     val context = LocalContext.current.applicationContext
     val power = remember(context) { context.getSystemService(PowerManager::class.java) }
     var saver by remember(power) { mutableStateOf(power?.isPowerSaveMode == true) }
@@ -108,7 +109,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         alpha=1f // Keep the full-screen layer opaque; avoid an offscreen alpha buffer.
     }.drawWithCache {
         val backdrop=Brush.linearGradient(listOf(Color(0xFF003087),Color(0xFF001343),Color(0xFF000817)),end=Offset(size.width*.8f,size.height))
-        val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
+        val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f*decorationStrength),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
         val ribbons=List(3) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
@@ -125,18 +126,18 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                 // Nested translucent surfaces approximate a soft cross-section without blur.
                 repeat(2) { layer ->
                     ribbon.surface(1f-layer*.42f)
-                    drawPath(ribbon.fill,glass,alpha=.78f+light*.3f)
+                    drawPath(ribbon.fill,glass,alpha=(.78f+light*.3f)*decorationStrength)
                 }
                 glowStrokes.forEachIndexed { index, stroke ->
-                    drawPath(ribbon.crest,edge,alpha=(.06f+index*.025f+light*.12f),style=stroke)
+                    drawPath(ribbon.crest,edge,alpha=(.06f+index*.025f+light*.12f)*decorationStrength,style=stroke)
                 }
-                drawPath(ribbon.crest,edge,alpha=.32f+light,style=hairline)
+                drawPath(ribbon.crest,edge,alpha=(.32f+light)*decorationStrength,style=hairline)
             }
             // Tiny light motes use the scene clock; no independent particle jobs.
             repeat(14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
-                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=.11f+light*.15f)
+                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=(.11f+light*.15f)*decorationStrength)
             }
             drawRect(foregroundShade)
         }
