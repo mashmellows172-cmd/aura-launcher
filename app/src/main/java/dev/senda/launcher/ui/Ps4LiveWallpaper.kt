@@ -96,7 +96,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         }
     }
     Box(modifier.drawWithCache {
-        val base=Brush.linearGradient(listOf(Color(0xFF003FA6),Color(0xFF001D62),Color(0xFF000B2B)),end=Offset(size.width*.8f,size.height))
+        val base=Brush.linearGradient(listOf(Color(0xFF003087),Color(0xFF001343),Color(0xFF000817)),end=Offset(size.width*.8f,size.height))
         onDrawBehind { drawRect(base) }
     }) {
     Box(Modifier.matchParentSize().graphicsLayer {
@@ -107,14 +107,14 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         scaleX=1.04f;scaleY=1.04f
         alpha=1f // Keep the full-screen layer opaque; avoid an offscreen alpha buffer.
     }.drawWithCache {
-        val backdrop=Brush.linearGradient(listOf(Color(0xFF003FA6),Color(0xFF001D62),Color(0xFF000B2B)),end=Offset(size.width*.8f,size.height))
-        val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.42f),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
+        val backdrop=Brush.linearGradient(listOf(Color(0xFF003087),Color(0xFF001343),Color(0xFF000817)),end=Offset(size.width*.8f,size.height))
+        val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
         val ribbons=List(3) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
         val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
         val hairline=Stroke(.65.dp.toPx())
-        val foregroundShade=Brush.horizontalGradient(listOf(Color(0xFF000E30).copy(alpha=.24f),Color.Transparent))
+        val foregroundShade=Brush.horizontalGradient(listOf(Color(0xFF000817).copy(alpha=.42f),Color(0xFF000E30).copy(alpha=.16f),Color.Transparent))
         onDrawBehind {
             drawRect(backdrop)
             drawRect(atmosphere)

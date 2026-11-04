@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta57 candidata en codex/beta56-delegated: barra PS4 funcional, placas, Quick Menu agrupado, ficha y fondo refinados. Ver BETA57.md. Build/lint correctos4m30s,0 errores; no instalada por incompatibilidad de firma con beta55. No perder datos mediante otra migración sin aprobación explícita.
+
 Beta56 candidata en codex/beta56-delegated: controlador de refresco integrado por Codex sobre beta55, con auditoría improve-animations y revisión Ollama descartada. Build/lint correctos; Motorola conectado, instalación bloqueada por firma incompatible. Ver BETA56.md. No repetir la migración ni instalar con clave original antigua.
 
 Beta55 (0.36.4/code55), 3nov2026: foco visual PS4 solo al terminar el swipe. Compilación/lint correctos e instalación/hash verificados. Dos muestras no confirman mejora; fluidez sigue pendiente. Ver docs/BETA55.md y docs/MASTER.md.

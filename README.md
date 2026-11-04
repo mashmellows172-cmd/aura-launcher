@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta57 candidata,0.38.0/code57: cinco refinamientos PS4 aprobados; ver docs/BETA57.md. Última entrega física documentada:beta55. Instalación bloqueada por firma mientras no se recupere la clave compatible.
+
 Beta56 candidata,0.37.0/code56: refresco por interacción con liberación en reposo. No instalada; validación en docs/BETA56.md. Última instalación documentada:beta55.
 
 Beta55 (0.36.4/code55), 3nov2026: foco visual PS4 solo al terminar el swipe. Compilación/lint correctos e instalación/hash verificados. Dos muestras no confirman mejora; fluidez sigue pendiente. Ver docs/BETA55.md y docs/MASTER.md.

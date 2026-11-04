@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta57 candidata,0.38.0/code57,3nov2026: cinco refinamientos PS4 aprobados: barra funcional visible, placas definidas, Quick Menu agrupado, ficha jerarquizada y fondo azul profundo estático. Build/lint correctos4m30s,0 errores; instalación bloqueada por firma incompatible con beta55. Ver docs/BETA57.md.
+
 Beta56 candidata,0.37.0/code56,3nov2026: preferencia120Hz ligada a interacción y liberación al reposar/pausar/ahorro/modo ligero; fondo estático conservado. Compilación/lint correctos, instalación bloqueada por firma incompatible. Ver docs/BETA56.md.
 
 ## 0.36.4-beta55 · 3 de noviembre de 2026 · comparación de foco PS4

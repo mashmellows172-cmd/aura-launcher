@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
@@ -111,21 +113,45 @@ internal fun Ps4QuickMenu(
                                 .verticalScroll(rememberScrollState())
                                 .padding(bottom = 24.dp),
                         ) {
-                            Text(
-                                text = "Menú rápido",
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
-                                    .semantics { heading() },
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                            HorizontalDivider(color = separator)
+                            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                                Ps4Mark()
+                                Column(Modifier.weight(1f)) {
+                                    Text("Aura", style = MaterialTheme.typography.labelLarge, color = muted)
+                                    Text("Menú rápido", modifier = Modifier.semantics { heading() },
+                                        style = MaterialTheme.typography.headlineSmall)
+                                }
+                            }
+                            HorizontalDivider(color = separator.copy(alpha = .65f))
                             Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
                                 mediaContent()
                             }
                             actions.forEach { action ->
+                                val section = when (action.label) {
+                                    "Tema visual" -> "Inicio"
+                                    "Clima en el reloj" -> "Clima y perfil"
+                                    "Inicio y gestos" -> "Configuración"
+                                    "Sonidos y respuesta" -> "Sonido y movimiento"
+                                    "Centro de estado" -> "Estado y herramientas"
+                                    else -> null
+                                }
+                                if (section != null) {
+                                    HorizontalDivider(Modifier.padding(top = 12.dp), color = separator.copy(alpha = .3f))
+                                    Text(section, modifier = Modifier.padding(start = 20.dp, top = 14.dp, bottom = 4.dp)
+                                        .semantics { heading() }, style = MaterialTheme.typography.labelLarge, color = muted)
+                                }
+                                val interaction = remember(action.label) { MutableInteractionSource() }
+                                val pressed by interaction.collectIsPressedAsState()
+                                var focused by remember(action.label) { mutableStateOf(false) }
                                 TextButton(
                                     onClick = action.onClick,
                                     enabled = action.enabled,
-                                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                                    interactionSource = interaction,
+                                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                                        .onFocusChanged { focused = it.hasFocus }
+                                        .background(if (action.enabled && (focused || pressed))
+                                            ink.copy(alpha = .14f) else Color.Transparent),
                                     shape = RectangleShape,
                                     colors = actionColors,
                                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 14.dp),

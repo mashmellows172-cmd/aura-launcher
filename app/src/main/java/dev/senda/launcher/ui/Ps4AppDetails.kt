@@ -9,12 +9,21 @@ import android.graphics.drawable.Drawable
 import android.os.Process
 import android.util.LruCache
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -124,17 +134,33 @@ internal fun Ps4AppDetails(
     }
     AuraAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(ps4ReadableLabel(app.label, "Aplicación"), maxLines = 3, overflow = TextOverflow.Ellipsis) },
+        title = {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(64.dp)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = .12f), RoundedCornerShape(2.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = .6f), RoundedCornerShape(2.dp)),
+                    contentAlignment = Alignment.Center) {
+                    AppIcon(app, customIconUri, onLoadIcon)
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(ps4ReadableLabel(app.label, "Aplicación"), style = MaterialTheme.typography.titleLarge,
+                        maxLines = 3, overflow = TextOverflow.Ellipsis)
+                    Text(category, style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth().heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                AppIcon(app, customIconUri, onLoadIcon)
-                Text(category, style = MaterialTheme.typography.bodyMedium)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .4f))
                 Text("Accesos directos", style = MaterialTheme.typography.titleSmall)
                 if (state.message.isNotEmpty()) Text(state.message, style = MaterialTheme.typography.bodyMedium)
                 state.shortcuts.forEach { shortcut ->
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .2f))
                     TextButton(
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                         onClick = {
@@ -164,7 +190,8 @@ internal fun Ps4AppDetails(
             }
         },
         confirmButton = {
-            TextButton(onClick = onLaunch, modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
+            Button(onClick = onLaunch, shape = RoundedCornerShape(2.dp),
+                modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
         },
         dismissButton = {
             TextButton(onClick = onDismiss, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }

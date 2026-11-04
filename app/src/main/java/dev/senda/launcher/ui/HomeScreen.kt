@@ -688,7 +688,6 @@ internal fun Header(
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
     if (theme == LauncherTheme.PS4) {
-        var detailsExpanded by rememberSaveable { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
@@ -701,11 +700,9 @@ internal fun Header(
                     else Ps4Mark()
                 }
                 Column(Modifier.weight(1f).heightIn(min = 56.dp)
-                    .clickable { detailsExpanded = !detailsExpanded }
-                    .semantics { stateDescription = if (detailsExpanded) "Clima y fecha expandidos" else "Clima y fecha contraídos" }
                     .padding(start = 8.dp, top = 7.dp, bottom = 7.dp)) {
                     Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
-                    Text(if (detailsExpanded) "Ocultar detalles ▴" else "Clima y fecha ▾", style = MaterialTheme.typography.labelSmall,
+                    Text("Inicio", style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Box(Modifier.widthIn(min = 60.dp).heightIn(min = 56.dp).clickable(onClick = onOpenAlarms)
@@ -716,15 +713,15 @@ internal fun Header(
                     Icon(Icons.Filled.Settings, "Abrir menú rápido")
                 }
             }
-            if (detailsExpanded) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
+                Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                     HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, Modifier.weight(1f))
                     HeaderWeather(widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", reduceMotion, onOpenWeather, onWeatherConnection)
                 }
                 if (showMotivationalHeader) Text(
                     remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) },
                     style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 8.dp))
-            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
         if (themeMenuExpanded) {
             fun action(label: String, enabled: Boolean = true, callback: () -> Unit) =
@@ -1238,8 +1235,8 @@ private fun AppRow(
         ) {
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
-                    .background(Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF173C78).copy(alpha=.65f),androidx.compose.ui.graphics.Color(0xFF001538).copy(alpha=.7f))),RoundedCornerShape(2.dp))
-                    .border(.8.dp,androidx.compose.ui.graphics.Color.White.copy(alpha=.24f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
+                    .background(Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF173C78).copy(alpha=.72f),androidx.compose.ui.graphics.Color(0xFF001538).copy(alpha=.86f))),RoundedCornerShape(2.dp))
+                    .border(1.dp,androidx.compose.ui.graphics.Color.White.copy(alpha=.36f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
             } else AppIcon(app, customIconUri, onLoadIcon)
