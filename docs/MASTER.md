@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta60 instalada el4 de noviembre de2026:0.40.0-beta60/code60. Build/lint2m37s,0 errores/35 advertencias/3 avisos; firma compatible, actualización ADB y versión/hash posterior verificados. Sin revisión visual ni mejora de fluidez acreditada. Ver docs/BETA60.md.
+
 Beta60 checkpoint de desarrollo,4nov2026,0.40.0/code60: Continuar PS4, avatar con Quick Menu, reproductor con carátula/controles y editor con acentos/intensidad/placas. Compilación/lint en curso; NO instalada. Ver docs/BETA60.md. Última instalada beta58; lag permanece abierto.
 
 Beta59 candidata,4nov2026,0.39.1/code59: ajustes de caché, tiempos PS4 y centro de estado; aliases concretos de iconos. Build/lint2m37s,0 errores/35 advertencias/3 avisos. Firma compatible verificada; NO instalada por ADB offline. Lag y alcance completo pendientes. Ver docs/BETA59.md.
