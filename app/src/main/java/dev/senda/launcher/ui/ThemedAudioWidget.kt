@@ -66,8 +66,8 @@ fun ThemedAudioWidget(
     val powerSaver = rememberMotionPowerSaver()
     val expanded = audioInfo.isPlaying
     val motionDisabled = powerSaver || reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || preview || !android.animation.ValueAnimator.areAnimatorsEnabled()
-    val enterDuration = if (motionDisabled) 0 else 220
-    val exitDuration = if (motionDisabled) 0 else 160
+    val enterDuration = if (motionDisabled) 0 else Ps4Motion.enterMs
+    val exitDuration = if (motionDisabled) 0 else Ps4Motion.exitMs
     val enterCurve = remember { CubicBezierEasing(.23f, 1f, .32f, 1f) }
     val enterMotion = remember(theme, motionDisabled) {
         if (motionDisabled) EnterTransition.None else when (theme) {

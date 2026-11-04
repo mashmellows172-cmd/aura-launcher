@@ -92,3 +92,11 @@ internal fun Ps4Mark() {
         drawLine(ink,Offset(w*.60f,w*.69f),Offset(w*.40f,w*.89f),stroke.width)
     }
 }
+
+/** Shared finite timing for PS4 focus, overlays and media. */
+internal object Ps4Motion {
+    const val focusMs = 160
+    const val enterMs = 220
+    const val exitMs = 160
+    val easing = androidx.compose.animation.core.CubicBezierEasing(.23f, 1f, .32f, 1f)
+}

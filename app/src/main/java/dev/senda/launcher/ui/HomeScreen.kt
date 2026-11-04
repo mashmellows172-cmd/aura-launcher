@@ -596,6 +596,10 @@ fun HomeScreen(
     if (showThemePicker) ThemeEditorDialog(state, viewModel, widgetController) { showThemePicker = false }
     if (showStatusCenter) {
         val saving = LocalSystemPowerSaving.current
+        val battery = context.getSystemService(android.os.BatteryManager::class.java)
+            ?.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        val batteryStatus = battery?.takeIf { it in 0..100 }?.let { "Bater韆 $it%" } ?: "Bater韆 no disponible"
+        val playbackStatus = if (state.audioInfo.isPlaying) state.audioInfo.title ?: "Reproducci髇 activa" else "Sin reproducci髇 activa"
         fun statusAction(action: () -> Unit): () -> Unit = { showStatusCenter = false; action() }
         StatusCenter(
             items = listOf(
@@ -612,9 +616,9 @@ fun HomeScreen(
                 StatusItem("Respaldo", state.backupMessage ?: "Exporta una copia para conservar tu configuraci贸n",
                     "Abrir respaldo", statusAction { showPersonalization = true }),
                 StatusItem("Movimiento", if (LocalLightMode.current) "Modo ligero activo" else if (saving) "Ahorro del sistema activo" else "Preferencias visuales activas",
-                    "Movimiento y efectos", statusAction { showVisualSettings = true }),
+                    "Movimiento y efectos", statusAction { showVisualSettings = true }, group = "Rendimiento"),
                 StatusItem("Fluidez", "Muestra local de hasta 60 segundos",
-                    "Abrir diagn贸stico", statusAction { showStatusDiagnostics = true }),
+                    "Abrir diagn贸stico", statusAction { showStatusDiagnostics = true }, group = "Rendimiento"),
             ),
             movementStatus = "Conexiones y configuraci贸n de Aura",
             onDismiss = { showStatusCenter = false },
@@ -1316,6 +1320,8 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     val iconKey = "${app.component.flattenToString()}:${app.revision}:${pack?.pack?.packageName}:${pack?.pack?.revision}:$monochrome:$sourceUri:${if (monochrome) monoInk else 0}"
     val cached = remember(iconKey) { AppIconCache.get(iconKey) }
     val bitmap by key(iconKey, sourceUri) { produceState<ImageBitmap?>(initialValue = cached) {
+        // Cache hits already have their final image; avoid dispatching another IO job.
+        if (cached != null) return@produceState
         value = withContext(Dispatchers.IO) {
             val custom = sourceUri?.takeIf { cached == null }?.let { uri ->
                 loadLocalImage(context, uri.toUri(), 128)
@@ -1330,7 +1336,7 @@ internal fun AppIcon(app: LaunchableApp, customIconUri: String?, onLoadIcon: (La
     }
     }
     Box(
-        modifier = Modifier.size(appearance.iconSize.dp).animateContentSize(tween(style.motionMillis))
+        modifier = Modifier.size(appearance.iconSize.dp)
             .background(if (normal || preserveArtwork || bareNothing || bareConsole) androidx.compose.ui.graphics.Color.Transparent else if (monochrome) IndustrialTokens.iconBackground else MaterialTheme.colorScheme.surfaceVariant, holderShape)
             .then(if (retro.enabled && !normal && !monochrome && !preserveArtwork && !bareConsole) Modifier.background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), holderShape).border(.8.dp, MaterialTheme.colorScheme.outline, holderShape) else Modifier),
         contentAlignment = Alignment.Center,

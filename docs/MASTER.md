@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta59 candidata,4nov2026,0.39.1/code59: ajustes de caché, tiempos PS4 y centro de estado; aliases concretos de iconos. Build/lint2m37s,0 errores/35 advertencias/3 avisos. Firma compatible verificada; NO instalada por ADB offline. Lag y alcance completo pendientes. Ver docs/BETA59.md.
+
 ## Checkpoint vigente: beta58 instalada, 4 de noviembre de2026
 
 Fuente4aa155f, rama de entrega `codex/beta58-install`. Recompilada con la firma compatible de beta55: resuelto el bloqueo de instalación anterior sin migración ni desinstalación. Build/lint3m1s,0 errores/35 advertencias/3 avisos. Actualización ADB, code58/name y hash contrastados. [Evidencia](BETA58.md). La incidencia de fluidez permanece abierta; no se midió rendimiento durante esta instalación. Los estados candidatos inferiores son históricos.

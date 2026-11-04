@@ -48,7 +48,7 @@ internal fun Ps4QuickMenu(
     val entrance = remember { Animatable(if (noMotion) 1f else 0f) }
     LaunchedEffect(noMotion) {
         if (noMotion) entrance.snapTo(1f)
-        else entrance.animateTo(1f, tween(240, easing = FastOutSlowInEasing))
+        else entrance.animateTo(1f, tween(Ps4Motion.enterMs, easing = Ps4Motion.easing))
     }
 
     val colors = MaterialTheme.colorScheme

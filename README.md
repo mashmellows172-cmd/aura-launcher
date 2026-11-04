@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta59 candidata,4nov2026,0.39.1/code59: ajustes de caché, tiempos PS4 y centro de estado; aliases concretos de iconos. Build/lint2m37s,0 errores/35 advertencias/3 avisos. Firma compatible verificada; NO instalada por ADB offline. Lag y alcance completo pendientes. Ver docs/BETA59.md.
+
 Beta58 instalada el4 de noviembre de2026: 0.39.0-beta58/code58, fuente4aa155f recompilada en este equipo con firma compatible2eb417c5…; actualización ADB sin desinstalar. Build/lint3m1s,0 errores/35 advertencias/3 avisos; versión/hash del teléfono verificados. Fluidez y revisión visual pendientes. Ver docs/BETA58.md y docs/MASTER.md.
 
 Beta58 candidata,0.39.0/code58: glow móvil, Seda, reloj y multimedia temático; recuperación parcial de iconos de sistema. Ver docs/BETA58.md. No instalada por firma incompatible; última entrega física documentada beta55.

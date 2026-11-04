@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta59 candidata,4nov2026,0.39.1/code59: ajustes de caché, tiempos PS4 y centro de estado; aliases concretos de iconos. Build/lint2m37s,0 errores/35 advertencias/3 avisos. Firma compatible verificada; NO instalada por ADB offline. Lag y alcance completo pendientes. Ver docs/BETA59.md.
+
 Beta58 instalada el4 de noviembre de2026: 0.39.0-beta58/code58, fuente4aa155f recompilada en este equipo con firma compatible2eb417c5…; actualización ADB sin desinstalar. Build/lint3m1s,0 errores/35 advertencias/3 avisos; versión/hash del teléfono verificados. Fluidez y revisión visual pendientes. Ver docs/BETA58.md y docs/MASTER.md.
 
 Beta58 candidata, ver BETA58.md: glow vuelve durante scroll por petición explícita; nuevo Seda y multimedia. Iconos core por alias exacto recuperan prioridad; terceros genéricos siguen pendientes. Cinco propuestas de editor/galería rechazadas y no implementadas. No instalar con firma incompatible ni declarar lag resuelto.
