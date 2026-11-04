@@ -21,3 +21,15 @@ assembleBeta/lintBeta: BUILD SUCCESSFUL2m18s;0 errores/35 advertencias/3 avisos.
 `36d472388379189730440f543de5058b7efa337ba6f6c07ccc5bea72fd3d9479`
 
 Sin desinstalar ni borrar datos/cambiar permisos o ajustes del teléfono. No hubo suites automáticas ni revisión física de arrastre, preview, sonido o rendimiento. La instalación NO acredita solución del lag. Continuar con validación física y límites de respaldo descritos arriba. Estados pendientes anteriores son históricos.
+
+
+## Prueba física acotada — 4 de noviembre de2026
+Motorola con beta61/code61 confirmado. Editor de favoritas abierto desde Quick Menu. Las flechas cambiaron orden en borrador; Cancelar y reabrir devolvió el orden original (evidencia XML privada). Tres intentos de arrastre por ADB no movieron filas; no se interpretan como fallo del gesto táctil: usuario probó directamente y confirmó que se mueve. Volcado posterior mostró orden diferente, acreditando movimiento real en borrador. No se pulsó Guardar ni se eliminó ninguna favorita. Se tocó Cancelar después de esta prueba manual, pero el bloqueo de pantalla impidió nueva comprobación final de esa segunda cancelación. No se validaron todavía auto-scroll, guardado persistido ni rendimiento del arrastre.
+
+Revisión de colores definidos: contraste mínimo texto principal/secundario sobre los cinco fondos de paleta: Clásico7,99/6,41; Medianoche11,72/8,16; Blanco11,18/6,44. Cálculo sRGB de colores opacos definidos, no medición de captura ni prueba de todas las composiciones/transparencias. Prueba visual de paletas interrumpida por bloqueo del teléfono; pendiente de desbloqueo. Sin cambiar ajustes del sistema ni publicar evidencia privada.
+
+
+### Cierre de prueba física
+Desbloqueado nuevamente con el usuario. Arrastre táctil confirmado por usuario y orden cambiado contrastado en XML. Cancelar descartó el borrador manual: reabrir mostró las7 favoritas en orden original. Guardado probado por botones: se intercambiaron las dos primeras, Guardar/cerrar/reabrir conservó ese cambio; se restauró el orden inicial, Guardar/reabrir confirmó las7 identidades y posiciones originales. Se cerró el diálogo con Cancelar. No se eliminó ninguna favorita. No se validó auto-scroll con una lista más larga ni fluidez cuantificada del gesto.
+
+Paletas: abierta la vista previa del editor, seleccionadas Azul clásico/Medianoche/Blanco y capturas inspeccionadas juntas. Cambian fondo/superficies/texto; Blanco mostró texto oscuro legible y las tres conservaron iconos/imágenes. Cancelar cerró sin crear ni activar variante; captura de inicio confirmó vuelta a azul clásico. No se probó Guardar y usar una paleta nueva, horizontal/texto grande ni alto contraste en el dispositivo. El índice A-Z aparece muy comprimido en el área reducida de preview; no se modifica ese control en esta prueba. Evidencia XML/capturas privada fuera del repo, no publicar datos del teléfono.

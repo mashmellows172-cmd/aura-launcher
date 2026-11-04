@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Prueba física beta61,4nov2026: arrastre táctil confirmado y orden cambiado observado; flechas/Guardar/Cancelar/reapertura comprobados,7 favoritas restauradas. Tres paletas revisadas en preview y Cancelar devuelve azul clásico. Pendientes auto-scroll extendido, aplicación persistida de paleta y métricas. Ver docs/BETA61.md.
+
 Beta61 instalada,4nov2026,0.41.0/code61: favoritas por arrastre con Guardar/Cancelar, paletas PS4 Azul clásico/Medianoche/Blanco y borrador de sonidos con muestra. Build/lint2m18s,0 errores/35 advertencias/3 avisos; firma/versión/hash e instalación verificados. Revisión física de gestos/paletas pendiente. Ver docs/BETA61.md.
 
 Beta61 candidata,4nov2026,0.41.0/code61: favoritas por arrastre con borrador/Guardar/Cancelar, paletas PS4 completas y sonidos previsualizables. Compilación/lint en curso; no instalada. Última entrega física beta60. Ver docs/BETA61.md.
