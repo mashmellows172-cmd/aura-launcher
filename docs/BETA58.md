@@ -19,3 +19,15 @@ Dos agentes locales: revisión de pipeline/iconos y multimedia; supervisor integ
 
 ## Resultado final
 assembleBeta/lintBeta final correcto4m32s,50 tareas11 ejecutadas/39 al día;0 errores/35 advertencias/3 avisos. Diff revisado, SILK verificado en selector/normalización/backup. APK local beta/Aura-0.39.0-beta58.apk (ignorado). SHA25665B3272BFB68E2543957EB576573A8CEFB6005219937C1C76A355439B6A3D1CB; firma729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c. No instalada por incompatibilidad conocida; no se revisaron físicamente las nuevas entradas ni el coste del glow. No declarar lag corregido.
+
+
+## Instalación verificada — 4 de noviembre de2026
+
+Solicitud del usuario: instalar la última beta. Fuente remota4aa155f de codex/beta56-delegated, sin cambios de código; worktree independiente beta58 y rama codex/beta58-install. La prueba local beta56-raster-background se conserva aparte y NO forma parte de este APK.
+
+Recompilación assembleBeta/lintBeta con Android user home compatible: BUILD SUCCESSFUL en3m1s,50 tareas ejecutadas;0 errores/35 advertencias/3 avisos. Sin suites automáticas. Se leyó el certificado del APK instalado beta55 y se comparó con el candidato: ambos SHA256 `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`. La clave no se copió al repositorio.
+
+APK15.546.664bytes. SHA256 local e instalado coincidentes:
+`dac3d0f0d4f36b0204bb49c8f3ab05310cbd85a26601320923ea30b12eda7b71`
+
+ADB inalámbrico, `install -r`: Success. Consulta posterior confirma versionCode58/versionName0.39.0-beta58. No se desinstaló, borró datos ni cambiaron permisos/ajustes del teléfono. No se ejecutó comparación de swipe ni revisión visual: instalación correcta no demuestra corrección del lag. Los bloqueos por firma descritos arriba corresponden al candidato del otro entorno y quedan superados para este artefacto.

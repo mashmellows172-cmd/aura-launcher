@@ -1,5 +1,9 @@
 # Registro maestro de Aura Launcher
 
+## Checkpoint vigente: beta58 instalada, 4 de noviembre de2026
+
+Fuente4aa155f, rama de entrega `codex/beta58-install`. Recompilada con la firma compatible de beta55: resuelto el bloqueo de instalación anterior sin migración ni desinstalación. Build/lint3m1s,0 errores/35 advertencias/3 avisos. Actualización ADB, code58/name y hash contrastados. [Evidencia](BETA58.md). La incidencia de fluidez permanece abierta; no se midió rendimiento durante esta instalación. Los estados candidatos inferiores son históricos.
+
 Beta58 candidata: vuelve glow en scroll a petición del usuario (prevalece sobre pausa beta55), Seda y multimedia; restauración parcial de iconos core. BETA58.md contiene evidencia y pendientes. La repetición de terceras apps no se ha resuelto con esta prioridad. Última entrega física sigue beta55 por firma.
 
 Trabajo siguiente:beta57 candidata, cinco refinamientos PS4 aprobados. Plan design-plans/ps4-beta57.md, resultado BETA57.md. Beta55 sigue siendo última instalación documentada. Se conserva foco asentado y fondo estático deliberado; no cerrar incidencia de fluidez por pulido visual.

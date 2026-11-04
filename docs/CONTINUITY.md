@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta58 instalada el4 de noviembre de2026: 0.39.0-beta58/code58, fuente4aa155f recompilada en este equipo con firma compatible2eb417c5…; actualización ADB sin desinstalar. Build/lint3m1s,0 errores/35 advertencias/3 avisos; versión/hash del teléfono verificados. Fluidez y revisión visual pendientes. Ver docs/BETA58.md y docs/MASTER.md.
+
 Beta58 candidata, ver BETA58.md: glow vuelve durante scroll por petición explícita; nuevo Seda y multimedia. Iconos core por alias exacto recuperan prioridad; terceros genéricos siguen pendientes. Cinco propuestas de editor/galería rechazadas y no implementadas. No instalar con firma incompatible ni declarar lag resuelto.
 
 Beta57 candidata en codex/beta56-delegated: barra PS4 funcional, placas, Quick Menu agrupado, ficha y fondo refinados. Ver BETA57.md. Build/lint correctos4m30s,0 errores; no instalada por incompatibilidad de firma con beta55. No perder datos mediante otra migración sin aprobación explícita.
