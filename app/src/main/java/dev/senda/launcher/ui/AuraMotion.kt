@@ -140,6 +140,13 @@ internal fun GraphicsLayerScope.applyAuraMotion(position: Float, velocity: Float
     val direction = if (velocity < 0f) -1f else 1f
     cameraDistance = max(size.width, size.height).coerceAtLeast(1f) * MotionTokens.cameraDistanceFactor
     when (settings.motion) {
+        "SILK" -> {
+            // Gentle depth with no rotation: a lightweight alternative to the stronger profiles.
+            val scale = 1f - distance * .025f * energy
+            scaleX = scale; scaleY = scale
+            translationY = direction * distance * 6.dp.toPx() * energy
+            alpha = 1f - distance * .06f * energy
+        }
         "FOLD" -> {
             transformOrigin = TransformOrigin(.5f, if (p < 0) 1f else 0f)
             rotationX = -p * MotionTokens.foldDegrees * energy

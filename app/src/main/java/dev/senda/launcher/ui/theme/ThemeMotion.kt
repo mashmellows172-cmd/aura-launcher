@@ -41,13 +41,23 @@ fun rememberHistoricalPhase(theme: LauncherTheme, moving: Boolean, reduced: Bool
 @Composable
 fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean): State<Float> {
     val phase = remember { Animatable(1f) }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var resumed by remember(lifecycle) { mutableStateOf(lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
+    DisposableEffect(lifecycle) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, _ ->
+            resumed = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+        }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer) }
+    }
     var previous by remember { mutableStateOf(value) }
-    LaunchedEffect(value, theme, reduced) {
-        if (reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(1f); previous = value; return@LaunchedEffect }
+    LaunchedEffect(value, theme, reduced, resumed) {
+        if (!resumed || reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(1f); previous = value; return@LaunchedEffect }
         if (previous == value) return@LaunchedEffect
         previous = value
         phase.snapTo(0f)
-        phase.animateTo(1f, tween(historicalProfile(theme)?.durationMs ?: 240))
+        phase.animateTo(1f, tween((historicalProfile(theme)?.durationMs ?: 240).coerceIn(160, 280),
+            easing = androidx.compose.animation.core.FastOutSlowInEasing))
     }
     return phase.asState()
 }

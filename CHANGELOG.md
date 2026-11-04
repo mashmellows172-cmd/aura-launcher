@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta58 candidata,0.39.0/code58: glow PS4 móvil restaurado, perfil Seda, cambio de minuto y siete entradas/salidas multimedia; prioridad de iconos propios para apps del sistema en cinco temas. Build/lint correctos4m32s,0 errores. Restauración parcial; terceros pospuestos. Ver BETA58.md; instalación bloqueada por firma.
+
 Beta57 candidata,0.38.0/code57,3nov2026: cinco refinamientos PS4 aprobados: barra funcional visible, placas definidas, Quick Menu agrupado, ficha jerarquizada y fondo azul profundo estático. Build/lint correctos4m30s,0 errores; instalación bloqueada por firma incompatible con beta55. Ver docs/BETA57.md.
 
 Beta56 candidata,0.37.0/code56,3nov2026: preferencia120Hz ligada a interacción y liberación al reposar/pausar/ahorro/modo ligero; fondo estático conservado. Compilación/lint correctos, instalación bloqueada por firma incompatible. Ver docs/BETA56.md.

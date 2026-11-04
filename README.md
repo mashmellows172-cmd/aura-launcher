@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta58 candidata,0.39.0/code58: glow móvil, Seda, reloj y multimedia temático; recuperación parcial de iconos de sistema. Ver docs/BETA58.md. No instalada por firma incompatible; última entrega física documentada beta55.
+
 Beta57 candidata,0.38.0/code57: cinco refinamientos PS4 aprobados; ver docs/BETA57.md. Última entrega física documentada:beta55. Instalación bloqueada por firma mientras no se recupere la clave compatible.
 
 Beta56 candidata,0.37.0/code56: refresco por interacción con liberación en reposo. No instalada; validación en docs/BETA56.md. Última instalación documentada:beta55.

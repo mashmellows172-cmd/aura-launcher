@@ -4,6 +4,8 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -20,6 +22,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -63,13 +66,45 @@ fun ThemedAudioWidget(
     val powerSaver = rememberMotionPowerSaver()
     val expanded = audioInfo.isPlaying
     val motionDisabled = powerSaver || reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || preview || !android.animation.ValueAnimator.areAnimatorsEnabled()
-    val duration = if (motionDisabled) 0 else historicalProfile(theme)?.durationMs ?: 240
+    val enterDuration = if (motionDisabled) 0 else 220
+    val exitDuration = if (motionDisabled) 0 else 160
+    val enterCurve = remember { CubicBezierEasing(.23f, 1f, .32f, 1f) }
+    val enterMotion = remember(theme, motionDisabled) {
+        if (motionDisabled) EnterTransition.None else when (theme) {
+            LauncherTheme.NOTHING -> scaleIn(tween(enterDuration, easing = enterCurve), initialScale = .985f)
+            LauncherTheme.SENSE -> slideInVertically(tween(enterDuration, easing = enterCurve)) { it / 12 }
+            LauncherTheme.TOUCHWIZ -> scaleIn(tween(enterDuration, easing = enterCurve), initialScale = .97f,
+                transformOrigin = TransformOrigin(.5f, 1f))
+            LauncherTheme.OPTIMUS -> slideInHorizontally(tween(enterDuration, easing = enterCurve)) { -it / 16 }
+            LauncherTheme.XPERIA -> slideInHorizontally(tween(enterDuration, easing = enterCurve)) { it / 16 }
+            LauncherTheme.RAZR -> scaleIn(tween(enterDuration, easing = enterCurve), initialScale = .96f,
+                transformOrigin = TransformOrigin(.5f, 0f))
+            LauncherTheme.PS4 -> slideInVertically(tween(enterDuration, easing = enterCurve)) { it / 24 } +
+                scaleIn(tween(enterDuration, easing = enterCurve), initialScale = .99f)
+            else -> EnterTransition.None
+        }
+    }
+    val exitMotion = remember(theme, motionDisabled) {
+        if (motionDisabled) ExitTransition.None else when (theme) {
+            LauncherTheme.NOTHING -> scaleOut(tween(exitDuration, easing = FastOutLinearInEasing), targetScale = .985f)
+            LauncherTheme.SENSE -> slideOutVertically(tween(exitDuration, easing = FastOutLinearInEasing)) { it / 12 }
+            LauncherTheme.TOUCHWIZ -> scaleOut(tween(exitDuration, easing = FastOutLinearInEasing), targetScale = .97f,
+                transformOrigin = TransformOrigin(.5f, 1f))
+            LauncherTheme.OPTIMUS -> slideOutHorizontally(tween(exitDuration, easing = FastOutLinearInEasing)) { -it / 16 }
+            LauncherTheme.XPERIA -> slideOutHorizontally(tween(exitDuration, easing = FastOutLinearInEasing)) { it / 16 }
+            LauncherTheme.RAZR -> scaleOut(tween(exitDuration, easing = FastOutLinearInEasing), targetScale = .96f,
+                transformOrigin = TransformOrigin(.5f, 0f))
+            LauncherTheme.PS4 -> slideOutVertically(tween(exitDuration, easing = FastOutLinearInEasing)) { it / 24 } +
+                scaleOut(tween(exitDuration, easing = FastOutLinearInEasing), targetScale = .99f)
+            else -> ExitTransition.None
+        }
+    }
     val heroAccent = MaterialTheme.colorScheme.primary
     val heroLight = animateFloatAsState(if(expanded) 1f else 0f,
         if(motionDisabled) tween(0) else spring(dampingRatio=1f,stiffness=300f),label="media-light")
     AnimatedVisibility(audioInfo.isPlaying || recentlyPlaying, modifier = modifier,
-        enter = fadeIn(tween(duration)),
-        exit = fadeOut(tween(duration.coerceAtMost(200))) + shrinkVertically(tween(duration.coerceAtMost(240)))) {
+        enter = fadeIn(tween(enterDuration, easing = enterCurve)) + enterMotion,
+        exit = fadeOut(tween(exitDuration, easing = FastOutLinearInEasing)) + exitMotion) {
         HistoricalPanel(theme, Modifier.fillMaxWidth().animateContentSize(if(motionDisabled) tween(0) else spring(dampingRatio=1f,stiffness=300f)), onClick = if (preview) null else ({ if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId) })) {
             val scheme = MaterialTheme.colorScheme
             val compact = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE || LocalDensity.current.fontScale > 1.5f

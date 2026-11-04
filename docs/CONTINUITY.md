@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta58 candidata, ver BETA58.md: glow vuelve durante scroll por petición explícita; nuevo Seda y multimedia. Iconos core por alias exacto recuperan prioridad; terceros genéricos siguen pendientes. Cinco propuestas de editor/galería rechazadas y no implementadas. No instalar con firma incompatible ni declarar lag resuelto.
+
 Beta57 candidata en codex/beta56-delegated: barra PS4 funcional, placas, Quick Menu agrupado, ficha y fondo refinados. Ver BETA57.md. Build/lint correctos4m30s,0 errores; no instalada por incompatibilidad de firma con beta55. No perder datos mediante otra migración sin aprobación explícita.
 
 Beta56 candidata en codex/beta56-delegated: controlador de refresco integrado por Codex sobre beta55, con auditoría improve-animations y revisión Ollama descartada. Build/lint correctos; Motorola conectado, instalación bloqueada por firma incompatible. Ver BETA56.md. No repetir la migración ni instalar con clave original antigua.

@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta58 candidata: vuelve glow en scroll a petición del usuario (prevalece sobre pausa beta55), Seda y multimedia; restauración parcial de iconos core. BETA58.md contiene evidencia y pendientes. La repetición de terceras apps no se ha resuelto con esta prioridad. Última entrega física sigue beta55 por firma.
+
 Trabajo siguiente:beta57 candidata, cinco refinamientos PS4 aprobados. Plan design-plans/ps4-beta57.md, resultado BETA57.md. Beta55 sigue siendo última instalación documentada. Se conserva foco asentado y fondo estático deliberado; no cerrar incidencia de fluidez por pulido visual.
 
 Trabajo siguiente:beta56 candidata en codex/beta56-delegated; solicitud de refresco ligada a interacción, validación en BETA56.md. Beta55 sigue como última entrega física documentada. No se cierra incidencia swipe PS4 por esta solicitud de tasa.

@@ -53,7 +53,7 @@ class SettingsBackup(private val context: Context) {
                         key.startsWith("skin_accent_") -> require(value in AccentChoice.entries.map { it.name }) { "Acento no válido" }
                         key.startsWith("skin_icons_") -> require(value in IconTreatment.entries.map { it.name }) { "Estilo de iconos no válido" }
                         key.startsWith("skin_shape_") -> require(value in ShapeChoice.entries.map { it.name }) { "Forma no válida" }
-                        key == "visual_motion" -> require(value in setOf("AURA_FLOW", "CUBE", "PRISM", "ORBIT", "RIPPLE", "GLIDE", "DEPTH", "FOLD", "WAVE", "CASCADE", "TILT", "NONE")) { "Perfil desconocido" }
+                        key == "visual_motion" -> require(value in setOf("AURA_FLOW", "CUBE", "PRISM", "ORBIT", "RIPPLE", "GLIDE", "DEPTH", "FOLD", "WAVE", "CASCADE", "TILT", "SILK", "NONE")) { "Perfil desconocido" }
                         key in setOf("favorite_packages", "hidden_packages") -> require(value.split('\n').size <= 2000 && value.split('\n').all { it.isEmpty() || packagePattern.matches(it) }) { "Lista de apps inválida" }
                         key == "weather_app_package" || key.startsWith("icon_pack_") -> require(value.isEmpty() || packagePattern.matches(value)) { "Paquete inválido" }
                         imageKey(key) -> require(value == "asset:$key") { "Referencia de imagen inválida" }

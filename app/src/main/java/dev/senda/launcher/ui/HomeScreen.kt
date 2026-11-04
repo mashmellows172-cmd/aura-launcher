@@ -707,7 +707,13 @@ internal fun Header(
                 }
                 Box(Modifier.widthIn(min = 60.dp).heightIn(min = 56.dp).clickable(onClick = onOpenAlarms)
                     .semantics { contentDescription = "Abrir alarmas · $clockTime" }, contentAlignment = Alignment.Center) {
-                    Text(clockTime, fontSize = 20.sp, fontWeight = FontWeight.Light)
+                    val clockReduced = reduceMotion || LocalAppearance.current.highContrast
+                    val clockChange = dev.senda.launcher.ui.theme.rememberClockChange(clockTime, theme, clockReduced)
+                    Text(clockTime, modifier = Modifier.graphicsLayer {
+                        val p = clockChange.value
+                        alpha = .7f + .3f * p
+                        translationY = if (clockReduced) 0f else (1f-p)*3.dp.toPx()
+                    }, fontSize = 20.sp, fontWeight = FontWeight.Light)
                 }
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
                     Icon(Icons.Filled.Settings, "Abrir menú rápido")
@@ -1204,15 +1210,15 @@ private fun AppRow(
     // The result changes once per focused item, not once per scroll pixel.
     val focusedKey = LocalPs4FocusedKey.current
     val centered by remember(focusedKey, rowKey, console, listState) {
-        // Settle the visual focus after scrolling; navigation audio keeps its live key.
-        derivedStateOf { console && listState?.isScrollInProgress != true && rowKey != null && focusedKey.value == rowKey }
+        // Restore live focus while scrolling, using the shared nearest key rather than per-row scans.
+        derivedStateOf { console && rowKey != null && focusedKey.value == rowKey }
     }
     val category = if (console) rememberPs4AppCategory(app, centered || rowFocused, listState?.isScrollInProgress == true) else ""
     if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon,
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val focusProgress = animateFloatAsState(if (console && (centered || rowFocused || pressed)) 1f else 0f,
-        if (still) tween(0) else spring(dampingRatio = 1f, stiffness = 380f), label="ps4-row-focus")
+        tween(if (still) 0 else 160, easing=androidx.compose.animation.core.FastOutSlowInEasing), label="ps4-row-focus")
     Row(
         modifier = modifier.fillMaxWidth().heightIn(min = if(console) maxOf(appearance.rowHeight, appearance.iconSize+28).dp else appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,

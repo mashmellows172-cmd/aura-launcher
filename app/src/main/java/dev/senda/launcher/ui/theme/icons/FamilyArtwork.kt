@@ -37,16 +37,19 @@ private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boo
     }
 }
 
-/** True only for a known system function; modern/unmatched applications keep their actual drawable. */
+/** Exact package matches use authored system objects; third-party identities retain their own art. */
 @Composable
 fun renderFamilyAppIcon(app: LaunchableApp, theme: LauncherTheme, customHolder: Boolean): Boolean {
     if (theme == LauncherTheme.PS4) return renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
     if (theme !in iconFamilyThemes) return false
+    // FamilyCatalog contains explicit package aliases only, never category/name guesses.
+    if (theme != LauncherTheme.TOUCHWIZ) familyIconFor(app.packageName)?.let { icon ->
+        FamilyArtwork(icon, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
+        return true
+    }
     if (renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)) return true
     if (theme == LauncherTheme.TOUCHWIZ) return false
-    val icon = familyIconFor(app.packageName) ?: return false
-    FamilyArtwork(icon, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
-    return true
+    return false
 }
 
 /** Exact installed-app identity lookup; individual replacements are resolved before this function. */
