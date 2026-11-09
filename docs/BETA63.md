@@ -17,4 +17,11 @@ Skills aplicadas: Animate/Impeccable, Frontend Design, Accessible Animation, Pon
 
 `38c34430348d61d56c971a46cb4b9dd7e5a20f25958ace79a7ae84d7434a7ecb`
 
-El teléfono estaba mostrando otra aplicación tras la instalación. La prueba visual del selector y las escenas queda pendiente de que Aura esté visible. Sin medición de rendimiento nueva. Evidencia y ajustes privados fuera del repositorio.
+El teléfono estaba mostrando otra aplicación tras la instalación. La revisión posterior del selector y del proveedor se registra abajo. Sin medición de rendimiento nueva. Evidencia y ajustes privados fuera del repositorio.
+
+
+## Revisión en el Motorola
+
+Beta63 confirmada con Aura visible. En Inicio y gestos aparecieron Suave, Marcada y Espectacular. Se eligió Espectacular en borrador y se pulsó Probar. La muestra pasó de 20:24 a 20:25. Una captura durante el gesto mostró los dígitos entrando desde abajo con menor opacidad y otra mostró el valor asentado. Al cerrar y volver a abrir, el selector mostró Marcada, el valor inicial. Queda pendiente la prueba de persistencia al pulsar Aplicar intensidad.
+
+La cabecera mostró una lectura de Prognoza y su pulsación larga abrió Clima en el reloj. El panel confirmó el widget conectado y la misma localidad y temperatura que la cabecera. Queda pendiente observar cada escena meteorológica en movimiento. Las capturas y volcados se guardan fuera de Git. Se cerraron los paneles al terminar.

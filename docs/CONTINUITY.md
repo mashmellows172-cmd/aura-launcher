@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Revisión física de beta63 el 9 de noviembre de 2026. Selector del reloj y muestra Espectacular comprobados. Se confirmó que cerrar el borrador conserva el nivel original. La cabecera del clima y el panel muestran la misma lectura de Prognoza. Ver docs/BETA63.md.
+
 Beta63 instalada el 9 de noviembre de 2026. 0.43.0-beta63, código 63. Selector y muestra de intensidad del reloj, más escenas PS4 de clima por evento. Compilación y lint correctos, 0 errores. Versión, firma y hash instalado verificados. Ver docs/BETA63.md.
 
 Beta62 instalada el 9 de noviembre de 2026. 0.42.0-beta62, código 62. Reloj y clima PS4 ampliados con barridos breves. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado comprobados. Revisión visual en el Motorola y comparación breve documentadas en docs/BETA62.md.
