@@ -100,7 +100,8 @@ class FavoritesStore(private val context: Context) {
             WeatherCondition.fromStored(prefs[stringPreferencesKey("weather_scene_condition")])
         ).bounded(),
         showMotivationalHeader = prefs[booleanPreferencesKey("header_show_motivational")] ?: true,
-        showAudioWidget = prefs[booleanPreferencesKey("header_show_audio_widget")] ?: true
+        showAudioWidget = prefs[booleanPreferencesKey("header_show_audio_widget")] ?: true,
+        ps4ClockMotion = Ps4ClockMotion.fromStored(prefs[stringPreferencesKey("ps4_clock_motion")])
     ) }
     val rotation: Flow<HomeRotation> = store.data.map { prefs -> HomeRotation.entries.firstOrNull { it.name == prefs[stringPreferencesKey("home_rotation")] } ?: HomeRotation.SYSTEM }
     val gestures: Flow<GestureBindings> = store.data.map { prefs ->
@@ -125,6 +126,9 @@ class FavoritesStore(private val context: Context) {
         it[intPreferencesKey("weather_motion_duration")] = motion.durationMs
         it[intPreferencesKey("weather_motion_intensity")] = motion.intensity
     } }
+    suspend fun setPs4ClockMotion(value: Ps4ClockMotion) {
+        store.edit { it[stringPreferencesKey("ps4_clock_motion")] = value.name }
+    }
     suspend fun setRotation(value: HomeRotation) { store.edit { it[stringPreferencesKey("home_rotation")] = value.name } }
     suspend fun setGesture(direction: GestureDirection, action: String) {
         require(GestureBindings.valid(action))

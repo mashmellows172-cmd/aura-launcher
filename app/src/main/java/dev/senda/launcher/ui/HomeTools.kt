@@ -120,6 +120,13 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Inicio y gestos") }, text = {
         Column(Modifier.heightIn(max = HomeToolsSize.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
             Text("Cabecera", style = MaterialTheme.typography.titleSmall)
+            if (state.theme == dev.senda.launcher.data.LauncherTheme.PS4) {
+                Ps4ClockMotionControls(
+                    current = state.headerSettings.ps4ClockMotion,
+                    reduced = state.visualSettings.reduceMotion || state.appearance.highContrast || LocalSystemPowerSaving.current,
+                    onApply = viewModel::setPs4ClockMotion,
+                )
+            }
             SettingToggle("Frases motivacionales", state.headerSettings.showMotivationalHeader) { viewModel.setHeaderSettings(state.headerSettings.copy(showMotivationalHeader = it)) }
             SettingToggle("Widget multimedia automático", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
             if (state.headerSettings.showAudioWidget) MediaAccessControl(state.audioInfo.mediaAccess)

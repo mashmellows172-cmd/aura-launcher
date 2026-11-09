@@ -390,6 +390,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun setPs4ClockMotion(motion: Ps4ClockMotion) {
+        viewModelScope.launch { favoritesStore.setPs4ClockMotion(motion) }
+    }
     fun setHeaderSettings(settings: HeaderSettings) { viewModelScope.launch { favoritesStore.setHeaderSettings(settings) } }
     fun setRotation(rotation: HomeRotation) { viewModelScope.launch { favoritesStore.setRotation(rotation) } }
     fun setGesture(direction: GestureDirection, action: String) { viewModelScope.launch { favoritesStore.setGesture(direction, action) } }

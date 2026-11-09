@@ -6,6 +6,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -25,19 +32,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.senda.launcher.data.Ps4ClockMotion
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.rememberClockChange
 
 @Composable
-internal fun Ps4HeaderClock(time: String, size: TextUnit, reduced: Boolean, onOpen: () -> Unit) {
-    val progress = rememberClockChange(time, LauncherTheme.PS4, reduced, durationMs = 540)
+internal fun Ps4HeaderClock(
+    time: String,
+    size: TextUnit,
+    reduced: Boolean,
+    motion: Ps4ClockMotion,
+    onOpen: (() -> Unit)? = null,
+) {
+    val progress = rememberClockChange(time, LauncherTheme.PS4, reduced, durationMs = motion.durationMs)
     val prominent = size.value >= 40f
     val accent = MaterialTheme.colorScheme.primary
+    val travel = if (prominent) motion.travelDp.dp else (motion.travelDp / 3f).dp
     Box(
         Modifier.heightIn(min = 48.dp)
-            .then(if (prominent && !reduced) Modifier.ps4HeaderSweep(progress, accent, .75f) else Modifier)
-            .clickable(role = Role.Button, onClick = onOpen)
-            .semantics { contentDescription = "Abrir alarmas · $time" }
+            .then(if (!reduced) Modifier.ps4HeaderSweep(progress, accent, motion.light) else Modifier)
+            .then(if (onOpen == null) Modifier else Modifier.clickable(role = Role.Button, onClick = onOpen)
+                .semantics { contentDescription = "Abrir alarmas · $time" })
             .padding(horizontal = 4.dp),
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -46,7 +61,7 @@ internal fun Ps4HeaderClock(time: String, size: TextUnit, reduced: Boolean, onOp
             modifier = Modifier.graphicsLayer {
                 val p = progress.value
                 alpha = .66f + .34f * p
-                translationY = (1f - p) * (if (prominent) 12.dp else 4.dp).toPx()
+                translationY = (1f - p) * travel.toPx()
             },
             fontSize = size,
             fontWeight = FontWeight.Light,
@@ -56,6 +71,23 @@ internal fun Ps4HeaderClock(time: String, size: TextUnit, reduced: Boolean, onOp
             ),
             maxLines = 1,
         )
+    }
+}
+
+@Composable
+internal fun Ps4ClockMotionControls(current: Ps4ClockMotion, reduced: Boolean, onApply: (Ps4ClockMotion) -> Unit) {
+    var draft by remember(current) { mutableStateOf(current) }
+    var sample by remember { mutableStateOf("20:24") }
+    EffectChoice("Animación del reloj", draft.name, Ps4ClockMotion.entries.map { it.name to it.label }) {
+        draft = Ps4ClockMotion.valueOf(it)
+    }
+    Ps4HeaderClock(sample, 46.sp, reduced, draft)
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        TextButton(onClick = { sample = if (sample == "20:24") "20:25" else "20:24" }) { Text("Probar") }
+        TextButton(onClick = { onApply(draft) }, enabled = draft != current) { Text("Aplicar intensidad") }
+    }
+    if (reduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
+        Text("La muestra usa movimiento reducido.", style = MaterialTheme.typography.bodySmall)
     }
 }
 

@@ -406,6 +406,7 @@ fun HomeScreen(
             weatherPackage = state.weatherPackage ?: "hr.dtakac.prognoza",
             reduceMotion = state.visualSettings.reduceMotion,
             weatherMotion = state.headerSettings.weatherMotion,
+            clockMotion = state.headerSettings.ps4ClockMotion,
             onAvatar = { showAvatar = true },
             onWeatherConnection = { showWeatherConnection = true },
             onDashboard = { showDashboard = true },
@@ -684,6 +685,7 @@ internal fun Header(
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
     quickMedia: @Composable (() -> Unit) -> Unit = {},
+    clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -695,8 +697,10 @@ internal fun Header(
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
     if (theme == LauncherTheme.PS4) {
-        val config = LocalConfiguration.current
-        val compactHeader = config.screenHeightDp < 530 || config.screenWidthDp < 350 || LocalDensity.current.fontScale > 1.35f
+        val window = LocalWindowInfo.current.containerSize
+        val compactHeader = with(LocalDensity.current) {
+            window.height.toDp() < 530.dp || window.width.toDp() < 350.dp || fontScale > 1.35f
+        }
         val motionReduced = reduceMotion || LocalAppearance.current.highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current
         Column(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -716,7 +720,7 @@ internal fun Header(
                     Text("Inicio", style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, onOpenAlarms)
+                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, clockMotion, onOpenAlarms)
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
                     Icon(Icons.Filled.Settings, "Abrir menú rápido")
                 }
@@ -728,7 +732,7 @@ internal fun Header(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Column(Modifier.weight(1f)) {
-                    if (!compactHeader) Ps4HeaderClock(clockTime, 46.sp, motionReduced, onOpenAlarms)
+                    if (!compactHeader) Ps4HeaderClock(clockTime, 46.sp, motionReduced, clockMotion, onOpenAlarms)
                     HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar)
                 }
                 HeaderWeather(

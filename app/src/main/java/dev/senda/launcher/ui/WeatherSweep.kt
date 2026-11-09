@@ -25,14 +25,23 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.*
 import dev.senda.launcher.ui.theme.LocalSkinStyle
+import dev.senda.launcher.ui.theme.rememberClockChange
 import dev.senda.launcher.widgets.WidgetWeather
 import kotlinx.coroutines.awaitCancellation
 import kotlin.math.*
 
 /** Decorative only: no pointer input, no duplicate accessibility nodes, no polling or widget host. */
 @Composable
-internal fun WeatherSweep(theme:LauncherTheme,reading:WidgetWeather?,settings:WeatherMotionSettings,reduced:Boolean,modifier:Modifier=Modifier) {
-    val motion=settings.bounded()
+internal fun WeatherSweep(
+    theme: LauncherTheme,
+    reading: WidgetWeather?,
+    settings: WeatherMotionSettings,
+    reduced: Boolean,
+    modifier: Modifier = Modifier,
+    finiteUpdates: Boolean = false,
+) {
+    val motion = settings.bounded()
+    if (finiteUpdates && !motion.shouldAnimate(reduced, reading != null, ValueAnimator.areAnimatorsEnabled())) return
     val phase=remember { Animatable(1f) }
     var active by remember { mutableStateOf(false) }
     val lifecycle=LocalLifecycleOwner.current.lifecycle
@@ -53,7 +62,12 @@ internal fun WeatherSweep(theme:LauncherTheme,reading:WidgetWeather?,settings:We
     val condition=remember(motion.condition,reading?.conditionText) {
         if(motion.condition==WeatherCondition.AUTO)providerWeatherCondition(reading?.conditionText.orEmpty()) else motion.condition
     }
-    LaunchedEffect(lifecycle,theme,motion,reduced,condition,reading!=null) {
+    val finitePhase = if (finiteUpdates) rememberClockChange(
+        condition.name, theme, reduced,
+        durationMs = motion.durationMs.coerceAtMost(5000),
+        playOnEntry = true,
+    ) else null
+    if (!finiteUpdates) LaunchedEffect(lifecycle,theme,motion,reduced,condition,reading!=null) {
         active=false
         phase.snapTo(1f)
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -70,10 +84,15 @@ internal fun WeatherSweep(theme:LauncherTheme,reading:WidgetWeather?,settings:We
         }
     }
     Canvas(modifier.clipToBounds().clearAndSetSemantics {}) {
-        val p=phase.value
-        if(reduced||motion.mode==WeatherMotionMode.OFF||reading==null||!active||!ValueAnimator.areAnimatorsEnabled())return@Canvas
-        // Repeat scenes are periodic at both endpoints; ONCE uses a soft entrance and exit.
-        val fade=if(motion.mode==WeatherMotionMode.REPEAT)1f else min(p/.16f,(1f-p)/.22f).coerceIn(0f,1f)
+        val p = finitePhase?.value ?: phase.value
+        if (finiteUpdates) {
+            if (p <= 0f || p >= 1f) return@Canvas
+        } else if (reduced || motion.mode == WeatherMotionMode.OFF || reading == null || !active || !ValueAnimator.areAnimatorsEnabled()) {
+            return@Canvas
+        }
+        // A finite scene fades at both ends. Repeating scenes in other headers are periodic.
+        val fade = if (!finiteUpdates && motion.mode == WeatherMotionMode.REPEAT) 1f
+            else min(p / .16f, (1f - p) / .22f).coerceIn(0f, 1f)
         drawWeatherScene(p,condition,treatment,accent,fade*motion.intensity/100f, cloudPixels, dynamicPaths)
     }
 }
@@ -182,7 +201,7 @@ private fun DrawScope.drawWeatherScene(p:Float,condition:WeatherCondition,treatm
         WeatherCondition.CLOUDS -> for(i in 0..1)cloud((wrap(p+i*.5f)*1.6f-.3f)*size.width,size.height*(.40f+i*.26f),size.height*.35f,cool)
         WeatherCondition.RAIN,WeatherCondition.SNOW,WeatherCondition.STORM -> {
             val snow=condition==WeatherCondition.SNOW
-            val count=if(snow)28 else 40
+            val count = when { treatment == WeatherTreatment.CONSOLE_WAVE -> if (snow) 10 else 14; snow -> 28; else -> 40 }
             for(i in 0 until count) {
                 val fall=wrap(p*(if(snow)1f else 2f)+i*.381966f)
                 val x=wrap(i*.618034f+p)*size.width

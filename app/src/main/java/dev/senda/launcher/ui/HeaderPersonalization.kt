@@ -81,7 +81,7 @@ fun HeaderWeather(
     reduceMotion: Boolean,
     onOpen: () -> Unit,
     onConfigure: () -> Unit,
-    modifier: Modifier = Modifier.width(104.dp),
+    modifier: Modifier = Modifier,
     ps4Motion: WeatherMotionSettings? = null,
     prominent: Boolean = false,
 ) {
@@ -94,11 +94,10 @@ fun HeaderWeather(
         reduceMotion || LocalThemePreview.current || ps4Motion.mode == WeatherMotionMode.OFF, durationMs = 760,
         playOnEntry = true, ready = reading != null,
     ) else null
-    val accent = MaterialTheme.colorScheme.primary
-    val sweep = if (change != null && ps4Motion != null && prominent) {
-        Modifier.ps4HeaderSweep(change, accent, ps4Motion.intensity / 100f)
-    } else Modifier
-    Box(modifier.heightIn(min=if (prominent) 94.dp else 72.dp).then(sweep).combinedClickable(onClick=if(reading!=null)onOpen else onConfigure,onLongClick=onConfigure)
+    val width = if (ps4Motion == null) modifier.width(104.dp) else modifier
+    Box(width.heightIn(min = if (prominent) 94.dp else 72.dp)
+        .combinedClickable(onClick = if (reading != null) onOpen else onConfigure,
+            onLongClick = onConfigure, onLongClickLabel = "Ver detalles del clima")
         .semantics(mergeDescendants=true){contentDescription=if(reading!=null)"Clima de ${reading.place}: ${reading.temperature}. Datos de $sourceLabel" else "Configurar clima de $sourceLabel";role=Role.Button},contentAlignment=Alignment.Center){
         if(connected && !LocalThemePreview.current) key(id){
             Box(Modifier.size(1.dp).clearAndSetSemantics{}) {
@@ -106,6 +105,10 @@ fun HeaderWeather(
                 @Suppress("DEPRECATION") updateAppWidgetSize(null,120,90,120,90)}},
                 modifier=Modifier.requiredSize(120.dp,90.dp).clearAndSetSemantics{})
             }
+        }
+        if (ps4Motion != null) {
+            WeatherSweep(LauncherTheme.PS4, reading, ps4Motion, reduceMotion || LocalThemePreview.current,
+                Modifier.matchParentSize(), finiteUpdates = true)
         }
         val contentMotion = if (change != null) Modifier.graphicsLayer {
             val p = change.value
@@ -140,37 +143,49 @@ fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, on
             Text("Fuente: $sourceLabel",style=MaterialTheme.typography.titleMedium)
             Text("Aura refleja la temperatura, ciudad y símbolo que publica su widget. La ubicación, unidades y actualización se configuran en $sourceLabel.")
             Text(if(info?.provider?.packageName==source)"Widget conectado" else "Conecta el widget para mostrar sus datos en el reloj",color=MaterialTheme.colorScheme.primary)
-            controller.weatherReading?.let {Text("${it.place} · ${it.temperature}",style=MaterialTheme.typography.titleLarge)}
+            if (info?.provider?.packageName == source) controller.weatherReading?.let { reading ->
+                Text("${reading.place} · ${reading.temperature}", style = MaterialTheme.typography.titleLarge)
+                if (reading.conditionText.isNotBlank()) Text(reading.conditionText, style = MaterialTheme.typography.bodyMedium)
+            }
             Button(onClick={controller.connectWeather(source)}){Text("Conectar widget del clima")}
             TextButton(onClick=onOpen){Text("Abrir $sourceLabel")}
             TextButton(onClick=onChooseApp){Text("Elegir aplicación del clima")}
             if(info!=null) TextButton(onClick=controller::disconnectWeather){Text("Desconectar clima de la cabecera")}
             controller.weatherError?.let{Text(it,color=MaterialTheme.colorScheme.error)}
             HorizontalDivider()
-            WeatherMotionControls(state.headerSettings.weatherMotion){onSettings(state.headerSettings.copy(weatherMotion=it))}
+            WeatherMotionControls(state.headerSettings.weatherMotion, finite = state.theme == LauncherTheme.PS4) {onSettings(state.headerSettings.copy(weatherMotion=it))}
             Text("La escena interpreta la descripción accesible del icono. Si falta, usa ambiente neutro. La escena manual no modifica el clima. Movimiento reducido y alto contraste detienen el efecto.",style=MaterialTheme.typography.bodySmall)
         }
     },confirmButton={TextButton(onClick=onDismiss){Text("Listo")}})
 }
 
 @Composable
-private fun WeatherMotionControls(settings:WeatherMotionSettings,onChange:(WeatherMotionSettings)->Unit) {
-    var duration by remember(settings.durationMs){mutableFloatStateOf(settings.durationMs.toFloat())}
+private fun WeatherMotionControls(settings: WeatherMotionSettings, finite: Boolean, onChange: (WeatherMotionSettings) -> Unit) {
+    val maxDuration = if (finite) 5000 else 12000
+    var duration by remember(settings.durationMs, maxDuration) {
+        mutableFloatStateOf(settings.durationMs.coerceAtMost(maxDuration).toFloat())
+    }
     var intensity by remember(settings.intensity){mutableFloatStateOf(settings.intensity.toFloat())}
     Text("Animaciones del clima",style=MaterialTheme.typography.titleMedium)
-    WeatherMotionMode.entries.forEach { mode ->
+    val modes = if (finite) listOf(WeatherMotionMode.OFF, WeatherMotionMode.ONCE) else WeatherMotionMode.entries
+    val selected = if (finite && settings.mode == WeatherMotionMode.REPEAT) WeatherMotionMode.ONCE else settings.mode
+    modes.forEach { mode ->
         TextButton(onClick={onChange(settings.copy(mode=mode))},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
-            RadioButton(settings.mode==mode,null)
-            Text(mode.label,Modifier.weight(1f))
+            RadioButton(selected == mode, null)
+            Text(if (finite && mode == WeatherMotionMode.ONCE) "Al entrar y al cambiar la condición" else mode.label, Modifier.weight(1f))
         }
     }
     EffectChoice("Escena meteorológica",settings.condition.name,WeatherCondition.entries.map{it.name to it.label},onSelect={onChange(settings.copy(condition=WeatherCondition.valueOf(it)))})
     Text("La selección manual cambia el efecto; no modifica los datos del proveedor.",style=MaterialTheme.typography.bodySmall)
-    Text("Ciclo: ${(duration/1000).toInt()} s",style=MaterialTheme.typography.labelLarge)
-    Slider(duration,{duration=it},onValueChangeFinished={onChange(settings.copy(durationMs=duration.toInt()))},valueRange=3000f..12000f,steps=8,
+    Text("Duración ${(duration / 1000).toInt()} s", style = MaterialTheme.typography.labelLarge)
+    Slider(duration,{duration=it},onValueChangeFinished={onChange(settings.copy(durationMs=duration.toInt()))},valueRange=3000f..maxDuration.toFloat(),steps=(maxDuration - 3000) / 1000 - 1,
         modifier=Modifier.semantics {contentDescription="Duración del ciclo del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
     Text("Intensidad: ${intensity.toInt()}%",style=MaterialTheme.typography.labelLarge)
     Slider(intensity,{intensity=it},onValueChangeFinished={onChange(settings.copy(intensity=intensity.toInt()))},valueRange=20f..100f,steps=7,
         modifier=Modifier.semantics {contentDescription="Intensidad de la escena del clima"},enabled=settings.mode!=WeatherMotionMode.OFF)
-    Text("Al entrar realiza un recorrido y queda en reposo. Repetición mantiene ciclos mientras Inicio está visible y consume más energía.",style=MaterialTheme.typography.bodySmall)
+    Text(
+        if (finite) "La escena vuelve al reposo después de cada cambio."
+        else "Al entrar realiza un recorrido y queda en reposo. Repetición mantiene ciclos mientras Inicio está visible y consume más energía.",
+        style = MaterialTheme.typography.bodySmall,
+    )
 }

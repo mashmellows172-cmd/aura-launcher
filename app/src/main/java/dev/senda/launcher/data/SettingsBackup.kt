@@ -17,7 +17,7 @@ data class PreparedBackup(val settings: Map<String, Any>, val images: Map<String
 class SettingsBackup(private val context: Context) {
     companion object {
         private const val LIMIT = 24 * 1024 * 1024
-        private val stringKeys = setOf("sound_family", "favorite_packages", "hidden_packages", "launcher_theme", "visual_motion", "weather_app_package", "home_rotation", "gesture_up", "gesture_down", "gesture_left", "gesture_right", "double_tap_lock", "rail_effect", "menu_effect", "block_order", "weather_motion_mode", "weather_scene_condition") + HomeBlock.entries.map { "block_anchor_${it.name}" }
+        private val stringKeys = setOf("sound_family", "favorite_packages", "hidden_packages", "launcher_theme", "visual_motion", "weather_app_package", "home_rotation", "gesture_up", "gesture_down", "gesture_left", "gesture_right", "double_tap_lock", "rail_effect", "menu_effect", "block_order", "weather_motion_mode", "weather_scene_condition", "ps4_clock_motion") + HomeBlock.entries.map { "block_anchor_${it.name}" }
         private val integerRanges = mapOf("sound_volume" to 0..SoundSettings.MAX_VOLUME,"weather_motion_duration" to 3000..12000,"weather_motion_intensity" to 20..100,"visual_duration_ms" to 150..800, "scroll_motion_intensity" to 10..100,
             "rail_intensity" to 0..100,"rail_duration_ms" to 80..600,"rail_bubble_size" to 40..84,"rail_bubble_hold_ms" to 0..1000,
             "search_glow_strength" to 10..100, "appearance_text_size" to 14..24, "appearance_icon_size" to 32..60, "appearance_row_spacing" to 0..20) + HomeBlock.entries.flatMap { listOf("block_height_${it.name}" to 48..160, "block_text_${it.name}" to 12..20) }.toMap() + LauncherTheme.entries.associate { "skin_dim_${it.name}" to 60..90 }
@@ -44,6 +44,7 @@ class SettingsBackup(private val context: Context) {
                         key == "sound_family" -> require(value in SoundFamily.entries.map { it.name }) { "Familia sonora no válida" }
                         key == "launcher_theme" -> require(value in themes) { "Tema desconocido" }
                         key == "weather_scene_condition" -> require(value in WeatherCondition.entries.map { it.name }) { "Escena del clima no válida" }
+                        key == "ps4_clock_motion" -> require(Ps4ClockMotion.entries.any { it.name == value }) { "Intensidad de reloj no válida" }
                         key == "weather_motion_mode" -> require(value in WeatherMotionMode.entries.map { it.name }) { "Animación del clima no válida" }
                         key == "double_tap_lock" -> require(value in LockGesture.entries.map { it.name }) { "Gesto de bloqueo no válido" }
                         key == "rail_effect" -> require(value in RailEffects.ids) { "Efecto A–Z no válido" }
@@ -77,7 +78,7 @@ class SettingsBackup(private val context: Context) {
                 assets.put(key, Base64.encodeToString(bytes, Base64.NO_WRAP)); values.put(key, "asset:$key")
             } else { validate(key, value); values.put(key, value) }
         }
-        val root = JSONObject().put("format", "aura-settings").put("version", 16).put("settings", values).put("assets", assets).put("skippedImages", skipped)
+        val root = JSONObject().put("format", "aura-settings").put("version", 17).put("settings", values).put("assets", assets).put("skippedImages", skipped)
         val bytes = root.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= LIMIT) { "El respaldo supera 24 MB" }
         context.contentResolver.openOutputStream(destination, "wt")?.use { it.write(bytes) } ?: error("No se pudo abrir el archivo de destino")
@@ -113,7 +114,7 @@ class SettingsBackup(private val context: Context) {
         }
         require(!quoted && depth == 0) { "Archivo JSON incompleto" }
         val root = JSONObject(text)
-        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..16) { "Formato o versión de respaldo no compatible" }
+        require(root.getString("format") == "aura-settings" && root.getInt("version") in 1..17) { "Formato o versión de respaldo no compatible" }
         val json = root.getJSONObject("settings"); require(json.length() <= 2500) { "Demasiados ajustes" }
         val values = json.keys().asSequence().associateWith { key -> json.get(key).also { validate(key, it) } }
         val jsonImages = root.getJSONObject("assets"); require(jsonImages.length() <= 2000) { "Demasiadas imágenes" }

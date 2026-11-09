@@ -6,7 +6,18 @@ data class HeaderSettings(
     val weatherMotion: WeatherMotionSettings = WeatherMotionSettings(),
     val showMotivationalHeader: Boolean = true,
     val showAudioWidget: Boolean = true,
+    val ps4ClockMotion: Ps4ClockMotion = Ps4ClockMotion.MARKED,
 )
+enum class Ps4ClockMotion(val label: String, val durationMs: Int, val travelDp: Int, val light: Float) {
+    SOFT("Suave", 280, 4, .28f),
+    MARKED("Marcada", 540, 12, .75f),
+    SPECTACULAR("Espectacular", 900, 18, 1f);
+
+    companion object {
+        fun fromStored(value: String?) = entries.firstOrNull { it.name == value } ?: MARKED
+    }
+}
+
 enum class HomeRotation(val label: String) { SYSTEM("Seguir el sistema"), PORTRAIT("Vertical"), LANDSCAPE("Horizontal") }
 enum class GestureDirection(val label: String) { UP("Arriba"), DOWN("Abajo"), LEFT("Izquierda"), RIGHT("Derecha") }
 
