@@ -695,6 +695,9 @@ internal fun Header(
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
     if (theme == LauncherTheme.PS4) {
+        val config = LocalConfiguration.current
+        val compactHeader = config.screenHeightDp < 530 || config.screenWidthDp < 350 || LocalDensity.current.fontScale > 1.35f
+        val motionReduced = reduceMotion || LocalAppearance.current.highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current
         Column(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
@@ -713,28 +716,32 @@ internal fun Header(
                     Text("Inicio", style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                Box(Modifier.widthIn(min = 60.dp).heightIn(min = 56.dp).clickable(onClick = onOpenAlarms)
-                    .semantics { contentDescription = "Abrir alarmas · $clockTime" }, contentAlignment = Alignment.Center) {
-                    val clockReduced = reduceMotion || LocalAppearance.current.highContrast
-                    val clockChange = dev.senda.launcher.ui.theme.rememberClockChange(clockTime, theme, clockReduced)
-                    Text(clockTime, modifier = Modifier.graphicsLayer {
-                        val p = clockChange.value
-                        alpha = .7f + .3f * p
-                        translationY = if (clockReduced) 0f else (1f-p)*3.dp.toPx()
-                    }, fontSize = 20.sp, fontWeight = FontWeight.Light)
-                }
+                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, onOpenAlarms)
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
                     Icon(Icons.Filled.Settings, "Abrir menú rápido")
                 }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
-                Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, Modifier.weight(1f))
-                    HeaderWeather(widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", reduceMotion, onOpenWeather, onWeatherConnection)
+            Row(
+                Modifier.fillMaxWidth().padding(vertical = if (compactHeader) 0.dp else 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Column(Modifier.weight(1f)) {
+                    if (!compactHeader) Ps4HeaderClock(clockTime, 46.sp, motionReduced, onOpenAlarms)
+                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar)
                 }
-                if (showMotivationalHeader) Text(
-                    remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) },
-                    style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 8.dp))
+                HeaderWeather(
+                    widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
+                    onOpenWeather, onWeatherConnection,
+                    modifier = if (compactHeader) Modifier.width(116.dp) else Modifier.weight(.9f),
+                    ps4Motion = weatherMotion,
+                    prominent = !compactHeader,
+                )
+            }
+            if (showMotivationalHeader) Text(
+                remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) },
+                style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 8.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
         if (themeMenuExpanded) {

@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta62 instalada el 9 de noviembre de 2026. 0.42.0-beta62, código 62. Reloj y clima PS4 ampliados con barridos breves. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado comprobados. Revisión visual en el Motorola y comparación breve documentadas en docs/BETA62.md.
+
 Beta61 instalada,4nov2026,0.41.0/code61: favoritas por arrastre con Guardar/Cancelar, paletas PS4 Azul clásico/Medianoche/Blanco y borrador de sonidos con muestra. Build/lint2m18s,0 errores/35 advertencias/3 avisos; firma/versión/hash e instalación verificados. Revisión física de gestos/paletas pendiente. Ver docs/BETA61.md.
 
 Beta61 candidata,4nov2026,0.41.0/code61: favoritas por arrastre con borrador/Guardar/Cancelar, paletas PS4 completas y sonidos previsualizables. Compilación/lint en curso; no instalada. Última entrega física beta60. Ver docs/BETA61.md.

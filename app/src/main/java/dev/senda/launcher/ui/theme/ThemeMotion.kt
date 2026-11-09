@@ -39,7 +39,8 @@ fun rememberHistoricalPhase(theme: LauncherTheme, moving: Boolean, reduced: Bool
 
 /** A finite, theme-specific change cue. No infinite timer belongs to the clock. */
 @Composable
-fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean): State<Float> {
+fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean, durationMs: Int? = null,
+    playOnEntry: Boolean = false, ready: Boolean = true): State<Float> {
     val phase = remember { Animatable(1f) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var resumed by remember(lifecycle) { mutableStateOf(lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
@@ -51,12 +52,19 @@ fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean): 
         onDispose { lifecycle.removeObserver(observer) }
     }
     var previous by remember { mutableStateOf(value) }
-    LaunchedEffect(value, theme, reduced, resumed) {
-        if (!resumed || reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(1f); previous = value; return@LaunchedEffect }
-        if (previous == value) return@LaunchedEffect
+    var entryPending by remember { mutableStateOf(playOnEntry) }
+    LaunchedEffect(value, theme, reduced, resumed, durationMs, ready) {
+        if (!resumed || !ready) { phase.snapTo(1f); previous = value; return@LaunchedEffect }
+        if (reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(1f); previous = value; entryPending = false; return@LaunchedEffect }
+        if (!entryPending && previous == value) {
+            // Reset in the current effect so a cancelled animation cannot compete with its replacement.
+            if (phase.value != 1f) phase.snapTo(1f)
+            return@LaunchedEffect
+        }
+        entryPending = false
         previous = value
         phase.snapTo(0f)
-        phase.animateTo(1f, tween((historicalProfile(theme)?.durationMs ?: 240).coerceIn(160, 280),
+        phase.animateTo(1f, tween(durationMs ?: (historicalProfile(theme)?.durationMs ?: 240).coerceIn(160, 280),
             easing = androidx.compose.animation.core.FastOutSlowInEasing))
     }
     return phase.asState()

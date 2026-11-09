@@ -74,12 +74,31 @@ fun AvatarDialog(state: HomeUiState, viewModel: LauncherViewModel, onDismiss: ()
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel: String, reduceMotion: Boolean, onOpen: () -> Unit, onConfigure: () -> Unit) {
+fun HeaderWeather(
+    controller: WidgetController,
+    packageName: String,
+    sourceLabel: String,
+    reduceMotion: Boolean,
+    onOpen: () -> Unit,
+    onConfigure: () -> Unit,
+    modifier: Modifier = Modifier.width(104.dp),
+    ps4Motion: WeatherMotionSettings? = null,
+    prominent: Boolean = false,
+) {
     val id=controller.weatherWidgetId
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
     val connected=info?.provider?.packageName==packageName
     val reading=if(connected)controller.weatherReading else null
-    Box(Modifier.width(104.dp).heightIn(min=72.dp).combinedClickable(onClick=if(reading!=null)onOpen else onConfigure,onLongClick=onConfigure)
+    val change = if (ps4Motion != null) dev.senda.launcher.ui.theme.rememberClockChange(
+        "${reading?.temperature}|${reading?.place}|${reading?.conditionText}", LauncherTheme.PS4,
+        reduceMotion || LocalThemePreview.current || ps4Motion.mode == WeatherMotionMode.OFF, durationMs = 760,
+        playOnEntry = true, ready = reading != null,
+    ) else null
+    val accent = MaterialTheme.colorScheme.primary
+    val sweep = if (change != null && ps4Motion != null && prominent) {
+        Modifier.ps4HeaderSweep(change, accent, ps4Motion.intensity / 100f)
+    } else Modifier
+    Box(modifier.heightIn(min=if (prominent) 94.dp else 72.dp).then(sweep).combinedClickable(onClick=if(reading!=null)onOpen else onConfigure,onLongClick=onConfigure)
         .semantics(mergeDescendants=true){contentDescription=if(reading!=null)"Clima de ${reading.place}: ${reading.temperature}. Datos de $sourceLabel" else "Configurar clima de $sourceLabel";role=Role.Button},contentAlignment=Alignment.Center){
         if(connected && !LocalThemePreview.current) key(id){
             Box(Modifier.size(1.dp).clearAndSetSemantics{}) {
@@ -88,13 +107,21 @@ fun HeaderWeather(controller: WidgetController, packageName: String, sourceLabel
                 modifier=Modifier.requiredSize(120.dp,90.dp).clearAndSetSemantics{})
             }
         }
-        Column(horizontalAlignment=Alignment.CenterHorizontally,modifier=Modifier.themeReveal(if(LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme ?: LauncherTheme.NOTHING, reading?.temperature to reading?.conditionText, reduceMotion).padding(4.dp)){
+        val contentMotion = if (change != null) Modifier.graphicsLayer {
+            val p = change.value
+            alpha = .7f + .3f * p
+            translationY = (1f - p) * (if (prominent) 12.dp else 4.dp).toPx()
+        } else Modifier.themeReveal(
+            if (LocalIndustrialStyle.current.enabled) LauncherTheme.NOTHING else LocalRetroStyle.current.theme ?: LauncherTheme.NOTHING,
+            reading?.temperature to reading?.conditionText, reduceMotion,
+        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = contentMotion.padding(4.dp)) {
             if(reading!=null){
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
-                    reading.icon?.let { icon->Image(icon,null,Modifier.size(30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
-                    Text(reading.temperature,style=MaterialTheme.typography.titleMedium,maxLines=1)
+                    reading.icon?.let { icon->Image(icon,null,Modifier.size(if (prominent) 39.dp else 30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
+                    Text(reading.temperature, style = if (prominent) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                Text(reading.place.ifBlank{sourceLabel},style=MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(reading.place.ifBlank{sourceLabel},style=if (prominent) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
             }else{
                 Text(if(connected)"Sin lectura" else "Clima",style=MaterialTheme.typography.labelLarge)
                 Text(if(connected)"Abrir ajustes" else "Conectar",style=MaterialTheme.typography.labelSmall,color=LocalSkinStyle.current.accent)
