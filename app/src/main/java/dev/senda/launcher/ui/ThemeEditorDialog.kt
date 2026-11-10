@@ -17,6 +17,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.senda.launcher.audio.LocalSoundFeedback
 import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.*
@@ -25,7 +26,8 @@ import dev.senda.launcher.widgets.WidgetController
 import kotlin.math.roundToInt
 
 @Composable
-fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetController:WidgetController,onDismiss:()->Unit) {
+fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetController:WidgetController,onSaved:()->Unit = {},onDismiss:()->Unit) {
+    val feedback = LocalSoundFeedback.current
     val editor:ThemeEditorViewModel=viewModel(key="aura-theme-editor")
     val draft by editor.draft.collectAsStateWithLifecycle()
     val undo by editor.canUndo.collectAsStateWithLifecycle();val redo by editor.canRedo.collectAsStateWithLifecycle()
@@ -120,8 +122,8 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                         }
                     }
                     Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween){
-                        TextButton(onClick={editor.finishGesture();editor.save(name,false,onDismiss)},enabled=!busy){Text("Guardar copia")}
-                        Button(onClick={editor.finishGesture();editor.save(name,true,onDismiss)},enabled=!busy&&!state.isLoading){Text(if(busy)"Guardando…" else "Guardar y usar")}
+                        TextButton(onClick={editor.finishGesture();editor.save(name, false) { if (value.theme == LauncherTheme.PS4.name) { feedback.play(SoundEvent.SELECT); onSaved() }; onDismiss() }},enabled=!busy){Text("Guardar copia")}
+                        Button(onClick={editor.finishGesture();editor.save(name, true) { if (value.theme == LauncherTheme.PS4.name) { feedback.play(SoundEvent.SELECT); onSaved() }; onDismiss() }},enabled=!busy&&!state.isLoading){Text(if(busy)"Guardando…" else "Guardar y usar")}
                     }
                 }
             }

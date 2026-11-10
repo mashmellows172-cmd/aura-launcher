@@ -33,6 +33,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
+import dev.senda.launcher.data.LocalAppearance
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -96,6 +102,7 @@ internal fun Ps4AppDetails(
     onLoadIcon: (LaunchableApp) -> Drawable,
     onLaunch: () -> Unit,
     onDismiss: () -> Unit,
+    origin: Rect? = null,
 ) {
     val context = LocalContext.current
     val locales = LocalConfiguration.current.locales.toLanguageTags()
@@ -132,10 +139,43 @@ internal fun Ps4AppDetails(
             }
         }
     }
+    val settings = LocalMotionSettings.current
+    val reduced = settings.reduceMotion || settings.menuEffect == "NONE" || LocalAppearance.current.highContrast ||
+        LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val motion = rememberPs4PanelMotion(reduced)
+    val close = { motion.close(reduced, onDismiss) }
+    var destination by remember { mutableStateOf<Rect?>(null) }
+    val accent = MaterialTheme.colorScheme.primary
+    val transition = if (reduced) Modifier else Modifier
+        .onGloballyPositioned { coordinates ->
+            val position = coordinates.positionOnScreen()
+            if ((destination == null || motion.progress.value >= .999f) && position.x.isFinite() && position.y.isFinite()) {
+                destination = Rect(position, Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
+            }
+        }
+        .graphicsLayer {
+            val p = motion.progress.value
+            val target = destination
+            val source = origin
+            alpha = p
+            if (source != null && target != null && target.width > 0f && target.height > 0f) {
+                val startScale = minOf(source.width / target.width, source.height / target.height).coerceIn(.15f, .75f)
+                scaleX = startScale + (1f - startScale) * p
+                scaleY = scaleX
+                translationX = (source.center.x - target.center.x) * (1f - p)
+                translationY = (source.center.y - target.center.y) * (1f - p)
+            } else {
+                scaleX = .9f + .1f * p
+                scaleY = scaleX
+            }
+        }
     AuraAlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = close,
+        modifier = transition,
+        animate = false,
         title = {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp),
+            Row(Modifier.fillMaxWidth().then(if (reduced) Modifier else Modifier.ps4HeaderSweep(motion.progress.asState(), accent, .65f)),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(64.dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = .12f), RoundedCornerShape(2.dp))
@@ -194,7 +234,7 @@ internal fun Ps4AppDetails(
                 modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }
+            TextButton(onClick = close, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }
         },
     )
 }

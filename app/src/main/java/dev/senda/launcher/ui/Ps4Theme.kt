@@ -17,6 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.lazy.LazyListState
+import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -39,20 +43,22 @@ import dev.senda.launcher.ui.theme.rememberHistoricalPhase
 import kotlin.math.PI
 import kotlin.math.sin
 
-/** Share the nearest app key across rows; only the two changed rows recompose. */
 internal val LocalPs4FocusedKey = staticCompositionLocalOf<State<Any?>> { mutableStateOf(null) }
+internal val LocalPs4InputFocus = staticCompositionLocalOf<MutableState<String?>?> { null }
 
 @Composable
-internal fun rememberPs4FocusedKey(list: androidx.compose.foundation.lazy.LazyListState, enabled: Boolean): State<Any?> =
-    remember(list, enabled) {
+internal fun rememberPs4FocusedKey(list: LazyListState, enabled: Boolean, input: State<String?>): State<Any?> =
+    remember(list, enabled, input) {
         derivedStateOf {
             if (!enabled) null else {
                 val layout = list.layoutInfo
+                val preferred = input.value
                 val center = layout.viewportStartOffset + (layout.viewportEndOffset - layout.viewportStartOffset) * .42f
                 var nearest: Any? = null
                 var distance = Float.MAX_VALUE
                 for (item in layout.visibleItemsInfo) {
                     if (item.contentType != "app") continue
+                    if (item.key == preferred) { nearest = item.key; break }
                     val candidate = kotlin.math.abs(item.offset + item.size * .5f - center)
                     if (candidate < distance) { distance = candidate; nearest = item.key }
                 }
@@ -61,20 +67,43 @@ internal fun rememberPs4FocusedKey(list: androidx.compose.foundation.lazy.LazyLi
         }
     }
 
-/** Finite focus cue. No blur, idle oscillator or changes to the row's hit target. */
-internal fun Modifier.ps4FocusFrame(progress: () -> Float): Modifier = drawWithCache {
-    val corner = CornerRadius(3.dp.toPx())
-    val fill = Brush.horizontalGradient(listOf(Color(0xFF0070D1).copy(alpha=.28f), Color(0xFF003087).copy(alpha=.08f)))
-    val halo = Stroke(5.dp.toPx())
-    val edge = Stroke(1.5.dp.toPx())
-    val highlight = Stroke(.65.dp.toPx())
-    onDrawBehind {
-        val p = progress().coerceIn(0f,1f)
-        if (p > .001f) {
-            drawRoundRect(fill, cornerRadius=corner, alpha=p)
-            drawRoundRect(Color(0xFF008CFF).copy(alpha=p*.12f), cornerRadius=corner, style=halo)
-            drawRoundRect(Color(0xFF42C8FF).copy(alpha=p), cornerRadius=corner, style=edge)
-            drawRoundRect(Color.White.copy(alpha=p*.9f), cornerRadius=corner, style=highlight)
+/** Draw one outline for the list. Scroll position is read in draw, and a swipe snaps the travel offset. */
+@Composable
+internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, reduced: Boolean): Modifier {
+    if (!enabled || LocalAppearance.current.highContrast || LocalThemePreview.current) return this
+    val focus = LocalPs4FocusedKey.current
+    val delta = remember(list) { Animatable(0f) }
+    val colors = MaterialTheme.colorScheme
+    LaunchedEffect(list, focus, reduced) {
+        var previous: Any? = null
+        snapshotFlow { focus.value to list.isScrollInProgress }.collectLatest { (key, scrolling) ->
+            val items = list.layoutInfo.visibleItemsInfo
+            val from = items.firstOrNull { it.key == previous }
+            val to = items.firstOrNull { it.key == key }
+            val offset = if (!reduced && !scrolling && key != previous && from != null && to != null) {
+                (from.offset - to.offset + delta.value).coerceIn(-to.size * 1.5f, to.size * 1.5f)
+            } else 0f
+            previous = key
+            delta.snapTo(offset)
+            if (offset != 0f) delta.animateTo(0f, tween(Ps4Motion.focusMs, easing = Ps4Motion.easing))
+        }
+    }
+    return clipToBounds().drawWithCache {
+        val outer = Stroke(1.5.dp.toPx())
+        val inner = Stroke(.7.dp.toPx())
+        val corner = CornerRadius(3.dp.toPx())
+        onDrawWithContent {
+            drawContent()
+            val key = focus.value ?: return@onDrawWithContent
+            val layout = list.layoutInfo
+            val item = layout.visibleItemsInfo.firstOrNull { it.key == key } ?: return@onDrawWithContent
+            val inset = 2.dp.toPx()
+            val y = item.offset - layout.viewportStartOffset + delta.value + inset
+            if (size.width > inset * 4 && item.size > inset * 4) {
+                drawRoundRect(colors.primary, Offset(inset, y), Size(size.width - 2 * inset, item.size - 2 * inset), corner, style = outer)
+                drawRoundRect(colors.onSurface.copy(alpha = .52f), Offset(2 * inset, y + inset),
+                    Size(size.width - 4 * inset, item.size - 4 * inset), corner, style = inner)
+            }
         }
     }
 }

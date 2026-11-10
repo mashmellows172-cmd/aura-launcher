@@ -209,8 +209,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         _uiState.update { it.copy(query = query) }
     }
 
-    fun toggleFavorite(app: LaunchableApp) {
-        viewModelScope.launch { favoritesStore.toggle(app.packageName) }
+    fun toggleFavorite(app: LaunchableApp, onSaved: () -> Unit = {}) {
+        viewModelScope.launch {
+            favoritesStore.toggle(app.packageName)
+            onSaved()
+        }
     }
 
     fun setFavorites(packages: List<String>) {

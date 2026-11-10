@@ -2,6 +2,10 @@ package dev.senda.launcher.ui
 
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 
 import dev.senda.launcher.widgets.WidgetController
 import dev.senda.launcher.widgets.WidgetPickerDialog
@@ -206,7 +210,9 @@ fun HomeScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val motionController = rememberAuraMotion(listState, state.visualSettings)
-    val ps4FocusedKey = rememberPs4FocusedKey(listState, state.theme == LauncherTheme.PS4 && !state.appearance.highContrast)
+    val ps4InputFocus = remember { mutableStateOf<String?>(null) }
+    val ps4FocusedKey = rememberPs4FocusedKey(listState, state.theme == LauncherTheme.PS4 && !state.appearance.highContrast, ps4InputFocus)
+    var themeSaved by remember { mutableIntStateOf(0) }
     var alphabetJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     var previousWidgetCount by remember { mutableStateOf(widgetController.widgets.size) }
     LaunchedEffect(widgetController.widgets.size) {
@@ -372,7 +378,7 @@ fun HomeScreen(
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
 
-    androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
     Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
     }.pointerInput(state.lockGesture) {
@@ -407,6 +413,7 @@ fun HomeScreen(
             reduceMotion = state.visualSettings.reduceMotion,
             weatherMotion = state.headerSettings.weatherMotion,
             clockMotion = state.headerSettings.ps4ClockMotion,
+            confirmation = themeSaved,
             onAvatar = { showAvatar = true },
             onWeatherConnection = { showWeatherConnection = true },
             onDashboard = { showDashboard = true },
@@ -504,7 +511,7 @@ fun HomeScreen(
                 listState = listState,
                 visualSettings = state.visualSettings,
                 onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
-                onToggleFavorite = { soundFeedback.play(SoundEvent.FAVORITE); viewModel.toggleFavorite(it) },
+                onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
                 onLoadIcon = viewModel::icon,
                 onHide = viewModel::toggleHidden,
                 onChooseIcon = onChooseIcon,
@@ -532,7 +539,7 @@ fun HomeScreen(
                         visualSettings = state.visualSettings,
                         listState = listState,
                         onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
-                        onToggleFavorite = { soundFeedback.play(SoundEvent.FAVORITE); viewModel.toggleFavorite(it) },
+                        onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
                         onLoadIcon = viewModel::icon,
                         onHide = viewModel::toggleHidden,
                         onChooseIcon = onChooseIcon,
@@ -597,7 +604,7 @@ fun HomeScreen(
             onDismiss = { showHiddenApps = false },
         )
     }
-    if (showThemePicker) ThemeEditorDialog(state, viewModel, widgetController) { showThemePicker = false }
+    if (showThemePicker) ThemeEditorDialog(state, viewModel, widgetController, onSaved = { themeSaved++ }) { showThemePicker = false }
     if (showStatusCenter) {
         val saving = LocalSystemPowerSaving.current
         val battery = context.getSystemService(android.os.BatteryManager::class.java)
@@ -686,6 +693,7 @@ internal fun Header(
     showMotivationalHeader: Boolean = true,
     quickMedia: @Composable (() -> Unit) -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
+    confirmation: Int = 0,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -702,7 +710,13 @@ internal fun Header(
             window.height.toDp() < 530.dp || window.width.toDp() < 350.dp || fontScale > 1.35f
         }
         val motionReduced = reduceMotion || LocalAppearance.current.highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current
-        Column(Modifier.fillMaxWidth()) {
+        val entry = LocalPs4EntryProgress.current
+        val entryIntensity = LocalPs4EntryIntensity.current
+        val commit = dev.senda.launcher.ui.theme.rememberClockChange(confirmation.toString(), theme, motionReduced, durationMs = 320)
+        val accent = MaterialTheme.colorScheme.primary
+        val signal = if (motionReduced) Modifier else Modifier.ps4HeaderSweep(commit, accent, .6f)
+        Column(Modifier.fillMaxWidth().then(signal)
+            .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, .9f * entryIntensity) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
                     .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
@@ -763,13 +777,13 @@ internal fun Header(
                 action("Inicio y gestos", callback = onHomeSettings),
                 action("Personalización y respaldo", callback = onPersonalization),
                 action("Sonidos y respuesta", callback = onSoundSettings),
-                action("Barra Aâ€“Z", callback = onAlphabetSettings),
+                action("Barra A–Z", callback = onAlphabetSettings),
                 action("Movimiento y efectos", callback = onVisualSettings),
                 action("Entrada tras desbloquear", callback = { unlockSettings = true }),
                 action("Centro de estado", callback = onStatusCenter),
                 action("Diagnóstico de fluidez", callback = { diagnosticsShown = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
-            ), onDismiss = { themeMenuExpanded = false }, mediaContent = { quickMedia { themeMenuExpanded = false } })
+            ), onDismiss = { themeMenuExpanded = false }, mediaContent = { close -> quickMedia(close) })
         }
         return
     }
@@ -1038,7 +1052,9 @@ internal fun AppSections(
     val locale = LocalConfiguration.current.locales[0]
     val collator = remember(locale) { Collator.getInstance(locale) }
     LazyColumn(
-        modifier = modifier.fillMaxSize().testTag("aura-app-list").nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
+        modifier = modifier.fillMaxSize().testTag("aura-app-list")
+            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name, visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled())
+            .nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
         state = listState,
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -1117,7 +1133,9 @@ private fun SearchResults(
     onResetIcon: (LaunchableApp) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
+        modifier = Modifier.fillMaxSize()
+            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name, visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled())
+            .nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
         state = listState,
         contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -1177,19 +1195,33 @@ private fun AppRow(
     val console = skinName == LauncherTheme.PS4.name && !appearance.highContrast
     val rowInteractions = remember(app.packageName) { MutableInteractionSource() }
     val pressed by rowInteractions.collectIsPressedAsState()
-    var rowFocused by remember { mutableStateOf(false) }
-    // The result changes once per focused item, not once per scroll pixel.
+    val inputFocus = LocalPs4InputFocus.current
     val focusedKey = LocalPs4FocusedKey.current
-    val centered by remember(focusedKey, rowKey, console, listState) {
-        // Restore live focus while scrolling, using the shared nearest key rather than per-row scans.
+    val centered by remember(focusedKey, rowKey, console) {
         derivedStateOf { console && rowKey != null && focusedKey.value == rowKey }
     }
-    val category = if (console) rememberPs4AppCategory(app, centered || rowFocused, listState?.isScrollInProgress == true) else ""
-    if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon,
+    val category = if (console) rememberPs4AppCategory(app, centered, listState?.isScrollInProgress == true) else ""
+    var plateCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var plateBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon, origin = plateBounds,
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
-    val focusProgress = animateFloatAsState(if (console && (centered || rowFocused || pressed)) 1f else 0f,
-        tween(if (still) 0 else 160, easing=androidx.compose.animation.core.FastOutSlowInEasing), label="ps4-row-focus")
+    val pressScale = animateFloatAsState(if (console && !still && pressed) .986f else 1f,
+        tween(if (still) 0 else 120), label = "ps4-press")
+    val favoriteCue = if (console) remember { androidx.compose.animation.core.Animatable(1f) } else null
+    if (favoriteCue != null) {
+        var previous by remember { mutableStateOf(isFavorite) }
+        LaunchedEffect(isFavorite, still) {
+            favoriteCue.snapTo(1f)
+            if (previous != isFavorite && !still) {
+                previous = isFavorite
+                favoriteCue.snapTo(0f)
+                favoriteCue.animateTo(1f, tween(300))
+            } else previous = isFavorite
+        }
+    }
+    val rowAccent = MaterialTheme.colorScheme.primary
+    val feedback = LocalSoundFeedback.current
     Row(
         modifier = modifier.fillMaxWidth().heightIn(min = if(console) maxOf(appearance.rowHeight, appearance.iconSize+28).dp else appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
         verticalAlignment = Alignment.CenterVertically,
@@ -1197,8 +1229,12 @@ private fun AppRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .then(if (console) Modifier.ps4FocusFrame { focusProgress.value } else Modifier)
-                .onFocusChanged { rowFocused = it.hasFocus }
+                .then(if (console) Modifier.graphicsLayer { scaleX = pressScale.value; scaleY = pressScale.value }
+                    .onFocusChanged { focus ->
+                        if (focus.hasFocus) inputFocus?.value = rowKey
+                        else if (inputFocus?.value == rowKey) inputFocus?.value = null
+                    } else Modifier)
+                .then(if (favoriteCue != null && !still) Modifier.ps4HeaderSweep(favoriteCue.asState(), rowAccent, .65f) else Modifier)
                 .semantics(mergeDescendants = true) {
                     stateDescription = if (isFavorite) "Favorita" else "No favorita"
                     customActions = listOf(androidx.compose.ui.semantics.CustomAccessibilityAction(
@@ -1212,6 +1248,7 @@ private fun AppRow(
         ) {
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
+                    .onGloballyPositioned { plateCoordinates = it }
                     .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant,MaterialTheme.colorScheme.surface)),RoundedCornerShape(2.dp))
                     .border(1.dp,MaterialTheme.colorScheme.outline.copy(alpha=.6f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
@@ -1227,15 +1264,25 @@ private fun AppRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-                if (console) Text(if (centered || rowFocused) category else " ",
+                if (console) Text(if (centered) category else " ",
                     style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            if (skinName == LauncherTheme.PS4.name) IconButton(onClick = { detailsShown = true }, modifier = Modifier.size(48.dp)) {
+            if (skinName == LauncherTheme.PS4.name) IconButton(onClick = {
+                plateBounds = plateCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
+                    val position = coordinates.positionOnScreen()
+                    if (position.x.isFinite() && position.y.isFinite()) {
+                        androidx.compose.ui.geometry.Rect(position,
+                            androidx.compose.ui.geometry.Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
+                    } else null
+                }
+                feedback.play(SoundEvent.SELECT)
+                detailsShown = true
+            }, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Filled.MoreVert, "Detalles y accesos de ${app.label}", modifier = Modifier.size(20.dp))
             }
             if (isFavorite) {
-                // The section already identifies favorites; this quiet mark also works in Aâ€“Z/search.
+                // The section already identifies favorites; this quiet mark also works in A–Z/search.
                 Box(Modifier.padding(end = 12.dp).size(5.dp)
                     .background(MaterialTheme.colorScheme.primary, CircleShape))
             }

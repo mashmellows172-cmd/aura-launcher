@@ -51,6 +51,8 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     }
     val palette = dev.senda.launcher.ui.theme.ps4PaletteColors(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
     val whitePalette = dev.senda.launcher.ui.theme.LocalPs4Palette.current == dev.senda.launcher.data.Ps4Palette.WHITE
+    val entry = LocalPs4EntryProgress.current
+    val entryIntensity = LocalPs4EntryIntensity.current
     val scene = remember { ConsoleScene() }
     val focusedKey = LocalPs4FocusedKey.current
     val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
@@ -107,7 +109,10 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val time=scene.phase
         translationX=sin(time)*size.width*.014f+scene.parallax*size.width*.008f
         translationY=cos(time*.8f)*size.height*.009f
-        scaleX=1.04f;scaleY=1.04f
+        val opening = (1f - (entry?.value ?: 1f)) * entryIntensity
+        scaleX = 1.04f - opening * .1f
+        scaleY = 1.04f
+        translationY += opening * size.height * .022f
         alpha=1f // Keep the full-screen layer opaque; avoid an offscreen alpha buffer.
     }.drawWithCache {
         val backdrop=Brush.linearGradient(listOf(palette.top,palette.middle,palette.bottom),end=Offset(size.width*.8f,size.height))

@@ -45,6 +45,8 @@ internal fun Ps4HeaderClock(
     onOpen: (() -> Unit)? = null,
 ) {
     val progress = rememberClockChange(time, LauncherTheme.PS4, reduced, durationMs = motion.durationMs)
+    val entry = LocalPs4EntryProgress.current
+    val entryIntensity = LocalPs4EntryIntensity.current
     val prominent = size.value >= 40f
     val accent = MaterialTheme.colorScheme.primary
     val travel = if (prominent) motion.travelDp.dp else (motion.travelDp / 3f).dp
@@ -60,8 +62,9 @@ internal fun Ps4HeaderClock(
             time,
             modifier = Modifier.graphicsLayer {
                 val p = progress.value
-                alpha = .66f + .34f * p
-                translationY = (1f - p) * travel.toPx()
+                val opening = (1f - (entry?.value ?: 1f)) * entryIntensity
+                alpha = (.66f + .34f * p) * (1f - .28f * opening)
+                translationY = (1f - p) * travel.toPx() + opening * 10.dp.toPx()
             },
             fontSize = size,
             fontWeight = FontWeight.Light,

@@ -21,12 +21,16 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.rememberMotionPowerSaver
 import kotlinx.coroutines.launch
 import kotlin.math.*
+
+internal val LocalPs4EntryProgress = staticCompositionLocalOf<State<Float>?> { null }
+internal val LocalPs4EntryIntensity = staticCompositionLocalOf { 0f }
 
 enum class UnlockStyle(val title: String) {
     AUTO("Según el tema"), NONE("Sin efecto"), SLIDE("Slide clásico"), CRT("CRT suave"),
@@ -90,7 +94,7 @@ fun UnlockEntry(sequence: Int, theme: LauncherTheme, reduced: Boolean, content: 
         onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
     val selected = remember(revision) { runCatching { UnlockStyle.valueOf(prefs.getString("style", "AUTO")!!) }.getOrDefault(UnlockStyle.AUTO) }
-    val duration = remember(revision) { prefs.getInt("duration", 420).coerceIn(200,650) }
+    val duration = remember(revision, theme) { prefs.getInt("duration", if (theme == LauncherTheme.PS4) 600 else 420).coerceIn(200,650) }
     val intensity = remember(revision) { prefs.getFloat("intensity", .7f).let { if(it.isFinite()) it.coerceIn(0f,1f) else .7f } }
     val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
     var resumed by remember { mutableStateOf(lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
@@ -99,11 +103,16 @@ fun UnlockEntry(sequence: Int, theme: LauncherTheme, reduced: Boolean, content: 
         lifecycle.addObserver(observer); onDispose { lifecycle.removeObserver(observer) }
     }
     UnlockSurface(sequence, resolve(selected,theme), duration, intensity,
-        reduced || rememberMotionPowerSaver() || !resumed || LocalThemePreview.current, content)
+        reduced || rememberMotionPowerSaver() || !resumed || LocalThemePreview.current,
+        console = theme == LauncherTheme.PS4, content = content)
 }
 
 @Composable
-private fun UnlockSurface(sequence: Int, style: UnlockStyle, duration: Int, intensity: Float, reduced: Boolean, content: @Composable () -> Unit) {
+private fun UnlockSurface(
+    sequence: Int, style: UnlockStyle, duration: Int, intensity: Float, reduced: Boolean,
+    console: Boolean, content: @Composable () -> Unit,
+) {
+    val consoleRibbon = console && style == UnlockStyle.RIBBON
     val progress = remember { Animatable(1f) }
     var consumedSequence by remember { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
@@ -126,7 +135,7 @@ private fun UnlockSurface(sequence: Int, style: UnlockStyle, duration: Int, inte
         }
     }) {
         Box(Modifier.fillMaxSize().graphicsLayer {
-            val p = progress.value; val remaining = 1f-p
+            val p = if (consoleRibbon) 1f else progress.value; val remaining = 1f-p
             alpha = 1f - remaining * .35f * intensity
             when(style) {
                 UnlockStyle.SLIDE -> translationX = -size.width * .045f * remaining * intensity
@@ -144,8 +153,15 @@ private fun UnlockSurface(sequence: Int, style: UnlockStyle, duration: Int, inte
                 circle.addOval(androidx.compose.ui.geometry.Rect(Offset(size.width*.5f,size.height*.85f),radius))
                 clipPath(circle) { this@drawWithContent.drawContent() }
             }
-        } else Modifier)) { content() }
-        if(style == UnlockStyle.RIBBON || style == UnlockStyle.CRT) Canvas(Modifier.matchParentSize()) {
+        } else Modifier)) {
+            CompositionLocalProvider(
+                LocalPs4EntryProgress provides if (consoleRibbon && !reduced && intensity > 0f) progress.asState() else null,
+                LocalPs4EntryIntensity provides intensity,
+            ) {
+                content()
+            }
+        }
+        if ((!consoleRibbon && style == UnlockStyle.RIBBON) || style == UnlockStyle.CRT) Canvas(Modifier.matchParentSize()) {
             val p=progress.value
             if(p<1f) {
                 val y=size.height*p
@@ -162,7 +178,7 @@ internal fun UnlockSettingsDialog(theme: LauncherTheme, onDismiss: () -> Unit) {
     val context=LocalContext.current
     val prefs=remember(context) { context.getSharedPreferences("aura_unlock",Context.MODE_PRIVATE) }
     var selected by remember { mutableStateOf(runCatching { UnlockStyle.valueOf(prefs.getString("style","AUTO")!!) }.getOrDefault(UnlockStyle.AUTO)) }
-    var duration by remember { mutableFloatStateOf(prefs.getInt("duration",420).coerceIn(200,650).toFloat()) }
+    var duration by remember { mutableFloatStateOf(prefs.getInt("duration", if (theme == LauncherTheme.PS4) 600 else 420).coerceIn(200,650).toFloat()) }
     var intensity by remember { mutableFloatStateOf(prefs.getFloat("intensity",.7f).let { if(it.isFinite()) it.coerceIn(0f,1f) else .7f }) }
     var preview by remember { mutableIntStateOf(0) }
     val reduced=LocalMotionSettings.current.reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || rememberMotionPowerSaver()
@@ -177,8 +193,18 @@ internal fun UnlockSettingsDialog(theme: LauncherTheme, onDismiss: () -> Unit) {
             Text("Intensidad: ${(intensity*100).toInt()}%")
             Slider(intensity,{intensity=it})
             Box(Modifier.fillMaxWidth().height(100.dp)) {
-                UnlockSurface(preview,resolve(selected,theme),duration.toInt(),intensity,reduced) {
-                    Surface(color=Color(0xFF003087),modifier=Modifier.fillMaxSize()) { Text("Aura · Vista previa",Modifier.padding(24.dp),color=Color.White) }
+                UnlockSurface(preview, resolve(selected,theme), duration.toInt(), intensity, reduced, console = theme == LauncherTheme.PS4) {
+                    val entry = LocalPs4EntryProgress.current
+                    Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
+                        Box(Modifier.fillMaxSize()) {
+                            if (entry != null) Ps4Wallpaper(true, Modifier.matchParentSize())
+                            Column(Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                                .then(if (entry != null) Modifier.ps4HeaderSweep(entry, MaterialTheme.colorScheme.primary, intensity) else Modifier)) {
+                                if (entry != null) Ps4HeaderClock("20:24", 30.sp, reduced, dev.senda.launcher.data.Ps4ClockMotion.MARKED)
+                                Text("Aura · Vista previa", style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
                 }
             }
             TextButton(onClick={preview++}) { Text("Reproducir vista previa") }

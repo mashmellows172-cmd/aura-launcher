@@ -1,9 +1,6 @@
 package dev.senda.launcher.ui
 
 import android.animation.ValueAnimator
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,17 +36,15 @@ internal data class Ps4QuickAction(
 internal fun Ps4QuickMenu(
     actions: List<Ps4QuickAction>,
     onDismiss: () -> Unit,
-    mediaContent: @Composable () -> Unit = {},
+    mediaContent: @Composable (() -> Unit) -> Unit = {},
 ) {
     val highContrast = LocalAppearance.current.highContrast
     val settings = LocalMotionSettings.current
     val noMotion = settings.reduceMotion || highContrast || LocalThemePreview.current ||
         settings.menuEffect == "NONE" || !ValueAnimator.areAnimatorsEnabled()
-    val entrance = remember { Animatable(if (noMotion) 1f else 0f) }
-    LaunchedEffect(noMotion) {
-        if (noMotion) entrance.snapTo(1f)
-        else entrance.animateTo(1f, tween(Ps4Motion.enterMs, easing = Ps4Motion.easing))
-    }
+    val motion = rememberPs4PanelMotion(noMotion)
+    val entrance = motion.progress
+    val close = { motion.close(noMotion, onDismiss) }
 
     val colors = MaterialTheme.colorScheme
     val panel = colors.surface
@@ -62,12 +57,12 @@ internal fun Ps4QuickMenu(
     )
 
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = close,
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             decorFitsSystemWindows = false,
             dismissOnBackPress = true,
-            dismissOnClickOutside = true,
+            dismissOnClickOutside = false,
         ),
     ) {
         Box(Modifier.fillMaxSize()) {
@@ -79,7 +74,7 @@ internal fun Ps4QuickMenu(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClickLabel = "Cerrar menú rápido",
-                        onClick = onDismiss,
+                        onClick = close,
                     )
                     .semantics { contentDescription = "Cerrar menú rápido" },
             )
@@ -93,7 +88,7 @@ internal fun Ps4QuickMenu(
                         .graphicsLayer {
                             val progress = entrance.value
                             alpha = progress
-                            translationX = -28.dp.toPx() * (1f - progress)
+                            translationX = -size.width * .16f * (1f - progress)
                         }
                         .semantics { paneTitle = "Menú rápido" },
                     shape = RectangleShape,
@@ -101,9 +96,10 @@ internal fun Ps4QuickMenu(
                     contentColor = ink,
                     tonalElevation = 0.dp,
                 ) {
+                    Box(Modifier.fillMaxSize()) {
                     Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                         TextButton(
-                            onClick = onDismiss,
+                            onClick = close,
                             modifier = Modifier.align(Alignment.End).heightIn(min = 48.dp),
                             colors = actionColors,
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
@@ -125,7 +121,7 @@ internal fun Ps4QuickMenu(
                             }
                             HorizontalDivider(color = separator.copy(alpha = .65f))
                             Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                                mediaContent()
+                                mediaContent(close)
                             }
                             actions.forEach { action ->
                                 val section = when (action.label) {
@@ -145,7 +141,7 @@ internal fun Ps4QuickMenu(
                                 val pressed by interaction.collectIsPressedAsState()
                                 var focused by remember(action.label) { mutableStateOf(false) }
                                 TextButton(
-                                    onClick = action.onClick,
+                                    onClick = { motion.close(noMotion, action.onClick) },
                                     enabled = action.enabled,
                                     interactionSource = interaction,
                                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
@@ -164,6 +160,12 @@ internal fun Ps4QuickMenu(
                                 }
                             }
                         }
+                    }
+                    if (!noMotion) {
+                        Box(Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(2.dp)
+                            .graphicsLayer { val p = entrance.value; alpha = 4f * p * (1f - p) }
+                            .background(colors.primary))
+                    }
                     }
                 }
             }

@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta64 en validación el 10 de noviembre de 2026. 0.44.0-beta64, código 64. Marco viajero, entrada PS4, fichas desde su placa, salida del menú rápido y señales de confirmación. Ver docs/BETA64.md. Última instalación confirmada beta63.
+
 Revisión física de beta63 el 9 de noviembre de 2026. Selector del reloj y muestra Espectacular comprobados. Se confirmó que cerrar el borrador conserva el nivel original. La cabecera del clima y el panel muestran la misma lectura de Prognoza. Ver docs/BETA63.md.
 
 Beta63 instalada el 9 de noviembre de 2026. 0.43.0-beta63, código 63. Selector y muestra de intensidad del reloj, más escenas PS4 de clima por evento. Compilación y lint correctos, 0 errores. Versión, firma y hash instalado verificados. Ver docs/BETA63.md.
