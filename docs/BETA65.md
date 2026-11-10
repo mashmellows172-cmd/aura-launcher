@@ -2,7 +2,7 @@
 
 10 de noviembre de 2026. 0.44.1-beta65, código 65. Base beta64 `635a0ea`.
 
-El usuario indicó que no percibía la entrada de beta64. La revisión de código encontró un desplazamiento máximo de 10 dp multiplicado por la intensidad y una curva muy adelantada. Con el valor predeterminado de 70 %, el recorrido inicial del reloj era de 7 dp. Se encontró además una ruta posible en la que el efecto consumía la señal mientras la composición todavía esperaba `RESUMED`. La causa exacta en el teléfono queda por confirmar. Las escalas de animación del sistema estaban activas y el ahorro del sistema desactivado cuando se consultaron.
+El usuario indicó que no percibía la entrada de beta64. La revisión de código encontró un desplazamiento máximo de 10 dp multiplicado por la intensidad y una curva muy adelantada. Con el valor predeterminado de 70 %, el recorrido inicial del reloj era de 7 dp. Se encontró además una ruta posible en la que el efecto consumía la señal mientras la composición todavía esperaba `RESUMED`. La preferencia guardada se comprobó después de instalar beta65. Las escalas de animación del sistema estaban activas y el ahorro del sistema desactivado cuando se consultaron.
 
 Cinta PS4 ahora usa una fase lineal común con tiempos separados. El fondo abre más su ancho y desplaza su capa decorativa. El reloj se incorpora desde el 16 % del recorrido, con hasta 28 dp de desplazamiento y mayor diferencia de opacidad. La cabecera usa un haz de mayor contraste. La vista previa de 132 dp reproduce la misma secuencia. Se mantiene la duración y la intensidad guardadas. El toque llega a Inicio durante todo el efecto. La secuencia espera a `RESUMED` antes de consumir la señal y los ajustes de reducción de movimiento siguen aplicándose.
 
@@ -14,4 +14,8 @@ Instalada por ADB inalámbrico mediante `install -r` sobre beta64. El Motorola c
 
 `8625021ec1cfcf5edf18540741102eb966e251f0542f3cc843b119b9740a0391`
 
-El Motorola estaba bloqueado al terminar. Queda pendiente reproducir un desbloqueo real con Aura visible y comprobar la entrada. Sin métricas nuevas de rendimiento ni cambios de preferencias del teléfono.
+## Diagnóstico en el Motorola
+
+En beta65 se confirmó que el estilo guardado era **Sin efecto**, lo que desactiva la secuencia al desbloquear. Se seleccionó **Cinta PS4** temporalmente para la prueba y se conservaron la duración y la intensidad guardadas.
+
+ADB observó el bloqueo y un regreso breve a Inicio. Se obtuvo una sola imagen útil de Aura, insuficiente para comprobar la apertura de las cintas, el movimiento del reloj o la respuesta al toque durante la entrada. La pantalla volvió a bloquearse y Cinta PS4 quedó seleccionada temporalmente. Queda pendiente confirmar la secuencia y restaurar el estilo original, salvo que el usuario elija conservar Cinta PS4. Las capturas se mantienen fuera de Git.
