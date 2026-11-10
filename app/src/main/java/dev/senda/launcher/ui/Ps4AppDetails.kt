@@ -9,6 +9,16 @@ import android.graphics.drawable.Drawable
 import android.os.Process
 import android.util.LruCache
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.material3.Surface
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -146,14 +156,7 @@ internal fun Ps4AppDetails(
     val close = { motion.close(reduced, onDismiss) }
     var destination by remember { mutableStateOf<Rect?>(null) }
     val accent = MaterialTheme.colorScheme.primary
-    val transition = if (reduced) Modifier else Modifier
-        .onGloballyPositioned { coordinates ->
-            val position = coordinates.positionOnScreen()
-            if ((destination == null || motion.progress.value >= .999f) && position.x.isFinite() && position.y.isFinite()) {
-                destination = Rect(position, Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
-            }
-        }
-        .graphicsLayer {
+    val transition = if (reduced) Modifier else Modifier.graphicsLayer {
             val p = motion.progress.value
             val target = destination
             val source = origin
@@ -169,11 +172,7 @@ internal fun Ps4AppDetails(
                 scaleY = scaleX
             }
         }
-    AuraAlertDialog(
-        onDismissRequest = close,
-        modifier = transition,
-        animate = false,
-        title = {
+    val heading: @Composable () -> Unit = {
             Row(Modifier.fillMaxWidth().then(if (reduced) Modifier else Modifier.ps4HeaderSweep(motion.progress.asState(), accent, .65f)),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically) {
@@ -190,10 +189,10 @@ internal fun Ps4AppDetails(
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
-        },
-        text = {
+    }
+    val content: @Composable (Modifier) -> Unit = { modifier ->
             Column(
-                modifier = Modifier.fillMaxWidth().heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                modifier = modifier.fillMaxWidth().heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .4f))
@@ -204,6 +203,7 @@ internal fun Ps4AppDetails(
                     TextButton(
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                         onClick = {
+                            if (motion.closing) return@TextButton
                             launchError = null
                             try {
                                 if (launcherApps == null || !launcherApps.hasShortcutHostPermission()) {
@@ -228,13 +228,40 @@ internal fun Ps4AppDetails(
                     Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 }
             }
-        },
-        confirmButton = {
-            Button(onClick = onLaunch, shape = RoundedCornerShape(2.dp),
-                modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
-        },
-        dismissButton = {
-            TextButton(onClick = close, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }
-        },
-    )
+    }
+    Dialog(
+        onDismissRequest = close,
+        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false, dismissOnClickOutside = false),
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            Box(Modifier.matchParentSize().clickable(onClickLabel = "Cerrar ficha", onClick = close))
+            Box(Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp), contentAlignment = Alignment.Center) {
+                // This wrapper stays at the final position while the card moves inside the full-screen window.
+                Box(Modifier.widthIn(max = 460.dp).fillMaxWidth().onGloballyPositioned { coordinates ->
+                    val position = coordinates.positionOnScreen()
+                    if (position.x.isFinite() && position.y.isFinite()) {
+                        destination = Rect(position, Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
+                    }
+                }) {
+                    Surface(
+                        Modifier.fillMaxWidth().then(transition)
+                            .pointerInput(Unit) { detectTapGestures(onTap = {}) }
+                            .semantics { paneTitle = "Ficha de ${app.label}" },
+                        shape = RoundedCornerShape(2.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
+                        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            heading()
+                            content(Modifier.weight(1f, fill = false))
+                            Column(Modifier.align(Alignment.End), horizontalAlignment = Alignment.End) {
+                                Button(onClick = { if (!motion.closing) onLaunch() }, shape = RoundedCornerShape(2.dp),
+                                    modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
+                                TextButton(onClick = close, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

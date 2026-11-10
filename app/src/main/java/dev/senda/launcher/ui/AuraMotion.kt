@@ -223,7 +223,6 @@ fun AuraAlertDialog(
     dismissButton: (@Composable () -> Unit)? = null,
     title: (@Composable () -> Unit)? = null,
     text: (@Composable () -> Unit)? = null,
-    animate: Boolean = true,
 ) {
     val settings = LocalMotionSettings.current
     val progress = remember { Animatable(1f) }
@@ -231,8 +230,8 @@ fun AuraAlertDialog(
     val profile = theme?.let(::historicalProfile)?.withPs4Palette(LocalPs4Palette.current)?.takeUnless { LocalAppearance.current.highContrast }
     val gentle = settings.reduceMotion
     val noMotion = gentle || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
-    LaunchedEffect(settings.menuEffect, noMotion, profile?.motion, settings.durationMs, animate) {
-        if (!animate || noMotion || settings.menuEffect == "NONE") progress.snapTo(1f)
+    LaunchedEffect(settings.menuEffect, noMotion, profile?.motion, settings.durationMs) {
+        if (noMotion || settings.menuEffect == "NONE") progress.snapTo(1f)
         else {
             progress.snapTo(0f)
             progress.animateTo(1f, if (settings.menuEffect == "SPRING") spring(dampingRatio = 1f, stiffness = 420f * (360f / settings.durationMs).pow(2)) else tween(settings.durationMs.coerceAtMost(450)))

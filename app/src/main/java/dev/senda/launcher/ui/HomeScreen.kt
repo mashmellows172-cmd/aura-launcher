@@ -1276,7 +1276,7 @@ private fun AppRow(
                             androidx.compose.ui.geometry.Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
                     } else null
                 }
-                feedback.play(SoundEvent.SELECT)
+                feedback.play(SoundEvent.MENU)
                 detailsShown = true
             }, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Filled.MoreVert, "Detalles y accesos de ${app.label}", modifier = Modifier.size(20.dp))

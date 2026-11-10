@@ -122,8 +122,20 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                         }
                     }
                     Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween){
-                        TextButton(onClick={editor.finishGesture();editor.save(name, false) { if (value.theme == LauncherTheme.PS4.name) { feedback.play(SoundEvent.SELECT); onSaved() }; onDismiss() }},enabled=!busy){Text("Guardar copia")}
-                        Button(onClick={editor.finishGesture();editor.save(name, true) { if (value.theme == LauncherTheme.PS4.name) { feedback.play(SoundEvent.SELECT); onSaved() }; onDismiss() }},enabled=!busy&&!state.isLoading){Text(if(busy)"Guardando…" else "Guardar y usar")}
+                        fun saveVariant(apply: Boolean) {
+                            editor.finishGesture()
+                            editor.save(name, apply) {
+                                if (value.theme == LauncherTheme.PS4.name) {
+                                    feedback.play(SoundEvent.SELECT)
+                                    onSaved()
+                                }
+                                onDismiss()
+                            }
+                        }
+                        TextButton(onClick = { saveVariant(false) }, enabled = !busy) { Text("Guardar copia") }
+                        Button(onClick = { saveVariant(true) }, enabled = !busy && !state.isLoading) {
+                            Text(if (busy) "Guardando…" else "Guardar y usar")
+                        }
                     }
                 }
             }
