@@ -103,14 +103,14 @@ fun UnlockEntry(sequence: Int, theme: LauncherTheme, reduced: Boolean, content: 
         lifecycle.addObserver(observer); onDispose { lifecycle.removeObserver(observer) }
     }
     UnlockSurface(sequence, resolve(selected,theme), duration, intensity,
-        reduced || rememberMotionPowerSaver() || !resumed || LocalThemePreview.current,
-        console = theme == LauncherTheme.PS4, content = content)
+        reduced || rememberMotionPowerSaver() || LocalThemePreview.current,
+        console = theme == LauncherTheme.PS4, ready = resumed, content = content)
 }
 
 @Composable
 private fun UnlockSurface(
     sequence: Int, style: UnlockStyle, duration: Int, intensity: Float, reduced: Boolean,
-    console: Boolean, content: @Composable () -> Unit,
+    console: Boolean, ready: Boolean = true, content: @Composable () -> Unit,
 ) {
     val consoleRibbon = console && style == UnlockStyle.RIBBON
     val progress = remember { Animatable(1f) }
@@ -118,22 +118,24 @@ private fun UnlockSurface(
     val scope = rememberCoroutineScope()
     val circle = remember { Path() }
     val wave = remember { Path() }
-    LaunchedEffect(sequence, style, duration, intensity, reduced) {
+    LaunchedEffect(sequence, style, duration, intensity, reduced, ready) {
         progress.snapTo(1f)
-        if (sequence == 0 || sequence == consumedSequence) return@LaunchedEffect
+        if (!ready || sequence == 0 || sequence == consumedSequence) return@LaunchedEffect
         consumedSequence = sequence
         if (reduced || intensity <= 0f || style == UnlockStyle.NONE || !ValueAnimator.areAnimatorsEnabled()) return@LaunchedEffect
         progress.snapTo(0f)
-        progress.animateTo(1f, tween(duration, easing = CubicBezierEasing(.16f, 1f, .3f, 1f)))
+        val curve = if (consoleRibbon) LinearEasing else CubicBezierEasing(.16f, 1f, .3f, 1f)
+        progress.animateTo(1f, tween(duration, easing = curve))
     }
-    Box(Modifier.fillMaxSize().pointerInput(Unit) {
+    val touchSettlesEntry = if (consoleRibbon) Modifier else Modifier.pointerInput(Unit) {
         awaitEachGesture {
             val event = awaitPointerEvent(PointerEventPass.Initial)
             if (event.changes.any { it.pressed } && progress.value < 1f) scope.launch { progress.snapTo(1f) }
             // Observe only: the original down event reaches the app unchanged.
             do { val next = awaitPointerEvent() } while(next.changes.any { it.pressed })
         }
-    }) {
+    }
+    Box(Modifier.fillMaxSize().then(touchSettlesEntry)) {
         Box(Modifier.fillMaxSize().graphicsLayer {
             val p = if (consoleRibbon) 1f else progress.value; val remaining = 1f-p
             alpha = 1f - remaining * .35f * intensity
@@ -155,7 +157,7 @@ private fun UnlockSurface(
             }
         } else Modifier)) {
             CompositionLocalProvider(
-                LocalPs4EntryProgress provides if (consoleRibbon && !reduced && intensity > 0f) progress.asState() else null,
+                LocalPs4EntryProgress provides if (consoleRibbon && ready && !reduced && intensity > 0f) progress.asState() else null,
                 LocalPs4EntryIntensity provides intensity,
             ) {
                 content()
@@ -184,7 +186,11 @@ internal fun UnlockSettingsDialog(theme: LauncherTheme, onDismiss: () -> Unit) {
     val reduced=LocalMotionSettings.current.reduceMotion || dev.senda.launcher.data.LocalAppearance.current.highContrast || rememberMotionPowerSaver()
     AuraAlertDialog(onDismissRequest=onDismiss, title={Text("Entrada tras desbloquear")}, text={
         Column(Modifier.heightIn(max=500.dp).verticalScroll(rememberScrollState())) {
-            Text("Se aplica después de la autenticación de Android. Tocar cancela el movimiento.")
+            Text("Se aplica después de la autenticación de Android.")
+            if (theme == LauncherTheme.PS4) {
+                Text("Cinta PS4 abre el fondo y luego incorpora el reloj. Puedes usar Inicio durante la entrada.",
+                    style = MaterialTheme.typography.bodySmall)
+            }
             UnlockStyle.entries.forEach { style ->
                 TextButton(onClick={selected=style},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) { Text((if(selected==style) "✓ " else "")+style.title) }
             }
@@ -192,15 +198,15 @@ internal fun UnlockSettingsDialog(theme: LauncherTheme, onDismiss: () -> Unit) {
             Slider(duration,{duration=it},valueRange=200f..650f)
             Text("Intensidad: ${(intensity*100).toInt()}%")
             Slider(intensity,{intensity=it})
-            Box(Modifier.fillMaxWidth().height(100.dp)) {
+            Box(Modifier.fillMaxWidth().height(if (theme == LauncherTheme.PS4) 132.dp else 100.dp)) {
                 UnlockSurface(preview, resolve(selected,theme), duration.toInt(), intensity, reduced, console = theme == LauncherTheme.PS4) {
                     val entry = LocalPs4EntryProgress.current
                     Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
                         Box(Modifier.fillMaxSize()) {
                             if (entry != null) Ps4Wallpaper(true, Modifier.matchParentSize())
                             Column(Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                                .then(if (entry != null) Modifier.ps4HeaderSweep(entry, MaterialTheme.colorScheme.primary, intensity) else Modifier)) {
-                                if (entry != null) Ps4HeaderClock("20:24", 30.sp, reduced, dev.senda.launcher.data.Ps4ClockMotion.MARKED)
+                                .then(if (entry != null) Modifier.ps4HeaderSweep(entry, MaterialTheme.colorScheme.primary, intensity, beamAlpha = .5f) else Modifier)) {
+                                if (entry != null) Ps4HeaderClock("20:24", 36.sp, reduced, dev.senda.launcher.data.Ps4ClockMotion.MARKED)
                                 Text("Aura · Vista previa", style = MaterialTheme.typography.bodyMedium)
                             }
                         }

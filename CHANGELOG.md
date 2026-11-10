@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta65 instalada el 10 de noviembre de 2026. 0.44.1-beta65, código 65. Entrada Cinta PS4 con apertura más amplia, reloj escalonado y barrido visible. Compilación, lint, firma y hash instalado verificados. Confirmación tras desbloqueo pendiente. Ver docs/BETA65.md.
+
 Beta64 instalada por ADB inalámbrico el 10 de noviembre de 2026. 0.44.0-beta64, código 64. Marco viajero, entrada PS4, fichas desde su placa, salida del menú rápido y señales de confirmación. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Prueba visual de transiciones pendiente. Ver docs/BETA64.md.
 
 Beta63 instalada el 9 de noviembre de 2026. 0.43.0-beta63, código 63. Selector y muestra de intensidad del reloj, más escenas PS4 de clima por evento. Compilación y lint correctos, 0 errores. Versión, firma y hash instalado verificados. Ver docs/BETA63.md.

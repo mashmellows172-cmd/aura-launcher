@@ -62,9 +62,10 @@ internal fun Ps4HeaderClock(
             time,
             modifier = Modifier.graphicsLayer {
                 val p = progress.value
-                val opening = (1f - (entry?.value ?: 1f)) * entryIntensity
-                alpha = (.66f + .34f * p) * (1f - .28f * opening)
-                translationY = (1f - p) * travel.toPx() + opening * 10.dp.toPx()
+                val entryPhase = (((entry?.value ?: 1f) - .16f) / .68f).coerceIn(0f, 1f)
+                val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(entryPhase)) * entryIntensity
+                alpha = (.66f + .34f * p) * (1f - .85f * opening)
+                translationY = (1f - p) * travel.toPx() + opening * 28.dp.toPx()
             },
             fontSize = size,
             fontWeight = FontWeight.Light,
@@ -95,12 +96,14 @@ internal fun Ps4ClockMotionControls(current: Ps4ClockMotion, reduced: Boolean, o
 }
 
 /** One cached beam, clipped to its readout. The idle draw exits before submitting a shape. */
-internal fun Modifier.ps4HeaderSweep(progress: State<Float>, accent: Color, intensity: Float): Modifier =
+internal fun Modifier.ps4HeaderSweep(
+    progress: State<Float>, accent: Color, intensity: Float, beamAlpha: Float = .28f,
+): Modifier =
     clipToBounds().drawWithCache {
         val band = size.width * .75f
         val beamSize = Size(band, size.height)
         val beam = Brush.linearGradient(
-            listOf(Color.Transparent, accent.copy(alpha = .28f), Color.Transparent),
+            listOf(Color.Transparent, accent.copy(alpha = beamAlpha), Color.Transparent),
             end = Offset(band, size.height * .45f),
         )
         onDrawBehind {

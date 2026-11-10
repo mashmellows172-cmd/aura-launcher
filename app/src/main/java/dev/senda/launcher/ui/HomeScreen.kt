@@ -716,7 +716,7 @@ internal fun Header(
         val accent = MaterialTheme.colorScheme.primary
         val signal = if (motionReduced) Modifier else Modifier.ps4HeaderSweep(commit, accent, .6f)
         Column(Modifier.fillMaxWidth().then(signal)
-            .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, .9f * entryIntensity) else Modifier)) {
+            .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
                     .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
