@@ -21,4 +21,10 @@ En **Menú rápido → Clima en el reloj → Ver iconos y animaciones PS4** se p
 
 ## Validación
 
-Revisión de código con Frontend Design, Animate/Impeccable, Accessible Animation, Ponytail y Verification Before Completion. `assembleBeta` y `lintBeta` completados en 56 s. Lint registró 0 errores, 35 advertencias y 3 avisos. `aapt` confirmó el código 66 y `apksigner verify` confirmó la firma del APK local. La instalación, la inspección visual y la medición de fluidez en el Motorola quedan pendientes.
+Revisión de código con Frontend Design, Animate/Impeccable, Accessible Animation, Ponytail y Verification Before Completion. `assembleBeta` y `lintBeta` completados en 56 s. Lint registró 0 errores, 35 advertencias y 3 avisos. `aapt` confirmó el código 66 y `apksigner verify` confirmó la firma del APK local. La inspección visual y la medición de fluidez quedan pendientes.
+
+## Instalación en el Motorola
+
+El 10 de noviembre de 2026 se actualizó beta65 mediante ADB inalámbrico con `install -r`. Android confirmó 0.45.0-beta66, código 66. El SHA-256 del APK instalado coincide con el del APK local.
+
+`9c09d3b42dbe21eb9fe09f006d701074b95e53d9bf10646f68246a6b4218caba`
