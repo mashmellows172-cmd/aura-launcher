@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Beta64 compilada el 10 de noviembre de 2026. 0.44.0-beta64, código 64. Marco viajero, entrada PS4, fichas desde su placa, salida del menú rápido y señales de confirmación. Compilación y lint correctos con 0 errores. Prueba física pendiente. Ver docs/BETA64.md. Última instalación confirmada beta63.
+Beta64 instalada por ADB inalámbrico el 10 de noviembre de 2026. 0.44.0-beta64, código 64. Marco viajero, entrada PS4, fichas desde su placa, salida del menú rápido y señales de confirmación. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Prueba visual de transiciones pendiente. Ver docs/BETA64.md.
 
 Revisión física de beta63 el 9 de noviembre de 2026. Selector del reloj y muestra Espectacular comprobados. Se confirmó que cerrar el borrador conserva el nivel original. La cabecera del clima y el panel muestran la misma lectura de Prognoza. Ver docs/BETA63.md.
 

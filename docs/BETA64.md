@@ -10,7 +10,7 @@
 
 Movimiento reducido y alto contraste muestran estados estables. Los progresos decorativos se leen en dibujo o capas. El gesto de desbloqueo usa la observación del sistema existente. El marco sigue la lista sin iniciar un recorrido independiente durante el swipe. Sin dependencias nuevas.
 
-Primer compile detectó una importación faltante, corregida. `assembleBeta` y `lintBeta` finales correctos. Prueba física, grabación de las transiciones, foco con mando y medición de fluidez pendientes. Se conserva beta63 como última instalación registrada. Sin suites automáticas ni datos privados del teléfono en Git.
+Primer compile detectó una importación faltante, corregida. `assembleBeta` y `lintBeta` finales correctos. Prueba física, grabación de las transiciones, foco con mando y medición de fluidez pendientes. Beta63 era la versión instalada durante la preparación del candidato. Sin suites automáticas ni datos privados del teléfono en Git.
 
 Skills aplicadas: Animate, Frontend Design, Accessible Animation, Ponytail y Verification Before Completion. La cuota se consulta en las ventanas de uso de Codex. Las consultas son lecturas puntuales.
 
@@ -19,4 +19,13 @@ Skills aplicadas: Animate, Frontend Design, Accessible Animation, Ponytail y Ver
 
 El diálogo de ficha ocupa la ventana para permitir el recorrido desde la placa hasta el panel. Un contenedor fijo mide la posición final mientras la tarjeta se mueve dentro. El sonido de abrir ficha usa el evento de menú y el guardado usa el de selección. El primer checkpoint fue `9a07d54`.
 
-Compilación y lint correctos en 1 min 12 s. Lint reportó 0 errores, 35 advertencias y 3 avisos. `git diff --check` correcto. APK 15.612.196 bytes. Firma compatible SHA-256 `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`. Hash del APK candidato `101f15b977fa9271799d6ad7541ff9cc189ebeaa7c5a13cf4e2dcbaa6d05ad5f`. Prueba de posición real de la ficha, desbloqueo, reproducción de los sonidos y fluidez pendientes en el Motorola. No se instaló beta64 en esta entrega.
+Compilación y lint correctos en 1 min 12 s. Lint reportó 0 errores, 35 advertencias y 3 avisos. `git diff --check` correcto. APK 15.612.196 bytes. Firma compatible SHA-256 `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`. Hash del APK candidato `101f15b977fa9271799d6ad7541ff9cc189ebeaa7c5a13cf4e2dcbaa6d05ad5f`. Prueba de posición real de la ficha, desbloqueo, reproducción de los sonidos y fluidez pendientes en el Motorola. La instalación posterior se registra abajo.
+
+
+## Instalación en el Motorola
+
+10 de noviembre de 2026. ADB inalámbrico volvió a reconocer el dispositivo después de renovar la vinculación. Se confirmó que el Motorola tenía beta63 y se actualizó con `install -r`. El teléfono reportó 0.44.0-beta64 y código 64. El SHA-256 instalado coincide con el del APK candidato:
+
+`101f15b977fa9271799d6ad7541ff9cc189ebeaa7c5a13cf4e2dcbaa6d05ad5f`
+
+Actualización sobre la instalación existente. La revisión visual de las transiciones y las mediciones físicas quedan pendientes.
