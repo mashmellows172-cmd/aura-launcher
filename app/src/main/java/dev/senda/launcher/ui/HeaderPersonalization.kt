@@ -3,6 +3,7 @@ package dev.senda.launcher.ui
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import android.animation.ValueAnimator
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +38,11 @@ import dev.senda.launcher.HomeUiState
 import dev.senda.launcher.LauncherViewModel
 import dev.senda.launcher.data.loadLocalImage
 import dev.senda.launcher.data.HeaderSettings
+import dev.senda.launcher.data.LocalAppearance
 import dev.senda.launcher.data.WeatherCondition
 import dev.senda.launcher.data.WeatherMotionSettings
 import dev.senda.launcher.data.WeatherMotionMode
+import dev.senda.launcher.data.providerWeatherCondition
 import dev.senda.launcher.ui.theme.LocalIndustrialStyle
 import dev.senda.launcher.ui.theme.themeReveal
 import dev.senda.launcher.ui.theme.LocalRetroStyle
@@ -89,6 +93,7 @@ fun HeaderWeather(
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
     val connected=info?.provider?.packageName==packageName
     val reading=if(connected)controller.weatherReading else null
+    val condition = remember(reading?.conditionText) { providerWeatherCondition(reading?.conditionText.orEmpty()) }
     val change = if (ps4Motion != null) dev.senda.launcher.ui.theme.rememberClockChange(
         "${reading?.temperature}|${reading?.place}|${reading?.conditionText}", LauncherTheme.PS4,
         reduceMotion || LocalThemePreview.current || ps4Motion.mode == WeatherMotionMode.OFF, durationMs = 760,
@@ -106,7 +111,7 @@ fun HeaderWeather(
                 modifier=Modifier.requiredSize(120.dp,90.dp).clearAndSetSemantics{})
             }
         }
-        if (ps4Motion != null) {
+        if (ps4Motion != null && ps4Motion.condition != WeatherCondition.AUTO) {
             WeatherSweep(LauncherTheme.PS4, reading, ps4Motion, reduceMotion || LocalThemePreview.current,
                 Modifier.matchParentSize(), finiteUpdates = true)
         }
@@ -121,7 +126,12 @@ fun HeaderWeather(
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = contentMotion.padding(4.dp)) {
             if(reading!=null){
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
-                    reading.icon?.let { icon->Image(icon,null,Modifier.size(if (prominent) 39.dp else 30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
+                    if (ps4Motion != null && condition != WeatherCondition.AMBIENT) {
+                        Ps4WeatherIcon(condition, ps4Motion, reduceMotion || LocalThemePreview.current,
+                            Modifier.size(if (prominent) 48.dp else 34.dp))
+                    } else {
+                        reading.icon?.let { icon->Image(icon,null,Modifier.size(if (prominent) 39.dp else 30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
+                    }
                     Text(reading.temperature, style = if (prominent) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Text(reading.place.ifBlank{sourceLabel},style=if (prominent) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
@@ -141,7 +151,9 @@ fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, on
     AuraAlertDialog(onDismissRequest=onDismiss,title={Text("Clima en el reloj")},text={
         Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
             Text("Fuente: $sourceLabel",style=MaterialTheme.typography.titleMedium)
-            Text("Aura refleja la temperatura, ciudad y símbolo que publica su widget. La ubicación, unidades y actualización se configuran en $sourceLabel.")
+            Text(if (state.theme == LauncherTheme.PS4)
+                "Aura muestra la temperatura y la ciudad del widget. PS4 dibuja su propio icono cuando el proveedor describe la condición. La ubicación, unidades y actualización se configuran en $sourceLabel."
+                else "Aura refleja la temperatura, ciudad y símbolo que publica su widget. La ubicación, unidades y actualización se configuran en $sourceLabel.")
             Text(if(info?.provider?.packageName==source)"Widget conectado" else "Conecta el widget para mostrar sus datos en el reloj",color=MaterialTheme.colorScheme.primary)
             if (info?.provider?.packageName == source) controller.weatherReading?.let { reading ->
                 Text("${reading.place} · ${reading.temperature}", style = MaterialTheme.typography.titleLarge)
@@ -153,11 +165,45 @@ fun WeatherConnectionDialog(state: HomeUiState, controller: WidgetController, on
             if(info!=null) TextButton(onClick=controller::disconnectWeather){Text("Desconectar clima de la cabecera")}
             controller.weatherError?.let{Text(it,color=MaterialTheme.colorScheme.error)}
             HorizontalDivider()
+            if (state.theme == LauncherTheme.PS4) {
+                Ps4WeatherPreview(state.headerSettings.weatherMotion,
+                    state.visualSettings.reduceMotion || LocalAppearance.current.highContrast || LocalSystemPowerSaving.current)
+            }
             WeatherMotionControls(state.headerSettings.weatherMotion, finite = state.theme == LauncherTheme.PS4) {onSettings(state.headerSettings.copy(weatherMotion=it))}
             Text("La escena interpreta la descripción accesible del icono. Si falta, usa ambiente neutro. La escena manual no modifica el clima. Movimiento reducido y alto contraste detienen el efecto.",style=MaterialTheme.typography.bodySmall)
         }
     },confirmButton={TextButton(onClick=onDismiss){Text("Listo")}})
 }
+
+@Composable
+private fun Ps4WeatherPreview(settings: WeatherMotionSettings, reduced: Boolean) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableStateOf(WeatherCondition.SUN.name) }
+    var replay by remember { mutableIntStateOf(0) }
+    TextButton(onClick = { expanded = !expanded }) {
+        Text(if (expanded) "Cerrar muestra PS4" else "Ver iconos y animaciones PS4")
+    }
+    if (expanded) {
+        val condition = WeatherCondition.valueOf(selected)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            key(replay) {
+                Ps4WeatherIcon(condition, settings.copy(mode = WeatherMotionMode.ONCE), reduced, Modifier.size(56.dp))
+            }
+            Column(Modifier.weight(1f)) {
+                Text(condition.label, style = MaterialTheme.typography.titleMedium)
+                Text("Vista previa · no cambia el clima de Inicio", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        EffectChoice("Evento de ejemplo", selected, ps4WeatherExamples, onSelect = { selected = it; replay++ })
+        TextButton(onClick = { replay++ }, enabled = !reduced && ValueAnimator.areAnimatorsEnabled()) {
+            Text("Repetir animación")
+        }
+    }
+}
+
+private val ps4WeatherExamples = WeatherCondition.entries
+    .filter { it != WeatherCondition.AUTO && it != WeatherCondition.AMBIENT }
+    .map { it.name to it.label }
 
 @Composable
 private fun WeatherMotionControls(settings: WeatherMotionSettings, finite: Boolean, onChange: (WeatherMotionSettings) -> Unit) {
@@ -175,7 +221,8 @@ private fun WeatherMotionControls(settings: WeatherMotionSettings, finite: Boole
             Text(if (finite && mode == WeatherMotionMode.ONCE) "Al entrar y al cambiar la condición" else mode.label, Modifier.weight(1f))
         }
     }
-    EffectChoice("Escena meteorológica",settings.condition.name,WeatherCondition.entries.map{it.name to it.label},onSelect={onChange(settings.copy(condition=WeatherCondition.valueOf(it)))})
+    val scenes = WeatherCondition.entries.filter { it != WeatherCondition.WIND && it != WeatherCondition.NIGHT }
+    EffectChoice("Escena meteorológica",settings.condition.name,scenes.map{it.name to it.label},onSelect={onChange(settings.copy(condition=WeatherCondition.valueOf(it)))})
     Text("La selección manual cambia el efecto; no modifica los datos del proveedor.",style=MaterialTheme.typography.bodySmall)
     Text("Duración ${(duration / 1000).toInt()} s", style = MaterialTheme.typography.labelLarge)
     Slider(duration,{duration=it},onValueChangeFinished={onChange(settings.copy(durationMs=duration.toInt()))},valueRange=3000f..maxDuration.toFloat(),steps=(maxDuration - 3000) / 1000 - 1,

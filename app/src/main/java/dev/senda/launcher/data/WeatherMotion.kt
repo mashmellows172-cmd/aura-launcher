@@ -26,7 +26,8 @@ internal fun sweepX(progress:Float,width:Float,glyph:Float)=-glyph+(width+glyph)
 /** AUTO trusts only explicit provider text. Manual scenes are decoration, not forecasts. */
 enum class WeatherCondition(val label:String) {
     AUTO("Según el proveedor"), AMBIENT("Atmósfera neutra"), SUN("Soleado"), CLOUDS("Nublado"),
-    RAIN("Lluvia"), SNOW("Nieve"), STORM("Tormenta"), FOG("Niebla");
+    RAIN("Lluvia"), SNOW("Nieve"), STORM("Tormenta"), FOG("Niebla"),
+    WIND("Viento"), NIGHT("Noche despejada");
     companion object { fun fromStored(value:String?)=entries.firstOrNull { it.name==value } ?: AUTO }
 }
 internal fun providerWeatherCondition(description:String):WeatherCondition {
@@ -40,6 +41,9 @@ internal fun providerWeatherCondition(description:String):WeatherCondition {
         has("rain|rainy|showers|drizzle|lluvia|lluvias|llovizna|deszcz|opady")->WeatherCondition.RAIN
         has("fog|foggy|mist|niebla|neblina|bruma|mgla")->WeatherCondition.FOG
         has("cloudy|clouds|overcast|nublado|nublados|nuboso|nubosos|nubosidad|nubes|zachmurzenie|pochmurno")->WeatherCondition.CLOUDS
+        has("clear night|clear at night|noche despejada|noche clara|despejado de noche|bezchmurna noc")->WeatherCondition.NIGHT
+        text.trim() in setOf("wind", "viento", "wiatr") ||
+            has("windy|strong winds|gusty|ventoso|viento fuerte|rafagas de viento|wietrznie|silny wiatr")->WeatherCondition.WIND
         has("sunny|clear|sunshine|soleado|despejado|slonecznie|bezchmurnie")->WeatherCondition.SUN
         else->WeatherCondition.AMBIENT
     }
