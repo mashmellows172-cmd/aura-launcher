@@ -13,3 +13,5 @@
 - Instalación sobre beta66 por ADB inalámbrico con `install -r`. Android confirmó versión 0.46.0-beta67 y código 67. SHA-256 instalado y local coincidente `51fbc6ee03fc938f2e4bd8d2a9bf6b802e762905b8e1ec60b293ad7bd041185b`.
 - En el Motorola, la cabecera PS4 identificó Soleado desde Prognoza y se observó el icono plateado. Ambas aplicaciones aparecieron en los resultados de búsqueda de Aura. Se limpió la búsqueda al terminar.
 - Queda pendiente la revisión visual de las otras condiciones, los cambios de evento y las métricas de fluidez. La evidencia privada del teléfono permanece fuera del repositorio.
+
+[Encargo de revisión para Antigravity](coordination/BETA67-WEATHER-REVIEW.md). Pendiente por cuota semanal agotada.
