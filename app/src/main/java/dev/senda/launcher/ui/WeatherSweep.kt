@@ -60,7 +60,8 @@ internal fun WeatherSweep(
         }
     } }
     val condition=remember(motion.condition,reading?.conditionText) {
-        if(motion.condition==WeatherCondition.AUTO)providerWeatherCondition(reading?.conditionText.orEmpty()) else motion.condition
+        (if (motion.condition == WeatherCondition.AUTO) providerWeatherCondition(reading?.conditionText.orEmpty())
+        else motion.condition).atmosphericScene()
     }
     val finitePhase = if (finiteUpdates) rememberClockChange(
         condition.name, theme, reduced,

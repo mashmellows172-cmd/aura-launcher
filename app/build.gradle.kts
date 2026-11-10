@@ -13,8 +13,8 @@ android {
         applicationId = "dev.senda.launcher"
         minSdk = 29
         targetSdk = 37
-        versionCode = 66
-        versionName = "0.45.0-beta66"
+        versionCode = 67
+        versionName = "0.46.0-beta67"
     }
 
     buildTypes {

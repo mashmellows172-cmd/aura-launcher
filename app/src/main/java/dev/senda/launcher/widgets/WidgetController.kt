@@ -9,6 +9,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.RemoteViews
 import android.widget.Toast
@@ -18,9 +19,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
+import dev.senda.launcher.data.WeatherCondition
+import dev.senda.launcher.data.providerWeatherCondition
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class HomeWidget(val id: Int, val heightDp: Int)
-data class WidgetWeather(val temperature: String, val place: String, val icon: androidx.compose.ui.graphics.ImageBitmap?, val conditionText:String="")
+data class WidgetWeather(
+    val temperature: String,
+    val place: String,
+    val icon: androidx.compose.ui.graphics.ImageBitmap?,
+    val conditionText: String = "",
+    val symbolCondition: WeatherCondition? = null,
+)
 
 /** A fixed host identity and durable IDs keep provider data across process/activity recreation. */
 class WidgetController(private val activity: ComponentActivity) {
@@ -79,22 +92,57 @@ class WidgetController(private val activity: ComponentActivity) {
         val id = weatherWidgetId; weatherWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;weatherReading = null
         storage.edit(commit = true) { remove("weather_widget_id") };runCatching { host.deleteAppWidgetId(id) }
     }
-    private var weatherIconSignature = 0
-    private fun captureWeather(view: android.view.View) {
-        val texts = mutableListOf<String>();var conditionText="";var signature = 0; var icon: androidx.compose.ui.graphics.ImageBitmap? = null
+    private val prognozaSymbols = PrognozaWeatherSymbols(activity.applicationContext)
+    private var weatherDrawableKey: Any? = null
+    private fun captureWeather(view: AppWidgetHostView) {
+        if (view.appWidgetId != weatherWidgetId) return
+        val texts = mutableListOf<String>()
+        var conditionText = ""
+        var drawable: Drawable? = null
         fun visit(node: android.view.View) {
             if (node is android.widget.TextView) node.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let(texts::add)
-            if (node is android.widget.ImageView && icon == null && node.drawable != null) { conditionText=node.contentDescription?.toString().orEmpty(); signature = node.drawable.constantState?.hashCode() ?: node.drawable.hashCode(); icon = runCatching { node.drawable.toBitmap(96,96).asImageBitmap() }.getOrNull() }
+            if (node is android.widget.ImageView && drawable == null && node.drawable != null) {
+                drawable = node.drawable
+                conditionText = node.contentDescription?.toString().orEmpty()
+            }
             if (node is android.view.ViewGroup) for (i in 0 until node.childCount) visit(node.getChildAt(i))
         }
         visit(view)
-        val temperature = texts.firstOrNull { Regex("[+−-]?\\d{1,3}(?:[.,]\\d{1,2})?\\s*°(?:\\s*[CF])?").matches(it) }
-        if (temperature != null) {
-            val place = texts.firstOrNull { it != temperature && !it.matches(Regex("[\\d:., ]+")) }.orEmpty()
-            val old = weatherReading
-            if (old?.temperature != temperature || old.place != place || old.conditionText != conditionText || old.icon == null || signature != weatherIconSignature) { weatherIconSignature = signature; weatherReading = WidgetWeather(temperature,place,icon,conditionText) }
-        } else if (texts.isNotEmpty()) weatherReading = null
+        val temperature = texts.firstOrNull(temperaturePattern::matches)
+        if (temperature == null) {
+            if (texts.isNotEmpty()) weatherReading = null
+            return
+        }
+        val place = texts.firstOrNull { it != temperature && !numericText.matches(it) }.orEmpty()
+        val old = weatherReading
+        val source = drawable
+        val key = source?.constantState ?: source
+        if (old != null && key === weatherDrawableKey) {
+            if (old.temperature != temperature || old.place != place || old.conditionText != conditionText) {
+                weatherReading = old.copy(temperature = temperature, place = place, conditionText = conditionText)
+            }
+            return
+        }
+        weatherDrawableKey = key
+        val bitmap = runCatching { source?.toBitmap(WEATHER_ICON_SIZE, WEATHER_ICON_SIZE) }.getOrNull()
+        val icon = bitmap?.asImageBitmap()
+        weatherReading = WidgetWeather(temperature, place, icon, conditionText)
+        if (bitmap != null && view.appWidgetInfo?.provider?.packageName == PROGNOZA_PACKAGE &&
+            providerWeatherCondition(conditionText) == WeatherCondition.AMBIENT
+        ) {
+            val id = view.appWidgetId
+            activity.lifecycleScope.launch {
+                val condition = withContext(Dispatchers.Default) { prognozaSymbols.identify(bitmap) }
+                val current = weatherReading
+                if (id == weatherWidgetId && current != null && current.icon === icon && condition != null) {
+                    weatherReading = current.copy(symbolCondition = condition)
+                }
+            }
+        }
     }
+
+    private val temperaturePattern = Regex("[+−-]?\\d{1,3}(?:[.,]\\d{1,2})?\\s*°(?:\\s*[CF])?")
+    private val numericText = Regex("[\\d:., ]+")
 
     var widgets by mutableStateOf(readWidgets())
         private set

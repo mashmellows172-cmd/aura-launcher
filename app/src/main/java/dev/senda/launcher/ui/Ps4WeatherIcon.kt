@@ -1,9 +1,14 @@
 package dev.senda.launcher.ui
 
+import android.animation.ValueAnimator
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -12,6 +17,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
@@ -32,8 +38,25 @@ internal fun Ps4WeatherIcon(
     reduced: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val still = reduced || settings.mode == WeatherMotionMode.OFF || !ValueAnimator.areAnimatorsEnabled()
+    if (still) {
+        WeatherEmblem(condition, settings, true, modifier)
+    } else {
+        Crossfade(condition, modifier, animationSpec = tween(340), label = "Cambio de clima PS4") {
+            WeatherEmblem(it, settings, false, Modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+private fun WeatherEmblem(
+    condition: WeatherCondition,
+    settings: WeatherMotionSettings,
+    still: Boolean,
+    modifier: Modifier,
+) {
     val phase = rememberClockChange(
-        condition.name, LauncherTheme.PS4, reduced || settings.mode == WeatherMotionMode.OFF,
+        condition.name, LauncherTheme.PS4, still,
         durationMs = settings.durationMs.coerceIn(3000, 5000), playOnEntry = true,
     )
     val intensity = settings.intensity.coerceIn(20, 100) / 100f
@@ -71,27 +94,67 @@ private fun DrawScope.drawWeatherEmblem(condition: WeatherCondition, progress: F
         }
         WeatherCondition.CLOUDS -> {
             val glide = sin(progress * 2 * Math.PI).toFloat() * motion
-            translate(2.6f * glide, -1.4f * motion) { emblem(cloud, cloudFace) }
+            translate(4f * glide, -2.2f * motion) { cloud(progress, motion) }
         }
-        WeatherCondition.RAIN, WeatherCondition.SNOW, WeatherCondition.STORM -> {
-            translate(0f, -8f) {
-                emblem(cloud, if (condition == WeatherCondition.STORM) stormFace else cloudFace)
-            }
-            when (condition) {
-                WeatherCondition.RAIN -> repeat(6) { index ->
-                    val travel = (progress * 2f + index * .38f) % 1f
-                    val start = Offset(16f + index * 6.5f, 41f + index % 2 * 5f)
-                    raindrop(start, .84f - .58f * motion)
-                    val visibility = (min(travel, 1f - travel) * 6f).coerceIn(0f, 1f)
-                    if (motion > 0f) {
-                        raindrop(start + Offset(-5f, 8f) * travel, visibility * motion)
+        WeatherCondition.PARTLY_CLOUDY, WeatherCondition.CLOUDY_NIGHT -> {
+            translate(-8f - 5f * motion, -9f - 3f * motion) {
+                scale(.72f, .72f, Offset(32f, 32f)) {
+                    if (condition == WeatherCondition.PARTLY_CLOUDY) {
+                        rotate(24f * motion, Offset(32f, 32f)) { emblem(sunRays) }
+                        drawCircle(sunFace, 13.2f, Offset(32f, 32f))
+                    } else {
+                        emblem(moon)
+                        emblem(stars.first(), alpha = .75f + .25f * motion)
                     }
+                }
+            }
+            translate(5f + 3f * motion, 9f) {
+                scale(.87f, .87f, Offset(32f, 32f)) { cloud(progress, motion) }
+            }
+        }
+        WeatherCondition.DRIZZLE, WeatherCondition.RAIN, WeatherCondition.DOWNPOUR,
+        WeatherCondition.SLEET, WeatherCondition.SNOW, WeatherCondition.HAIL, WeatherCondition.STORM -> {
+            translate(0f, -8f) { cloud(progress, motion, dark = condition == WeatherCondition.STORM || condition == WeatherCondition.DOWNPOUR) }
+            when (condition) {
+                WeatherCondition.RAIN, WeatherCondition.DOWNPOUR -> {
+                    val heavy = condition == WeatherCondition.DOWNPOUR
+                    val count = if (heavy) 8 else 6
+                    val speed = if (heavy) 3f else 2f
+                    repeat(count) { index ->
+                        val travel = (progress * speed + index * .38f) % 1f
+                        val start = Offset(13f + index * (39f / (count - 1)), 40f + index % 2 * 6f)
+                        val length = if (heavy) 12f else 8f
+                        raindrop(start, .88f - .65f * motion, length)
+                        val visibility = (min(travel, 1f - travel) * 6f).coerceIn(0f, 1f)
+                        if (motion > 0f) {
+                            raindrop(start + Offset(-5f, 6f) * travel, visibility * motion, length)
+                        }
+                    }
+                }
+                WeatherCondition.DRIZZLE -> repeat(7) { index ->
+                    val ripple = sin((progress * 2f - index * .18f) * Math.PI).toFloat() * motion
+                    val point = Offset(16f + index * 5.2f, 46f + index % 2 * 7f + ripple * 4f)
+                    drawCircle(shadow, 2.2f, point)
+                    drawCircle(ice.copy(alpha = .77f + ripple * .23f), 1.45f, point)
                 }
                 WeatherCondition.SNOW -> {
                     snowflake(24f - 3f * motion, 49f + 3f * motion, 1f, -24f * motion)
                     snowflake(43f + 3f * motion, 46f + 7f * motion, .72f, 34f * motion)
                     drawCircle(ice.copy(alpha = .75f), 1.4f, Offset(13f, 53f + 4f * motion))
                     drawCircle(ice.copy(alpha = .75f), 1.2f, Offset(51f, 56f + 2f * motion))
+                }
+                WeatherCondition.SLEET -> {
+                    snowflake(39f + 3f * motion, 49f + 3f * motion, .78f, 32f * motion)
+                    repeat(3) { index ->
+                        val slide = (sin((progress * 2f - index * .12f) * Math.PI).toFloat() + 1f) * motion
+                        raindrop(Offset(15f + index * 6f - slide, 42f + index % 2 * 5f + 4f * slide), .89f, 7f)
+                    }
+                }
+                WeatherCondition.HAIL -> repeat(5) { index ->
+                    val impact = abs(sin((progress * 2f - index * .16f) * Math.PI).toFloat())
+                    translate(14f + index * 8.6f, 49f + index % 2 * 6f - 8f * impact * motion) {
+                        rotate(index * 17f + 38f * motion, Offset.Zero) { emblem(icePellet) }
+                    }
                 }
                 else -> {
                     val charge = motion * motion
@@ -123,15 +186,36 @@ private fun DrawScope.drawWeatherEmblem(condition: WeatherCondition, progress: F
             }
         }
         WeatherCondition.AUTO, WeatherCondition.AMBIENT -> {
-            repeat(3) { drawCircle(ice, 2.3f, Offset(21f + 11f * it, 32f)) }
+            val frame = Size(42f, 33f)
+            val origin = Offset(11f, 15.5f)
+            val corners = CornerRadius(9f)
+            drawRoundRect(shadow, origin, frame, corners)
+            drawRoundRect(rim, origin, frame, corners, style = Stroke(1.8f))
+            repeat(3) { index ->
+                val signal = sin((progress * 2f - index * .19f) * Math.PI).toFloat() * motion
+                drawCircle(ice.copy(alpha = .83f + signal * .17f), 2.3f + signal * .7f,
+                    Offset(22f + 10f * index, 32f))
+            }
         }
     }
 }
 
-private fun DrawScope.raindrop(start: Offset, alpha: Float) {
-    val end = start + Offset(-4f, 9f)
+private fun DrawScope.raindrop(start: Offset, alpha: Float, length: Float) {
+    val end = start + Offset(-.43f * length, length)
     drawLine(shadow.copy(alpha = shadow.alpha * alpha), start, end, 3.5f, StrokeCap.Round)
     drawLine(ice.copy(alpha = alpha), start, end, 1.8f, StrokeCap.Round)
+}
+
+private fun DrawScope.cloud(progress: Float, motion: Float, dark: Boolean = false) {
+    emblem(cloudOutline, if (dark) stormFace else cloudFace)
+    drawPath(cloudOutline, rim, alpha = .74f, style = Stroke(2.8f))
+    if (motion > 0f) {
+        clipPath(cloudOutline) {
+            translate(-24f + progress * 92f, 0f) {
+                drawRect(reflection, Offset(0f, 10f), Size(18f, 39f), alpha = .38f * motion)
+            }
+        }
+    }
 }
 
 private fun DrawScope.emblem(path: Path, face: Brush = silver, alpha: Float = 1f) {
@@ -176,11 +260,21 @@ private val mist = Brush.horizontalGradient(
     listOf(Color(0xFF8CA6C5), Color(0xFFDBE9F7), Color(0xFFA3BCD5)), startX = 6f, endX = 58f,
 )
 
-private val cloud = Path().apply {
+private val reflection = Brush.horizontalGradient(
+    listOf(Color.Transparent, Color.White, Color.Transparent), startX = 0f, endX = 18f,
+)
+private val cloudOutline = Path().apply {
     moveTo(17f, 46f)
     cubicTo(2f, 46f, 3f, 26f, 17f, 27f)
     cubicTo(19f, 10f, 43f, 9f, 47f, 27f)
     cubicTo(62f, 24f, 63f, 46f, 49f, 46f)
+    close()
+}
+private val icePellet = Path().apply {
+    moveTo(0f, -3.7f)
+    lineTo(3.7f, 0f)
+    lineTo(0f, 3.7f)
+    lineTo(-3.7f, 0f)
     close()
 }
 private val bolt = Path().apply {

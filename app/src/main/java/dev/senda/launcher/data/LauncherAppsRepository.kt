@@ -47,7 +47,7 @@ class LauncherAppsRepository(context: Context) {
 
     private fun toLaunchableApp(resolveInfo: ResolveInfo): LaunchableApp? {
         val activity = resolveInfo.activityInfo ?: return null
-        if (!activity.enabled || !activity.applicationInfo.enabled) return null
+        // The query already applies runtime enabled states, including aliases enabled by the app.
         val label = runCatching { activity.applicationInfo.loadLabel(packageManager).toString() }
             .getOrNull()
             ?.takeIf(String::isNotBlank)

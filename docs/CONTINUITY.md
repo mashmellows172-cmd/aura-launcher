@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta67 instalada por ADB inalámbrico el 10 de noviembre de 2026. 0.46.0-beta67, código 67. Pack PS4 de 15 iconos de clima con transiciones. Corregido el filtro de actividades de Inicio. En el Motorola se verificaron el sol plateado y los resultados de McDonald’s y Mercado Libre. Quedan por revisar las demás animaciones y su fluidez. Ver docs/BETA67.md.
+
 Beta66 instalada por ADB inalámbrico el 10 de noviembre de 2026. 0.45.0-beta66, código 66. Ocho iconos meteorológicos PS4 de acabado plateado con animación por evento y muestra interactiva. Compilación y lint correctos. Versión y hash instalado verificados. Revisión visual en el Motorola pendiente. Ver docs/BETA66.md.
 
 Beta65 instalada el 10 de noviembre de 2026. 0.44.1-beta65, código 65. Entrada Cinta PS4 con apertura más amplia, reloj escalonado y barrido visible. Compilación, lint, firma y hash instalado verificados. En el Motorola se restauró y verificó la selección original Sin efecto. Prueba visual de Cinta PS4 tras desbloqueo pendiente. Ver docs/BETA65.md.
