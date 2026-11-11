@@ -2,6 +2,7 @@ package dev.senda.launcher.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.*
 
@@ -28,11 +30,13 @@ import dev.senda.launcher.ui.theme.*
 internal fun ThemedSearchField(
     theme: LauncherTheme, query: String, onQuery: (String) -> Unit, onClear: () -> Unit,
     onSearch: () -> Unit, focus: FocusRequester, interactions: MutableInteractionSource,
-    glow: () -> Float, readOnly: Boolean = false,
+    glow: () -> Float, readOnly: Boolean = false, heightDp: Int = 56,
 ) {
     val profile = LocalHistoricalProfile.current
     val halo = profile?.readableAccent(LocalSkinStyle.current.accent) ?: MaterialTheme.colorScheme.primary
     val radius = (profile?.radius ?: 18).dp
+    val fieldHeight = heightDp.coerceIn(56, 88)
+    val fieldStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = (16 + (fieldHeight - 56) / 8).sp)
     HistoricalPanel(theme, Modifier.fillMaxWidth().drawWithCache {
         val rings = (3 downTo 1).map { ring ->
             val inset = ring * 2.8.dp.toPx()
@@ -48,9 +52,10 @@ internal fun ThemedSearchField(
     }) {
         OutlinedTextField(
             value = query, onValueChange = onQuery,
-            modifier = Modifier.fillMaxWidth().focusRequester(focus),
+            modifier = Modifier.fillMaxWidth().heightIn(min = fieldHeight.dp).focusRequester(focus),
             interactionSource = interactions,
-            placeholder = { Text("Buscar apps") },
+            textStyle = fieldStyle,
+            placeholder = { Text("Buscar apps", style = fieldStyle) },
             leadingIcon = {
                 if (theme == LauncherTheme.PS4) Ps4ChromeIcon("search")
                 else Icon(Icons.Filled.Search, contentDescription = null)

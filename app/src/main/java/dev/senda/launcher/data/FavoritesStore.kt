@@ -101,7 +101,11 @@ class FavoritesStore(private val context: Context) {
         ).bounded(),
         showMotivationalHeader = prefs[booleanPreferencesKey("header_show_motivational")] ?: true,
         showAudioWidget = prefs[booleanPreferencesKey("header_show_audio_widget")] ?: true,
-        ps4ClockMotion = Ps4ClockMotion.fromStored(prefs[stringPreferencesKey("ps4_clock_motion")])
+        ps4ClockMotion = Ps4ClockMotion.fromStored(prefs[stringPreferencesKey("ps4_clock_motion")]),
+        searchHeight = (prefs[intPreferencesKey("home_search_height")] ?: 56).coerceIn(56, 88),
+        clockSize = (prefs[intPreferencesKey("home_clock_size")] ?: 48).coerceIn(32, 64),
+        headerHeight = (prefs[intPreferencesKey("home_header_height")] ?: 120).coerceIn(120, 216),
+        ps4Ambient = prefs[booleanPreferencesKey("ps4_ambient")] ?: true,
     ) }
     val rotation: Flow<HomeRotation> = store.data.map { prefs -> HomeRotation.entries.firstOrNull { it.name == prefs[stringPreferencesKey("home_rotation")] } ?: HomeRotation.SYSTEM }
     val gestures: Flow<GestureBindings> = store.data.map { prefs ->
@@ -120,6 +124,10 @@ class FavoritesStore(private val context: Context) {
         it[booleanPreferencesKey("header_show_calendar")] = value.showCalendar
         it[booleanPreferencesKey("header_show_motivational")] = value.showMotivationalHeader
         it[booleanPreferencesKey("header_show_audio_widget")] = value.showAudioWidget
+        it[intPreferencesKey("home_search_height")] = value.searchHeight.coerceIn(56, 88)
+        it[intPreferencesKey("home_clock_size")] = value.clockSize.coerceIn(32, 64)
+        it[intPreferencesKey("home_header_height")] = value.headerHeight.coerceIn(120, 216)
+        it[booleanPreferencesKey("ps4_ambient")] = value.ps4Ambient
         val motion = value.weatherMotion.bounded()
         it[stringPreferencesKey("weather_motion_mode")] = motion.mode.name
         it[stringPreferencesKey("weather_scene_condition")] = motion.condition.name

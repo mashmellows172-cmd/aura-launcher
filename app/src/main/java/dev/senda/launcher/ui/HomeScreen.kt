@@ -220,6 +220,8 @@ fun HomeScreen(
         previousWidgetCount = widgetController.widgets.size
     }
     var showFavoritesEditor by rememberSaveable { mutableStateOf(false) }
+    var showForecast by rememberSaveable { mutableStateOf(false) }
+    var forecastOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showHiddenApps by rememberSaveable { mutableStateOf(false) }
     var showLetterJump by rememberSaveable { mutableStateOf(false) }
     var showThemePicker by rememberSaveable { mutableStateOf(false) }
@@ -302,7 +304,7 @@ fun HomeScreen(
             showWeatherPicker = false
             showWidgetPicker = false
             showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
-            showAvatar = false; showWeatherConnection = false; showDashboard = false
+            showAvatar = false; showWeatherConnection = false; showDashboard = false; showForecast = false
             showNotificationHelp = false
             showIconSource = false
             showFamilyIconPicker = false
@@ -440,6 +442,9 @@ fun HomeScreen(
             onChooseWeatherApp = { showWeatherPicker = true },
             onChooseWidgets = { showWidgetPicker = true },
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
+            clockSize = state.headerSettings.clockSize,
+            headerHeight = state.headerSettings.headerHeight,
+            onWeatherPanel = { forecastOrigin = it; showForecast = true },
             quickMedia = { closeMenu ->
                 if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
                     audioInfo = state.audioInfo, theme = state.theme,
@@ -481,6 +486,7 @@ fun HomeScreen(
             onClear = { viewModel.setQuery(""); focusManager.clearFocus(force = true); keyboard?.hide() },
             onSearch = { focusManager.clearFocus(force = true); keyboard?.hide() }, focus = searchFocus,
             interactions = searchInteractions, glow = { glowAlpha },
+            heightDp = state.headerSettings.searchHeight,
         )
 
         if (state.errorMessage != null) {
@@ -649,6 +655,21 @@ fun HomeScreen(
         onDismiss = { showVisualSettings = false },
         onAlphabetSettings = { showVisualSettings = false; showAlphabetSettings = true },
     )
+    if (showForecast) WeatherForecastPanel(
+        widgetController.weatherReading?.takeIf {
+            widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId)?.provider?.packageName ==
+                (state.weatherPackage ?: "hr.dtakac.prognoza")
+        }, state.headerSettings.weatherMotion,
+        state.visualSettings.reduceMotion || state.appearance.highContrast,
+        forecastOrigin,
+        onOpenProvider = {
+            showForecast = false
+            val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }
+            if (app != null) viewModel.launch(app) else showWeatherPicker = true
+        },
+        onConfigure = { showForecast = false; showWeatherConnection = true },
+        onDismiss = { showForecast = false },
+    )
     if (showAlphabetSettings) AlphabetSettingsDialog(state.theme,storedState.visualSettings,viewModel::setVisualSettings){showAlphabetSettings=false}
     if (showWeatherPicker) WeatherAppDialog(
         apps = state.apps,
@@ -694,6 +715,9 @@ internal fun Header(
     quickMedia: @Composable (() -> Unit) -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
     confirmation: Int = 0,
+    clockSize: Int = 48,
+    headerHeight: Int = 120,
+    onWeatherPanel: ((androidx.compose.ui.geometry.Rect?) -> Unit)? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -744,13 +768,19 @@ internal fun Header(
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     .clip(RoundedCornerShape(4.dp)).ps4Material()
+                    .heightIn(min = if (compactHeader) 0.dp else headerHeight.coerceIn(120, 216).dp)
                     .padding(horizontal = 10.dp, vertical = if (compactHeader) 2.dp else 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Column(Modifier.weight(1f)) {
-                    if (!compactHeader) Ps4HeaderClock(clockTime, 48.sp, motionReduced, clockMotion, onOpenAlarms)
-                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, chrome = true)
+                BoxWithConstraints(Modifier.weight(1f)) {
+                    val fittedClock = with(LocalDensity.current) {
+                        minOf(clockSize.coerceIn(32, 64).toFloat(), (maxWidth.value - 8f) / (3.1f * fontScale))
+                    }.coerceAtLeast(22f)
+                    Column {
+                        if (!compactHeader) Ps4HeaderClock(clockTime, fittedClock.sp, motionReduced, clockMotion, onOpenAlarms)
+                        HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, chrome = true)
+                    }
                 }
                 if (!compactHeader) Box(Modifier.width(1.dp).height(66.dp)
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .14f)))
@@ -760,6 +790,7 @@ internal fun Header(
                     modifier = if (compactHeader) Modifier.width(116.dp) else Modifier.weight(.9f),
                     ps4Motion = weatherMotion,
                     prominent = !compactHeader,
+                    onOpenPanel = onWeatherPanel,
                 )
             }
             if (showMotivationalHeader) Text(

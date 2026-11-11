@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     getSharedPreferences("aura_performance", MODE_PRIVATE).edit().putBoolean("light", enabled).apply()
                 }, dev.senda.launcher.audio.LocalSoundFeedback provides soundFeedback, dev.senda.launcher.ui.LocalMotionSettings provides uiState.visualSettings, LocalAppearance provides uiState.appearance, LocalIconPack provides uiState.iconMapping,
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
-            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice) {
+            AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice, ps4Ambient = uiState.headerSettings.ps4Ambient) {
                 dev.senda.launcher.ui.UnlockEntry(unlockEvents.sequence, uiState.theme, uiState.visualSettings.reduceMotion || uiState.appearance.highContrast) {
                 HomeScreen(
                     viewModel = viewModel,

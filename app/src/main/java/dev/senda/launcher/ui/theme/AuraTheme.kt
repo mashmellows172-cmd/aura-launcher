@@ -70,9 +70,10 @@ internal fun skin(theme: LauncherTheme, systemIsDark: Boolean): Pair<SkinStyle, 
 }
 
 @Composable
-fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, fontChoice: String = "THEME", content: @Composable () -> Unit) {
+fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean = false, finish: ThemeFinish = ThemeFinish(), reduceMotion: Boolean = false, fontChoice: String = "THEME", ps4Ambient: Boolean = false, content: @Composable () -> Unit) {
     val (originalStyle, originalScheme) = skin(theme, systemIsDark)
-    val palette = ps4PaletteColors(finish.ps4Palette)
+    val ambient = rememberPs4Ambient(ps4Ambient && theme == LauncherTheme.PS4 && !highContrast)
+    val palette = ps4PaletteColors(finish.ps4Palette, ambient)
     val consolePalette = theme == LauncherTheme.PS4 && !highContrast
     val presetStyle = if (consolePalette) originalStyle.copy(accent=palette.accent,backgroundTop=palette.top,backgroundBottom=palette.bottom) else originalStyle
     val presetScheme = if (consolePalette) originalScheme.copy(background=palette.bottom,onBackground=palette.ink,surface=palette.surface,onSurface=palette.ink,surfaceVariant=palette.raised,onSurfaceVariant=palette.muted,outline=palette.muted,inverseSurface=palette.ink,inverseOnSurface=palette.bottom,error=if(finish.ps4Palette == dev.senda.launcher.data.Ps4Palette.WHITE) Color(0xFFB3261E) else originalScheme.error,onError=if(finish.ps4Palette == dev.senda.launcher.data.Ps4Palette.WHITE) Color.White else originalScheme.onError) else originalScheme
@@ -102,10 +103,12 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
         surfaceContainerLowest = background, surfaceContainerLow = background, surfaceContainer = background,
         surfaceContainerHigh = background, surfaceContainerHighest = background, surfaceBright = background, surfaceDim = background,
         primaryContainer = background, onPrimaryContainer = foreground, secondaryContainer = background, onSecondaryContainer = foreground) else baseScheme
-    val colorDuration = if (highContrast || reduceMotion) 0 else style.motionMillis
+    val colorDuration = if (highContrast || reduceMotion) 0 else if (ambient != null) 700 else style.motionMillis
     val accent by animateColorAsState(style.accent, tween(colorDuration), label = "skin-accent")
     val top by animateColorAsState(style.backgroundTop, tween(colorDuration), label = "skin-background-top")
     val bottom by animateColorAsState(style.backgroundBottom, tween(colorDuration), label = "skin-background-bottom")
+    val surface by animateColorAsState(scheme.surface, tween(colorDuration), label = "skin-surface")
+    val raised by animateColorAsState(scheme.surfaceVariant, tween(colorDuration), label = "skin-raised")
     val industrial = theme == LauncherTheme.NOTHING
     val retro = RetroStyle(theme, finish.shape != ShapeChoice.DEFAULT)
     val animatedScheme = if (industrial && !highContrast) scheme.copy(
@@ -116,12 +119,12 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
         outlineVariant = IndustrialTokens.outline,
         inverseSurface = IndustrialTokens.text, inverseOnSurface = Color.Black, inversePrimary = Color.Black,
         surfaceTint = Color.Transparent, background = bottom,
-    ) else scheme.copy(primary = accent, secondary = accent, background = bottom)
+    ) else scheme.copy(primary = accent, secondary = accent, background = bottom, surface = surface, surfaceVariant = raised)
     val animatedStyle = style.copy(accent = accent, backgroundTop = top, backgroundBottom = bottom)
     MaterialTheme(colorScheme = animatedScheme,
         typography = variantTypography(fontChoice) ?: if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
         shapes = if (industrial) IndustrialShapes else if (retro.enabled) retroShapes(theme) else androidx.compose.material3.Shapes(), content = {
-        CompositionLocalProvider(LocalPs4Palette provides finish.ps4Palette, LocalHistoricalProfile provides historicalProfile(theme)?.withPs4Palette(finish.ps4Palette).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
+        CompositionLocalProvider(LocalPs4Ambient provides ambient, LocalPs4Palette provides finish.ps4Palette, LocalHistoricalProfile provides historicalProfile(theme)?.withPs4Palette(finish.ps4Palette).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
             LocalIconTreatment provides finish.icons, LocalRetroStyle provides if (highContrast) RetroStyle() else retro,
             LocalIndustrialStyle provides IndustrialStyle(industrial, finish.icons == IconTreatment.MONOCHROME || (industrial && finish.icons == IconTreatment.AUTO)), content = content)
     })

@@ -120,7 +120,12 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Inicio y gestos") }, text = {
         Column(Modifier.heightIn(max = HomeToolsSize.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(HomeToolsSize.gap)) {
             Text("Cabecera", style = MaterialTheme.typography.titleSmall)
+            HomeSizingControls(state.headerSettings, state.theme == dev.senda.launcher.data.LauncherTheme.PS4,
+                viewModel::setHeaderSettings)
             if (state.theme == dev.senda.launcher.data.LauncherTheme.PS4) {
+                SettingToggle("Iluminación según la hora", state.headerSettings.ps4Ambient) {
+                    viewModel.setHeaderSettings(state.headerSettings.copy(ps4Ambient = it))
+                }
                 Ps4ClockMotionControls(
                     current = state.headerSettings.ps4ClockMotion,
                     reduced = state.visualSettings.reduceMotion || state.appearance.highContrast || LocalSystemPowerSaving.current,
@@ -129,6 +134,9 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
             }
             SettingToggle("Frases motivacionales", state.headerSettings.showMotivationalHeader) { viewModel.setHeaderSettings(state.headerSettings.copy(showMotivationalHeader = it)) }
             SettingToggle("Widget multimedia automático", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
+            if (state.theme == dev.senda.launcher.data.LauncherTheme.PS4) {
+                Ps4MediaSample(state.visualSettings.reduceMotion || state.appearance.highContrast)
+            }
             if (state.headerSettings.showAudioWidget) MediaAccessControl(state.audioInfo.mediaAccess)
             SettingToggle("Próxima alarma", state.headerSettings.showAlarm) { viewModel.setHeaderSettings(state.headerSettings.copy(showAlarm = it)) }
             SettingToggle("Próximo evento", state.headerSettings.showCalendar) { enabled ->

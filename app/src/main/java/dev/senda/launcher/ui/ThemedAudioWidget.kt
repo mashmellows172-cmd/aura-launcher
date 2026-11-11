@@ -55,6 +55,10 @@ fun ThemedAudioWidget(
     onEnableAccess: () -> Unit = {},
     preview: Boolean = false,
 ) {
+    if (theme == LauncherTheme.PS4) {
+        Ps4MediaWidget(audioInfo, reduceMotion, onOpenAudio, modifier, onPause, onPrevious, onNext, onEnableAccess, preview)
+        return
+    }
     var retained by remember { mutableStateOf(audioInfo) }
     if (audioInfo.isPlaying) SideEffect { retained = audioInfo }
     val info = if (audioInfo.isPlaying) audioInfo else retained

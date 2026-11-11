@@ -5,3 +5,8 @@
 DeepSeek R1 7B en Ollama recibe un encargo acotado de dibujo para el reproductor PS4. Crear tres cintas luminosas con movimiento finito dentro de la tarjeta y un reflejo local. Codex revisa las APIs, integra el resultado y comprueba compilación y lint. Las propuestas reciben solo los fragmentos necesarios del proyecto.
 
 El usuario autorizó añadir Internet y consultar Open-Meteo para la localidad elegida desde el panel. La ampliación incluye pronóstico por horas, amanecer y atardecer, iluminación ambiental por franja horaria, tamaños configurables de reloj/cabecera/buscador y un reproductor PS4 renovado. Cada estado de red debe tener carga, error y recuperación. Las animaciones respetan movimiento reducido, alto contraste y ahorro de energía. No se añaden suites automáticas.
+
+
+## Supervisión del candidato
+
+Ollama devolvió una respuesta local de DeepSeek R1 7B con 221 tokens de entrada y 1096 generados. Su código tenía sintaxis e importaciones inválidas. Se descartó como fuente compilable. Se conservó el concepto de tres cintas y un reflejo finito y se implementó con las APIs de Compose existentes. El modelo fue descargado de memoria al terminar. Los candidatos originales permanecen fuera de Git.

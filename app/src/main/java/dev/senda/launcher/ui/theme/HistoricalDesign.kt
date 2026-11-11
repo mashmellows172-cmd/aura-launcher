@@ -133,8 +133,8 @@ fun HistoricalPanel(
     val pressed by interactions.collectIsPressedAsState()
     val highlighted = selected || (onClick != null && focused)
     val frame = if (highlighted) accent else profile?.frame ?: scheme.outline
-    val panelScheme = profile?.let { historicalColors(it, scheme, accent) } ?: scheme
     val console = theme == LauncherTheme.PS4 && !LocalAppearance.current.highContrast
+    val panelScheme = if (console) scheme else profile?.let { historicalColors(it, scheme, accent) } ?: scheme
     val reduced = LocalMotionSettings.current.reduceMotion || LocalSystemPowerSaving.current ||
         LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val light = if (console) animateFloatAsState(

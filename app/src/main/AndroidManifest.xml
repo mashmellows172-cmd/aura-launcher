@@ -2,6 +2,7 @@
     <!-- Required by Android's widget-host contract. Binding still uses the user-approved ACTION_APPWIDGET_BIND flow. -->
     <uses-permission android:name="android.permission.BIND_APPWIDGET" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <queries>
         <package android:name="hr.dtakac.prognoza" />
         <intent>

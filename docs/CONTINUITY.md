@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta69 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.48.0-beta69, código 69. Panel meteorológico con Open-Meteo autorizado, iluminación horaria PS4, tamaños de Inicio y reproductor renovado. APK compilado, firma, versión y hash instalado verificados. Lint final en curso y revisión física pendiente. Ver docs/BETA69.md.
+
 Beta68 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.47.0-beta68, código 68. Cabecera PS4 integrada, superficies con luz de interacción, controles plateados y transición de fichas afinada. Propuestas locales de Ollama revisadas y corregidas. Compilación y lint correctos, versión y hash instalado verificados. Cabecera y apertura/cierre de ficha comprobados. Muestra de arrastre registrada con discrepancia entre contadores de Android; evaluación de cadencia pendiente. Ver docs/BETA68.md.
 
 Beta67 instalada por ADB inalámbrico el 10 de noviembre de 2026. 0.46.0-beta67, código 67. Pack PS4 de 15 iconos de clima con transiciones. Corregido el filtro de actividades de Inicio. En el Motorola se verificaron el sol plateado y los resultados de McDonald’s y Mercado Libre. Quedan por revisar las demás animaciones y su fluidez. Ver docs/BETA67.md. El encargo pendiente para Antigravity está en docs/coordination/BETA67-WEATHER-REVIEW.md.

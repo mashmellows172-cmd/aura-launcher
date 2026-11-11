@@ -24,6 +24,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.*
@@ -89,6 +93,7 @@ fun HeaderWeather(
     modifier: Modifier = Modifier,
     ps4Motion: WeatherMotionSettings? = null,
     prominent: Boolean = false,
+    onOpenPanel: ((Rect?) -> Unit)? = null,
 ) {
     val id=controller.weatherWidgetId
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
@@ -102,8 +107,16 @@ fun HeaderWeather(
         playOnEntry = true, ready = reading != null,
     ) else null
     val width = if (ps4Motion == null) modifier.width(104.dp) else modifier
+    var bounds by remember { mutableStateOf<Rect?>(null) }
     Box(width.heightIn(min = if (prominent) 94.dp else 72.dp)
-        .combinedClickable(onClick = if (reading != null) onOpen else onConfigure,
+        .onGloballyPositioned { coordinates ->
+            if (onOpenPanel != null) bounds = Rect(coordinates.positionOnScreen(),
+                Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
+        }
+        .combinedClickable(onClick = {
+            if (onOpenPanel != null) onOpenPanel(bounds)
+            else if (reading != null) onOpen() else onConfigure()
+        },
             onLongClick = onConfigure, onLongClickLabel = "Ver detalles del clima")
         .semantics(mergeDescendants = true) {
             contentDescription = if (reading != null) {

@@ -7,6 +7,10 @@ data class HeaderSettings(
     val showMotivationalHeader: Boolean = true,
     val showAudioWidget: Boolean = true,
     val ps4ClockMotion: Ps4ClockMotion = Ps4ClockMotion.MARKED,
+    val searchHeight: Int = 56,
+    val clockSize: Int = 48,
+    val headerHeight: Int = 120,
+    val ps4Ambient: Boolean = true,
 )
 enum class Ps4ClockMotion(val label: String, val durationMs: Int, val travelDp: Int, val light: Float) {
     SOFT("Suave", 280, 4, .28f),

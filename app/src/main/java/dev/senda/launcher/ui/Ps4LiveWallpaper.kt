@@ -49,7 +49,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         saver = power?.isPowerSaveMode == true
         onDispose { context.unregisterReceiver(receiver) }
     }
-    val palette = dev.senda.launcher.ui.theme.ps4PaletteColors(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
+    val targetPalette = dev.senda.launcher.ui.theme.ps4PaletteColors(
+        dev.senda.launcher.ui.theme.LocalPs4Palette.current, dev.senda.launcher.ui.theme.LocalPs4Ambient.current)
+    val middle by androidx.compose.animation.animateColorAsState(targetPalette.middle,
+        androidx.compose.animation.core.tween(if (reduced || saver) 0 else 700), label = "ps4-ambient-middle")
+    val skin = dev.senda.launcher.ui.theme.LocalSkinStyle.current
+    val palette = targetPalette.copy(top = skin.backgroundTop, middle = middle, bottom = skin.backgroundBottom)
     val whitePalette = dev.senda.launcher.ui.theme.LocalPs4Palette.current == dev.senda.launcher.data.Ps4Palette.WHITE
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
