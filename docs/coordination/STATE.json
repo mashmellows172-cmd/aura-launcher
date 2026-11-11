@@ -78,6 +78,18 @@
         "finite panel motion proposals"
       ],
       "dependsOn": []
+    },
+    {
+      "id": "BETA69-MEDIA",
+      "owner": "ollama/deepseek-r1:7b",
+      "status": "ASSIGNED",
+      "branch": "codex/beta69-climate-and-media",
+      "baseCommit": "84f5bd1",
+      "contract": "docs/coordination/BETA69-OLLAMA.md",
+      "scope": [
+        "bounded media drawing proposal"
+      ],
+      "dependsOn": []
     }
   ],
   "budget": {
