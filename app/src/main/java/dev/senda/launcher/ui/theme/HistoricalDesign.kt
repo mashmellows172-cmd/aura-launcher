@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -120,6 +121,7 @@ fun HistoricalPanel(
             IconHolder.BEVELED -> androidx.compose.foundation.shape.CutCornerShape(6.dp)
         }
         profile == null -> MaterialTheme.shapes.large
+        profile.material == HistoricalMaterial.DOTS -> androidx.compose.foundation.shape.CutCornerShape(8.dp)
         profile.material == HistoricalMaterial.LCD -> androidx.compose.foundation.shape.CutCornerShape(4.dp)
         else -> RoundedCornerShape(profile.radius.dp)
     }
@@ -137,9 +139,16 @@ fun HistoricalPanel(
     val panelScheme = if (console) scheme else profile?.let { historicalColors(it, scheme, accent) } ?: scheme
     val reduced = LocalMotionSettings.current.reduceMotion || LocalSystemPowerSaving.current ||
         LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
-    val light = if (console) animateFloatAsState(
+    val reactionMs = when (theme) {
+        LauncherTheme.NOTHING -> 130
+        LauncherTheme.RAZR -> 190
+        LauncherTheme.TOUCHWIZ -> 240
+        LauncherTheme.XPERIA -> 220
+        else -> Ps4Motion.focusMs
+    }
+    val light = if (profile != null) animateFloatAsState(
         if (highlighted || pressed) 1f else 0f,
-        tween(if (reduced) 0 else Ps4Motion.focusMs, easing = Ps4Motion.easing),
+        tween(if (reduced) 0 else reactionMs, easing = if (console) Ps4Motion.easing else androidx.compose.animation.core.FastOutSlowInEasing),
         label = "ps4-panel-light",
     ) else null
     val inner: @Composable () -> Unit = {
@@ -147,41 +156,24 @@ fun HistoricalPanel(
             CompositionLocalProvider(LocalContentColor provides foreground) {
                 Box((if (console) Modifier.ps4Material(light)
                     else Modifier.background(Brush.verticalGradient(listOf(top, bottom))))
-                    .drawWithContent {
-                        // Material is decorative, stays clipped by Surface and cannot intercept taps.
-                        when (profile?.material) {
-                            HistoricalMaterial.CHROME -> {
-                                drawLine(Color.White.copy(alpha = .25f), Offset(3.dp.toPx(), 1.dp.toPx()), Offset(size.width - 3.dp.toPx(), 1.dp.toPx()), 1.dp.toPx())
-                                drawLine(Color.Black.copy(alpha = .45f), Offset(0f, size.height - 2.dp.toPx()), Offset(size.width, size.height - 2.dp.toPx()), 2.dp.toPx())
-                            }
-                            HistoricalMaterial.WATER -> {
-                                val gloss = Path().apply {
-                                    moveTo(0f, 0f); lineTo(size.width, 0f); lineTo(size.width, size.height * .18f)
-                                    quadraticTo(size.width * .45f, size.height * .45f, 0f, size.height * .25f); close()
-                                }
-                                drawPath(gloss, Color.White.copy(alpha = .07f))
-                            }
-                            HistoricalMaterial.PAPER -> {
-                                drawRect(Color(0xFFC87F36), Offset(0f, 0f), Size(3.dp.toPx(), size.height))
-                                for (row in 1..3) drawLine(Color(0xFF8E846E).copy(alpha = .08f), Offset(0f, size.height * row / 4), Offset(size.width, size.height * row / 4), .5.dp.toPx())
-                            }
-                            HistoricalMaterial.FLOW -> {
-                                drawLine(Color(0xFFCDC7FF).copy(alpha = .32f), Offset(0f, 1.dp.toPx()), Offset(size.width, 1.dp.toPx()), .6.dp.toPx())
-                                drawLine(Color(0xFF70B8E3).copy(alpha = .22f), Offset(size.width * .55f, size.height - 1.dp.toPx()), Offset(size.width, size.height - 1.dp.toPx()), .6.dp.toPx())
-                            }
-                            HistoricalMaterial.LCD -> {
-                                drawRect(Color(0xFF8396A5).copy(alpha = .22f), style = Stroke(4.dp.toPx()))
-                                for (row in 1..6) drawLine(Color.Black.copy(alpha = .10f), Offset(3.dp.toPx(), size.height * row / 7), Offset(size.width - 3.dp.toPx(), size.height * row / 7), .5.dp.toPx())
-                            }
-                            else -> Unit
-                        }
-                        drawContent()
-                    }, content = content)
+                    .then(if (console) Modifier else Modifier.themeSurfaceDetail(theme, light)), content = content)
             }
         }
     }
-    if (onClick == null) Surface(modifier, shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
-    else Surface(onClick = onClick, interactionSource = interactions, modifier = modifier, shape = shape, color = bottom, contentColor = foreground,
+    val materialMotion = Modifier.graphicsLayer {
+        val p = if (reduced) 0f else light?.value ?: 0f
+        when (theme) {
+            LauncherTheme.NOTHING -> translationY = p * .7.dp.toPx()
+            LauncherTheme.RAZR -> { rotationX = p * 1.2f; cameraDistance = 24.dp.toPx(); scaleY = 1f - p * .003f }
+            LauncherTheme.TOUCHWIZ -> { scaleX = 1f - p * .004f; scaleY = scaleX }
+            LauncherTheme.SENSE -> scaleY = 1f - p * .003f
+            LauncherTheme.OPTIMUS -> translationX = p * .6.dp.toPx()
+            LauncherTheme.XPERIA -> translationY = -p * .6.dp.toPx()
+            else -> Unit
+        }
+    }
+    if (onClick == null) Surface(modifier.then(materialMotion), shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
+    else Surface(onClick = onClick, interactionSource = interactions, modifier = modifier.then(materialMotion), shape = shape, color = bottom, contentColor = foreground,
         border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
 }
 

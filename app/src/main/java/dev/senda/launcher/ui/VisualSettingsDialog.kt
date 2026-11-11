@@ -23,6 +23,17 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
     val profiles = listOf("DEPTH" to "Profundidad", "FOLD" to "Pliegue 3D", "WAVE" to "Onda", "ORBIT" to "Órbita", "GLIDE" to "Deslizamiento", "CASCADE" to "Cascada", "TILT" to "Abanico", "SILK" to "Seda", "NONE" to "Sin efecto")
     AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Movimiento y efectos") }, text = {
         Column(Modifier.heightIn(max = VisualTokens.dialog).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(VisualTokens.gap)) {
+            if (ps4) {
+                HorizontalDivider()
+                EffectChoice("Fondo PS4", draft.wallpaperMode, listOf("STATIC" to "Estático", "REACTIVE" to "Reactivo")) {
+                    commit(draft.copy(wallpaperMode = it))
+                }
+                Text("Luz y cintas acompañan tus gestos y vuelven al reposo. Sin vídeo ni animación permanente.", style = MaterialTheme.typography.bodySmall)
+                Text("Intensidad del fondo · ${draft.wallpaperIntensity}%")
+                Slider(draft.wallpaperIntensity.toFloat(), { draft = draft.copy(wallpaperIntensity = it.toInt()) }, valueRange = 0f..100f,
+                    onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.wallpaperMode == "REACTIVE",
+                    modifier = Modifier.semantics { contentDescription = "Intensidad del fondo PS4" })
+            }
             Text("Siete despliegues por tema: puntos, pliegue, gota, capas, onda, bisagra y foco. Reloj, clima y widgets usan el estilo del tema; movimiento reducido los desactiva.",style=MaterialTheme.typography.bodySmall)
             Text("El efecto sigue la velocidad real del desplazamiento y vuelve suavemente al reposo.", style = MaterialTheme.typography.bodySmall)
             Row(Modifier.fillMaxWidth()) {
@@ -59,17 +70,6 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
             Slider(draft.glowStrength.toFloat(), { draft = draft.copy(glowStrength = it.toInt()) }, valueRange = 10f..100f,
                 onValueChangeFinished = { onChange(draft) }, enabled = draft.glowEnabled,
                 modifier = Modifier.semantics { contentDescription = "Intensidad del glow" })
-            if (ps4) {
-                HorizontalDivider()
-                EffectChoice("Fondo PS4", draft.wallpaperMode, listOf("STATIC" to "Estático", "REACTIVE" to "Reactivo")) {
-                    commit(draft.copy(wallpaperMode = it))
-                }
-                Text("Luz y cintas acompañan tus gestos y vuelven al reposo. Sin vídeo ni animación permanente.", style = MaterialTheme.typography.bodySmall)
-                Text("Intensidad del fondo · ${draft.wallpaperIntensity}%")
-                Slider(draft.wallpaperIntensity.toFloat(), { draft = draft.copy(wallpaperIntensity = it.toInt()) }, valueRange = 0f..100f,
-                    onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.wallpaperMode == "REACTIVE",
-                    modifier = Modifier.semantics { contentDescription = "Intensidad del fondo PS4" })
-            }
             MotionToggle("Reducir movimiento", draft.reduceMotion) { commit(draft.copy(reduceMotion = it)) }
             Text("Desactiva las transformaciones de la lista y el rebote. El sistema decide la frecuencia de pantalla; Aura no fuerza un refresco permanente.", style = MaterialTheme.typography.bodySmall)
         }

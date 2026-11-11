@@ -147,12 +147,12 @@ fun ThemedAudioWidget(
                 if (expanded && !info.generic && !console) {
                     IconButton(onClick = { onPause(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPause,
                         modifier = Modifier.size(48.dp).semantics { contentDescription = "Pausar reproducción" }) {
-                        MediaControlGlyph("pause", if (info.canPause) scheme.primary else scheme.onSurfaceVariant.copy(alpha = .4f))
+                        ThemeSystemIcon("pause", theme)
                     }
                     Box {
                         IconButton(onClick = { menu = true }, enabled = !preview && audioInfo.isPlaying,
                             modifier = Modifier.size(48.dp).semantics { contentDescription = "Más controles multimedia" }) {
-                            MediaControlGlyph("more", scheme.onSurface)
+                            ThemeSystemIcon("more", theme)
                         }
                         DropdownMenu(menu, { menu = false }) {
                             DropdownMenuItem(text = { Text("Anterior") }, enabled = info.canPrevious && audioInfo.isPlaying,
@@ -199,16 +199,6 @@ fun ThemedAudioWidget(
                 Modifier.fillMaxWidth().height(if (compact) 16.dp else 28.dp).padding(horizontal = 14.dp, vertical = 3.dp))
             }
         }
-    }
-}
-
-@Composable
-private fun MediaControlGlyph(kind: String, color: Color) {
-    Canvas(Modifier.size(22.dp).clearAndSetSemantics {}) {
-        if (kind == "pause") {
-            drawRoundRect(color, Offset(size.width * .22f, size.height * .15f), Size(size.width * .18f, size.height * .7f), CornerRadius(1.dp.toPx()))
-            drawRoundRect(color, Offset(size.width * .60f, size.height * .15f), Size(size.width * .18f, size.height * .7f), CornerRadius(1.dp.toPx()))
-        } else for (i in 0..2) drawCircle(color, 1.7.dp.toPx(), Offset(size.width * .5f, size.height * (.22f + i * .28f)))
     }
 }
 

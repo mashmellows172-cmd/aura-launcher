@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint de trabajo al 11 de noviembre de 2026: `codex/beta71-reactive-wallpaper`, basado en beta70 y el plan `9b5afea`. Ver docs/BETA71.md y docs/CONTINUITY.md para validación e instalación reales. Los párrafos históricos siguientes no describen la última beta del Motorola.
+Checkpoint de trabajo al 11 de noviembre de 2026: `codex/beta72-theme-personality`, candidata compilada sobre beta71. Ver docs/BETA72.md y docs/CONTINUITY.md para validación e instalación reales. Última instalación verificada: beta71; beta72 pendiente de recuperar ADB. Los párrafos históricos siguientes no describen la última beta del Motorola.
 Rama de integración: `codex/phase1-theme-editor`. `main` conserva beta37: NO arrancar trabajo nuevo desde main por defecto. Beta42 es candidato local compilado, NO instalado; Motorola contiene beta43 de otra firma, fuera del alcance actual. Consultar docs/CONTINUITY.md y docs/BETA42.md. Nunca asumir que número mayor significa código presente en GitHub.
 
 ## Inicio obligatorio

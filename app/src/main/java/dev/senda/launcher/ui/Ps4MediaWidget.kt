@@ -60,6 +60,7 @@ internal fun Ps4MediaWidget(
         "${info.sessionId}|${info.title}|${info.artist}|${audioInfo.isPlaying}",
         LauncherTheme.PS4, still, durationMs = 2400, playOnEntry = true, ready = audioInfo.isPlaying,
     )
+    val atmosphere = LocalMediaAtmosphere.current
     val title = info.title ?: info.appLabel ?: "Contenido en reproducción"
     val art = info.artwork?.takeUnless { it.isRecycled }
     AnimatedVisibility(
@@ -80,7 +81,7 @@ internal fun Ps4MediaWidget(
             val pauseEnabled = !preview && audioInfo.isPlaying && info.canPause
             val nextEnabled = !preview && audioInfo.isPlaying && info.canNext
             Column(
-                Modifier.fillMaxWidth().then(if (still) Modifier else Modifier.ps4MediaScene(change))
+                Modifier.fillMaxWidth().ps4MediaAtmosphere(atmosphere).then(if (still) Modifier else Modifier.ps4MediaScene(change))
                     .padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -96,8 +97,10 @@ internal fun Ps4MediaWidget(
                         }.clip(RoundedCornerShape(5.dp)).ps4Material(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                        else Ps4ChromeIcon("play", Modifier.size(38.dp))
+                        androidx.compose.animation.Crossfade(art, animationSpec = tween(if (still) 0 else 320), label = "media-artwork") { cover ->
+                            if (cover != null && !cover.isRecycled) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                            else Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Ps4ChromeIcon("play", Modifier.size(38.dp)) }
+                        }
                     }
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(if (!audioInfo.isPlaying) "Audio detenido" else if (info.generic) "Reproducción detectada" else "En reproducción",
@@ -162,19 +165,26 @@ internal fun Ps4MediaWidget(
 @Composable
 internal fun Ps4MediaSample(reduced: Boolean) {
     var expanded by remember { mutableStateOf(false) }
+    var coverIndex by remember { mutableIntStateOf(0) }
     var replay by remember { mutableIntStateOf(0) }
     TextButton(onClick = { expanded = !expanded }) {
         Text(if (expanded) "Cerrar muestra multimedia" else "Ver muestra multimedia PS4")
     }
     if (expanded) {
+        val covers = remember { listOf(sampleMediaCover(false), sampleMediaCover(true)) }
+        val sample = ActiveAudioInfo(isPlaying = true, title = if (coverIndex == 0) "Horizonte azul" else "Luz de cobre",
+            artist = "Vista previa PS4", appLabel = "Reproductor", artwork = covers[coverIndex])
+        val sampleAtmosphere = rememberMediaAtmosphere(sample, reduced, enabled = true)
+        CompositionLocalProvider(LocalMediaAtmosphere provides sampleAtmosphere) {
         key(replay) {
             Ps4MediaWidget(
-                ActiveAudioInfo(isPlaying = true, title = "Tu música, en Aura", artist = "Vista previa PS4",
-                    appLabel = "Reproductor"),
+                sample,
                 reduced, {}, onPause = {}, onPrevious = {}, onNext = {}, onEnableAccess = {},
                 preview = true, sampleMotion = true,
             )
         }
+        }
+        TextButton(onClick = { coverIndex = 1 - coverIndex }) { Text("Alternar carátula y ambiente") }
         Text("Muestra visual · controles desactivados", style = MaterialTheme.typography.bodySmall)
         TextButton(onClick = { replay++ },
             enabled = !reduced && !LocalSystemPowerSaving.current && ValueAnimator.areAnimatorsEnabled()) {
@@ -214,4 +224,31 @@ private fun Modifier.ps4MediaScene(progress: State<Float>): Modifier {
             }
         }
     }
+}
+
+private fun Modifier.ps4MediaAtmosphere(atmosphere: MediaAtmosphere): Modifier = drawWithCache {
+    onDrawBehind {
+        val presence = atmosphere.presence.value
+        if (presence > .001f) {
+            val color = atmosphere.color.value
+            drawRect(color, alpha = presence * .12f)
+            drawLine(color, Offset(0f, size.height - 1.dp.toPx()), Offset(size.width, size.height - 1.dp.toPx()),
+                2.dp.toPx(), alpha = presence * .65f)
+        }
+    }
+}
+
+/** Two small original preview tiles, generated only while this sample is open. */
+private fun sampleMediaCover(warm: Boolean): android.graphics.Bitmap {
+    val bitmap = android.graphics.Bitmap.createBitmap(64, 64, android.graphics.Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+    val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+    paint.shader = android.graphics.LinearGradient(0f, 0f, 64f, 64f,
+        if (warm) 0xFFF7A14B.toInt() else 0xFF36D9F5.toInt(),
+        if (warm) 0xFF6F2354.toInt() else 0xFF152B95.toInt(), android.graphics.Shader.TileMode.CLAMP)
+    canvas.drawRect(0f, 0f, 64f, 64f, paint)
+    paint.shader = null; paint.color = 0x66FFFFFF
+    canvas.drawLine(0f, 52f, 64f, 12f, paint.apply { strokeWidth = 3f })
+    canvas.drawLine(0f, 60f, 64f, 20f, paint)
+    return bitmap
 }

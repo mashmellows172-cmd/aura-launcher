@@ -22,6 +22,7 @@ import dev.senda.launcher.data.LauncherTheme
 
 /** The rail marker and search share the same material silhouette, without changing their hit areas. */
 internal fun HistoricalProfile?.chromeShape(): Shape = when (this?.material) {
+    HistoricalMaterial.DOTS -> CutCornerShape(8.dp)
     HistoricalMaterial.CHROME -> RoundedCornerShape(6.dp)
     HistoricalMaterial.PAPER -> RoundedCornerShape(3.dp)
     HistoricalMaterial.FLOW, HistoricalMaterial.CONSOLE -> RoundedCornerShape(2.dp)
@@ -42,7 +43,7 @@ internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherThem
             val dots = List(3) { Offset(it * 4.dp.toPx() + 1.dp.toPx(), bottom) }
             onDrawBehind {
                 when (profile?.material) {
-                    HistoricalMaterial.DOTS -> dots.forEach { drawCircle(accent, .8.dp.toPx(), it) }
+                    HistoricalMaterial.DOTS -> dots.forEach { drawRect(accent, it, androidx.compose.ui.geometry.Size(1.6.dp.toPx(), 1.6.dp.toPx())) }
                     HistoricalMaterial.CHROME -> {
                         drawLine(frame, Offset(0f, bottom), Offset(size.width, bottom), 1.dp.toPx())
                         drawLine(Color.White.copy(alpha = .08f), Offset(0f, bottom - 1.dp.toPx()), Offset(size.width, bottom - 1.dp.toPx()), .5.dp.toPx())

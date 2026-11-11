@@ -128,12 +128,14 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
 
 @Composable
 internal fun Ps4WallpaperFeedback(scene: Ps4WallpaperMotion, modifier: Modifier, strength: Float = 1f) {
+    val media = LocalMediaAtmosphere.current
     Box(modifier.drawWithCache {
         val light = Brush.radialGradient(listOf(Color(0xFF64CFFF).copy(alpha=.12f * strength.coerceIn(0f, 1f)), Color.Transparent),
             center = Offset(size.width * .65f, size.height * .5f), radius = size.height * .48f)
         onDrawBehind {
             // Separate overlay: changing light never rebuilds ribbon paths or gradients.
             val amount = scene.amount
+            if (scene.enabled) drawRect(media.color.value, alpha = media.presence.value * .10f * amount)
             val panel = if (scene.enabled) scene.panel?.value ?: 0f else 0f
             drawRect(Color.Black, alpha = maxOf(scene.search * .045f, panel * .08f) * amount)
             if (scene.light > .001f) withTransform({

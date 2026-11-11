@@ -96,14 +96,14 @@ internal fun Ps4QuickMenu(
                     contentColor = ink,
                     tonalElevation = 0.dp,
                 ) {
-                    Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize().ps4Material()) {
                     Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                         TextButton(
                             onClick = close,
                             modifier = Modifier.align(Alignment.End).heightIn(min = 48.dp),
                             colors = actionColors,
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-                        ) { Text("Cerrar") }
+                        ) { Ps4ChromeIcon("close"); Spacer(Modifier.width(8.dp)); Text("Cerrar") }
                         Column(
                             Modifier.weight(1f).fillMaxWidth()
                                 .verticalScroll(rememberScrollState())
@@ -152,9 +152,11 @@ internal fun Ps4QuickMenu(
                                     colors = actionColors,
                                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 14.dp),
                                 ) {
+                                    Ps4ChromeIcon(quickActionGlyph(action.label), Modifier.size(20.dp))
+                                    Spacer(Modifier.width(12.dp))
                                     Text(
                                         text = action.label,
-                                        modifier = Modifier.fillMaxWidth(),
+                                        modifier = Modifier.weight(1f),
                                         style = MaterialTheme.typography.bodyLarge,
                                     )
                                 }
@@ -171,4 +173,18 @@ internal fun Ps4QuickMenu(
             }
         }
     }
+}
+
+private fun quickActionGlyph(label: String): String = when (label) {
+    "Tema visual", "Personalización y respaldo" -> "edit"
+    "Saltar a una letra · A–Z", "Barra A–Z" -> "search"
+    "Organizar inicio", "Inicio y gestos" -> "home"
+    "Añadir widget" -> "add"
+    "Editar favoritas" -> "favorite"
+    "Clima en el reloj", "Elegir app del clima" -> "weather"
+    "Cambiar avatar" -> "person"
+    "Sonidos y respuesta" -> "volume"
+    "Movimiento y efectos", "Entrada tras desbloquear" -> "play"
+    "Centro de estado", "Diagnóstico de fluidez" -> "status"
+    else -> "apps"
 }

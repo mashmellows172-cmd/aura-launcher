@@ -99,7 +99,9 @@ fun Modifier.themeReveal(theme:LauncherTheme,key:Any?,reduced:Boolean=false):Mod
                 val path=Path()
                 for(i in 0 until bands){val fill=(p*1.45f-i*.06f).coerceIn(0f,1f);path.addRect(Rect(0f,size.height*i/bands,size.width*fill,size.height*(i+1)/bands))}
                 clipPath(path){this@revealDraw.drawContent()}
-                for(i in 0 until 12){val x=size.width*(i+.5f)/12;drawCircle(ink.copy(alpha=(1f-p)*.45f),1.1f*density,Offset(x,size.height*.5f))}
+                for(i in 0 until 12){val x=size.width*(i+.5f)/12
+                    if(theme==LauncherTheme.NOTHING) drawRect(ink.copy(alpha=(1f-p)*.45f),Offset(x,size.height*.5f),androidx.compose.ui.geometry.Size(2f*density,2f*density))
+                    else drawCircle(ink.copy(alpha=(1f-p)*.45f),1.1f*density,Offset(x,size.height*.5f))}
             }
             ThemeReveal.RIPPLE->{
                 val radius=hypot(size.width,size.height)*p

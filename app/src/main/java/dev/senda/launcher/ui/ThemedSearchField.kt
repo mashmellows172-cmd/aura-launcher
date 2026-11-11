@@ -10,6 +10,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusRequester
@@ -57,11 +59,10 @@ internal fun ThemedSearchField(
             textStyle = fieldStyle,
             placeholder = { Text("Buscar apps", style = fieldStyle) },
             leadingIcon = {
-                if (theme == LauncherTheme.PS4) Ps4ChromeIcon("search")
-                else Icon(Icons.Filled.Search, contentDescription = null)
+                ThemeSystemIcon("search", theme)
             },
             trailingIcon = if (query.isNotEmpty()) ({
-                IconButton(onClick = onClear) { Icon(Icons.Filled.Close, contentDescription = "Borrar búsqueda") }
+                IconButton(onClick = onClear, modifier = Modifier.semantics { contentDescription = "Borrar búsqueda" }) { ThemeSystemIcon("close", theme) }
             }) else null,
             singleLine = true, readOnly = readOnly, shape = profile.chromeShape(),
             colors = OutlinedTextFieldDefaults.colors(

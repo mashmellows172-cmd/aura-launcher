@@ -28,6 +28,10 @@ internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
                 size.width * .3f, size.height * .4f, 0f, size.height * .25f)
             close()
         }
+        val facet = Path().apply {
+            moveTo(size.width * .72f, 0f); lineTo(size.width, 0f)
+            lineTo(size.width, size.height * .48f); close()
+        }
         val sheen = Brush.verticalGradient(
             listOf(scheme.onSurface.copy(alpha = .065f), Color.Transparent),
             endY = size.height.coerceAtLeast(1f) * .45f,
@@ -41,6 +45,8 @@ internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
         onDrawBehind {
             drawRect(base)
             drawPath(reflection, sheen)
+            drawPath(facet, scheme.onSurface, alpha = .025f)
+            drawLine(scheme.onSurface, Offset(0f, edgeHeight), Offset(size.width, edgeHeight), edgeHeight, alpha = .18f)
             drawRect(edge, Offset(0f, size.height - edgeHeight), Size(size.width, edgeHeight))
             val strength = highlight?.value?.coerceIn(0f, 1f) ?: 0f
             if (strength > 0f) drawRect(light, alpha = strength)

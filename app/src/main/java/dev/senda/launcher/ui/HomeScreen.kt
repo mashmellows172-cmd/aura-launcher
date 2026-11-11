@@ -380,9 +380,11 @@ fun HomeScreen(
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
 
+    val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
+        state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
     val wallpaperMotion = rememberPs4WallpaperMotion(state.theme == LauncherTheme.PS4,
         state.visualSettings, listState, ps4FocusedKey, searchFocused)
-    androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
     Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
@@ -624,6 +626,7 @@ fun HomeScreen(
         val playbackStatus = if (state.audioInfo.isPlaying) state.audioInfo.title ?: "Reproducción activa" else "Sin reproducción activa"
         fun statusAction(action: () -> Unit): () -> Unit = { showStatusCenter = false; action() }
         StatusCenter(
+            theme = state.theme,
             items = listOf(
                 StatusItem("Inicio", if (isDefaultHome) "Aura es el inicio predeterminado" else "Otro inicio está seleccionado",
                     "Elegir inicio", statusAction(onChooseHome)),
@@ -786,7 +789,7 @@ internal fun Header(
                     }.coerceAtLeast(22f)
                     Column {
                         if (!compactHeader) Ps4HeaderClock(clockTime, fittedClock.sp, motionReduced, clockMotion, onOpenAlarms)
-                        HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, chrome = true)
+                        HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
                     }
                 }
                 if (!compactHeader) Box(Modifier.width(1.dp).height(66.dp)
@@ -866,16 +869,16 @@ internal fun Header(
                     horizontalArrangement = Arrangement.spacedBy(9.dp),
                     modifier = Modifier.fillMaxWidth().padding(top = 3.dp),
                 ) {
-                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar)
+                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
                 }
             }
         }
         Box {
             IconButton(
                 onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(48.dp).semantics { contentDescription = "Personalizar tema. Actual: ${theme.title}" },
             ) {
-                Icon(Icons.Filled.MoreVert, contentDescription = "Personalizar tema. Actual: ${theme.title}")
+                ThemeSystemIcon("settings", theme)
             }
             DropdownMenu(expanded = themeMenuExpanded, onDismissRequest = { themeMenuExpanded = false }, modifier = Modifier.animateContentSize(tween(240))) {
                 DropdownMenuItem(text = { Text("Tema visual · ${theme.title}") }, onClick = { themeMenuExpanded = false; onChooseTheme() })
@@ -909,7 +912,7 @@ internal fun Header(
 
 @Composable
 private fun HeaderShortcut(glyph: String, label: String, description: String, onClick: () -> Unit,
-    modifier: Modifier = Modifier, chrome: Boolean = false) {
+    modifier: Modifier = Modifier, theme: LauncherTheme) {
     val iconTint = MaterialTheme.colorScheme.onSurfaceVariant
     Row(
         modifier = modifier.widthIn(min = 48.dp).heightIn(min = 48.dp).clickable(onClick = onClick)
@@ -917,35 +920,7 @@ private fun HeaderShortcut(glyph: String, label: String, description: String, on
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        if (chrome) Ps4ChromeIcon(glyph, Modifier.size(18.dp))
-        else Canvas(Modifier.size(13.dp)) {
-            val tint = iconTint
-            val stroke = 1.35.dp.toPx()
-            when (glyph) {
-                "clock" -> {
-                    drawCircle(tint, radius = size.minDimension * .42f, style = Stroke(stroke))
-                    drawLine(tint, androidx.compose.ui.geometry.Offset(size.width * .5f, size.height * .25f), androidx.compose.ui.geometry.Offset(size.width * .5f, size.height * .52f), stroke)
-                    drawLine(tint, androidx.compose.ui.geometry.Offset(size.width * .5f, size.height * .52f), androidx.compose.ui.geometry.Offset(size.width * .72f, size.height * .64f), stroke)
-                }
-                "calendar" -> {
-                    val rect = androidx.compose.ui.geometry.Offset(size.width * .12f, size.height * .2f)
-                    drawRoundRect(tint, topLeft = rect, size = androidx.compose.ui.geometry.Size(size.width * .76f, size.height * .7f), cornerRadius = androidx.compose.ui.geometry.CornerRadius(2.dp.toPx()), style = Stroke(stroke))
-                    drawLine(tint, androidx.compose.ui.geometry.Offset(size.width * .12f, size.height * .4f), androidx.compose.ui.geometry.Offset(size.width * .88f, size.height * .4f), stroke)
-                    drawLine(tint, androidx.compose.ui.geometry.Offset(size.width * .32f, size.height * .08f), androidx.compose.ui.geometry.Offset(size.width * .32f, size.height * .3f), stroke)
-                    drawLine(tint, androidx.compose.ui.geometry.Offset(size.width * .68f, size.height * .08f), androidx.compose.ui.geometry.Offset(size.width * .68f, size.height * .3f), stroke)
-                }
-                else -> {
-                    val path = Path().apply {
-                        moveTo(size.width * .2f, size.height * .75f)
-                        cubicTo(size.width * .02f, size.height * .72f, size.width * .12f, size.height * .44f, size.width * .34f, size.height * .48f)
-                        cubicTo(size.width * .39f, size.height * .14f, size.width * .86f, size.height * .22f, size.width * .83f, size.height * .54f)
-                        cubicTo(size.width * 1.05f, size.height * .55f, size.width * 1.02f, size.height * .78f, size.width * .78f, size.height * .78f)
-                        close()
-                    }
-                    drawPath(path, tint)
-                }
-            }
-        }
+        ThemeSystemIcon(glyph, theme, Modifier.size(18.dp))
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
@@ -1253,7 +1228,7 @@ private fun AppRow(
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current ||
         LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val wallpaperScene = LocalPs4WallpaperMotion.current
-    val windowHeight = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp * androidx.compose.ui.platform.LocalDensity.current.density
+    val windowHeight = androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.height.toFloat()
     androidx.compose.runtime.DisposableEffect(pressed, console, still, wallpaperScene) {
         if (pressed && console && !still) {
             val coordinates = plateCoordinates?.takeIf { it.isAttached }
@@ -1340,8 +1315,7 @@ private fun AppRow(
             }
             if (isFavorite) {
                 // The section already identifies favorites; this quiet mark also works in A–Z/search.
-                Box(Modifier.padding(end = 12.dp).size(5.dp)
-                    .background(MaterialTheme.colorScheme.primary, CircleShape))
+                Ps4ChromeIcon("favorite", Modifier.padding(end = 12.dp).size(14.dp))
             }
         }
         }
