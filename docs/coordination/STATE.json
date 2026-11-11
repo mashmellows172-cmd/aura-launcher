@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-29",
+  "updated": "2026-11-11",
   "integrationBranch": "codex/phase1-theme-editor",
   "implementationBase": "9d028ed417e65a5962cff526949108cc51654278",
   "coordinator": "codex",
@@ -64,6 +64,20 @@
       ],
       "executionAgent": "codex",
       "note": "Implemented locally; external task contracts were not executed."
+    },
+    {
+      "id": "BETA68-LOCAL-UI",
+      "owner": "ollama/deepseek-coder:6.7b",
+      "status": "ASSIGNED",
+      "branch": "codex/beta68-ps4-polish",
+      "baseCommit": "4accab7783ea12b835e6e23332afdd02584bf09a",
+      "contract": "docs/coordination/BETA68-OLLAMA.md",
+      "scope": [
+        "PS4 silver controls",
+        "PS4 material drawing",
+        "finite panel motion proposals"
+      ],
+      "dependsOn": []
     }
   ],
   "budget": {
