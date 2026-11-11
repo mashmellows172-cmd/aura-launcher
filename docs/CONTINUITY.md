@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Beta69 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.48.0-beta69, código 69. Panel meteorológico con Open-Meteo autorizado, iluminación horaria PS4, tamaños de Inicio y reproductor renovado. APK compilado, firma, versión y hash instalado verificados. Lint final en curso y revisión física pendiente. Ver docs/BETA69.md.
+Beta69 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.48.0-beta69, código 69. Panel meteorológico con Open-Meteo autorizado, iluminación horaria PS4, tamaños de Inicio y reproductor renovado. APK compilado, firma, versión y hash instalado verificados. Compilación y lint finales correctos con 0 errores. Revisión física pendiente. Ver docs/BETA69.md.
 
 Beta68 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.47.0-beta68, código 68. Cabecera PS4 integrada, superficies con luz de interacción, controles plateados y transición de fichas afinada. Propuestas locales de Ollama revisadas y corregidas. Compilación y lint correctos, versión y hash instalado verificados. Cabecera y apertura/cierre de ficha comprobados. Muestra de arrastre registrada con discrepancia entre contadores de Android; evaluación de cadencia pendiente. Ver docs/BETA68.md.
 

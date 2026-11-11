@@ -17,7 +17,7 @@ El usuario autorizó explícitamente Internet y las consultas a Open-Meteo el 11
 
 ## Delegación y validación
 
-[Encargo y supervisión de Ollama](coordination/BETA69-OLLAMA.md). Una consulta manual a Open-Meteo para Berlín devolvió 48 horas, temperatura, códigos meteorológicos y dos pares de amanecer/atardecer. La pasada final completó `assembleBeta`. Lint continúa en ejecución. Una pasada anterior fue cancelada tras cambios de fuente realizados durante el análisis.
+[Encargo y supervisión de Ollama](coordination/BETA69-OLLAMA.md). Una consulta manual a Open-Meteo para Berlín devolvió 48 horas, temperatura, códigos meteorológicos y dos pares de amanecer/atardecer. La pasada final de `assembleBeta` y `lintBeta` completó en 8 min 48 s con un trabajador. Lint registró 0 errores, 41 advertencias y 3 avisos. Una pasada anterior fue cancelada tras cambios de fuente realizados durante el análisis.
 
 El Motorola se actualizó mediante `install -r`. Android confirmó 0.48.0-beta69, código 69, y el permiso Internet autorizado como concedido. Firma del APK local verificada y SHA-256 instalado coincidente con el local.
 
