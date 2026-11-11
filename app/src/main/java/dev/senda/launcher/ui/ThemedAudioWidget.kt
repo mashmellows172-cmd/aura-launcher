@@ -54,9 +54,11 @@ fun ThemedAudioWidget(
     onNext: (String?) -> Unit = {},
     onEnableAccess: () -> Unit = {},
     preview: Boolean = false,
+    onSeek: (String?, Long) -> Unit = { _, _ -> },
+    onResume: (String?) -> Unit = {},
 ) {
     if (theme == LauncherTheme.PS4) {
-        Ps4MediaWidget(audioInfo, reduceMotion, onOpenAudio, modifier, onPause, onPrevious, onNext, onEnableAccess, preview)
+        Ps4MediaWidget(audioInfo, reduceMotion, onOpenAudio, modifier, onPause, onPrevious, onNext, onEnableAccess, preview, onSeek = onSeek, onResume = onResume)
         return
     }
     var retained by remember { mutableStateOf(audioInfo) }

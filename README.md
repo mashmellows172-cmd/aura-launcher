@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta73 candidata, 11 de noviembre de 2026. 0.51.0-beta73, código 73. Ficha PS4 multimedia con carátula desde su origen, progreso de sesión y búsqueda soportada; calidad decorativa adaptativa por ventanas de métricas, sin limitar FPS ni modificar gestos. Compilación/lint finales correctos (0 errores, 57 s); versión y firma del APK verificadas. No instalada ni validada con una sesión real. Ver docs/BETA73.md.
+
 Beta72 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.50.0-beta72, código 72. Materiales PS4 coherentes, ambiente multimedia desde carátula local, 21 glifos de sistema y respuesta propia por tema. Compilación/lint correctos (0 errores); revisión independiente de fuente sin hallazgos concretos. Actualización install -r sobre beta71 con firma compatible; versión y hash instalado verificados. Revisión visual, reproducción real y métricas pendientes. Ver docs/BETA72.md.
 
 Revisión beta71, 11 de noviembre de 2026: tres trazas Reactivas válidas (2149 cuadros; 9 Late Present, 0.419 %). Intervalo habitual de presentación 8.35 ms en la primera muestra. Estático no confirmado: muestras descartadas. Selector e intensidad finales verificados en Reactivo/50 %. Comparación y latencia pendientes; Ambiental aplazado. Ver docs/BETA71.md.

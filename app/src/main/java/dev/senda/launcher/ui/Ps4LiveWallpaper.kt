@@ -29,6 +29,7 @@ import kotlin.math.*
 /** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
 @Composable
 internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listState: LazyListState? = null, strength: Float = 1f) {
+    val constrained = LocalDecorationConstrained.current
     val decorationStrength = strength.coerceIn(0f, 1f)
     val context = LocalContext.current.applicationContext
     val power = remember(context) { context.getSystemService(PowerManager::class.java) }
@@ -108,13 +109,13 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                     ribbon.surface(1f-layer*.42f)
                     drawPath(ribbon.fill,glass,alpha=(.78f+light*.3f)*decorationStrength)
                 }
-                glowStrokes.forEachIndexed { index, stroke ->
+                if (!constrained.value) glowStrokes.forEachIndexed { index, stroke ->
                     drawPath(ribbon.crest,edge,alpha=(.06f+index*.025f+light*.12f)*decorationStrength,style=stroke)
                 }
                 drawPath(ribbon.crest,edge,alpha=(.32f+light)*decorationStrength,style=hairline)
             }
             // Fixed motes remain on the retained layer; no particle jobs.
-            repeat(14) { index ->
+            repeat(if (constrained.value) 0 else 14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
                 drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=(.11f+light*.15f)*decorationStrength)
@@ -128,11 +129,13 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
 
 @Composable
 internal fun Ps4WallpaperFeedback(scene: Ps4WallpaperMotion, modifier: Modifier, strength: Float = 1f) {
+    val constrained = LocalDecorationConstrained.current
     val media = LocalMediaAtmosphere.current
     Box(modifier.drawWithCache {
         val light = Brush.radialGradient(listOf(Color(0xFF64CFFF).copy(alpha=.12f * strength.coerceIn(0f, 1f)), Color.Transparent),
             center = Offset(size.width * .65f, size.height * .5f), radius = size.height * .48f)
         onDrawBehind {
+            if (constrained.value) return@onDrawBehind
             // Separate overlay: changing light never rebuilds ribbon paths or gradients.
             val amount = scene.amount
             if (scene.enabled) drawRect(media.color.value, alpha = media.presence.value * .10f * amount)

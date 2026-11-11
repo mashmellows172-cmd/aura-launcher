@@ -380,11 +380,12 @@ fun HomeScreen(
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
 
+    val decorationQuality = rememberDecorationQuality()
     val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
     val wallpaperMotion = rememberPs4WallpaperMotion(state.theme == LauncherTheme.PS4,
         state.visualSettings, listState, ps4FocusedKey, searchFocused)
-    androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere, LocalDecorationConstrained provides decorationQuality) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
     Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
@@ -457,7 +458,7 @@ fun HomeScreen(
                     audioInfo = state.audioInfo, theme = state.theme,
                     reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
                     onOpenAudio = { closeMenu(); viewModel.openAudioApp(it) }, onPause = viewModel::pauseAudio,
-                    onPrevious = viewModel::previousAudio, onNext = viewModel::nextAudio,
+                    onPrevious = viewModel::previousAudio, onNext = viewModel::nextAudio, onSeek = viewModel::seekAudio, onResume = viewModel::resumeAudio,
                     onEnableAccess = { closeMenu(); showHomeSettings = true },
                 )
             },
@@ -470,7 +471,7 @@ fun HomeScreen(
                 onOpenAudio = viewModel::openAudioApp,
                 onPause = viewModel::pauseAudio,
                 onPrevious = viewModel::previousAudio,
-                onNext = viewModel::nextAudio,
+                onNext = viewModel::nextAudio, onSeek = viewModel::seekAudio, onResume = viewModel::resumeAudio,
                 onEnableAccess = { showHomeSettings = true },
                 modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
             )
@@ -947,7 +948,7 @@ private fun WeatherAppDialog(
                     }
                     items(apps.sortedBy { it.label.lowercase() }, key = { it.packageName }) { app ->
                         DropdownMenuItem(
-                            text = { Text(if (app.packageName == selectedPackage) "âœ“  ${app.label}" else app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            text = { Text(if (app.packageName == selectedPackage) "✓  ${app.label}" else app.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             onClick = { onSelect(app.packageName) },
                         )
                     }

@@ -18,6 +18,7 @@ import dev.senda.launcher.data.LocalAppearance
 @Composable
 internal fun Modifier.themeSurfaceDetail(theme: LauncherTheme?, reaction: State<Float>?): Modifier {
     if (theme == null || LocalAppearance.current.highContrast) return this
+    val constrained = dev.senda.launcher.ui.LocalDecorationConstrained.current
     val ink = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
     val accent = LocalSkinStyle.current.accent
     return drawWithCache {
@@ -31,6 +32,7 @@ internal fun Modifier.themeSurfaceDetail(theme: LauncherTheme?, reaction: State<
             cubicTo(size.width * .3f, size.height * .64f, size.width * .7f, size.height * .88f, size.width, size.height * .78f)
         }
         onDrawBehind {
+            if (constrained.value) return@onDrawBehind
             val p = reaction?.value ?: 0f
             when (theme) {
                 LauncherTheme.NOTHING -> {

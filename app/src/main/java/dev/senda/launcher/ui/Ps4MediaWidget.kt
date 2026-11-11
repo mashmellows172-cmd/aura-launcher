@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
@@ -45,7 +47,14 @@ internal fun Ps4MediaWidget(
     modifier: Modifier = Modifier, onPause: (String?) -> Unit, onPrevious: (String?) -> Unit,
     onNext: (String?) -> Unit, onEnableAccess: () -> Unit, preview: Boolean,
     sampleMotion: Boolean = false,
+    onSeek: (String?, Long) -> Unit = { _, _ -> },
+    onResume: (String?) -> Unit = {},
 ) {
+    var details by remember(audioInfo.sessionId) { mutableStateOf(false) }
+    var artOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    if (details && audioInfo.sessionId != null && !audioInfo.generic) MediaDetails(audioInfo, artOrigin,
+        reduced || LocalSystemPowerSaving.current || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled(),
+        { details = false }, onSeek, onPause, onResume, onOpenAudio)
     var retained by remember { mutableStateOf(audioInfo) }
     var recentlyPlaying by remember { mutableStateOf(false) }
     if (audioInfo.isPlaying) SideEffect { retained = audioInfo }
@@ -72,7 +81,7 @@ internal fun Ps4MediaWidget(
     ) {
         HistoricalPanel(LauncherTheme.PS4, Modifier.fillMaxWidth(),
             onClick = if (preview) null else ({
-                if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId)
+                if (info.generic) onEnableAccess() else details = true
             })) {
             BoxWithConstraints(Modifier.fillMaxWidth()) {
             val compact = maxWidth < 340.dp || LocalDensity.current.fontScale > 1.3f
@@ -86,7 +95,9 @@ internal fun Ps4MediaWidget(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     Box(
-                        Modifier.size(artSize).graphicsLayer {
+                        Modifier.size(artSize).onGloballyPositioned {
+                            val p = it.positionOnScreen(); artOrigin = androidx.compose.ui.geometry.Rect(p.x, p.y, p.x + it.size.width, p.y + it.size.height)
+                        }.graphicsLayer {
                             if (!still) {
                                 val wave = sin(change.value * Math.PI).toFloat()
                                 translationY = -3.dp.toPx() * wave
@@ -196,6 +207,7 @@ internal fun Ps4MediaSample(reduced: Boolean) {
 /** Finite local-model concept, corrected to cached Compose drawing primitives. */
 @Composable
 private fun Modifier.ps4MediaScene(progress: State<Float>): Modifier {
+    val constrained = LocalDecorationConstrained.current
     val primary = MaterialTheme.colorScheme.primary
     val ink = MaterialTheme.colorScheme.onSurface
     return drawWithCache {
@@ -206,6 +218,7 @@ private fun Modifier.ps4MediaScene(progress: State<Float>): Modifier {
             startX = 0f, endX = bandWidth.coerceAtLeast(1f))
         val stroke = Stroke(1.1.dp.toPx())
         onDrawBehind {
+            if (constrained.value) return@onDrawBehind
             val p = progress.value
             val envelope = sin(p * Math.PI).toFloat().coerceAtLeast(0f)
             if (envelope > .001f) {

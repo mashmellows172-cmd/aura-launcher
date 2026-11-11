@@ -32,6 +32,12 @@ data class ActiveAudioInfo(
     val canPrevious: Boolean = false,
     val canNext: Boolean = false,
     val artwork: Bitmap? = null,
+    val positionMs: Long? = null,
+    val durationMs: Long? = null,
+    val positionUpdatedAt: Long = 0L,
+    val speed: Float = 0f,
+    val canSeek: Boolean = false,
+    val canPlay: Boolean = false,
 )
 
 /**
@@ -132,7 +138,10 @@ class AudioPlaybackMonitor(context: Context) {
         if (!MediaAccessService.isEnabled(app)) { disconnect(); publishGeneric(); ensureFallback(); return }
         // Never lend a paused player's metadata or controls to another application's audio.
         val playing = entries.values.filter { runCatching { it.controller.playbackState?.state == PlaybackState.STATE_PLAYING }.getOrDefault(false) }
-        val selected = playing.firstOrNull { it.id == current?.id } ?: playing.firstOrNull()
+        val paused = current?.takeIf { entry ->
+            entries.values.any { it.id == entry.id } && runCatching { entry.controller.playbackState?.state.let { state -> state == PlaybackState.STATE_BUFFERING || state == PlaybackState.STATE_CONNECTING || (state == PlaybackState.STATE_PAUSED && audio?.isMusicActive != true) } }.getOrDefault(false)
+        }
+        val selected = playing.firstOrNull { it.id == current?.id } ?: playing.firstOrNull() ?: paused
         if (selected == null) {
             current = null; artworkJob?.cancel(); artRevision++
             publishGeneric(); ensureFallback(); return
@@ -142,7 +151,9 @@ class AudioPlaybackMonitor(context: Context) {
         current = selected
         val controller = selected.controller
         val metadata = runCatching { controller.metadata }.getOrNull()
-        val actions = runCatching { controller.playbackState?.actions ?: 0L }.getOrDefault(0L)
+        val playback = runCatching { controller.playbackState }.getOrNull()
+        val actions = playback?.actions ?: 0L
+        val duration = runCatching { metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION)?.takeIf { it > 0L } }.getOrNull()
         fun supports(action: Long) = actions and action != 0L
         val label = labels.getOrPut(controller.packageName) {
             runCatching { app.packageManager.getApplicationLabel(app.packageManager.getApplicationInfo(controller.packageName, 0)).toString() }
@@ -150,13 +161,18 @@ class AudioPlaybackMonitor(context: Context) {
         }
         fun text(key: String) = runCatching { metadata?.getString(key)?.takeIf(String::isNotBlank)?.take(240) }.getOrNull()
         mutableState.value = ActiveAudioInfo(
-            isPlaying = true,
+            isPlaying = playback?.state == PlaybackState.STATE_PLAYING,
             title = text(MediaMetadata.METADATA_KEY_DISPLAY_TITLE) ?: text(MediaMetadata.METADATA_KEY_TITLE),
             artist = text(MediaMetadata.METADATA_KEY_ARTIST), packageName = controller.packageName, appLabel = label,
             sessionId = selected.id, mediaAccess = true,
             canPause = supports(PlaybackState.ACTION_PAUSE) || supports(PlaybackState.ACTION_PLAY_PAUSE),
             canPrevious = supports(PlaybackState.ACTION_SKIP_TO_PREVIOUS), canNext = supports(PlaybackState.ACTION_SKIP_TO_NEXT),
             artwork = if (changed || artChanged) null else mutableState.value.artwork,
+            durationMs = duration, positionMs = playback?.position?.takeIf { it >= 0L },
+            positionUpdatedAt = playback?.lastPositionUpdateTime ?: 0L,
+            speed = playback?.playbackSpeed?.takeIf { it.isFinite() } ?: 0f,
+            canSeek = duration != null && supports(PlaybackState.ACTION_SEEK_TO),
+            canPlay = playback?.state == PlaybackState.STATE_PAUSED && (supports(PlaybackState.ACTION_PLAY) || supports(PlaybackState.ACTION_PLAY_PAUSE)),
         )
         if (changed || artChanged) loadArtwork(selected.id, metadata)
     }
@@ -204,6 +220,25 @@ class AudioPlaybackMonitor(context: Context) {
             val state = selected.controller.playbackState ?: return@runCatching
             if (state.state != PlaybackState.STATE_PLAYING || state.actions and action == 0L) return@runCatching
             command(selected.controller.transportControls)
+        }
+    }
+
+    fun seek(id: String?, position: Long) {
+        val entry = current?.takeIf { it.id == id && id != null } ?: return
+        runCatching {
+            val state = entry.controller.playbackState ?: return@runCatching
+            val duration = entry.controller.metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: return@runCatching
+            if (duration <= 0L || state.actions and PlaybackState.ACTION_SEEK_TO == 0L ||
+                state.state !in setOf(PlaybackState.STATE_PLAYING, PlaybackState.STATE_PAUSED)) return@runCatching
+            entry.controller.transportControls.seekTo(position.coerceIn(0L, duration))
+        }
+    }
+    fun resume(id: String?) {
+        val entry = current?.takeIf { it.id == id && id != null } ?: return
+        runCatching {
+            val state = entry.controller.playbackState ?: return@runCatching
+            if (state.state == PlaybackState.STATE_PAUSED &&
+                state.actions and (PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PLAY_PAUSE) != 0L) entry.controller.transportControls.play()
         }
     }
 
