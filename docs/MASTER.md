@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Revisión beta71, 11 de noviembre de 2026: tres trazas Reactivas válidas (2149 cuadros; 9 Late Present, 0.419 %). Intervalo habitual de presentación 8.35 ms en la primera muestra. Estático no confirmado: muestras descartadas. Selector e intensidad finales verificados en Reactivo/50 %. Comparación y latencia pendientes; Ambiental aplazado. Ver docs/BETA71.md.
+
 Beta71 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.49.0-beta71, código 71. Fondo PS4 reactivo al arrastre, foco, pulsación, búsqueda y paneles; Estático/Reactivo e intensidad persistentes. Coordinador finito y geometría retenida. Compilación/lint correctos (0 errores); firma, versión y hash instalado verificados. Comparación física pendiente; no se declara resuelto el lag. Ambiental aplazado. Ver docs/BETA71.md.
 
 Plan propuesto el 11 de noviembre de 2026 para [fondo PS4 reactivo](superpowers/plans/2026-11-11-ps4-reactive-wallpaper.md). Define reacciones, etapas y criterios de rendimiento. Pendiente de implementación. La entrega instalada sigue siendo beta70.

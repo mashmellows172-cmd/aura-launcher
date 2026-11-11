@@ -151,7 +151,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta71 installed over beta70 with compatible signature and verified version/hash. Final assembleBeta/lintBeta successful; 0 errors, 41 warnings, 3 hints. Reactive wallpaper candidate pending physical comparison; Ambient deferred. Branch codex/beta71-reactive-wallpaper; see docs/BETA71.md.",
+  "latestCheckpoint": "Beta71 installed and hash verified. Three valid Reactive traces: 2149 frames, 9 Late Present. Static comparison invalid/unconfirmed; discarded. Final UI verified Reactive/50%. Ambient deferred. See docs/BETA71.md; branch codex/beta71-reactive-wallpaper.",
   "checkpointBranch": "codex/beta71-reactive-wallpaper",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

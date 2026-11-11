@@ -34,8 +34,26 @@ APKs verificados con aapt y apksigner. Firma compatible `2eb417c55c60a8ca8db1fb6
 
 Tamaño del APK: 15 694 148 bytes; el APK de beta70 instalado medía 15 694 144 bytes. Diferencia real de archivo: +4 bytes, condicionada por el empaquetado/alineación; no equivale al tamaño del código añadido ni acredita consumo de memoria. El APK queda fuera de Git.
 
-No se inició Aura sobre la aplicación que el usuario estaba utilizando. No hay revisión visual de beta71 ni comparación acreditada de presentación.
+La instalación no abrió Aura sobre otra aplicación. Después del desbloqueo autorizado se revisaron una captura estática de Inicio y los controles nuevos. No se ha acreditado aún la suavidad de las transiciones ni una comparación Estático/Reactivo.
 
-La captura de referencia de beta70 se interrumpió antes de grabar porque Aura dejó de estar en primer plano. El Motorola quedó primero cubierto por el panel de notificaciones y después mostró otra aplicación. Tras la confirmación del usuario se intentó medir: Perfetto rechazó la configuración en /data/local/tmp por SELinux; se corrigió su ubicación a /data/misc/perfetto-configs. Antes de capturar cuadros el teléfono perdió primer plano y después Keyguard indicó showing=true/inputRestricted=true. Las capturas se cancelaron; no hay muestra válida de esta beta. Se solicitó desbloquear sin cambiar ajustes ni permisos. No se afirma una mejora de fluidez ni el cumplimiento de los presupuestos de CPU, memoria o presentación.
+La captura de referencia de beta70 se interrumpió antes de grabar porque Aura dejó de estar en primer plano. El Motorola quedó primero cubierto por el panel de notificaciones y después mostró otra aplicación. Tras la confirmación del usuario se intentó medir: Perfetto rechazó la configuración en /data/local/tmp por SELinux; se corrigió su ubicación a /data/misc/perfetto-configs. Antes de capturar cuadros el teléfono perdió primer plano y después Keyguard indicó showing=true/inputRestricted=true. Esos intentos iniciales se cancelaron; posteriormente se obtuvieron las muestras Reactivas de la tabla siguiente. Se solicitó desbloquear sin cambiar ajustes ni permisos. No se afirma una mejora de fluidez ni el cumplimiento de los presupuestos de CPU, memoria o presentación.
 
-Pendientes: tres recorridos comparables de FrameTimeline en Estático/Reactivo; inversión rápida, fling y listas cortas; pulsación y apertura inmediata; búsqueda/teclado; abrir/cerrar paneles; bloqueo/retorno; paletas; imágenes personales; confirmación de favoritas. Las trazas y capturas del teléfono permanecen fuera de Git.
+### Capturas posteriores al desbloqueo
+
+Tres muestras válidas de Reactivo, de 9 s cada una, con seis swipes ADB de 450 ms (tres por dirección), comprobando Aura en primer plano. Se aplicó el mismo recorrido previsto para Estático. La captura se obtuvo con android.surfaceflinger.frametimeline y linux.process_stats. Procesamiento local con trace_processor oficial de Perfetto. Los valores siguientes filtran actual_frame_timeline_slice por el proceso de Aura.
+
+| Muestra Reactiva | Cuadros | Late Present | Porcentaje tarde | P95 duración de slice real |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 660 | 4 | 0.606 % | 19.412 ms |
+| 2 | 670 | 2 | 0.299 % | 19.164 ms |
+| 3 | 819 | 3 | 0.366 % | 19.101 ms |
+
+Total: 2149 cuadros y 9 presentaciones tarde (0.419 %). La duración del slice real comprende el intervalo de FrameTimeline, no solo tiempo de CPU de dibujo. En la primera muestra SurfaceFlinger presentó habitualmente a intervalos de 8.35 ms, aproximadamente 120 Hz efectivos durante la actividad. No se deduce ese refresco del P95 de gfxinfo.
+
+Gfxinfo, con una ventana algo mayor que la traza, registró P95 19/20/19 ms y jank moderno 0.45/0.96/0.60 %, frente a legacy 43.18/93.84/67.03 %. La discrepancia impide usar un único porcentaje como prueba de suavidad. FrameTimeline también etiqueta muchos slices como Buffer Stuffing; no se interpreta automáticamente como retraso de presentación ni se declara resuelta la latencia.
+
+Se descartaron dos tandas etiquetadas provisionalmente Estático: la primera no confirmó el selector; en la segunda el usuario confirmó su elección, pero la comprobación posterior mostró Reactivo. Sin confirmación de persistencia no se consideran una referencia Estática. El último control observado en Movimiento y efectos mostró **Reactivo e intensidad 50 %**, y se cerró el panel dejando Inicio visible. No se modificaron permisos ni ajustes del sistema.
+
+No hay comparación causal válida ni validación de CPU adicional, memoria, temperatura o cadencia en otras cargas. Ambiental sigue aplazado. Evidencia privada fuera de Git.
+
+Pendientes: capturas de Estático con selección y persistencia comprobadas antes/después de cada tanda; comparación con Reactivo; inversión rápida, fling y listas cortas; pulsación y apertura inmediata; búsqueda/teclado; abrir/cerrar paneles; bloqueo/retorno; paletas; imágenes personales; confirmación de favoritas. Las trazas y capturas del teléfono permanecen fuera de Git.
