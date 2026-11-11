@@ -90,6 +90,19 @@
         "bounded media drawing proposal"
       ],
       "dependsOn": []
+    },
+    {
+      "id": "BETA71-MOTION",
+      "owner": "ollama/qwen3.5:4b",
+      "status": "ASSIGNED",
+      "branch": "codex/beta71-reactive-wallpaper",
+      "baseCommit": "9b5afea",
+      "contract": "docs/coordination/BETA71-OLLAMA.md",
+      "scope": [
+        "frame cadence and exponential settling review",
+        "bounded final source review"
+      ],
+      "dependsOn": []
     }
   ],
   "budget": {
