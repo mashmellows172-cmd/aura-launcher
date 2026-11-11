@@ -23,4 +23,12 @@ El Motorola se actualizó mediante `install -r`. Android confirmó 0.48.0-beta69
 
 `4de81059ced2f48086b09ed64b7386ed06039cf9657f70f217a76cc9aa101ee4`
 
-Pruebas visuales, flujo de pronóstico en el teléfono y medición de fluidez pendientes. La evidencia privada permanece fuera de Git.
+## Comprobación física del 11 de noviembre
+
+El panel cargó el pronóstico para una localidad coincidente con el widget. Se observaron las horas, la zona America/Santiago, las condiciones, la temperatura y los eventos de amanecer y atardecer. Tocar una hora mostró el pronóstico en la cabecera del panel y Volver al clima actual recuperó la lectura del widget. Se eliminó la localidad temporal al terminar, comprobando el regreso al buscador de localidades.
+
+Se probaron buscador de 88 dp, reloj de 32 sp y cabecera de 208 dp. Los valores persistieron al cerrar y reabrir Inicio y gestos. Restablecer tamaños recuperó los tres valores iniciales, 56 dp, 48 sp y 120 dp. La cabecera y el buscador se observaron con los tamaños modificados.
+
+La muestra multimedia apareció y Repetir animación multimedia produjo dos estados visuales distintos. Se detectó que los nombres de transporte se partían en el panel estrecho. Esto motiva la corrección beta70. La revisión del árbol accesible confirmó que los controles padres estaban desactivados en ambas versiones. La muestra fue cerrada y se dejó Inicio visible.
+
+Quedan pendientes reproducción real con metadatos, las otras paletas, los cambios horarios de iluminación y una nueva medición de fluidez. La evidencia privada permanece fuera de Git.

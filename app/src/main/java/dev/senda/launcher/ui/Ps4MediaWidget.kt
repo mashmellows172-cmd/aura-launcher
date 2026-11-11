@@ -25,8 +25,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -59,9 +60,6 @@ internal fun Ps4MediaWidget(
         "${info.sessionId}|${info.title}|${info.artist}|${audioInfo.isPlaying}",
         LauncherTheme.PS4, still, durationMs = 2400, playOnEntry = true, ready = audioInfo.isPlaying,
     )
-    val compact = LocalConfiguration.current.screenWidthDp < 360 ||
-        LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-    val artSize = if (compact) 72.dp else 98.dp
     val title = info.title ?: info.appLabel ?: "Contenido en reproducción"
     val art = info.artwork?.takeUnless { it.isRecycled }
     AnimatedVisibility(
@@ -75,6 +73,12 @@ internal fun Ps4MediaWidget(
             onClick = if (preview) null else ({
                 if (info.generic) onEnableAccess() else onOpenAudio(info.sessionId)
             })) {
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val compact = maxWidth < 340.dp || LocalDensity.current.fontScale > 1.3f
+            val artSize = if (compact) 72.dp else 98.dp
+            val previousEnabled = !preview && audioInfo.isPlaying && info.canPrevious
+            val pauseEnabled = !preview && audioInfo.isPlaying && info.canPause
+            val nextEnabled = !preview && audioInfo.isPlaying && info.canNext
             Column(
                 Modifier.fillMaxWidth().then(if (still) Modifier else Modifier.ps4MediaScene(change))
                     .padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -98,7 +102,8 @@ internal fun Ps4MediaWidget(
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(if (!audioInfo.isPlaying) "Audio detenido" else if (info.generic) "Reproducción detectada" else "En reproducción",
                             style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(title, style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
+                            maxLines = 2, overflow = TextOverflow.Ellipsis)
                         Text(if (info.generic) "Toca para conectar los controles"
                             else listOfNotNull(info.artist, info.appLabel).distinct().joinToString(" · "),
                             style = MaterialTheme.typography.bodySmall, maxLines = 2, overflow = TextOverflow.Ellipsis,
@@ -110,32 +115,45 @@ internal fun Ps4MediaWidget(
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = { onPrevious(info.sessionId) },
-                            enabled = !preview && audioInfo.isPlaying && info.canPrevious,
-                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics { contentDescription = "Pista anterior" }) {
+                            enabled = previousEnabled,
+                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics {
+                                contentDescription = "Pista anterior"
+                                if (!previousEnabled) disabled()
+                            }) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Ps4ChromeIcon("previous")
-                                Text("Anterior", style = MaterialTheme.typography.labelMedium)
+                                if (!compact) Text("Anterior", style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
                             }
                         }
                         FilledTonalButton(onClick = { onPause(info.sessionId) },
-                            enabled = !preview && audioInfo.isPlaying && info.canPause,
-                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics { contentDescription = "Pausar reproducción" },
+                            enabled = pauseEnabled,
+                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics {
+                                contentDescription = "Pausar reproducción"
+                                if (!pauseEnabled) disabled()
+                            },
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Ps4ChromeIcon("pause")
-                                Text("Pausar", style = MaterialTheme.typography.labelMedium)
+                                if (!compact) Text("Pausar", style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
                             }
                         }
                         TextButton(onClick = { onNext(info.sessionId) },
-                            enabled = !preview && audioInfo.isPlaying && info.canNext,
-                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics { contentDescription = "Pista siguiente" }) {
+                            enabled = nextEnabled,
+                            modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics {
+                                contentDescription = "Pista siguiente"
+                                if (!nextEnabled) disabled()
+                            }) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Ps4ChromeIcon("next")
-                                Text("Siguiente", style = MaterialTheme.typography.labelMedium)
+                                if (!compact) Text("Siguiente", style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
                             }
                         }
                     }
                 }
+            }
             }
         }
     }
@@ -172,11 +190,11 @@ private fun Modifier.ps4MediaScene(progress: State<Float>): Modifier {
     val ink = MaterialTheme.colorScheme.onSurface
     return drawWithCache {
         val paths = List(3) { Path() }
-        val glow = Brush.horizontalGradient(listOf(Color.Transparent, primary.copy(alpha = .20f), Color.Transparent))
+        val glow = Brush.horizontalGradient(listOf(Color.Transparent, primary.copy(alpha = .30f), Color.Transparent))
         val bandWidth = size.width * .32f
         val reflection = Brush.horizontalGradient(listOf(Color.Transparent, ink.copy(alpha = .10f), Color.Transparent),
             startX = 0f, endX = bandWidth.coerceAtLeast(1f))
-        val stroke = Stroke(.8.dp.toPx())
+        val stroke = Stroke(1.1.dp.toPx())
         onDrawBehind {
             val p = progress.value
             val envelope = sin(p * Math.PI).toFloat().coerceAtLeast(0f)
