@@ -40,7 +40,7 @@ internal fun Ps4QuickMenu(
 ) {
     val highContrast = LocalAppearance.current.highContrast
     val settings = LocalMotionSettings.current
-    val noMotion = settings.reduceMotion || highContrast || LocalThemePreview.current ||
+    val noMotion = settings.reduceMotion || highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current ||
         settings.menuEffect == "NONE" || !ValueAnimator.areAnimatorsEnabled()
     val motion = rememberPs4PanelMotion(noMotion)
     val entrance = motion.progress

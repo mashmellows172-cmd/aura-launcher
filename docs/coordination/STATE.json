@@ -68,7 +68,7 @@
     {
       "id": "BETA68-LOCAL-UI",
       "owner": "ollama/deepseek-coder:6.7b",
-      "status": "ASSIGNED",
+      "status": "IMPLEMENTED_PENDING_PHYSICAL_VALIDATION",
       "branch": "codex/beta68-ps4-polish",
       "baseCommit": "4accab7783ea12b835e6e23332afdd02584bf09a",
       "contract": "docs/coordination/BETA68-OLLAMA.md",

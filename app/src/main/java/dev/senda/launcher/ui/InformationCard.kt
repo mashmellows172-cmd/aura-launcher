@@ -29,7 +29,9 @@ internal fun InformationCard(label:String,value:String,kind:HomeBlock,onClick:()
         val scheme = MaterialTheme.colorScheme
         Row(Modifier.padding(horizontal = if (theme == LauncherTheme.OPTIMUS) 14.dp else 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            InformationGlyph(kind, scheme.primary)
+            if (theme == LauncherTheme.PS4) {
+                Ps4ChromeIcon(if (kind == HomeBlock.ALARM) "alarm" else "calendar")
+            } else InformationGlyph(kind, scheme.primary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, style = MaterialTheme.typography.labelSmall, fontSize = 12.sp,
                     color = scheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)

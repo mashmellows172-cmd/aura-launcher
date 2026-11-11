@@ -735,20 +735,25 @@ internal fun Header(
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, clockMotion, onOpenAlarms)
-                IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
-                    Icon(Icons.Filled.Settings, "Abrir menú rápido")
+                IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
+                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir menú rápido" }) {
+                    Ps4ChromeIcon("settings", Modifier.size(24.dp))
                 }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
             Row(
-                Modifier.fillMaxWidth().padding(vertical = if (compactHeader) 0.dp else 4.dp),
+                Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    .clip(RoundedCornerShape(4.dp)).ps4Material()
+                    .padding(horizontal = 10.dp, vertical = if (compactHeader) 2.dp else 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Column(Modifier.weight(1f)) {
-                    if (!compactHeader) Ps4HeaderClock(clockTime, 46.sp, motionReduced, clockMotion, onOpenAlarms)
-                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar)
+                    if (!compactHeader) Ps4HeaderClock(clockTime, 48.sp, motionReduced, clockMotion, onOpenAlarms)
+                    HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, chrome = true)
                 }
+                if (!compactHeader) Box(Modifier.width(1.dp).height(66.dp)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .14f)))
                 HeaderWeather(
                     widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
                     onOpenWeather, onWeatherConnection,
@@ -865,7 +870,8 @@ internal fun Header(
 }
 
 @Composable
-private fun HeaderShortcut(glyph: String, label: String, description: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun HeaderShortcut(glyph: String, label: String, description: String, onClick: () -> Unit,
+    modifier: Modifier = Modifier, chrome: Boolean = false) {
     val iconTint = MaterialTheme.colorScheme.onSurfaceVariant
     Row(
         modifier = modifier.widthIn(min = 48.dp).heightIn(min = 48.dp).clickable(onClick = onClick)
@@ -873,7 +879,8 @@ private fun HeaderShortcut(glyph: String, label: String, description: String, on
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        Canvas(Modifier.size(13.dp)) {
+        if (chrome) Ps4ChromeIcon(glyph, Modifier.size(18.dp))
+        else Canvas(Modifier.size(13.dp)) {
             val tint = iconTint
             val stroke = 1.35.dp.toPx()
             when (glyph) {
@@ -1205,9 +1212,10 @@ private fun AppRow(
     var plateBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon, origin = plateBounds,
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
-    val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current ||
+        LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val pressScale = animateFloatAsState(if (console && !still && pressed) .986f else 1f,
-        tween(if (still) 0 else 120), label = "ps4-press")
+        tween(if (still) 0 else 120, easing = Ps4Motion.easing), label = "ps4-press")
     val favoriteCue = if (console) remember { androidx.compose.animation.core.Animatable(1f) } else null
     if (favoriteCue != null) {
         var previous by remember { mutableStateOf(isFavorite) }
@@ -1249,7 +1257,7 @@ private fun AppRow(
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
                     .onGloballyPositioned { plateCoordinates = it }
-                    .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceVariant,MaterialTheme.colorScheme.surface)),RoundedCornerShape(2.dp))
+                    .clip(RoundedCornerShape(2.dp)).ps4Material()
                     .border(1.dp,MaterialTheme.colorScheme.outline.copy(alpha=.6f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
@@ -1278,8 +1286,8 @@ private fun AppRow(
                 }
                 feedback.play(SoundEvent.MENU)
                 detailsShown = true
-            }, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Filled.MoreVert, "Detalles y accesos de ${app.label}", modifier = Modifier.size(20.dp))
+            }, modifier = Modifier.size(48.dp).semantics { contentDescription = "Detalles y accesos de ${app.label}" }) {
+                Ps4ChromeIcon("more", Modifier.size(20.dp))
             }
             if (isFavorite) {
                 // The section already identifies favorites; this quiet mark also works in A–Z/search.

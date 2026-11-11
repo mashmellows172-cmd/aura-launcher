@@ -151,7 +151,7 @@ internal fun Ps4AppDetails(
     }
     val settings = LocalMotionSettings.current
     val reduced = settings.reduceMotion || settings.menuEffect == "NONE" || LocalAppearance.current.highContrast ||
-        LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+        LocalThemePreview.current || LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
     val motion = rememberPs4PanelMotion(reduced)
     val close = { motion.close(reduced, onDismiss) }
     var destination by remember { mutableStateOf<Rect?>(null) }

@@ -51,7 +51,10 @@ internal fun ThemedSearchField(
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
             interactionSource = interactions,
             placeholder = { Text("Buscar apps") },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+            leadingIcon = {
+                if (theme == LauncherTheme.PS4) Ps4ChromeIcon("search")
+                else Icon(Icons.Filled.Search, contentDescription = null)
+            },
             trailingIcon = if (query.isNotEmpty()) ({
                 IconButton(onClick = onClear) { Icon(Icons.Filled.Close, contentDescription = "Borrar búsqueda") }
             }) else null,

@@ -165,11 +165,26 @@ fun ThemedAudioWidget(
                 if (!info.generic) Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                     TextButton(onClick = { onPrevious(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPrevious,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Anterior") }
+                        modifier = Modifier.weight(1f).heightIn(min = 56.dp)) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Ps4ChromeIcon("previous", Modifier.size(20.dp))
+                            Text("Anterior", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    }
                     FilledTonalButton(onClick = { onPause(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canPause,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Pausar") }
+                        modifier = Modifier.weight(1f).heightIn(min = 56.dp)) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Ps4ChromeIcon("pause", Modifier.size(20.dp))
+                            Text("Pausar", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    }
                     TextButton(onClick = { onNext(info.sessionId) }, enabled = !preview && audioInfo.isPlaying && info.canNext,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text("Siguiente") }
+                        modifier = Modifier.weight(1f).heightIn(min = 56.dp)) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Ps4ChromeIcon("next", Modifier.size(20.dp))
+                            Text("Siguiente", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    }
                 }
                 // Playback state owns the light; no decorative frame loop in the PS4 player.
                 Box(Modifier.fillMaxWidth().height(2.dp).drawWithCache {

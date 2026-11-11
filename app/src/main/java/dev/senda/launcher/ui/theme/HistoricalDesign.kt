@@ -2,6 +2,9 @@ package dev.senda.launcher.ui.theme
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.BorderStroke
@@ -27,6 +30,11 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.LocalAppearance
+import dev.senda.launcher.ui.LocalMotionSettings
+import dev.senda.launcher.ui.LocalSystemPowerSaving
+import dev.senda.launcher.ui.LocalThemePreview
+import dev.senda.launcher.ui.Ps4Motion
+import dev.senda.launcher.ui.ps4Material
 
 enum class HistoricalMaterial { DOTS, CHROME, WATER, PAPER, FLOW, LCD, CONSOLE }
 enum class HistoricalMotion { DOT_REVEAL, HINGE, RIPPLE, LAYERS, GLIDE, SEGMENTS }
@@ -122,13 +130,23 @@ fun HistoricalPanel(
     val accent = profile?.readableAccent(LocalSkinStyle.current.accent) ?: scheme.primary
     val interactions = remember { MutableInteractionSource() }
     val focused by interactions.collectIsFocusedAsState()
+    val pressed by interactions.collectIsPressedAsState()
     val highlighted = selected || (onClick != null && focused)
     val frame = if (highlighted) accent else profile?.frame ?: scheme.outline
     val panelScheme = profile?.let { historicalColors(it, scheme, accent) } ?: scheme
+    val console = theme == LauncherTheme.PS4 && !LocalAppearance.current.highContrast
+    val reduced = LocalMotionSettings.current.reduceMotion || LocalSystemPowerSaving.current ||
+        LocalThemePreview.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val light = if (console) animateFloatAsState(
+        if (highlighted || pressed) 1f else 0f,
+        tween(if (reduced) 0 else Ps4Motion.focusMs, easing = Ps4Motion.easing),
+        label = "ps4-panel-light",
+    ) else null
     val inner: @Composable () -> Unit = {
         MaterialTheme(colorScheme = panelScheme) {
             CompositionLocalProvider(LocalContentColor provides foreground) {
-                Box(Modifier.background(Brush.verticalGradient(listOf(top, bottom)))
+                Box((if (console) Modifier.ps4Material(light)
+                    else Modifier.background(Brush.verticalGradient(listOf(top, bottom))))
                     .drawWithContent {
                         // Material is decorative, stays clipped by Surface and cannot intercept taps.
                         when (profile?.material) {

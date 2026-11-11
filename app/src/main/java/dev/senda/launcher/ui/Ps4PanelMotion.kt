@@ -1,5 +1,6 @@
 package dev.senda.launcher.ui
 
+import android.animation.ValueAnimator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
@@ -20,8 +21,8 @@ internal class Ps4PanelMotion(
     fun close(reduced: Boolean, done: () -> Unit) {
         if (closing) return
         closing = true
-        if (reduced) done() else scope.launch {
-            progress.animateTo(0f, tween(Ps4Motion.exitMs))
+        if (reduced || !ValueAnimator.areAnimatorsEnabled()) done() else scope.launch {
+            progress.animateTo(0f, tween(Ps4Motion.exitMs, easing = Ps4Motion.easing))
             done()
         }
     }
@@ -30,10 +31,11 @@ internal class Ps4PanelMotion(
 @Composable
 internal fun rememberPs4PanelMotion(reduced: Boolean): Ps4PanelMotion {
     val scope = rememberCoroutineScope()
-    val motion = remember(scope) { Ps4PanelMotion(Animatable(if (reduced) 1f else 0f), scope) }
-    LaunchedEffect(reduced) {
+    val still = reduced || LocalSystemPowerSaving.current || !ValueAnimator.areAnimatorsEnabled()
+    val motion = remember(scope) { Ps4PanelMotion(Animatable(if (still) 1f else 0f), scope) }
+    LaunchedEffect(still) {
         if (!motion.closing) {
-            if (reduced) motion.progress.snapTo(1f)
+            if (still) motion.progress.snapTo(1f)
             else motion.progress.animateTo(1f, tween(Ps4Motion.enterMs, easing = Ps4Motion.easing))
         }
     }
