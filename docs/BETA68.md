@@ -20,4 +20,10 @@ Se actualizó el Motorola por ADB inalámbrico con `install -r`. Android confirm
 
 `f63a97125986a598557dca4c99ff9862e5fc8f7818bfa6bf8358ae8cf2151274`
 
-Quedan pendientes la revisión visual y la medición física de fluidez. El Motorola tenía otra aplicación abierta al terminar. Sin evidencia privada del teléfono en Git.
+## Revisión física del 11 de noviembre
+
+En el Motorola se comprobó la cabecera completa, incluidos reloj, fecha, temperatura, ciudad e icono de nubes parciales. Se observó el acabado plateado de ajustes y calendario. Una ficha se abrió mediante su botón de detalles, mostró Accesos directos y volvió a Inicio al pulsar Cerrar.
+
+Se midieron seis arrastres ADB de 450 ms, tres en cada sentido, con 250 ms entre gestos y reinicio previo de los contadores de gfxinfo. La muestra incluyó 644 cuadros. Android informó 1 cuadro janky, 0.16 %, y su contador legacy informó 515, 79.97 %. Los percentiles de tiempo de cuadro fueron P50 16 ms, P90 18 ms, P95 18 ms y P99 22 ms. Las consultas posteriores de pantalla mostraron 90 Hz en DisplayManager y un período de 16.67 ms en SurfaceFlinger. Se mantienen ambos resultados por su discrepancia. Esta muestra requiere una captura de tiempos de presentación correlacionada con la frecuencia efectiva para evaluar la cadencia.
+
+Quedan pendientes las demás paletas, texto ampliado, controles multimedia con una sesión compatible y la evaluación de cadencia. La evidencia privada del teléfono permanece fuera de Git.
