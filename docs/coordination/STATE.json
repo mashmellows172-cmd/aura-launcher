@@ -116,6 +116,18 @@
         "bounded material and glyph aesthetic proposal"
       ],
       "dependsOn": []
+    },
+    {
+      "id": "BETA72-REVIEW",
+      "owner": "beta72_reviewer",
+      "status": "ASSIGNED",
+      "branch": "codex/beta72-theme-personality",
+      "baseCommit": "0b3c156",
+      "contract": "docs/coordination/BETA72-REVIEW.md",
+      "scope": [
+        "read-only final source review of working diff"
+      ],
+      "dependsOn": []
     }
   ],
   "budget": {
