@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta72 candidate 0.50.0/code72: four selected personality features implemented; final build/lint 56s, 0 errors/42 warnings/3 hints; independent source review no concrete findings; local APK version/signature/hash verified. NOT installed: device offline, current IP/port requested. Last verified installation beta71. See docs/BETA72.md and branch codex/beta72-theme-personality.",
+  "latestCheckpoint": "Beta72 0.50.0/code72 installed over beta71 via wireless ADB on 2026-11-11. Compatible signature, version and installed SHA-256 match verified. Build/lint 0 errors; independent source review no concrete findings. Physical transitions, real media session and metrics pending. See docs/BETA72.md; branch codex/beta72-theme-personality.",
   "checkpointBranch": "codex/beta72-theme-personality",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

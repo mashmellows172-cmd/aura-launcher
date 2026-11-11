@@ -1,6 +1,6 @@
 # Historial de actualizaciones de Aura Launcher
 
-Beta72 candidata, 11 de noviembre de 2026. 0.50.0-beta72, código 72. Materiales PS4 coherentes, ambiente multimedia desde carátula local, familia de 21 glifos de sistema y respuesta táctil/material propia por tema. Centro de estado integrado y Fondo PS4 accesible al inicio de ajustes. Compilación/lint finales correctos (0 errores); revisión independiente sin hallazgos concretos; versión/firma del APK verificadas. No instalada: Motorola sin conexión ADB. Revisión visual, reproducción real y rendimiento pendientes. Ver docs/BETA72.md. Última instalación verificada: beta71.
+Beta72 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.50.0-beta72, código 72. Materiales PS4 coherentes, ambiente multimedia desde carátula local, 21 glifos de sistema y respuesta propia por tema. Compilación/lint correctos (0 errores); revisión independiente de fuente sin hallazgos concretos. Actualización install -r sobre beta71 con firma compatible; versión y hash instalado verificados. Revisión visual, reproducción real y métricas pendientes. Ver docs/BETA72.md.
 
 Revisión beta71, 11 de noviembre de 2026: tres trazas Reactivas válidas (2149 cuadros; 9 Late Present, 0.419 %). Intervalo habitual de presentación 8.35 ms en la primera muestra. Estático no confirmado: muestras descartadas. Selector e intensidad finales verificados en Reactivo/50 %. Comparación y latencia pendientes; Ambiental aplazado. Ver docs/BETA71.md.
 

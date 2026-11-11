@@ -1,6 +1,6 @@
 # Beta72 · materiales, controles y ambiente multimedia
 
-11 de noviembre de 2026. Candidata 0.50.0-beta72, código 72. Base beta71 439c3df. Implementa las propuestas elegidas por el usuario: 1, 2, 6 y 4. Compilación/lint correctos y APK con firma compatible. No instalada: el Motorola perdió conexión ADB.
+11 de noviembre de 2026. 0.50.0-beta72, código 72. Base beta71 439c3df. Implementa las propuestas elegidas por el usuario: 1, 2, 6 y 4. Compilación/lint correctos y APK con firma compatible. Instalada sobre beta71 por ADB inalámbrico, con versión y hash verificados.
 
 ## Cambios visibles
 
@@ -34,4 +34,8 @@ SHA-256 del APK local:
 
 Tamaño del archivo: 15 694 144 bytes. No hay aumento de archivo respecto a beta71, sujeto al empaquetado/alineación; esto no mide memoria ni CPU. APK privado: C:/Users/victus/Documents/Aura-private-beta72/aura-beta72.apk, fuera del repositorio.
 
-No instalada. ADB pasó a offline y después no detectó dispositivos; mDNS no anunció un destino y la reconexión al último puerto agotó el tiempo. Se solicitó la dirección actual. No se verificaron versión/hash instalados de beta72, revisión física, una sesión multimedia real ni métricas de esta versión. La comparación Estático/Reactivo de beta71 sigue sin referencia confirmada; Ambiental continúa aplazado. Evidencia del teléfono, salidas locales y APK fuera de Git.
+El primer intento quedó pendiente por ADB offline. Tras el reintento solicitado por el usuario, mDNS detectó de nuevo el Motorola Edge 50 Ultra. El 11 de noviembre de 2026 se ejecutó install -r correctamente sobre beta71, conservando el paquete y su firma. Android confirmó 0.50.0-beta72 y código 72. El SHA-256 del APK instalado coincide con el local:
+
+`e659d8a44396cfcee5e1a41892e714f0c218b13675e96a4a3f03bfd8986a0a17`
+
+Aura no estaba en primer plano después de instalar. No se abrió sobre la otra aplicación ni se cambiaron permisos o ajustes del sistema. No se verificaron visualmente las transiciones, una sesión multimedia real ni métricas de esta versión. La comparación Estático/Reactivo de beta71 sigue sin referencia confirmada; Ambiental continúa aplazado. Evidencia del teléfono, salidas locales y APK fuera de Git.
