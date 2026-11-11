@@ -104,6 +104,18 @@
       ],
       "dependsOn": [],
       "result": "Both local Qwen reviews completed; incorrect mathematics and coroutine false positives rejected. No model code integrated. See contract evaluation."
+    },
+    {
+      "id": "BETA72-DESIGN",
+      "owner": "ollama/qwen3.5:4b",
+      "status": "ASSIGNED",
+      "branch": "codex/beta72-theme-personality",
+      "baseCommit": "439c3df",
+      "contract": "docs/coordination/BETA72-OLLAMA.md",
+      "scope": [
+        "bounded material and glyph aesthetic proposal"
+      ],
+      "dependsOn": []
     }
   ],
   "budget": {
@@ -152,7 +164,7 @@
     }
   ],
   "latestCheckpoint": "Beta71 installed and hash verified. Three valid Reactive traces: 2149 frames, 9 Late Present. Static comparison invalid/unconfirmed; discarded. Final UI verified Reactive/50%. Ambient deferred. See docs/BETA71.md; branch codex/beta71-reactive-wallpaper.",
-  "checkpointBranch": "codex/beta71-reactive-wallpaper",
+  "checkpointBranch": "codex/beta72-theme-personality",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,
