@@ -94,7 +94,7 @@
     {
       "id": "BETA71-MOTION",
       "owner": "ollama/qwen3.5:4b",
-      "status": "ASSIGNED",
+      "status": "REVIEWED_REJECTED",
       "branch": "codex/beta71-reactive-wallpaper",
       "baseCommit": "9b5afea",
       "contract": "docs/coordination/BETA71-OLLAMA.md",
@@ -102,7 +102,8 @@
         "frame cadence and exponential settling review",
         "bounded final source review"
       ],
-      "dependsOn": []
+      "dependsOn": [],
+      "result": "Both local Qwen reviews completed; incorrect mathematics and coroutine false positives rejected. No model code integrated. See contract evaluation."
     }
   ],
   "budget": {
@@ -116,9 +117,9 @@
       "unknownQuotaBlocksInference": true
     },
     "codex": {
-      "internal90PercentCap": false,
+      "internal90PercentCap": true,
       "providerLimitsStillApply": true,
-      "reason": "Usuario retiró el límite de Codex el29oct2026"
+      "reason": "Instrucción posterior vigente: reservar al menos 10 % y detener al 90 %; se comprueban las ventanas disponibles de Codex."
     }
   },
   "projects": [
@@ -150,5 +151,14 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta45 compiled/lint and original signature/hash verified. Not installed: incompatible installed signing certificate. Physical validation pending."
+  "latestCheckpoint": "Beta71 installed over beta70 with compatible signature and verified version/hash. Final assembleBeta/lintBeta successful; 0 errors, 41 warnings, 3 hints. Reactive wallpaper candidate pending physical comparison; Ambient deferred. Branch codex/beta71-reactive-wallpaper; see docs/BETA71.md.",
+  "checkpointBranch": "codex/beta71-reactive-wallpaper",
+  "currentUserQuotaPolicy": {
+    "stopAtPercent": 90,
+    "reservePercent": 10,
+    "observedCodexFiveHourPercent": 43,
+    "observedCodexWeeklyPercent": 38,
+    "date": "2026-11-11",
+    "dailyQuotaAvailable": false
+  }
 }

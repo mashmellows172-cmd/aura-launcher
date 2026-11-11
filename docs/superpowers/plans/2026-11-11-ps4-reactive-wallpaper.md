@@ -115,3 +115,9 @@ La captura propuesta usa FrameTimeline, que distingue tiempos esperados y reales
 Ollama puede proponer curvas, rangos y pseudocódigo acotado para una reacción cada vez. El coordinador revisa las APIs y compara los candidatos con el código real antes de integrar. Los modelos locales anteriores produjeron sintaxis inválida, por lo que cada candidato debe pasar esa revisión.
 
 AGENTS.md establece compilación, lint y revisión visual/source. No se añaden ni ejecutan suites automáticas sin nueva petición expresa. Las trazas y capturas privadas del Motorola permanecen fuera de Git.
+
+## Ejecución beta71 · 11 de noviembre de 2026
+
+La fuente implementa las reacciones finitas de las etapas 2–4: arrastre, foco asentado, pulsación, búsqueda, paneles y confirmación, conservando el desbloqueo existente. Preferencias añadidas a VisualSettings, que ya alimenta Movimiento y efectos y el respaldo; no se creó una segunda estructura de ajustes. Se ofrecen solo Estático y Reactivo. Ambiental no se habilita ni se simula como disponible.
+
+Las casillas anteriores incluyen aceptación física: permanecen pendientes mientras no exista la comparación y revisión del Motorola. La referencia de beta70 se abortó antes de capturar al perder primer plano. El estado verificable de compilación, instalación y pendientes se registra en docs/BETA71.md. El primer release no implica que el presupuesto de rendimiento esté acreditado.

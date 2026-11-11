@@ -3,6 +3,8 @@
 Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repositorio privado: https://github.com/mashmellows172-cmd/aura-launcher
 
 ## Fuente vigente
+
+Checkpoint de trabajo al 11 de noviembre de 2026: `codex/beta71-reactive-wallpaper`, basado en beta70 y el plan `9b5afea`. Ver docs/BETA71.md y docs/CONTINUITY.md para validación e instalación reales. Los párrafos históricos siguientes no describen la última beta del Motorola.
 Rama de integración: `codex/phase1-theme-editor`. `main` conserva beta37: NO arrancar trabajo nuevo desde main por defecto. Beta42 es candidato local compilado, NO instalado; Motorola contiene beta43 de otra firma, fuera del alcance actual. Consultar docs/CONTINUITY.md y docs/BETA42.md. Nunca asumir que número mayor significa código presente en GitHub.
 
 ## Inicio obligatorio
@@ -39,3 +41,5 @@ Compartir únicamente código/documentación necesarios del proyecto con agentes
 Los archivos CLAUDE.md/GEMINI.md/DEEPSEEK.md/OPENCODE.md son entradas de lectura; no todos los runtimes los cargan automáticamente. BOOTSTRAP debe suministrarse explícitamente cuando no exista soporte confirmado.
 
 Ubicaciones por agente: [PROJECTS.md](PROJECTS.md). Se usan clones independientes para que las aplicaciones externas no dependan de un worktree administrado por Codex.
+
+La instrucción posterior del usuario exige reservar al menos 10 % y detener el trabajo al 90 % de cuota. Prevalece sobre las excepciones históricas anteriores. Codex solo muestra ventanas de cinco horas y semanal, no una cuota diaria.

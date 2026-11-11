@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta71 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.49.0-beta71, código 71. Fondo PS4 reactivo al arrastre, foco, pulsación, búsqueda y paneles; Estático/Reactivo e intensidad persistentes. Coordinador finito y geometría retenida. Compilación/lint correctos (0 errores); firma, versión y hash instalado verificados. Comparación física pendiente; no se declara resuelto el lag. Ambiental aplazado. Ver docs/BETA71.md.
+
 Plan propuesto el 11 de noviembre de 2026 para [fondo PS4 reactivo](superpowers/plans/2026-11-11-ps4-reactive-wallpaper.md). Define reacciones, etapas y criterios de rendimiento. Pendiente de implementación. La entrega instalada sigue siendo beta70.
 
 Beta70 instalada y revisada en el Motorola el 11 de noviembre de 2026. 0.48.1-beta70, código 70. Reproductor PS4 adaptable al ancho real, con controles compactos y sin nombres partidos. Compilación/lint con 0 errores, firma, versión y hash instalado verificados. Clima y tamaños de beta69 comprobados y ajustes temporales restaurados. Ver docs/BETA70.md y docs/BETA69.md.

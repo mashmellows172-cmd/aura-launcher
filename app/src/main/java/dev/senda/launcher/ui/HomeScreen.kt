@@ -380,8 +380,11 @@ fun HomeScreen(
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
 
+    val wallpaperMotion = rememberPs4WallpaperMotion(state.theme == LauncherTheme.PS4,
+        state.visualSettings, listState, ps4FocusedKey, searchFocused)
+    androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
-    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
+    Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
     }.pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
@@ -390,10 +393,12 @@ fun HomeScreen(
             Image(
                 bitmap = wallpaperBitmap!!,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
+                modifier = if (state.theme == LauncherTheme.PS4) Modifier.fillMaxSize().ps4PersonalWallpaper(wallpaperMotion) else Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
             )
         }
+        if (wallpaperBitmap != null && state.theme == LauncherTheme.PS4 && !state.appearance.highContrast)
+            Ps4WallpaperFeedback(wallpaperMotion, Modifier.matchParentSize())
         val consoleBackground = state.theme == LauncherTheme.PS4 && wallpaperBitmap == null && !state.appearance.highContrast
         if (consoleBackground) Ps4Wallpaper(state.visualSettings.reduceMotion, Modifier.matchParentSize(), listState, strength = (100 - (state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64)) / 40f)
         Column(
@@ -654,6 +659,7 @@ fun HomeScreen(
         onChange = viewModel::setVisualSettings,
         onDismiss = { showVisualSettings = false },
         onAlphabetSettings = { showVisualSettings = false; showAlphabetSettings = true },
+        ps4 = state.theme == LauncherTheme.PS4,
     )
     if (showForecast) WeatherForecastPanel(
         widgetController.weatherReading?.takeIf {
@@ -677,6 +683,7 @@ fun HomeScreen(
         onSelect = { packageName -> viewModel.setWeatherPackage(packageName); showWeatherPicker = false },
         onDismiss = { showWeatherPicker = false },
     )
+    } // Wallpaper coordination also covers modal panels.
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -1245,6 +1252,16 @@ private fun AppRow(
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current ||
         LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val wallpaperScene = LocalPs4WallpaperMotion.current
+    val windowHeight = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp * androidx.compose.ui.platform.LocalDensity.current.density
+    androidx.compose.runtime.DisposableEffect(pressed, console, still, wallpaperScene) {
+        if (pressed && console && !still) {
+            val coordinates = plateCoordinates?.takeIf { it.isAttached }
+            val y = coordinates?.let { (it.positionOnScreen().y + it.size.height * .5f) / windowHeight.coerceAtLeast(1f) } ?: .4f
+            wallpaperScene?.press(true, y)
+        }
+        onDispose { if (pressed && console) wallpaperScene?.press(false) }
+    }
     val pressScale = animateFloatAsState(if (console && !still && pressed) .986f else 1f,
         tween(if (still) 0 else 120, easing = Ps4Motion.easing), label = "ps4-press")
     val favoriteCue = if (console) remember { androidx.compose.animation.core.Animatable(1f) } else null
@@ -1254,6 +1271,7 @@ private fun AppRow(
             favoriteCue.snapTo(1f)
             if (previous != isFavorite && !still) {
                 previous = isFavorite
+                wallpaperScene?.confirm()
                 favoriteCue.snapTo(0f)
                 favoriteCue.animateTo(1f, tween(300))
             } else previous = isFavorite

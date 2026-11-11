@@ -29,6 +29,8 @@ data class VisualSettings(
     val glowEnabled: Boolean = true,
     val glowStrength: Int = 65,
     val reduceMotion: Boolean = false,
+    val wallpaperMode: String = "REACTIVE",
+    val wallpaperIntensity: Int = 50,
     val railEffect: String = "MAGNET",
     val menuEffect: String = "SPRING",
     val railHaptics: Boolean = false,
@@ -255,6 +257,8 @@ class FavoritesStore(private val context: Context) {
             glowEnabled = prefs[glowKey] ?: true,
             glowStrength = (prefs[glowStrengthKey] ?: 65).coerceIn(10, 100),
             reduceMotion = prefs[reduceMotionKey] ?: false,
+            wallpaperMode = prefs[stringPreferencesKey("ps4_wallpaper_mode")]?.takeIf { it in setOf("STATIC", "REACTIVE") } ?: "REACTIVE",
+            wallpaperIntensity = (prefs[intPreferencesKey("ps4_wallpaper_intensity")] ?: 50).coerceIn(0, 100),
             railIntensity = (prefs[railIntensityKey] ?: 65).coerceIn(0, 100),
             railDurationMs = (prefs[railDurationKey] ?: 220).coerceIn(80, 600),
             railBubbleSize = (prefs[railBubbleSizeKey] ?: 56).coerceIn(40, 84),
@@ -272,6 +276,8 @@ class FavoritesStore(private val context: Context) {
             prefs[glowKey] = settings.glowEnabled
             prefs[glowStrengthKey] = settings.glowStrength.coerceIn(10, 100)
             prefs[reduceMotionKey] = settings.reduceMotion
+            prefs[stringPreferencesKey("ps4_wallpaper_mode")] = settings.wallpaperMode.takeIf { it in setOf("STATIC", "REACTIVE") } ?: "REACTIVE"
+            prefs[intPreferencesKey("ps4_wallpaper_intensity")] = settings.wallpaperIntensity.coerceIn(0, 100)
             prefs[railIntensityKey] = settings.railIntensity.coerceIn(0, 100)
             prefs[railDurationKey] = settings.railDurationMs.coerceIn(80, 600)
             prefs[railBubbleSizeKey] = settings.railBubbleSize.coerceIn(40, 84)

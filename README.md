@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta71 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.49.0-beta71, código 71. Fondo PS4 reactivo al arrastre, foco, pulsación, búsqueda y paneles; Estático/Reactivo e intensidad persistentes. Coordinador finito y geometría retenida. Compilación/lint correctos (0 errores); firma, versión y hash instalado verificados. Comparación física pendiente; no se declara resuelto el lag. Ambiental aplazado. Ver docs/BETA71.md.
+
 Beta70 instalada y revisada en el Motorola el 11 de noviembre de 2026. 0.48.1-beta70, código 70. Reproductor PS4 adaptable al ancho real, con controles compactos y sin nombres partidos. Compilación/lint con 0 errores, firma, versión y hash instalado verificados. Clima y tamaños de beta69 comprobados y ajustes temporales restaurados. Ver docs/BETA70.md y docs/BETA69.md.
 
 Beta69 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.48.0-beta69, código 69. Panel meteorológico con Open-Meteo autorizado, iluminación horaria PS4, tamaños de Inicio y reproductor renovado. APK compilado, firma, versión y hash instalado verificados. Compilación y lint finales correctos con 0 errores. Panel meteorológico y tamaños comprobados; la revisión multimedia motivó beta70. Ver docs/BETA69.md.

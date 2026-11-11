@@ -1,6 +1,5 @@
 package dev.senda.launcher.ui
 
-import android.animation.ValueAnimator
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -25,14 +25,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.LocalAppearance
 import kotlin.math.*
-
-@Stable
-private class ConsoleScene {
-    var phase by mutableFloatStateOf(.7f)
-    var parallax by mutableFloatStateOf(0f)
-    var energy by mutableFloatStateOf(0f)
-    var focusLight by mutableFloatStateOf(0f)
-}
 
 /** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
 @Composable
@@ -58,14 +50,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     val whitePalette = dev.senda.launcher.ui.theme.LocalPs4Palette.current == dev.senda.launcher.data.Ps4Palette.WHITE
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
-    val scene = remember { ConsoleScene() }
+    val scene = if (reduced) null else LocalPs4WallpaperMotion.current
     val focusedKey = LocalPs4FocusedKey.current
     val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val adaptive = LocalAdaptiveMotion.current
-    // Static-background comparison requested by the user; list effects stay unchanged.
-    val staticWallpaper = true
     // Focus feedback follows navigation, independently of the decorative frame clock.
     LaunchedEffect(lifecycle, listState, disabled, feedback, focusedKey, adaptive) {
         if (disabled) return@LaunchedEffect
@@ -73,35 +63,9 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             var previousFocus: Any? = null
             snapshotFlow { focusedKey.value }.collect { focus ->
                 if (focus != null && previousFocus != null && focus != previousFocus) {
-                    if (!adaptive || listState?.isScrollInProgress != true) scene.focusLight = 1f
                     if (listState?.isScrollInProgress == true) feedback.play(dev.senda.launcher.data.SoundEvent.INDEX)
                 }
                 previousFocus = focus
-            }
-        }
-    }
-    LaunchedEffect(lifecycle, listState, disabled, adaptive) {
-        if (disabled || staticWallpaper) { scene.parallax=0f; scene.energy=0f; scene.focusLight=0f; return@LaunchedEffect }
-        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            var previous = 0L
-            while (ValueAnimator.areAnimatorsEnabled()) {
-                withFrameNanos { now ->
-                    // Frame-aligned updates retain continuity during gestures. At high refresh
-                    // rates the adaptive scene targets approximately 60 updates per second.
-                    if (adaptive && previous != 0L && now - previous < 16_000_000L) return@withFrameNanos
-                    val dt = if(previous==0L) 0f else ((now-previous)/1_000_000_000f).coerceIn(0f,.05f)
-                    previous=now
-                    val info = listState?.layoutInfo
-                    val first = info?.visibleItemsInfo?.firstOrNull()
-                    val cursor = if(listState==null) 0f else listState.firstVisibleItemIndex +
-                        listState.firstVisibleItemScrollOffset.toFloat()/(first?.size?.coerceAtLeast(1) ?: 1)
-                    val target = sin(cursor*.14f)
-                    scene.parallax += (target-scene.parallax)*(1f-exp(-dt*5f))
-                    val moving = if(listState?.isScrollInProgress==true) 1f else 0f
-                    scene.energy += (moving-scene.energy)*(1f-exp(-dt*4f))
-                    scene.focusLight *= exp(-dt*3.6f)
-                    scene.phase=(scene.phase+dt*(2f*PI.toFloat()/24f)*(1f+scene.energy*.28f))%(2f*PI.toFloat())
-                }
             }
         }
     }
@@ -111,13 +75,15 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     }) {
     Box(Modifier.matchParentSize().graphicsLayer {
         // Animate a retained display list rather than rebuilding ribbon geometry per frame.
-        val time=scene.phase
-        translationX=sin(time)*size.width*.014f+scene.parallax*size.width*.008f
-        translationY=cos(time*.8f)*size.height*.009f
+        val amount = scene?.amount ?: 0f
+        val panel = if (scene?.enabled == true) scene.panel?.value ?: 0f else 0f
+        val depth = maxOf((scene?.search ?: 0f) * .45f, panel)
+        translationX=sin(.7f)*size.width*.014f
+        translationY=cos(.7f*.8f)*size.height*.009f + (scene?.drift ?: 0f) * 6.dp.toPx() * amount
         val ribbonPhase = ((entry?.value ?: 1f) / .78f).coerceIn(0f, 1f)
         val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(ribbonPhase)) * entryIntensity
-        scaleX = 1.04f - opening * .29f
-        scaleY = 1.04f
+        scaleX = 1.04f - opening * .29f - depth * .012f * amount
+        scaleY = 1.04f - depth * .012f * amount
         translationX += opening * size.width * .065f
         translationY += opening * size.height * .045f
         alpha=1f // Keep the full-screen layer opaque; avoid an offscreen alpha buffer.
@@ -147,7 +113,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                 }
                 drawPath(ribbon.crest,edge,alpha=(.32f+light)*decorationStrength,style=hairline)
             }
-            // Tiny light motes use the scene clock; no independent particle jobs.
+            // Fixed motes remain on the retained layer; no particle jobs.
             repeat(14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
@@ -156,7 +122,25 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             drawRect(foregroundShade)
         }
     })
+    if (scene != null) Ps4WallpaperFeedback(scene, Modifier.matchParentSize(), decorationStrength)
     }
+}
+
+@Composable
+internal fun Ps4WallpaperFeedback(scene: Ps4WallpaperMotion, modifier: Modifier, strength: Float = 1f) {
+    Box(modifier.drawWithCache {
+        val light = Brush.radialGradient(listOf(Color(0xFF64CFFF).copy(alpha=.12f * strength.coerceIn(0f, 1f)), Color.Transparent),
+            center = Offset(size.width * .65f, size.height * .5f), radius = size.height * .48f)
+        onDrawBehind {
+            // Separate overlay: changing light never rebuilds ribbon paths or gradients.
+            val amount = scene.amount
+            val panel = if (scene.enabled) scene.panel?.value ?: 0f else 0f
+            drawRect(Color.Black, alpha = maxOf(scene.search * .045f, panel * .08f) * amount)
+            if (scene.light > .001f) withTransform({
+                translate(top = (scene.lightY - .5f) * size.height)
+            }) { drawRect(light, alpha = scene.light * amount) }
+        }
+    })
 }
 
 /** Fixed buffers and paths: no per-frame geometry collections or bitmap allocations. */

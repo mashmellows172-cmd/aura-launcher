@@ -1,6 +1,8 @@
 # Continuidad del proyecto
 
-Plan propuesto de [fondo PS4 reactivo](superpowers/plans/2026-11-11-ps4-reactive-wallpaper.md), 11 de noviembre de 2026. Se comprobó el modo estático fijado en código y una reacción de foco que no llega al dibujo. El plan exige una referencia de cadencia y entregas por etapas. Pendiente de implementación, con beta70 como entrega vigente.
+Beta71 instalada por ADB inalámbrico el 11 de noviembre de 2026. 0.49.0-beta71, código 71. Fondo PS4 reactivo al arrastre, foco, pulsación, búsqueda y paneles; Estático/Reactivo e intensidad persistentes. Coordinador finito y geometría retenida. Compilación/lint correctos (0 errores); firma, versión y hash instalado verificados. Comparación física pendiente; no se declara resuelto el lag. Ambiental aplazado. Ver docs/BETA71.md.
+
+Plan propuesto de [fondo PS4 reactivo](superpowers/plans/2026-11-11-ps4-reactive-wallpaper.md), 11 de noviembre de 2026. Se comprobó el modo estático fijado en código y una reacción de foco que no llega al dibujo. El plan exige una referencia de cadencia y entregas por etapas. Reactivo implementado e instalado en beta71; aceptación de rendimiento pendiente.
 
 Beta70 instalada y revisada en el Motorola el 11 de noviembre de 2026. 0.48.1-beta70, código 70. Reproductor PS4 adaptable al ancho real, con controles compactos y sin nombres partidos. Compilación/lint con 0 errores, firma, versión y hash instalado verificados. Clima y tamaños de beta69 comprobados y ajustes temporales restaurados. Ver docs/BETA70.md y docs/BETA69.md.
 

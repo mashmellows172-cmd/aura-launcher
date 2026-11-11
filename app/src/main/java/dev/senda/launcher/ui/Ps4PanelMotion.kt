@@ -33,6 +33,11 @@ internal fun rememberPs4PanelMotion(reduced: Boolean): Ps4PanelMotion {
     val scope = rememberCoroutineScope()
     val still = reduced || LocalSystemPowerSaving.current || !ValueAnimator.areAnimatorsEnabled()
     val motion = remember(scope) { Ps4PanelMotion(Animatable(if (still) 1f else 0f), scope) }
+    val wallpaper = LocalPs4WallpaperMotion.current
+    androidx.compose.runtime.DisposableEffect(wallpaper, motion) {
+        wallpaper?.attachPanel(motion, motion.progress.asState())
+        onDispose { wallpaper?.detachPanel(motion) }
+    }
     LaunchedEffect(still) {
         if (!motion.closing) {
             if (still) motion.progress.snapTo(1f)
