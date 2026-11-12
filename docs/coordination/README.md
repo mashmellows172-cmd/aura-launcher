@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint de trabajo al 11 de noviembre de 2026: `codex/beta73-media-quality`, beta73 candidata compilada sobre beta72, sin instalar. Ver docs/BETA73.md y docs/CONTINUITY.md para validación e instalación reales. Última instalación verificada: beta72, versión y hash coincidentes; revisión visual y rendimiento pendientes. Los párrafos históricos siguientes no describen la última beta del Motorola.
+Checkpoint de trabajo al 12 de noviembre de 2026: `codex/beta74-unified-media`, beta74 candidata compilada sobre beta73. Ver [ficha y registro de operaciones](../BETA74.md). Última instalación verificada: beta72. Firma local incompatible para actualizar el Motorola.
 Rama de integración: `codex/phase1-theme-editor`. `main` conserva beta37: NO arrancar trabajo nuevo desde main por defecto. Beta42 es candidato local compilado, NO instalado; Motorola contiene beta43 de otra firma, fuera del alcance actual. Consultar docs/CONTINUITY.md y docs/BETA42.md. Nunca asumir que número mayor significa código presente en GitHub.
 
 ## Inicio obligatorio

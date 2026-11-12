@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-11",
+  "updated": "2026-11-12",
   "integrationBranch": "codex/phase1-theme-editor",
   "implementationBase": "9d028ed417e65a5962cff526949108cc51654278",
   "coordinator": "codex",
@@ -177,8 +177,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta73 candidate 0.51.0/code73 compiled/lint 57s, 0 errors/42 warnings/3 hints; APK version/signature/hash verified locally. Media details and adaptive decoration implemented. NOT installed; real media and quality acceptance pending. Last installed beta72. Branch codex/beta73-media-quality; docs/BETA73.md.",
-  "checkpointBranch": "codex/beta73-media-quality",
+  "latestCheckpoint": "Beta74 candidate 0.52.0/code74. Beta73 plus local beta59 compact media and menu-only setting. Build/lint 3m46s, 0 errors/38 warnings/3 hints. Local certificate differs from installed beta72. See docs/BETA74.md for operations and failures.",
+  "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,

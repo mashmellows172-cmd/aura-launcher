@@ -133,7 +133,10 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
                 )
             }
             SettingToggle("Frases motivacionales", state.headerSettings.showMotivationalHeader) { viewModel.setHeaderSettings(state.headerSettings.copy(showMotivationalHeader = it)) }
-            SettingToggle("Widget multimedia automático", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
+            SettingToggle("Reproductor multimedia", state.headerSettings.showAudioWidget) { viewModel.setHeaderSettings(state.headerSettings.copy(showAudioWidget = it)) }
+            SettingToggle("Multimedia solo en el menú", state.headerSettings.audioInMenuOnly) {
+                viewModel.setHeaderSettings(state.headerSettings.copy(audioInMenuOnly = it))
+            }
             if (state.theme == dev.senda.launcher.data.LauncherTheme.PS4) {
                 Ps4MediaSample(state.visualSettings.reduceMotion || state.appearance.highContrast)
             }
@@ -142,7 +145,7 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
             SettingToggle("Próximo evento", state.headerSettings.showCalendar) { enabled ->
                 if (enabled && !state.headerInfo.calendarPermission) onRequestCalendar() else viewModel.setHeaderSettings(state.headerSettings.copy(showCalendar = enabled))
             }
-            Text("El widget aparece al detectar reproducción y adopta el tema elegido. El visualizador es decorativo: no escucha ni analiza el sonido. Las frases cambian según el día y la franja horaria.", style = MaterialTheme.typography.bodySmall)
+            Text("Durante la reproducción, los controles están en la lista y en el menú. Puedes dejar solo el acceso del menú. El visualizador es decorativo: no escucha ni analiza el sonido. Las frases cambian según el día y la franja horaria.", style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = onAppPermissions) { Text("Permisos de Aura") }
             HorizontalDivider()
             Text("Gestos", style = MaterialTheme.typography.titleSmall)

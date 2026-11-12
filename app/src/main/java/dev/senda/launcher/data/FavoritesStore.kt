@@ -103,6 +103,7 @@ class FavoritesStore(private val context: Context) {
         ).bounded(),
         showMotivationalHeader = prefs[booleanPreferencesKey("header_show_motivational")] ?: true,
         showAudioWidget = prefs[booleanPreferencesKey("header_show_audio_widget")] ?: true,
+        audioInMenuOnly = prefs[booleanPreferencesKey("header_audio_in_menu_only")] ?: false,
         ps4ClockMotion = Ps4ClockMotion.fromStored(prefs[stringPreferencesKey("ps4_clock_motion")]),
         searchHeight = (prefs[intPreferencesKey("home_search_height")] ?: 56).coerceIn(56, 88),
         clockSize = (prefs[intPreferencesKey("home_clock_size")] ?: 48).coerceIn(32, 64),
@@ -126,6 +127,7 @@ class FavoritesStore(private val context: Context) {
         it[booleanPreferencesKey("header_show_calendar")] = value.showCalendar
         it[booleanPreferencesKey("header_show_motivational")] = value.showMotivationalHeader
         it[booleanPreferencesKey("header_show_audio_widget")] = value.showAudioWidget
+        it[booleanPreferencesKey("header_audio_in_menu_only")] = value.audioInMenuOnly
         it[intPreferencesKey("home_search_height")] = value.searchHeight.coerceIn(56, 88)
         it[intPreferencesKey("home_clock_size")] = value.clockSize.coerceIn(32, 64)
         it[intPreferencesKey("home_header_height")] = value.headerHeight.coerceIn(120, 216)

@@ -75,13 +75,15 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
             Header(theme=state.theme,clockTime=time,avatarUri=state.avatarUri,widgetController=widgets,weatherPackage=state.weatherPackage?:"hr.dtakac.prognoza",reduceMotion=true,weatherMotion=state.headerSettings.weatherMotion,clockMotion=state.headerSettings.ps4ClockMotion,
                 onAvatar={},onWeatherConnection={},onDashboard={},weatherAppLabel=state.apps.firstOrNull{it.packageName==state.weatherPackage}?.label,
                 onOpenAlarms={},onOpenCalendar={},onOpenWeather={},onEditFavorites={},onManageHiddenApps={},onChooseTheme={},onLetterJump={},letterJumpEnabled=false,onVisualSettings={},onAlphabetSettings={},onSoundSettings={},onPersonalization={},onHomeSettings={},onGesture={},onDoubleTap=null,onChooseWeatherApp={},onChooseWidgets={},showMotivationalHeader=state.headerSettings.showMotivationalHeader)
-            if(state.headerSettings.showAudioWidget)ThemedAudioWidget(audioInfo=state.audioInfo,theme=state.theme,reduceMotion=true,onOpenAudio={},onPause={},onPrevious={},onNext={},onEnableAccess={},modifier=Modifier.padding(vertical=4.dp))
             if(dashboardBlocks(state,widgets,BlockAnchor.HEADER).isNotEmpty())Column(Modifier.heightIn(max=with(LocalDensity.current){(LocalWindowInfo.current.containerSize.height*.28f).toDp()}.coerceIn(120.dp,300.dp)).verticalScroll(rememberScrollState())){DashboardGroup(state,widgets,BlockAnchor.HEADER){}}
             Spacer(Modifier.height(if(compact)4.dp else 12.dp))
             ThemedSearchField(state.theme,"",{}, {},{},focus,interactions,{0f},readOnly=true)
             Spacer(Modifier.height(8.dp))
+            val showCompactAudio = state.headerSettings.showAudioWidget && !state.headerSettings.audioInMenuOnly && state.audioInfo.isPlaying
             Row(Modifier.weight(1f).fillMaxWidth()) {
-                AppSections(modifier=Modifier.weight(1f),widgetController=widgets,dashboardState=state,onCalendarPermission={},favoriteApps=favorites,allApps=apps,groups=groups,groupLetters=letters,favoritePackages=state.favoritePackages.toSet(),skinName=state.theme.name,skinTitle=state.theme.title,skinIcons=state.skinIcons,visualSettings=state.visualSettings,listState=list,onLaunch={},onToggleFavorite={},onHide={},onLoadIcon=viewModel::icon,onChooseIcon={},onResetIcon={})
+                AppSections(modifier=Modifier.weight(1f),widgetController=widgets,dashboardState=state,onCalendarPermission={},
+                    media = if (showCompactAudio) ({ CompactAudioWidget(state.audioInfo, state.theme) }) else null,
+                    favoriteApps=favorites,allApps=apps,groups=groups,groupLetters=letters,favoritePackages=state.favoritePackages.toSet(),skinName=state.theme.name,skinTitle=state.theme.title,skinIcons=state.skinIcons,visualSettings=state.visualSettings,listState=list,onLaunch={},onToggleFavorite={},onHide={},onLoadIcon=viewModel::icon,onChooseIcon={},onResetIcon={})
                 AlphabetRail(letters=letters,theme=state.theme,modifier=Modifier.width(if(compact||LocalDensity.current.fontScale>=1.4f)MotionTokens.railLandscape else MotionTokens.railPortrait).fillMaxHeight(),selectedLetter=letters.firstOrNull(),visualSettings=state.visualSettings,onClick={},onScrub={})
             }
         }

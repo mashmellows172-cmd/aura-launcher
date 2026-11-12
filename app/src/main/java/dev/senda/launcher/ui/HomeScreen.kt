@@ -232,6 +232,8 @@ fun HomeScreen(
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
     var showHomeSettings by rememberSaveable { mutableStateOf(false) }
+    var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
+    var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
@@ -304,6 +306,7 @@ fun HomeScreen(
             showWeatherPicker = false
             showWidgetPicker = false
             showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
+            showMediaControls = false
             showAvatar = false; showWeatherConnection = false; showDashboard = false; showForecast = false
             showNotificationHelp = false
             showIconSource = false
@@ -361,9 +364,18 @@ fun HomeScreen(
     val recentApp = if (state.theme == LauncherTheme.PS4) visibleApps.firstOrNull {
         it.component.flattenToString() == state.lastLaunchedComponent
     } else null
-    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
+    val mediaAvailable = state.headerSettings.showAudioWidget && state.audioInfo.isPlaying
+    val mediaInList = mediaAvailable && !state.headerSettings.audioInMenuOnly
+    val hasPs4Session = state.theme == LauncherTheme.PS4 && state.audioInfo.sessionId != null && !state.audioInfo.generic
+    val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && hasPs4Session)
+    LaunchedEffect(mediaControlsAvailable) {
+        if (!mediaControlsAvailable) showMediaControls = false
+    }
+    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings, mediaInList) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
-        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { it.value + dashboardSections + if (recentApp != null) 2 else 0 }
+        sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { (_, index) ->
+            index + dashboardSections + (if (recentApp != null) 2 else 0) + (if (mediaInList) 1 else 0)
+        }
     }
     val activeLetter by remember(listState, starts) {
         derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
@@ -453,6 +465,7 @@ fun HomeScreen(
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
+            onOpenMediaControls = if (mediaAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
             quickMedia = { closeMenu ->
                 if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
                     audioInfo = state.audioInfo, theme = state.theme,
@@ -463,19 +476,6 @@ fun HomeScreen(
                 )
             },
         )
-        if (state.headerSettings.showAudioWidget) {
-            ThemedAudioWidget(
-                audioInfo = state.audioInfo,
-                theme = state.theme,
-                reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
-                onOpenAudio = viewModel::openAudioApp,
-                onPause = viewModel::pauseAudio,
-                onPrevious = viewModel::previousAudio,
-                onNext = viewModel::nextAudio, onSeek = viewModel::seekAudio, onResume = viewModel::resumeAudio,
-                onEnableAccess = { showHomeSettings = true },
-                modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
-            )
-        }
         if (dashboardBlocks(state,widgetController,BlockAnchor.HEADER).isNotEmpty()) {
             val dashboardLimit = with(LocalDensity.current) { (LocalWindowInfo.current.containerSize.height * .28f).toDp() }.coerceIn(120.dp,300.dp)
             Column(Modifier.fillMaxWidth().heightIn(max = dashboardLimit).verticalScroll(rememberScrollState())) {
@@ -542,6 +542,17 @@ fun HomeScreen(
                         widgetController = widgetController,
                         dashboardState = state,
                         onCalendarPermission = { showHomeSettings = true },
+                        media = if (mediaInList) ({
+                            CompactAudioWidget(
+                                audioInfo = state.audioInfo,
+                                theme = state.theme,
+                                onOpenControls = { origin ->
+                                    mediaArtworkOrigin = origin
+                                    showMediaControls = true
+                                },
+                                onPause = { viewModel.pauseAudio(state.audioInfo.sessionId) },
+                            )
+                        }) else null,
                         favoriteApps = favoriteApps,
                         allApps = filteredApps,
                         groups = groups,
@@ -594,6 +605,47 @@ fun HomeScreen(
     if (showWeatherConnection) WeatherConnectionDialog(state,widgetController,onSettings=viewModel::setHeaderSettings,
         onOpen = { val app = state.apps.firstOrNull { it.packageName == (state.weatherPackage ?: "hr.dtakac.prognoza") }; if(app != null) viewModel.launch(app) else showWeatherPicker = true },
         onChooseApp = { showWeatherConnection = false; showWeatherPicker = true }, onDismiss = { showWeatherConnection = false })
+    if (showMediaControls && mediaControlsAvailable) {
+        val closeMedia = { showMediaControls = false }
+        val reduced = state.visualSettings.reduceMotion || state.appearance.highContrast ||
+            LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+        val openAudio: (String?) -> Unit = { sessionId ->
+            closeMedia()
+            viewModel.openAudioApp(sessionId)
+        }
+        if (hasPs4Session) {
+            MediaDetails(
+                info = state.audioInfo,
+                origin = mediaArtworkOrigin,
+                reduced = reduced,
+                onDismiss = closeMedia,
+                onSeek = viewModel::seekAudio,
+                onPause = viewModel::pauseAudio,
+                onResume = viewModel::resumeAudio,
+                onOpen = openAudio,
+                onPrevious = viewModel::previousAudio,
+                onNext = viewModel::nextAudio,
+            )
+        } else {
+            AuraAlertDialog(
+                onDismissRequest = closeMedia,
+                title = { Text("Reproductor") },
+                text = {
+                    ThemedAudioWidget(
+                        audioInfo = state.audioInfo,
+                        theme = state.theme,
+                        reduceMotion = reduced,
+                        onOpenAudio = openAudio,
+                        onPause = viewModel::pauseAudio,
+                        onPrevious = viewModel::previousAudio,
+                        onNext = viewModel::nextAudio,
+                        onEnableAccess = { closeMedia(); showHomeSettings = true },
+                    )
+                },
+                confirmButton = { TextButton(onClick = closeMedia) { Text("Cerrar") } },
+            )
+        }
+    }
     if (showDashboard && state.dashboardLoaded) DashboardEditorDialog(state,viewModel,widgetController,onAddWidget = { showDashboard = false; showWidgetPicker = true }) { showDashboard = false }
     if (showPersonalization) PersonalizationDialog(state, viewModel, onExportSettings, onImportSettings) { showPersonalization = false }
     if (state.restoreSummary != null) AuraAlertDialog(
@@ -723,6 +775,7 @@ internal fun Header(
     onChooseWeatherApp: () -> Unit,
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
+    onOpenMediaControls: (() -> Unit)? = null,
     quickMedia: @Composable (() -> Unit) -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
     confirmation: Int = 0,
@@ -882,6 +935,12 @@ internal fun Header(
                 ThemeSystemIcon("settings", theme)
             }
             DropdownMenu(expanded = themeMenuExpanded, onDismissRequest = { themeMenuExpanded = false }, modifier = Modifier.animateContentSize(tween(240))) {
+                if (onOpenMediaControls != null) {
+                    DropdownMenuItem(text = { Text("Reproductor") }, onClick = {
+                        themeMenuExpanded = false
+                        onOpenMediaControls()
+                    })
+                }
                 DropdownMenuItem(text = { Text("Tema visual · ${theme.title}") }, onClick = { themeMenuExpanded = false; onChooseTheme() })
                 DropdownMenuItem(text = { Text("Saltar a una letra · A–Z") }, enabled = letterJumpEnabled, onClick = { themeMenuExpanded = false; onLetterJump() })
                 DropdownMenuItem(text = { Text("Clima en el reloj") }, onClick = { themeMenuExpanded = false; onWeatherConnection() })
@@ -1053,6 +1112,7 @@ internal fun AppSections(
     widgetController: WidgetController,
     dashboardState: HomeUiState,
     onCalendarPermission: () -> Unit,
+    media: (@Composable () -> Unit)? = null,
     favoriteApps: List<LaunchableApp>,
     allApps: List<LaunchableApp>,
     groups: Map<String, List<LaunchableApp>>,
@@ -1080,6 +1140,7 @@ internal fun AppSections(
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
+        if (media != null) item(key = "media", contentType = "media") { media() }
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (skinName == LauncherTheme.PS4.name) {
             allApps.firstOrNull { it.component.flattenToString() == dashboardState.lastLaunchedComponent }?.let { app ->

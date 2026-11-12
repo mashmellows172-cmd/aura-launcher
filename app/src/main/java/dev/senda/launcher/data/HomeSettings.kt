@@ -6,6 +6,7 @@ data class HeaderSettings(
     val weatherMotion: WeatherMotionSettings = WeatherMotionSettings(),
     val showMotivationalHeader: Boolean = true,
     val showAudioWidget: Boolean = true,
+    val audioInMenuOnly: Boolean = false,
     val ps4ClockMotion: Ps4ClockMotion = Ps4ClockMotion.MARKED,
     val searchHeight: Int = 56,
     val clockSize: Int = 48,

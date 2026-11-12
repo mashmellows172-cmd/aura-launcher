@@ -40,7 +40,9 @@ private fun mediaTime(ms: Long): String = "%d:%02d".format(ms / 60000, ms / 1000
 
 @Composable
 internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean, onDismiss: () -> Unit,
-    onSeek: (String?, Long) -> Unit, onPause: (String?) -> Unit, onResume: (String?) -> Unit, onOpen: (String?) -> Unit) {
+    onSeek: (String?, Long) -> Unit, onPause: (String?) -> Unit, onResume: (String?) -> Unit, onOpen: (String?) -> Unit,
+    onPrevious: (String?) -> Unit, onNext: (String?) -> Unit,
+) {
     val motion = rememberPs4PanelMotion(reduced)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var position by remember(info.sessionId) { mutableStateOf(positionAt(info)) }
@@ -79,6 +81,12 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             Button(onClick = { if (info.isPlaying) onPause(info.sessionId) else onResume(info.sessionId) },
                 enabled = if (info.isPlaying) info.canPause else info.canPlay) {
                 Text(if (info.isPlaying) "Pausar" else "Reanudar")
+            }
+            if (info.isPlaying && (info.canPrevious || info.canNext)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = { onPrevious(info.sessionId) }, enabled = info.canPrevious) { Text("Anterior") }
+                    TextButton(onClick = { onNext(info.sessionId) }, enabled = info.canNext) { Text("Siguiente") }
+                }
             }
             TextButton(onClick = { onOpen(info.sessionId) }) { Text("Abrir reproductor") }
             TextButton(onClick = close) { Text("Cerrar") }

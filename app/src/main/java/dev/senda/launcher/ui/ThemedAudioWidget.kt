@@ -9,6 +9,7 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -27,6 +29,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -41,6 +46,70 @@ import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.*
 import kotlin.math.sin
 import kotlinx.coroutines.delay
+
+@Composable
+internal fun CompactAudioWidget(
+    audioInfo: ActiveAudioInfo,
+    theme: LauncherTheme,
+    onOpenControls: ((Rect?) -> Unit)? = null,
+    onPause: (() -> Unit)? = null,
+) {
+    var coverCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    val detailsModifier = if (onOpenControls == null) Modifier else Modifier.clickable(
+        onClickLabel = "Abrir controles multimedia",
+    ) {
+        val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
+            val position = coordinates.positionOnScreen()
+            if (position.x.isFinite() && position.y.isFinite()) {
+                Rect(position.x, position.y, position.x + coordinates.size.width, position.y + coordinates.size.height)
+            } else null
+        }
+        onOpenControls(origin)
+    }
+    HistoricalPanel(theme, Modifier.fillMaxWidth()) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val colors = MaterialTheme.colorScheme
+            val artwork = audioInfo.artwork?.takeUnless { it.isRecycled }
+            Row(
+                Modifier.weight(1f).heightIn(min = 48.dp).then(detailsModifier).padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                val coverShape = RoundedCornerShape(when (theme) {
+                    LauncherTheme.PS4, LauncherTheme.XPERIA, LauncherTheme.RAZR -> 2.dp
+                    else -> 8.dp
+                })
+                val positionModifier = if (theme == LauncherTheme.PS4 && onOpenControls != null) {
+                    Modifier.onGloballyPositioned { coverCoordinates = it }
+                } else Modifier
+                Box(Modifier.size(32.dp).then(positionModifier).clip(coverShape), contentAlignment = Alignment.Center) {
+                    if (artwork != null) {
+                        Image(artwork.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    } else {
+                        ThemedAudioVisualizer(theme, colors.primary, reduceMotion = true, modifier = Modifier.fillMaxSize())
+                    }
+                }
+                Text(
+                    audioInfo.title ?: audioInfo.appLabel ?: "En reproducción",
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (onOpenControls != null) ThemeSystemIcon("more", theme)
+            }
+            if (onPause != null && audioInfo.canPause) {
+                IconButton(
+                    onClick = onPause,
+                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Pausar reproducción" },
+                ) { ThemeSystemIcon("pause", theme) }
+            }
+        }
+    }
+}
 
 @Composable
 fun ThemedAudioWidget(

@@ -54,7 +54,7 @@ internal fun Ps4MediaWidget(
     var artOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     if (details && audioInfo.sessionId != null && !audioInfo.generic) MediaDetails(audioInfo, artOrigin,
         reduced || LocalSystemPowerSaving.current || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled(),
-        { details = false }, onSeek, onPause, onResume, onOpenAudio)
+        { details = false }, onSeek, onPause, onResume, onOpenAudio, onPrevious, onNext)
     var retained by remember { mutableStateOf(audioInfo) }
     var recentlyPlaying by remember { mutableStateOf(false) }
     if (audioInfo.isPlaying) SideEffect { retained = audioInfo }
