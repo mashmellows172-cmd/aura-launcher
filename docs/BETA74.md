@@ -33,3 +33,9 @@
 | Firma local de beta74 (`915f891c…`) distinta de la instalación beta72 (`2eb417c5…`). | Bloqueo de despliegue. Compilar o firmar desde el entorno que firmó beta72/beta73 y comparar certificado antes de `adb install -r`. La instalación y los datos del teléfono permanecen intactos. |
 
 Log completo de compilación en el notebook, fuera de Git, bajo `work/aura-beta74-build.log`. El APK generado queda en `app/build/outputs/apk/beta/app-beta.apk` y sirve como artefacto local de validación. Pendientes físicos: inicio y pausa a mitad de lista, saltos A–Z con y sin fila, TalkBack, apertura de ficha y progreso con sesiones reales.
+
+## Seguimiento de instalación · 12 de noviembre de 2026
+
+- ADB inalámbrico confirmó el Motorola Edge 50 Ultra, beta72 y el mismo hash registrado en BETA72.md. La huella SHA-256 del certificado instalado sigue siendo `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`.
+- La búsqueda en perfiles y ubicaciones habituales de Windows encontró dos claves de desarrollo con huellas distintas (`729385fc…` y `915f891c…`). Los almacenes personales de certificados de Windows no devolvieron coincidencias. Se revisó el índice de 24 archivos ZIP pertinentes y ninguno contiene un almacén de firma.
+- Las fichas beta72 y beta73 registran la firma compatible en el entorno de compilación anterior. El paso pendiente es firmar beta74 allí y transferir el APK firmado por un canal privado. No se ejecutó la instalación y el teléfono conserva beta72 y sus datos.
