@@ -20,13 +20,13 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${auraAppLabel}"
         android:supportsRtl="true"
         android:theme="@style/Theme.Aura">
-        <service android:name=".MediaAccessService" android:label="Aura · Reproducción multimedia" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true">
+        <service android:name=".MediaAccessService" android:label="${auraMediaLabel}" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true">
             <intent-filter><action android:name="android.service.notification.NotificationListenerService" /></intent-filter>
         </service>
-        <service android:name=".NotificationShadeService" android:label="@string/notification_shortcut_label" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
+        <service android:name=".NotificationShadeService" android:label="${auraGestureLabel}" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
             <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>
             <meta-data android:name="android.accessibilityservice" android:resource="@xml/notification_shortcut_service" />
         </service>

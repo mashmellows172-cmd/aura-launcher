@@ -13,6 +13,9 @@ android {
         applicationId = "dev.senda.launcher"
         minSdk = 29
         targetSdk = 37
+        manifestPlaceholders["auraAppLabel"] = "@string/app_name"
+        manifestPlaceholders["auraMediaLabel"] = "Aura · Reproducción multimedia"
+        manifestPlaceholders["auraGestureLabel"] = "@string/notification_shortcut_label"
         versionCode = 74
         versionName = "0.52.0-beta74"
     }
@@ -36,7 +39,13 @@ android {
         }
         create("beta") {
             initWith(getByName("release"))
-            applicationIdSuffix = ".debug"
+            val sideBySide = providers.gradleProperty("auraSideBySide").orNull == "true"
+            applicationIdSuffix = if (sideBySide) ".local" else ".debug"
+            if (sideBySide) {
+                manifestPlaceholders["auraAppLabel"] = "@string/app_name_local"
+                manifestPlaceholders["auraMediaLabel"] = "@string/media_service_label_local"
+                manifestPlaceholders["auraGestureLabel"] = "@string/notification_shortcut_label_local"
+            }
             isDebuggable = false
             isMinifyEnabled = true
             signingConfig = getByName("debug").signingConfig

@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta74 Local instalada por ADB inalámbrico con paquete dev.senda.launcher.local. Código 74 y hash verificados. Beta72 sigue como Inicio predeterminado. La importación del respaldo actual queda pendiente. [Ficha y diagnóstico](BETA74.md).
+
 Beta74 candidata, 12 de noviembre de 2026. 0.52.0-beta74, código 74. Unifica el mini reproductor y «Multimedia solo en el menú» con la ficha PS4, progreso y calidad adaptativa de beta73. Compilación y lint correctos, 0 errores, 38 advertencias y 3 avisos. No instalada por firma local distinta de la del Motorola. [Ficha y registro](BETA74.md).
 
 Beta73 candidata, 11 de noviembre de 2026. 0.51.0-beta73, código 73. Ficha PS4 multimedia con carátula desde su origen, progreso de sesión y búsqueda soportada; calidad decorativa adaptativa por ventanas de métricas, sin limitar FPS ni modificar gestos. Compilación/lint finales correctos (0 errores, 57 s); versión y firma del APK verificadas. No instalada ni validada con una sesión real. Ver docs/BETA73.md.

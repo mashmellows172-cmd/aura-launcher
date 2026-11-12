@@ -39,3 +39,11 @@ Log completo de compilación en el notebook, fuera de Git, bajo `work/aura-beta7
 - ADB inalámbrico confirmó el Motorola Edge 50 Ultra, beta72 y el mismo hash registrado en BETA72.md. La huella SHA-256 del certificado instalado sigue siendo `2eb417c55c60a8ca8db1fb6f7687c797eea645b423616f9d9495ea1bce7a5514`.
 - La búsqueda en perfiles y ubicaciones habituales de Windows encontró dos claves de desarrollo con huellas distintas (`729385fc…` y `915f891c…`). Los almacenes personales de certificados de Windows no devolvieron coincidencias. Se revisó el índice de 24 archivos ZIP pertinentes y ninguno contiene un almacén de firma.
 - Las fichas beta72 y beta73 registran la firma compatible en el entorno de compilación anterior. El paso pendiente es firmar beta74 allí y transferir el APK firmado por un canal privado. No se ejecutó la instalación y el teléfono conserva beta72 y sus datos.
+
+## Edición local en paralelo
+
+Con `-PauraSideBySide=true`, `assembleBeta lintBeta` genera **Aura Launcher Local**, paquete `dev.senda.launcher.local`. La beta habitual conserva `dev.senda.launcher.debug`. La edición local permite importar un respaldo de la anterior y conservar ambas instalaciones. Los datos privados, variantes Room, enlaces de widgets y permisos del paquete anterior siguen en la app original. Mantener la misma clave para actualizaciones de Aura Local.
+
+Compilación y lint correctos en 5 min 30 s, 0 errores, 40 advertencias y 3 avisos. APK `beta/Aura-0.52.0-beta74-local.apk`, código 74, certificado SHA-256 `915f891c1f55b7dc7d01b7ee31504c97d55952515449c6857d0d55485ddea966`, hash SHA-256 `fd12ad8dd3f12bde204d794848227afa743d7c8ca084b03c4e78df40c853131e`. Log completo local `work/aura-beta74-local-build.log`.
+
+El primer intento por ADB inalámbrico devolvió `failed to install` sin código del instalador y el dispositivo desapareció de ADB. Al reconectar, consultar el paquete `dev.senda.launcher.local` antes de repetir. Tras reconectar, una comprobación previa falló por colisión con una variable reservada de PowerShell. Se corrigió antes de ejecutar la instalación. El reintento con `adb install --no-streaming` respondió Success. Se verificó código 74 y SHA-256 instalado igual al APK local. Beta72 sigue presente y conserva el rol HOME. Pendiente: exportación e importación del respaldo actual.
