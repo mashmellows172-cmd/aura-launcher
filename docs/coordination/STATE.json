@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta87 Local 0.60.3/code87 installed. Quick center alarm independent of home visibility and refreshed on open. Build/lint and installed hash verified. Card review pending. See docs/BETA87.md.",
+  "latestCheckpoint": "Beta88 Local 0.61.0/code88 installed. Configurable quick actions, inline media expansion and shared A-Z material. Build/lint passed. Signature, version and hash verified. Interaction review pending. See docs/BETA88.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

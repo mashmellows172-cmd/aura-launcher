@@ -30,5 +30,6 @@ class NotificationShadeService : AccessibilityService() {
             return result
         }
         fun open(): Boolean = active.get()?.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS) == true
+        fun openQuickSettings(): Boolean = active.get()?.performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS) == true
     }
 }

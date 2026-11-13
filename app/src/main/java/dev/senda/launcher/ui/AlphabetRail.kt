@@ -99,11 +99,13 @@ fun AlphabetRail(
             if(reduced || dragging && (ps4 || effect!="SPRING"))snap()
             else if(effect=="SPRING")spring(.62f,650f*(220f/duration)*(220f/duration))
             else tween(duration,easing=FastOutSlowInEasing),label="rail-position")
+        val marker = if (ps4) Modifier.ps4ControlGlass(markerShape, translucent = !held)
+        else Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = .18f), markerShape)
         Box(Modifier.offset {
             IntOffset((columnWidth*(selectedIndex/rows)).roundToPx(),
                 indicatorY.value.coerceIn(0.dp,(maxHeight-slot).coerceAtLeast(0.dp)).roundToPx())
         }.width(columnWidth).height(slot).padding(1.dp)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha=if(ps4 && held) .30f else .18f),markerShape)
+            .then(marker)
             .border(1.dp,MaterialTheme.colorScheme.primary.copy(alpha=if(ps4 && !held) .36f else .65f),markerShape))
         Row(Modifier.fillMaxSize().pointerInput(letters,columns,rows){
             var previous=-1

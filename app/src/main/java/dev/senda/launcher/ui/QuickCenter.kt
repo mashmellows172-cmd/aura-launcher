@@ -1,5 +1,7 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +24,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
@@ -88,7 +88,9 @@ internal fun QuickCenter(
     event: AgendaEvent?,
     reduced: Boolean,
     onDismiss: () -> Unit,
-    onMedia: (androidx.compose.ui.geometry.Rect?) -> Unit,
+    onSearch: () -> Unit,
+    onPrevious: () -> Unit,
+    onSeek: (Long) -> Unit,
     onPlayback: () -> Unit,
     onNext: () -> Unit,
     onAlarm: () -> Unit,
@@ -140,7 +142,8 @@ internal fun QuickCenter(
                     }
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (audio != null) QuickMediaCard(audio, onMedia, onPlayback, onNext)
+                    if (audio != null) QuickMediaCard(audio, motion.effect != "NONE" &&
+                        LocalMotionSettings.current.mediaDetailsMotionEnabled, onPlayback, onPrevious, onNext, onSeek)
                     if (alarmAt != null) {
                         val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
                         val day = when (at.toLocalDate()) {
@@ -161,6 +164,8 @@ internal fun QuickCenter(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp))
                     }
                     }
+                    QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
+                        onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
                 }
             }
         }
@@ -195,9 +200,12 @@ private fun QuickActionCard(icon: String, label: String, value: String, action: 
 }
 
 @Composable
-private fun QuickMediaCard(audio: ActiveAudioInfo, onMedia: (androidx.compose.ui.geometry.Rect?) -> Unit, onPlayback: () -> Unit, onNext: () -> Unit) {
+private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, onPlayback: () -> Unit,
+    onPrevious: () -> Unit, onNext: () -> Unit, onSeek: (Long) -> Unit,
+) {
     val cover = audio.artwork?.takeUnless { it.isRecycled }
-    var coverCoordinates by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
+    var expanded by remember(audio.sessionId) { mutableStateOf(false) }
+    var scrub by remember(audio.sessionId, audio.title) { mutableStateOf<Float?>(null) }
     val duration = audio.durationMs?.takeIf { it > 0L }
     var position by remember(audio.sessionId, audio.title) { mutableStateOf(audio.positionMs) }
     LaunchedEffect(audio.positionMs, audio.positionUpdatedAt, audio.isPlaying, audio.speed, duration) {
@@ -210,6 +218,8 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, onMedia: (androidx.compose.ui
         } while (duration != null && (position ?: 0L) < duration)
     }
     QuickCard {
+        Column(Modifier.fillMaxWidth().then(if (animated) Modifier.animateContentSize(tween(260, easing = Ps4Motion.easing)) else Modifier),
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val coverSize = when {
                 maxWidth < 290.dp || LocalDensity.current.fontScale >= 1.4f -> 60.dp
@@ -218,16 +228,10 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, onMedia: (androidx.compose.ui
             }
             Row(Modifier.fillMaxWidth().heightIn(min = coverSize),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(Modifier.size(coverSize).onGloballyPositioned { coverCoordinates = it }
+                Box(Modifier.size(coverSize)
                     .clip(RoundedCornerShape(10.dp)).background(Color(0xFF122B59))
-                    .clickable(onClickLabel = "Ampliar reproductor") {
-                        val coordinates = coverCoordinates?.takeIf { it.isAttached }
-                        onMedia(coordinates?.let {
-                            val origin = it.positionOnScreen()
-                            if (origin.x.isFinite() && origin.y.isFinite()) androidx.compose.ui.geometry.Rect(
-                                origin.x, origin.y, origin.x + it.size.width, origin.y + it.size.height,
-                            ) else null
-                        })
+                    .clickable(onClickLabel = if (expanded) "Minimizar reproductor" else "Ampliar reproductor") {
+                        expanded = !expanded
                     }, contentAlignment = Alignment.Center) {
                     if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
@@ -256,8 +260,32 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, onMedia: (androidx.compose.ui
                 }
         }
         }
+        if (expanded) {
+            audio.artist?.takeIf { it.isNotBlank() }?.let {
+                Text(it, color = quickMuted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
+            }
+            val current = position
+            if (duration != null && current != null) {
+                val fraction = scrub ?: (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                if (audio.canSeek) Slider(value = fraction, onValueChange = { scrub = it },
+                    onValueChangeFinished = {
+                        scrub?.let { onSeek((it.toDouble() * duration).toLong()) }
+                        scrub = null
+                    }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
+                Text("${quickMediaTime((fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
+                    color = quickMuted, style = MaterialTheme.typography.labelMedium)
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically) {
+                QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
+                TextButton(onClick = { expanded = false }) { Text("Minimizar", color = quickBlue) }
+            }
+        }
+        }
     }
 }
+
+private fun quickMediaTime(ms: Long) = "${ms / 60_000}:${(ms / 1_000 % 60).toString().padStart(2, '0')}"
 
 @Composable
 private fun QuickMediaButton(icon: String, label: String, enabled: Boolean, onClick: () -> Unit) {

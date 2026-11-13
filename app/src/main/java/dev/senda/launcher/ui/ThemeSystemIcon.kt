@@ -60,6 +60,7 @@ private val systemGlyphs = mapOf(
     "settings" to "M9 3H15L16 6L19 7L21 12L19 17L16 18L15 21H9L8 18L5 17L3 12L5 7L8 6Z M12 8A4 4 0 1 1 12 16A4 4 0 1 1 12 8",
     "close" to "M5 5L19 19 M19 5L5 19",
     "layers" to "M2 9L12 3L22 9L12 15Z M2 14L12 20L22 14",
+    "torch" to "M7 3H17V7L14 11V21H10V11L7 7Z M7 7H17 M12 14V16",
     "more" to "M11 4H13V6H11Z M11 11H13V13H11Z M11 18H13V20H11Z",
     "play" to "M7 4L20 12L7 20Z",
     "pause" to "M8 5V19 M16 5V19",

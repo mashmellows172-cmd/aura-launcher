@@ -645,7 +645,16 @@ fun HomeScreen(
             event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
             reduced = sonyMotionReduced,
             onDismiss = { showQuickCenter = false },
-            onMedia = { origin -> showQuickCenter = false; mediaArtworkOrigin = origin; showMediaControls = true },
+            onSearch = {
+                showQuickCenter = false
+                scope.launch {
+                    androidx.compose.runtime.withFrameNanos { }
+                    searchFocus.requestFocus()
+                    keyboard?.show()
+                }
+            },
+            onPrevious = { viewModel.previousAudio(audio.sessionId) },
+            onSeek = { viewModel.seekAudio(audio.sessionId, it) },
             onPlayback = {
                 if (audio.isPlaying) viewModel.pauseAudio(audio.sessionId)
                 else viewModel.resumeAudio(audio.sessionId)
