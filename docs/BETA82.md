@@ -19,3 +19,5 @@
 - assembleBeta y lintBeta correctos en 2m54s con 0 errores, 40 advertencias y 3 avisos.
 - Aura Local código 82 y certificado compatible con la copia verificada de beta80. SHA-256 del APK 988DE390FD17F37DE8B9E8CB60BBAC9C25A306F91626F9F464E18D18620FED69.
 - ADB no detectó el Motorola por USB ni por descubrimiento inalámbrico. Instalación y validación visual con una sesión real pendientes.
+
+- Instalación posterior el 13 de noviembre de 2026. Motorola Edge 50 Ultra actualizado de beta80 a beta82 mediante ADB inalámbrico con install -r. Certificados coincidentes, código 82 y hash del APK instalado verificados. Aura Local sigue siendo Inicio predeterminado. Prueba visual pendiente.

@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta82 Local 0.59.0/code82 built and linted. Coordinated clock/weather, search lens, animated media with cover and seek acknowledgement. ADB device absent. See docs/BETA82.md.",
+  "latestCheckpoint": "Beta82 Local 0.59.0/code82 built and linted. Coordinated clock/weather, search lens, animated media with cover and seek acknowledgement. Installed via wireless ADB with matching signature and APK hash. Visual review pending. See docs/BETA82.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

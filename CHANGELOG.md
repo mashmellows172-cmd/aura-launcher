@@ -1,6 +1,6 @@
 # Historial de actualizaciones de Aura Launcher
 
-Beta82 Local compilada el 13 de noviembre de 2026. 0.59.0-beta82, código 82. Reloj y clima coordinados, buscador con apertura de luz y reproductor con carátula, minimización táctil y progreso confirmado. Compilación y lint correctos. Instalación pendiente porque ADB no detectó el Motorola. [Ficha](docs/BETA82.md).
+Beta82 Local compilada el 13 de noviembre de 2026. 0.59.0-beta82, código 82. Reloj y clima coordinados, buscador con apertura de luz y reproductor con carátula, minimización táctil y progreso confirmado. Compilación y lint correctos. Instalada por ADB inalámbrico el 13 de noviembre de 2026, con firma, versión y hash verificados. [Ficha](docs/BETA82.md).
 
 Beta81 Local compilada el 13 de noviembre de 2026. 0.58.0-beta81, código 81. Pronóstico táctil, lente de búsqueda, destello A–Z, carátula animada y revelado de tema. Compilación y lint correctos. Instalación pendiente por desconexión de ADB. [Ficha](docs/BETA81.md).
 
