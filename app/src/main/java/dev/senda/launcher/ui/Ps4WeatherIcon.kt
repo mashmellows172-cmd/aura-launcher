@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
@@ -37,13 +38,14 @@ internal fun Ps4WeatherIcon(
     settings: WeatherMotionSettings,
     reduced: Boolean,
     modifier: Modifier = Modifier,
+    scenePhase: State<Float>? = null,
 ) {
     val still = reduced || settings.mode == WeatherMotionMode.OFF || !ValueAnimator.areAnimatorsEnabled()
     if (still) {
-        WeatherEmblem(condition, settings, true, modifier)
+        WeatherEmblem(condition, settings, true, modifier, null)
     } else {
         Crossfade(condition, modifier, animationSpec = tween(340), label = "Cambio de clima PS4") {
-            WeatherEmblem(it, settings, false, Modifier.fillMaxSize())
+            WeatherEmblem(it, settings, false, Modifier.fillMaxSize(), scenePhase)
         }
     }
 }
@@ -54,10 +56,11 @@ private fun WeatherEmblem(
     settings: WeatherMotionSettings,
     still: Boolean,
     modifier: Modifier,
+    scenePhase: State<Float>?,
 ) {
-    val phase = rememberClockChange(
+    val phase = scenePhase ?: rememberClockChange(
         condition.name, LauncherTheme.PS4, still,
-        durationMs = settings.durationMs.coerceIn(3000, 5000), playOnEntry = true,
+        durationMs = settings.durationMs.coerceIn(3000, 12000), playOnEntry = true,
     )
     val intensity = settings.intensity.coerceIn(20, 100) / 100f
     Spacer(modifier.drawWithCache {
@@ -69,7 +72,7 @@ private fun WeatherEmblem(
         onDrawBehind {
             // Read phase during drawing so the surrounding header and list do not recompose.
             val progress = phase.value
-            val envelope = (sin(progress * Math.PI).toFloat() * 2f).coerceIn(0f, 1f) * intensity
+            val envelope = sin(progress * Math.PI).toFloat().coerceIn(0f, 1f) * intensity
             translate((size.width - 64f * unit) / 2f, (size.height - 64f * unit) / 2f) {
                 scale(unit, unit, Offset.Zero) {
                     clipRect(0f, 0f, 64f, 64f) {

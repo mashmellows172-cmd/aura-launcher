@@ -40,7 +40,9 @@ fun rememberHistoricalPhase(theme: LauncherTheme, moving: Boolean, reduced: Bool
 /** A finite, theme-specific change cue. No infinite timer belongs to the clock. */
 @Composable
 fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean, durationMs: Int? = null,
-    playOnEntry: Boolean = false, ready: Boolean = true): State<Float> {
+    playOnEntry: Boolean = false, ready: Boolean = true,
+    easing: androidx.compose.animation.core.Easing = androidx.compose.animation.core.FastOutSlowInEasing,
+): State<Float> {
     val phase = remember { Animatable(1f) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     var resumed by remember(lifecycle) { mutableStateOf(lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
@@ -53,7 +55,7 @@ fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean, d
     }
     var previous by remember { mutableStateOf(value) }
     var entryPending by remember { mutableStateOf(playOnEntry) }
-    LaunchedEffect(value, theme, reduced, resumed, durationMs, ready) {
+    LaunchedEffect(value, theme, reduced, resumed, durationMs, ready, easing) {
         if (!resumed || !ready) { phase.snapTo(1f); previous = value; return@LaunchedEffect }
         if (reduced || !ValueAnimator.areAnimatorsEnabled()) { phase.snapTo(1f); previous = value; entryPending = false; return@LaunchedEffect }
         if (!entryPending && previous == value) {
@@ -65,7 +67,7 @@ fun rememberClockChange(value: String, theme: LauncherTheme, reduced: Boolean, d
         previous = value
         phase.snapTo(0f)
         phase.animateTo(1f, tween(durationMs ?: (historicalProfile(theme)?.durationMs ?: 240).coerceIn(160, 280),
-            easing = androidx.compose.animation.core.FastOutSlowInEasing))
+            easing = easing))
     }
     return phase.asState()
 }

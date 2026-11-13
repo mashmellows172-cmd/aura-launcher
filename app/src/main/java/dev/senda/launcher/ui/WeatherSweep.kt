@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -13,9 +14,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -29,6 +33,52 @@ import dev.senda.launcher.ui.theme.rememberClockChange
 import dev.senda.launcher.widgets.WidgetWeather
 import kotlinx.coroutines.awaitCancellation
 import kotlin.math.*
+
+@Composable
+internal fun rememberPs4WeatherPhase(event: String, settings: WeatherMotionSettings, reduced: Boolean, ready: Boolean): State<Float> =
+    rememberClockChange(event, LauncherTheme.PS4,
+        reduced || settings.mode == WeatherMotionMode.OFF || LocalSystemPowerSaving.current ||
+            LocalThemePreview.current || LocalAppearance.current.highContrast,
+        durationMs = settings.bounded().durationMs, playOnEntry = true, ready = ready, easing = LinearEasing)
+
+/** A single ribbon carries the weather scene from the icon across its surface. */
+@Composable
+internal fun Ps4WeatherRibbon(condition: WeatherCondition, settings: WeatherMotionSettings, phase: State<Float>,
+    modifier: Modifier = Modifier, fromRight: Boolean = true,
+) {
+    if (settings.mode == WeatherMotionMode.OFF || LocalSystemPowerSaving.current ||
+        LocalAppearance.current.highContrast || LocalThemePreview.current) return
+    val intensity = settings.bounded().intensity / 100f
+    val constrained = LocalDecorationConstrained.current
+    val accent = LocalSkinStyle.current.accent
+    Spacer(modifier.clearAndSetSemantics {}.drawWithCache {
+        val ribbon = Path()
+        val paths = List(5) { Path() }
+        val cloudPixels = Path()
+        val glow = Brush.horizontalGradient(listOf(Color.Transparent, Color(0xFF90DFFF), Color.Transparent))
+        onDrawBehind {
+            val p = phase.value
+            if (p <= 0f || p >= 1f) return@onDrawBehind
+            val width = size.width
+            val height = size.height
+            val intro = (p / .18f).coerceIn(0f, 1f)
+            val fade = ((1f - p) / .28f).coerceIn(0f, 1f)
+            val travel = androidx.compose.animation.core.FastOutSlowInEasing.transform(p)
+            val head = (if (fromRight) 1f - travel else travel) * width
+            val strength = intro * fade * intensity
+            val y = height * .68f
+            ribbon.reset()
+            ribbon.moveTo(0f, y)
+            ribbon.cubicTo(width * .27f, y + height * .23f, head, y - height * .5f, width, y - height * .19f)
+            clipRect(max(0f, head - width * .42f), 0f, min(width, head + width * .42f), height) {
+                if (!constrained.value) drawPath(ribbon, glow, alpha = strength * .32f, style = Stroke(5.dp.toPx()))
+                drawPath(ribbon, glow, alpha = strength * .84f, style = Stroke(1.dp.toPx()))
+                if (!constrained.value) drawWeatherScene(p, condition.atmosphericScene(), WeatherTreatment.CONSOLE_WAVE,
+                    accent, strength * .57f, cloudPixels, paths)
+            }
+        }
+    })
+}
 
 /** Decorative only: no pointer input, no duplicate accessibility nodes, no polling or widget host. */
 @Composable

@@ -94,6 +94,7 @@ fun HeaderWeather(
     ps4Motion: WeatherMotionSettings? = null,
     prominent: Boolean = false,
     onOpenPanel: ((Rect?) -> Unit)? = null,
+    scenePhase: State<Float>? = null,
 ) {
     val id=controller.weatherWidgetId
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
@@ -136,10 +137,6 @@ fun HeaderWeather(
                 modifier=Modifier.requiredSize(120.dp,90.dp).clearAndSetSemantics{})
             }
         }
-        if (ps4Motion != null && ps4Motion.condition != WeatherCondition.AUTO) {
-            WeatherSweep(LauncherTheme.PS4, reading, ps4Motion, reduceMotion || LocalThemePreview.current,
-                Modifier.matchParentSize(), finiteUpdates = true)
-        }
         val contentMotion = if (change != null) Modifier.graphicsLayer {
             val p = change.value
             alpha = .7f + .3f * p
@@ -153,7 +150,7 @@ fun HeaderWeather(
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
                     if (ps4Motion != null) {
                         Ps4WeatherIcon(iconCondition, ps4Motion, reduceMotion || LocalThemePreview.current,
-                            Modifier.size(if (prominent) 48.dp else 34.dp))
+                            Modifier.size(if (prominent) 48.dp else 34.dp), scenePhase)
                     } else {
                         reading.icon?.let { icon->Image(icon,null,Modifier.size(if (prominent) 39.dp else 30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
                     }
@@ -214,18 +211,22 @@ private fun Ps4WeatherPreview(settings: WeatherMotionSettings, reduced: Boolean)
     }
     if (expanded) {
         val condition = WeatherCondition.valueOf(selected)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            key(replay) {
-                Ps4WeatherIcon(condition, settings.copy(mode = WeatherMotionMode.ONCE), reduced, Modifier.size(56.dp))
-            }
-            Column(Modifier.weight(1f)) {
-                Text(if (condition == WeatherCondition.AMBIENT) "Condición sin identificar" else condition.label,
-                    style = MaterialTheme.typography.titleMedium)
-                Text("Vista previa · no cambia el clima de Inicio", style = MaterialTheme.typography.bodySmall)
+        val phase = rememberPs4WeatherPhase("$selected:$replay", settings, reduced, ready = true)
+        Box(Modifier.fillMaxWidth().ps4Material()) {
+            Ps4WeatherRibbon(condition, settings, phase, Modifier.matchParentSize(), fromRight = false)
+            Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Ps4WeatherIcon(condition, settings, reduced, Modifier.size(56.dp), phase)
+                Column(Modifier.weight(1f)) {
+                    Text(if (condition == WeatherCondition.AMBIENT) "Condición sin identificar" else condition.label,
+                        style = MaterialTheme.typography.titleMedium)
+                    Text("Vista previa · no cambia el clima de Inicio", style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
         EffectChoice("Evento de ejemplo", selected, ps4WeatherExamples, onSelect = { selected = it })
-        TextButton(onClick = { replay++ }, enabled = !reduced && ValueAnimator.areAnimatorsEnabled()) {
+        TextButton(onClick = { replay++ }, enabled = !reduced && settings.mode != WeatherMotionMode.OFF &&
+            ValueAnimator.areAnimatorsEnabled()) {
             Text("Repetir animación")
         }
     }
@@ -236,7 +237,7 @@ private val ps4WeatherExamples = WeatherCondition.entries.filter { it != Weather
 
 @Composable
 private fun WeatherMotionControls(settings: WeatherMotionSettings, finite: Boolean, onChange: (WeatherMotionSettings) -> Unit) {
-    val maxDuration = if (finite) 5000 else 12000
+    val maxDuration = 12000
     var duration by remember(settings.durationMs, maxDuration) {
         mutableFloatStateOf(settings.durationMs.coerceAtMost(maxDuration).toFloat())
     }

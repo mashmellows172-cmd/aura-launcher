@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta80 Local instalada el 13 de noviembre de 2026. 0.57.0-beta80, código 80. Clima PS4 con cinta de luz sincronizada, recorrido por la cabecera, escena de pronóstico y vista previa repetible de hasta 12 segundos. Compilación y lint correctos. Versión y hash instalados verificados. Revisión visual pendiente. [Ficha](docs/BETA80.md).
+
 Beta79 Local instalada el 13 de noviembre de 2026. 0.56.0-beta79, código 79. Transiciones PS4 configurables con vista previa para menú rápido, ficha de app, multimedia y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Revisión visual pendiente. [Ficha](docs/BETA79.md).
 
 Beta78 Local instalada el 13 de noviembre de 2026. 0.55.0-beta78, código 78. PS4 con placas azules, dos ondas reactivas, cabecera compacta y cápsula A–Z. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Revisión visual pendiente. [Ficha](docs/BETA78.md).

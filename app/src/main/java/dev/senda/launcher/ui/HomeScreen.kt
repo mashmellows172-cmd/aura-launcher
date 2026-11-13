@@ -803,6 +803,19 @@ internal fun Header(
         val commit = dev.senda.launcher.ui.theme.rememberClockChange(confirmation.toString(), theme, motionReduced, durationMs = 320)
         val accent = MaterialTheme.colorScheme.primary
         val signal = if (motionReduced) Modifier else Modifier.ps4HeaderSweep(commit, accent, .6f)
+        val weatherConnected = remember(widgetController.weatherWidgetId, widgetController.providerRevision, weatherPackage) {
+            widgetController.manager.getAppWidgetInfo(widgetController.weatherWidgetId)?.provider?.packageName == weatherPackage
+        }
+        val reading = widgetController.weatherReading.takeIf { weatherConnected }
+        val weatherCondition = reading?.let {
+            dev.senda.launcher.data.providerWeatherCondition(it.conditionText)
+                .takeUnless { condition -> condition == dev.senda.launcher.data.WeatherCondition.AMBIENT }
+                ?: it.symbolCondition
+        } ?: dev.senda.launcher.data.WeatherCondition.AMBIENT
+        val sceneCondition = weatherMotion.condition.takeUnless { it == dev.senda.launcher.data.WeatherCondition.AUTO }
+            ?: weatherCondition
+        val scenePhase = rememberPs4WeatherPhase("${sceneCondition.name}:${weatherCondition.name}:${reading?.place}:${reading?.temperature}",
+            weatherMotion, motionReduced, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
         Column(Modifier.fillMaxWidth().then(signal)
             .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -834,6 +847,8 @@ internal fun Header(
                 }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
+            Box(Modifier.fillMaxWidth()) {
+            Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
@@ -862,7 +877,9 @@ internal fun Header(
                     modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
                     ps4Motion = weatherMotion,
                     onOpenPanel = onWeatherPanel,
+                    scenePhase = scenePhase,
                 )
+            }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }

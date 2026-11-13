@@ -89,6 +89,8 @@ internal fun WeatherForecastPanel(
     val heroTemperature = selectedHour?.temperature?.let { "${it.roundToInt()} °C" } ?: reading?.temperature ?: "—"
     val heroTitle = selectedHour?.time?.format(DateTimeFormatter.ofPattern("EEE HH:mm"))
         ?: reading?.place?.ifBlank { "Clima" } ?: "Clima"
+    val heroPhase = rememberPs4WeatherPhase("$heroTitle:$heroCondition:$heroTemperature", settings, still,
+        ready = reading != null || selectedHour != null)
 
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(Modifier.fillMaxSize()) {
@@ -112,9 +114,11 @@ internal fun WeatherForecastPanel(
                         Text("Clima", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                         TextButton(onClick = close) { Text("Cerrar") }
                     }
-                    Row(Modifier.fillMaxWidth().heightIn(min = 132.dp).ps4Material().padding(10.dp),
+                    Box(Modifier.fillMaxWidth().ps4Material()) {
+                    Ps4WeatherRibbon(heroCondition, settings, heroPhase, Modifier.matchParentSize(), fromRight = false)
+                    Row(Modifier.fillMaxWidth().heightIn(min = 132.dp).padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Ps4WeatherIcon(heroCondition, settings, still, Modifier.size(90.dp))
+                        Ps4WeatherIcon(heroCondition, settings, still, Modifier.size(90.dp), heroPhase)
                         Column(Modifier.weight(1f)) {
                             Text(heroTemperature, style = MaterialTheme.typography.headlineLarge,
                                 maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -122,6 +126,7 @@ internal fun WeatherForecastPanel(
                             Text(if (selectedHour == null) "Lectura del widget" else "Pronóstico de Open-Meteo",
                                 style = MaterialTheme.typography.labelSmall)
                         }
+                    }
                     }
                     if (selectedHour != null) TextButton(onClick = { selectedHour = null }) { Text("Volver al clima actual") }
                     val chosen = place

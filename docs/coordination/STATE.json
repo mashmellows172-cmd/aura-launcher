@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta79 Local 0.56.0/code79 installed. Configurable PS4 panel transitions with preview. Build/lint passed. Signature, version and hash verified. Visual review pending. See docs/BETA79.md.",
+  "latestCheckpoint": "Beta80 Local 0.57.0/code80 installed. Extended PS4 weather scene on home, forecast and preview. Build/lint passed. Signature, version and hash verified. Visual review pending. See docs/BETA80.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
