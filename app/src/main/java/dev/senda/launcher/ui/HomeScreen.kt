@@ -817,7 +817,7 @@ internal fun Header(
                     else Ps4Mark()
                 }
                 Column(Modifier.weight(1f).heightIn(min = 56.dp)
-                    .padding(start = 8.dp, top = 7.dp, bottom = 7.dp)) {
+                    .padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
                     Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
                     if (showMotivationalHeader) {
                         val message = remember(theme, today, clockTime) {
@@ -835,30 +835,32 @@ internal fun Header(
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
             Row(
-                Modifier.fillMaxWidth().padding(vertical = 8.dp)
-                    .clip(RoundedCornerShape(4.dp)).ps4Material()
-                    .heightIn(min = if (compactHeader) 0.dp else headerHeight.coerceIn(120, 216).dp)
-                    .padding(horizontal = 10.dp, vertical = if (compactHeader) 2.dp else 10.dp),
+                Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
+                    .padding(horizontal = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 BoxWithConstraints(Modifier.weight(1f)) {
                     val fittedClock = with(LocalDensity.current) {
-                        minOf(clockSize.coerceIn(32, 64).toFloat(), (maxWidth.value - 8f) / (3.1f * fontScale))
-                    }.coerceAtLeast(22f)
-                    Column {
-                        if (!compactHeader) Ps4HeaderClock(clockTime, fittedClock.sp, motionReduced, clockMotion, onOpenAlarms)
+                        minOf(clockSize.coerceIn(32, 64) * .8f, (maxWidth.value - 64f) / (3.1f * fontScale))
+                    }.coerceAtLeast(18f)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (!compactHeader) {
+                            Ps4HeaderClock(clockTime, fittedClock.sp, motionReduced, clockMotion, onOpenAlarms)
+                            Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
+                        }
                         HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
                     }
                 }
-                if (!compactHeader) Box(Modifier.width(1.dp).height(66.dp)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .14f)))
+                Box(Modifier.width(1.dp).height(28.dp)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
                 HeaderWeather(
                     widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
                     onOpenWeather, onWeatherConnection,
-                    modifier = if (compactHeader) Modifier.width(116.dp) else Modifier.weight(.9f),
+                    modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
                     ps4Motion = weatherMotion,
-                    prominent = !compactHeader,
                     onOpenPanel = onWeatherPanel,
                 )
             }
@@ -1361,7 +1363,7 @@ private fun AppRow(
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
                     .onGloballyPositioned { plateCoordinates = it }
-                    .clip(RoundedCornerShape(2.dp)).ps4Material()
+                    .clip(RoundedCornerShape(2.dp)).ps4TilePlate()
                     .border(1.dp,MaterialTheme.colorScheme.outline.copy(alpha=.6f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
                 }

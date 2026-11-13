@@ -9,12 +9,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -48,8 +51,9 @@ fun AlphabetRail(
     if (letters.isEmpty()) return
     val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val highContrast = dev.senda.launcher.data.LocalAppearance.current.highContrast
+    val ps4 = theme == LauncherTheme.PS4 && !highContrast
     val profile = historicalProfile(theme)?.withPs4Palette(dev.senda.launcher.ui.theme.LocalPs4Palette.current).takeUnless { highContrast }
-    val markerShape = profile.chromeShape()
+    val markerShape = if (ps4) RoundedCornerShape(5.dp) else profile.chromeShape()
     val haptics = LocalHapticFeedback.current
     val effect = RailEffects.canonical(visualSettings.railEffect)
     val duration = visualSettings.railDurationMs.coerceIn(80,600)
@@ -90,15 +94,15 @@ fun AlphabetRail(
         val slot=maxHeight/rows
         val selectedIndex=letters.indexOf(if(held)chosen else selectedLetter).coerceAtLeast(0)
         val indicatorY=animateDpAsState(slot*(selectedIndex%rows),
-            if(reduced || dragging && effect!="SPRING")snap()
+            if(reduced || dragging && (ps4 || effect!="SPRING"))snap()
             else if(effect=="SPRING")spring(.62f,650f*(220f/duration)*(220f/duration))
             else tween(duration,easing=FastOutSlowInEasing),label="rail-position")
         Box(Modifier.offset {
             IntOffset((columnWidth*(selectedIndex/rows)).roundToPx(),
                 indicatorY.value.coerceIn(0.dp,(maxHeight-slot).coerceAtLeast(0.dp)).roundToPx())
         }.width(columnWidth).height(slot).padding(1.dp)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha=.18f),markerShape)
-            .border(1.dp,MaterialTheme.colorScheme.primary.copy(alpha=.65f),markerShape))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha=if(ps4 && held) .30f else .18f),markerShape)
+            .border(1.dp,MaterialTheme.colorScheme.primary.copy(alpha=if(ps4 && !held) .36f else .65f),markerShape))
         Row(Modifier.fillMaxSize().pointerInput(letters,columns,rows){
             var previous=-1
             fun move(position:Offset){
@@ -137,7 +141,9 @@ fun AlphabetRail(
                                     "SPRING"->{translationX=if(column==0)-22.dp.toPx()*influence else 0f;translationY=distance*9.dp.toPx()*influence;scaleX=1f+1.7f*influence;scaleY=scaleX}
                                     "FADE"->{alpha=1f-.16f*engagement.value.coerceIn(0f,1f)*(1f-exp(-distance*distance*.38f))}
                                 }
-                            },color=MaterialTheme.colorScheme.onSurface,fontWeight=FontWeight.SemiBold,fontSize=11.sp,lineHeight=13.sp)
+                            },color=if(ps4 && index!=selectedIndex) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                                fontWeight=if(ps4 && index!=selectedIndex) FontWeight.Medium else FontWeight.SemiBold,
+                                fontSize=11.sp,lineHeight=13.sp)
                         }
                     }
                 }
@@ -154,7 +160,16 @@ fun AlphabetRail(
                 else->fadeIn(tween(duration))+scaleIn(if(effect=="SPRING")spring(.6f,600f) else tween(duration),initialScale=if(effect=="LENS").4f else .7f)
             }
             AnimatedVisibility(held,enter=enter,exit=if(reduced)fadeOut(tween(0)) else fadeOut(tween(duration.coerceAtMost(220)))){
-                HistoricalPanel(theme,Modifier.size(bubbleSize).clearAndSetSemantics {},selected=true){
+                if (ps4) {
+                    val capsule = RoundedCornerShape(28)
+                    Box(Modifier.size(bubbleSize)
+                        .background(Brush.linearGradient(listOf(Color(0xFF174B91), Color(0xFF08275C))), capsule)
+                        .border(1.dp, Color(0xFF8DD5FF), capsule)
+                        .clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
+                        Text(letters[selectedIndex], color = Color.White, fontWeight = FontWeight.SemiBold,
+                            fontSize = (bubbleSize.value * .56f).sp, maxLines = 1)
+                    }
+                } else HistoricalPanel(theme,Modifier.size(bubbleSize).clearAndSetSemantics {},selected=true){
                     Box(Modifier.fillMaxSize(),contentAlignment=Alignment.Center){
                         if(effect=="FADE" && !reduced)Crossfade(letters[selectedIndex],animationSpec=tween(duration),label="rail-letter"){
                             Text(it,fontWeight=FontWeight.Bold,fontSize=(visualSettings.railBubbleSize.coerceIn(40,84)*.5f).sp,maxLines=1)

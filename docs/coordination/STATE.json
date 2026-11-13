@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta77 Local 0.54.1/code77 installed. PS4 focus border follows row bounds during scroll. Build and lint successful. Installed version and hash verified. Visual review pending. See docs/BETA77.md.",
+  "latestCheckpoint": "Beta78 Local 0.55.0/code78 installed. PS4 tile plates, two reactive waves, compact header and alphabet capsule. Build/lint successful. Signature, version and installed hash verified. Visual review pending. See docs/BETA78.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

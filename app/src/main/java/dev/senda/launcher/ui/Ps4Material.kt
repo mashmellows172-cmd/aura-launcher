@@ -10,8 +10,31 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LocalAppearance
+
+@Composable
+internal fun Modifier.ps4TilePlate(): Modifier {
+    val colors = MaterialTheme.colorScheme
+    return drawWithCache {
+        val base = Brush.linearGradient(
+            listOf(colors.primary.copy(alpha = .23f), colors.surfaceVariant, colors.surface),
+            end = Offset(size.width, size.height),
+        )
+        val edge = Brush.linearGradient(
+            listOf(colors.primary.copy(alpha = .68f), colors.outline.copy(alpha = .28f)),
+            end = Offset(size.width, size.height),
+        )
+        val stroke = Stroke(1.dp.toPx())
+        val inset = stroke.width / 2
+        onDrawBehind {
+            drawRect(base)
+            drawRect(edge, topLeft = Offset(inset, inset),
+                size = Size(size.width - stroke.width, size.height - stroke.width), style = stroke)
+        }
+    }
+}
 
 /** Local Ollama proposal corrected to Material 3 and draw-only state observation. */
 @Composable

@@ -108,7 +108,11 @@ fun HeaderWeather(
     ) else null
     val width = if (ps4Motion == null) modifier.width(104.dp) else modifier
     var bounds by remember { mutableStateOf<Rect?>(null) }
-    Box(width.heightIn(min = if (prominent) 94.dp else 72.dp)
+    Box(width.heightIn(min = when {
+        prominent -> 94.dp
+        ps4Motion != null -> 56.dp
+        else -> 72.dp
+    })
         .onGloballyPositioned { coordinates ->
             if (onOpenPanel != null) bounds = Rect(coordinates.positionOnScreen(),
                 Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))

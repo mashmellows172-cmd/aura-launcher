@@ -16,8 +16,8 @@ android {
         manifestPlaceholders["auraAppLabel"] = "@string/app_name"
         manifestPlaceholders["auraMediaLabel"] = "Aura · Reproducción multimedia"
         manifestPlaceholders["auraGestureLabel"] = "@string/notification_shortcut_label"
-        versionCode = 77
-        versionName = "0.54.1-beta77"
+        versionCode = 78
+        versionName = "0.55.0-beta78"
     }
 
     buildTypes {

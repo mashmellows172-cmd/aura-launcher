@@ -80,7 +80,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val panel = if (scene?.enabled == true) scene.panel?.value ?: 0f else 0f
         val depth = maxOf((scene?.search ?: 0f) * .45f, panel)
         translationX=sin(.7f)*size.width*.014f
-        translationY=cos(.7f*.8f)*size.height*.009f + (scene?.drift ?: 0f) * 6.dp.toPx() * amount
+        translationY=cos(.7f*.8f)*size.height*.009f + (scene?.drift ?: 0f) * 9.dp.toPx() * amount
         val ribbonPhase = ((entry?.value ?: 1f) / .78f).coerceIn(0f, 1f)
         val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(ribbonPhase)) * entryIntensity
         scaleX = 1.04f - opening * .29f - depth * .012f * amount
@@ -91,34 +91,34 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     }.drawWithCache {
         val backdrop=Brush.linearGradient(listOf(palette.top,palette.middle,palette.bottom),end=Offset(size.width*.8f,size.height))
         val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f*decorationStrength),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
-        val ribbons=List(3) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
+        val ribbons=List(2) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
         val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
         val hairline=Stroke(.65.dp.toPx())
-        val foregroundShade=Brush.horizontalGradient(listOf(palette.bottom.copy(alpha=if(whitePalette).14f else .42f),palette.middle.copy(alpha=.16f),Color.Transparent))
+        val foregroundShade=Brush.horizontalGradient(
+            0f to palette.bottom.copy(alpha=if(whitePalette).18f else .60f),
+            .46f to palette.bottom.copy(alpha=if(whitePalette).10f else .42f),
+            1f to Color.Transparent,
+        )
+        ribbons.forEach { it.surface(1f) }
         onDrawBehind {
             drawRect(backdrop)
             drawRect(atmosphere)
             val time=.7f
             val drift=0f
-            val light=0f
-            ribbons.forEach { ribbon ->
-                // Nested translucent surfaces approximate a soft cross-section without blur.
-                repeat(2) { layer ->
-                    ribbon.surface(1f-layer*.42f)
-                    drawPath(ribbon.fill,glass,alpha=(.78f+light*.3f)*decorationStrength)
-                }
+            ribbons.forEachIndexed { band, ribbon ->
+                drawPath(ribbon.fill,glass,alpha=(if (band == 0) .76f else .98f)*decorationStrength)
                 if (!constrained.value) glowStrokes.forEachIndexed { index, stroke ->
-                    drawPath(ribbon.crest,edge,alpha=(.06f+index*.025f+light*.12f)*decorationStrength,style=stroke)
+                    drawPath(ribbon.crest,edge,alpha=(.08f+index*.03f)*decorationStrength,style=stroke)
                 }
-                drawPath(ribbon.crest,edge,alpha=(.32f+light)*decorationStrength,style=hairline)
+                drawPath(ribbon.crest,edge,alpha=(if (band == 0) .38f else .56f)*decorationStrength,style=hairline)
             }
             // Fixed motes remain on the retained layer; no particle jobs.
             repeat(if (constrained.value) 0 else 14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
-                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=(.11f+light*.15f)*decorationStrength)
+                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=.11f*decorationStrength)
             }
             drawRect(foregroundShade)
         }
