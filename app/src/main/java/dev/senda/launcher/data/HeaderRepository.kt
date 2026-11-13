@@ -18,7 +18,8 @@ class HeaderRepository(private val context: Context) {
     fun canReadCalendar() = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
 
     suspend fun load(settings: HeaderSettings): HeaderInfo = withContext(Dispatchers.IO) {
-        val alarm = if (settings.showAlarm) context.getSystemService(AlarmManager::class.java)?.nextAlarmClock?.triggerTime else null
+        // The Centro rápido uses the system alarm even when its Inicio card is hidden.
+        val alarm = context.getSystemService(AlarmManager::class.java)?.nextAlarmClock?.triggerTime
         val permitted = canReadCalendar()
         if (!settings.showCalendar || !permitted) return@withContext HeaderInfo(alarmAt = alarm, calendarPermission = permitted)
         try {

@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta87 Local instalada el 13 de noviembre de 2026. 0.60.3-beta87, código 87. El Centro rápido consulta la próxima alarma al abrir y funciona aunque su tarjeta de Inicio esté oculta. Compilación y lint correctos. Firma, versión y hash verificados. Prueba de la tarjeta pendiente. [Ficha](docs/BETA87.md).
+
 Beta86 Local instalada el 13 de noviembre de 2026. 0.60.2-beta86, código 86. Centro rápido, buscador y cabecera PS4 comparten un acabado azul. El cierre permanece visible al desplazar las tarjetas. Compilación y lint correctos. Firma, versión y hash verificados. Revisión visual pendiente. [Ficha](docs/BETA86.md).
 
 Beta85 Local compilada el 13 de noviembre de 2026. 0.60.1-beta85, código 85. Tarjeta multimedia del Centro rápido con carátula adaptable, progreso celeste y controles circulares. Compilación y lint correctos. Instalada por ADB inalámbrico sobre beta83, con firma, versión y hash verificados. Revisión visual pendiente. [Ficha](docs/BETA85.md).

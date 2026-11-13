@@ -628,6 +628,7 @@ fun HomeScreen(
         if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
             QuickCenterButton {
                 soundFeedback.play(SoundEvent.MENU)
+                viewModel.refreshHeader()
                 showQuickCenter = true
             }
         }
@@ -640,7 +641,7 @@ fun HomeScreen(
         val audio = state.audioInfo
         QuickCenter(
             audio = audio.takeIf { mediaControlsAvailable },
-            alarmAt = state.headerInfo.alarmAt.takeIf { state.headerSettings.showAlarm },
+            alarmAt = state.headerInfo.alarmAt,
             event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
             reduced = sonyMotionReduced,
             onDismiss = { showQuickCenter = false },

@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta86 Local 0.60.2/code86 installed. Shared PS4 quick center glass on home search and header. Build/lint passed. Signature, version and hash verified. Visual review pending. See docs/BETA86.md.",
+  "latestCheckpoint": "Beta87 Local 0.60.3/code87 installed. Quick center alarm independent of home visibility and refreshed on open. Build/lint and installed hash verified. Card review pending. See docs/BETA87.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
