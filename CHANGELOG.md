@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta77 Local instalada el 13 de noviembre de 2026. 0.54.1-beta77, código 77. Marco PS4 alineado con la baldosa durante el scroll en Inicio y búsqueda. Compilación y lint correctos, 0 errores. Firma, versión y hash instalado verificados. Prueba visual de scroll rápido pendiente. [Ficha](docs/BETA77.md).
+
 Beta76 Local instalada, 12 de noviembre de 2026. 0.54.0-beta76/código 76. Mensaje PS4 junto al logo de Aura, sin línea extra bajo reloj/clima; 18 frases propias y rotación cada cinco minutos usando el reloj existente. Compilación/lint correctos (3m6s, 0 errores, 40 advertencias, 3 avisos); install -r, firma, versión y hash verificados. Revisión visual pendiente. [Ficha](docs/BETA76.md).
 
 Beta75 Local instalada, 12 de noviembre de 2026. 0.53.0-beta75, código 75. Marco PS4 móvil durante scroll con destello al asentarse; ficha desde el icono por pulsación larga con acciones de favoritas e iconos. Un toque conserva la apertura. Compilación/lint correctos (3m31s; 0 errores, 40 advertencias y 3 avisos). Install -r con firma y hash verificados; original beta72 intacta. Validación visual pendiente. [Ficha](docs/BETA75.md).

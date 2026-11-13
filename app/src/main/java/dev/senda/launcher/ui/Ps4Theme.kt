@@ -67,30 +67,18 @@ internal fun rememberPs4FocusedKey(list: LazyListState, enabled: Boolean, input:
         }
     }
 
-/** One finite moving outline. Geometry follows scroll in draw without relaying out rows. */
+/** The outline tracks the selected row's bounds directly, including during a fling. */
 @Composable
 internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, reduced: Boolean): Modifier {
     if (!enabled || LocalAppearance.current.highContrast || LocalThemePreview.current) return this
     val focus = LocalPs4FocusedKey.current
-    val delta = remember(list) { Animatable(0f) }
     val arrival = remember(list) { Animatable(0f) }
     val quiet = reduced || LocalSystemPowerSaving.current
     val colors = MaterialTheme.colorScheme
     LaunchedEffect(list, focus, quiet) {
-        var previous: Any? = null
-        snapshotFlow { focus.value to list.isScrollInProgress }.collectLatest { (key, scrolling) ->
-            val items = list.layoutInfo.visibleItemsInfo
-            val from = items.firstOrNull { it.key == previous }
-            val to = items.firstOrNull { it.key == key }
-            val changed = key != previous
-            val offset = if (!quiet && changed && from != null && to != null) {
-                (from.offset - to.offset + delta.value).coerceIn(-to.size * 1.5f, to.size * 1.5f)
-            } else if (!quiet && !changed) delta.value else 0f
-            previous = key
+        snapshotFlow { if (list.isScrollInProgress) null else focus.value }.collectLatest { settledKey ->
             arrival.snapTo(0f)
-            delta.snapTo(offset)
-            if (offset != 0f) delta.animateTo(0f, tween(Ps4Motion.focusMs, easing = Ps4Motion.easing))
-            if (!quiet && !scrolling && key != null) {
+            if (!quiet && settledKey != null) {
                 arrival.snapTo(1f)
                 arrival.animateTo(0f, tween(240, easing = Ps4Motion.easing))
             }
@@ -98,7 +86,6 @@ internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, redu
     }
     return clipToBounds().drawWithCache {
         val outer = Stroke(1.5.dp.toPx())
-        val inner = Stroke(.7.dp.toPx())
         val halo = Stroke(6.dp.toPx())
         val corner = CornerRadius(3.dp.toPx())
         onDrawWithContent {
@@ -107,13 +94,13 @@ internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, redu
             val layout = list.layoutInfo
             val item = layout.visibleItemsInfo.firstOrNull { it.key == key } ?: return@onDrawWithContent
             val inset = 2.dp.toPx()
-            val y = item.offset - layout.viewportStartOffset + delta.value + inset
+            val y = item.offset - layout.viewportStartOffset + inset
             if (size.width > inset * 4 && item.size > inset * 4) {
-                drawRoundRect(colors.primary.copy(alpha = .12f + .16f * arrival.value), Offset(inset, y),
-                    Size(size.width - 2 * inset, item.size - 2 * inset), corner, style = halo)
-                drawRoundRect(colors.primary, Offset(inset, y), Size(size.width - 2 * inset, item.size - 2 * inset), corner, style = outer)
-                drawRoundRect(colors.onSurface.copy(alpha = .52f + .35f * arrival.value), Offset(2 * inset, y + inset),
-                    Size(size.width - 4 * inset, item.size - 4 * inset), corner, style = inner)
+                val topLeft = Offset(inset, y)
+                val frameSize = Size(size.width - 2 * inset, item.size - 2 * inset)
+                val flash = if (quiet || list.isScrollInProgress) 0f else arrival.value
+                drawRoundRect(colors.primary.copy(alpha = .12f + .16f * flash), topLeft, frameSize, corner, style = halo)
+                drawRoundRect(colors.primary, topLeft, frameSize, corner, style = outer)
             }
         }
     }

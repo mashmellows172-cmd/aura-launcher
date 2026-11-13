@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta76 Local 0.54.0/code76 installed. PS4 motivational caption beside avatar; five-minute themed phrases using existing clock. Build/lint 3m6s, 0 errors/40 warnings/3 hints. Certificate/version/hash verified. Visual review pending. See docs/BETA76.md.",
+  "latestCheckpoint": "Beta77 Local 0.54.1/code77 installed. PS4 focus border follows row bounds during scroll. Build and lint successful. Installed version and hash verified. Visual review pending. See docs/BETA77.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

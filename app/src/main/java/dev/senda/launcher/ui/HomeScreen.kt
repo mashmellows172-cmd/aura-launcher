@@ -1330,7 +1330,9 @@ private fun AppRow(
     val rowAccent = MaterialTheme.colorScheme.primary
     val feedback = LocalSoundFeedback.current
     Row(
-        modifier = modifier.fillMaxWidth().heightIn(min = if(console) maxOf(appearance.rowHeight, appearance.iconSize+28).dp else appearance.rowHeight.dp).auraListMotion(listState, rowKey, visualSettings),
+        modifier = modifier.fillMaxWidth()
+            .heightIn(min = if (console) maxOf(appearance.rowHeight, appearance.iconSize + 28).dp else appearance.rowHeight.dp)
+            .then(if (console) Modifier else Modifier.auraListMotion(listState, rowKey, visualSettings)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
