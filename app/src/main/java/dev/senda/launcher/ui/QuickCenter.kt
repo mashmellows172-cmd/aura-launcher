@@ -23,11 +23,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import dev.senda.launcher.data.ActiveAudioInfo
@@ -191,45 +195,66 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, onMedia: (androidx.compose.ui
         } while (duration != null && (position ?: 0L) < duration)
     }
     QuickCard {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Box(Modifier.size(88.dp).onGloballyPositioned { coverCoordinates = it }
-                .clip(RoundedCornerShape(10.dp)).background(Color(0xFF122B59))
-                .clickable(onClickLabel = "Ampliar reproductor") {
-                    val coordinates = coverCoordinates?.takeIf { it.isAttached }
-                    val origin = coordinates?.positionOnScreen()?.takeIf { it.x.isFinite() && it.y.isFinite() }
-                    onMedia(if (origin != null && coordinates != null) androidx.compose.ui.geometry.Rect(
-                        origin.x, origin.y, origin.x + coordinates.size.width, origin.y + coordinates.size.height,
-                    ) else null)
-                }, contentAlignment = Alignment.Center) {
-                if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val coverSize = when {
+                maxWidth < 290.dp || LocalDensity.current.fontScale >= 1.4f -> 60.dp
+                maxWidth < 340.dp -> 76.dp
+                else -> 88.dp
             }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = quickMuted,
-                    style = MaterialTheme.typography.bodySmall)
-                Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
-                    maxLines = 2, overflow = TextOverflow.Ellipsis)
-                val current = position
-                if (duration != null && current != null) LinearProgressIndicator(
-                    progress = { (current.toDouble() / duration).toFloat().coerceIn(0f, 1f) },
-                    modifier = Modifier.fillMaxWidth().padding(top = 5.dp).height(4.dp),
-                    color = quickBlue, trackColor = Color(0xFF304B73),
-                )
-            }
-            if (if (audio.isPlaying) audio.canPause else audio.canPlay) QuickMediaButton(
-                if (audio.isPlaying) "pause" else "play",
-                if (audio.isPlaying) "Pausar" else "Reanudar", onPlayback,
-            )
-            if (audio.canNext) QuickMediaButton("next", "Siguiente pista", onNext)
+            Row(Modifier.fillMaxWidth().heightIn(min = coverSize),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(coverSize).onGloballyPositioned { coverCoordinates = it }
+                    .clip(RoundedCornerShape(10.dp)).background(Color(0xFF122B59))
+                    .clickable(onClickLabel = "Ampliar reproductor") {
+                        val coordinates = coverCoordinates?.takeIf { it.isAttached }
+                        onMedia(coordinates?.let {
+                            val origin = it.positionOnScreen()
+                            if (origin.x.isFinite() && origin.y.isFinite()) androidx.compose.ui.geometry.Rect(
+                                origin.x, origin.y, origin.x + it.size.width, origin.y + it.size.height,
+                            ) else null
+                        })
+                    }, contentAlignment = Alignment.Center) {
+                    if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = quickMuted,
+                        style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    val current = position
+                    if (duration != null && current != null) {
+                        val fraction = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                        Box(Modifier.fillMaxWidth().padding(top = 8.dp).height(4.dp)
+                            .semantics { progressBarRangeInfo = ProgressBarRangeInfo(fraction, 0f..1f) }
+                            .background(Color(0xFF304B73), CircleShape)) {
+                            if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction).fillMaxHeight()
+                                .background(quickBlue, CircleShape))
+                        }
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    QuickMediaButton(if (audio.isPlaying) "pause" else "play",
+                        if (audio.isPlaying) "Pausar" else "Reanudar",
+                        if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
+                    QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
+                }
+        }
         }
     }
 }
 
 @Composable
-private fun QuickMediaButton(icon: String, label: String, onClick: () -> Unit) {
-    IconButton(onClick = onClick, modifier = Modifier.size(48.dp).semantics { contentDescription = label }) {
-        Box(Modifier.size(38.dp).background(Color(0xFF233D6A), CircleShape), contentAlignment = Alignment.Center) {
-            ThemeSystemIcon(icon, LauncherTheme.PS4)
+private fun QuickMediaButton(icon: String, label: String, enabled: Boolean, onClick: () -> Unit) {
+    IconButton(onClick = onClick, enabled = enabled,
+        modifier = Modifier.size(48.dp).semantics { contentDescription = label }) {
+        Box(Modifier.size(36.dp)
+            .background(Brush.verticalGradient(listOf(Color(0xFF2C4A79), Color(0xFF1A3056))), CircleShape)
+            .border(1.dp, quickEdge.copy(alpha = if (enabled) .65f else .3f), CircleShape),
+            contentAlignment = Alignment.Center) {
+            CompositionLocalProvider(LocalContentColor provides quickInk.copy(alpha = if (enabled) 1f else .4f)) {
+                ThemeSystemIcon(icon, LauncherTheme.SYSTEM, Modifier.size(20.dp))
+            }
         }
     }
 }
