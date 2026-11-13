@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.senda.launcher.data.LauncherTheme
@@ -35,7 +36,7 @@ import dev.senda.launcher.ui.theme.*
 /** The text field still owns input/IME semantics. The external halo never intercepts a tap. */
 @Composable
 internal fun ThemedSearchField(
-    theme: LauncherTheme, query: String, onQuery: (String) -> Unit, onClear: () -> Unit,
+    theme: LauncherTheme, query: TextFieldValue, onQuery: (TextFieldValue) -> Unit, onClear: () -> Unit,
     onSearch: () -> Unit, focus: FocusRequester, interactions: MutableInteractionSource,
     glow: () -> Float, readOnly: Boolean = false, heightDp: Int = 56,
 ) {
@@ -91,7 +92,7 @@ internal fun ThemedSearchField(
             leadingIcon = {
                 ThemeSystemIcon("search", theme)
             },
-            trailingIcon = if (query.isNotEmpty()) ({
+            trailingIcon = if (query.text.isNotEmpty()) ({
                 IconButton(onClick = onClear, modifier = Modifier.semantics { contentDescription = "Borrar búsqueda" }) { ThemeSystemIcon("close", theme) }
             }) else null,
             singleLine = true, readOnly = readOnly, shape = profile.chromeShape(),

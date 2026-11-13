@@ -39,7 +39,7 @@ val LocalThemePreview=staticCompositionLocalOf { false }
 /** The real Header/AppSections/DashboardGroup, with inert external actions and passive widgets. */
 @Composable
 fun ThemeLivePreview(snapshot:ThemeSnapshot, source:HomeUiState, viewModel:LauncherViewModel, widgets:WidgetController, modifier:Modifier=Modifier) {
-    val state=remember(snapshot,source){snapshot.applyTo(source).copy(query="",visualSettings=source.visualSettings.copy(reduceMotion=true))}
+    val state=remember(snapshot,source){snapshot.applyTo(source).copy(visualSettings=source.visualSettings.copy(reduceMotion=true))}
     val mapping by produceState<IconPackMapping?>(null,snapshot.pack,source.availableIconPacks){value=viewModel.previewIconPack(snapshot.pack)}
     val retro=source.retroLibrary[snapshot.theme]?.takeIf{snapshot.retro}
     AuraTheme(state.theme,isSystemInDarkTheme(),state.appearance.highContrast,snapshot.finish(),reduceMotion=true,fontChoice=snapshot.font) {
@@ -77,7 +77,7 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
                 onOpenAlarms={},onOpenCalendar={},onOpenWeather={},onEditFavorites={},onManageHiddenApps={},onChooseTheme={},onLetterJump={},letterJumpEnabled=false,onVisualSettings={},onAlphabetSettings={},onSoundSettings={},onPersonalization={},onHomeSettings={},onGesture={},onDoubleTap=null,onChooseWeatherApp={},onChooseWidgets={},showMotivationalHeader=state.headerSettings.showMotivationalHeader)
             if(dashboardBlocks(state,widgets,BlockAnchor.HEADER).isNotEmpty())Column(Modifier.heightIn(max=with(LocalDensity.current){(LocalWindowInfo.current.containerSize.height*.28f).toDp()}.coerceIn(120.dp,300.dp)).verticalScroll(rememberScrollState())){DashboardGroup(state,widgets,BlockAnchor.HEADER){}}
             Spacer(Modifier.height(if(compact)4.dp else 12.dp))
-            ThemedSearchField(state.theme,"",{}, {},{},focus,interactions,{0f},readOnly=true)
+            ThemedSearchField(state.theme,androidx.compose.ui.text.input.TextFieldValue(),{}, {},{},focus,interactions,{0f},readOnly=true)
             Spacer(Modifier.height(8.dp))
             val showCompactAudio = state.headerSettings.showAudioWidget && !state.headerSettings.audioInMenuOnly && state.audioInfo.isPlaying
             Row(Modifier.weight(1f).fillMaxWidth()) {

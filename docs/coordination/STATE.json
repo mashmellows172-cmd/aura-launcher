@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta82 Local 0.59.0/code82 built and linted. Coordinated clock/weather, search lens, animated media with cover and seek acknowledgement. Installed via wireless ADB with matching signature and APK hash. Visual review pending. See docs/BETA82.md.",
+  "latestCheckpoint": "Beta83 Local 0.59.1/code83 installed. Search preserves IME composition and cursor in local editor state. Build/lint passed. Signature, version and hash verified. Keyboard review pending. See docs/BETA83.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

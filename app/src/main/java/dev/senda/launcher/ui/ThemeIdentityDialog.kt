@@ -55,7 +55,7 @@ internal fun ThemeIdentityDialog(initialTheme: LauncherTheme, finish: ThemeFinis
                             }
                         }
                     }
-                    ThemedSearchField(theme, "", {}, {}, {}, searchFocus, searchInteractions, { 0f }, readOnly = true)
+                    ThemedSearchField(theme, androidx.compose.ui.text.input.TextFieldValue(), {}, {}, {}, searchFocus, searchInteractions, { 0f }, readOnly = true)
                     ThemedSectionHeading("Tus favoritas", 3, theme)
                     if (theme != LauncherTheme.PS4) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         listOf(dev.senda.launcher.ui.theme.icons.FamilyIcon.PHONE, dev.senda.launcher.ui.theme.icons.FamilyIcon.CAMERA,

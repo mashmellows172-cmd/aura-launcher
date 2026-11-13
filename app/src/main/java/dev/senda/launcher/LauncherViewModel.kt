@@ -42,7 +42,6 @@ data class HomeUiState(
     val visualSettings: VisualSettings = VisualSettings(),
     val soundSettings: SoundSettings = SoundSettings(),
     val weatherPackage: String? = null,
-    val query: String = "",
     val fontChoice: String = "THEME",
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
@@ -205,10 +204,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun setQuery(query: String) {
-        _uiState.update { it.copy(query = query) }
-    }
-
     fun toggleFavorite(app: LaunchableApp, onSaved: () -> Unit = {}) {
         viewModelScope.launch {
             favoritesStore.toggle(app.packageName)
@@ -225,7 +220,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun returnHome() {
         if (!_uiState.value.backupBusy) cancelRestore()
-        _uiState.update { it.copy(query = "", homeRequest = it.homeRequest + 1) }
+        _uiState.update { it.copy(homeRequest = it.homeRequest + 1) }
     }
 
     fun toggleHidden(app: LaunchableApp) {

@@ -207,6 +207,10 @@ fun HomeScreen(
     val locale = LocalConfiguration.current.locales[0]
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
     val keyboard = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
+    var searchInput by rememberSaveable(stateSaver = androidx.compose.ui.text.input.TextFieldValue.Saver) {
+        mutableStateOf(androidx.compose.ui.text.input.TextFieldValue())
+    }
+    val query = searchInput.text
     val listState = rememberLazyListState()
     val searchListState = rememberLazyListState()
     val sonyTheme = state.theme == LauncherTheme.PS4 || state.theme == LauncherTheme.XPERIA
@@ -281,7 +285,7 @@ fun HomeScreen(
     val searchFocused by searchInteractions.collectIsFocusedAsState()
     val lens = androidx.compose.animation.core.animateFloatAsState(
         if (sonyTheme && !sonyMotionReduced && state.visualSettings.glowEnabled &&
-            (searchFocused || state.query.isNotBlank())) 1f else 0f,
+            (searchFocused || query.isNotBlank())) 1f else 0f,
         tween(if (sonyMotionReduced) 0 else 300), label = "search-lens",
     )
     val glowAlpha by androidx.compose.animation.core.animateFloatAsState(
@@ -310,6 +314,7 @@ fun HomeScreen(
     LaunchedEffect(state.homeRequest) {
         if (state.homeRequest != handledHomeRequest) {
             handledHomeRequest = state.homeRequest
+            searchInput = androidx.compose.ui.text.input.TextFieldValue()
             showFavoritesEditor = false
             showHiddenApps = false
             showLetterJump = false
@@ -334,17 +339,17 @@ fun HomeScreen(
     val visibleApps = remember(state.apps, state.hiddenPackages) {
         state.apps.filterNot { it.packageName in state.hiddenPackages }
     }
-    val filteredApps = remember(visibleApps, state.query, locale) {
-        val query = normalizeSearchText(state.query, locale)
-        if (query.isBlank()) visibleApps
-        else visibleApps.filter { normalizeSearchText(it.label, locale).contains(query) }
+    val filteredApps = remember(visibleApps, query, locale) {
+        val normalized = normalizeSearchText(query, locale)
+        if (normalized.isBlank()) visibleApps
+        else visibleApps.filter { normalizeSearchText(it.label, locale).contains(normalized) }
     }
     val favoriteApps = remember(visibleApps, state.favoritePackages) {
         val appsByPackage = visibleApps.associateBy(LaunchableApp::packageName)
         state.favoritePackages.mapNotNull(appsByPackage::get)
     }
-    val groups = remember(filteredApps, state.query, locale) {
-        if (state.query.isNotBlank()) emptyMap()
+    val groups = remember(filteredApps, query, locale) {
+        if (query.isNotBlank()) emptyMap()
         else filteredApps.groupBy { sectionLetterFor(it.label, locale) }
     }
     val groupLetters = remember(groups) {
@@ -353,7 +358,7 @@ fun HomeScreen(
     }
 
     BackHandler(enabled = true) {
-        if (state.query.isNotEmpty()) viewModel.setQuery("")
+        if (query.isNotEmpty()) searchInput = androidx.compose.ui.text.input.TextFieldValue()
         focusManager.clearFocus(force = true)
         keyboard?.hide()
     }
@@ -361,7 +366,7 @@ fun HomeScreen(
     val executeGesture: (GestureDirection) -> Unit = { direction ->
         val action = state.gestures[direction]
         when (action) {
-            "SEARCH" -> { viewModel.setQuery(""); scope.launch { listState.scrollToItem(0); searchFocus.requestFocus(); keyboard?.show() } }
+            "SEARCH" -> { searchInput = androidx.compose.ui.text.input.TextFieldValue(); scope.launch { listState.scrollToItem(0); searchFocus.requestFocus(); keyboard?.show() } }
             "NOTIFICATIONS" -> if (!NotificationShadeService.open()) showNotificationHelp = true
             "NONE" -> Unit
             else -> {
@@ -409,7 +414,7 @@ fun HomeScreen(
         val jump = alphabetJob
         scope.launch {
             jump?.join()
-            if (alphabetJob === jump && state.query.isBlank()) letterArrival = letter to (letterArrival.second + 1)
+            if (alphabetJob === jump && query.isBlank()) letterArrival = letter to (letterArrival.second + 1)
         }
     }
 
@@ -473,7 +478,7 @@ fun HomeScreen(
             onManageHiddenApps = { showHiddenApps = true },
             onChooseTheme = { viewModel.clearThemeError(); showThemePicker = true },
             onLetterJump = { showLetterJump = true },
-            letterJumpEnabled = state.query.isBlank() && groupLetters.isNotEmpty(),
+            letterJumpEnabled = query.isBlank() && groupLetters.isNotEmpty(),
             onVisualSettings = { showVisualSettings = true },
             onAlphabetSettings = { showAlphabetSettings = true },
             onSoundSettings = { showSoundSettings = true },
@@ -513,8 +518,8 @@ fun HomeScreen(
         }
 
         ThemedSearchField(
-            theme = state.theme, query = state.query, onQuery = viewModel::setQuery,
-            onClear = { viewModel.setQuery(""); focusManager.clearFocus(force = true); keyboard?.hide() },
+            theme = state.theme, query = searchInput, onQuery = { searchInput = it },
+            onClear = { searchInput = androidx.compose.ui.text.input.TextFieldValue(); focusManager.clearFocus(force = true); keyboard?.hide() },
             onSearch = { focusManager.clearFocus(force = true); keyboard?.hide() }, focus = searchFocus,
             interactions = searchInteractions, glow = { glowAlpha },
             heightDp = state.headerSettings.searchHeight,
@@ -538,12 +543,12 @@ fun HomeScreen(
                 onRefresh = viewModel::refreshApps,
             )
             filteredApps.isEmpty() -> EmptyState(
-                title = if (state.query.isBlank()) "Todas las apps están ocultas" else "Sin coincidencias",
-                detail = if (state.query.isBlank()) "Puedes volver a mostrarlas desde la gestión de apps." else "Prueba con otra parte del nombre.",
-                onRefresh = { if (state.query.isBlank()) showHiddenApps = true else viewModel.setQuery("") },
-                actionLabel = if (state.query.isBlank()) "Gestionar apps" else "Limpiar búsqueda",
+                title = if (query.isBlank()) "Todas las apps están ocultas" else "Sin coincidencias",
+                detail = if (query.isBlank()) "Puedes volver a mostrarlas desde la gestión de apps." else "Prueba con otra parte del nombre.",
+                onRefresh = { if (query.isBlank()) showHiddenApps = true else searchInput = androidx.compose.ui.text.input.TextFieldValue() },
+                actionLabel = if (query.isBlank()) "Gestionar apps" else "Limpiar búsqueda",
             )
-            state.query.isNotBlank() -> {
+            query.isNotBlank() -> {
                 val searchKey = rememberPs4FocusedKey(searchListState, state.theme == LauncherTheme.PS4, ps4InputFocus)
                 androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey) {
                 SearchResults(
