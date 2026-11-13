@@ -819,7 +819,12 @@ internal fun Header(
                 Column(Modifier.weight(1f).heightIn(min = 56.dp)
                     .padding(start = 8.dp, top = 7.dp, bottom = 7.dp)) {
                     Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
-                    Text("Inicio", style = MaterialTheme.typography.labelSmall,
+                    if (showMotivationalHeader) {
+                        val message = remember(theme, today, clockTime) {
+                            dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme)
+                        }
+                        ThemedHeaderCaption(theme, message, motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled())
+                    } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, clockMotion, onOpenAlarms)
@@ -857,9 +862,6 @@ internal fun Header(
                     onOpenPanel = onWeatherPanel,
                 )
             }
-            if (showMotivationalHeader) Text(
-                remember(theme, today, clockTime) { dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme) },
-                style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 8.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
         if (themeMenuExpanded) {

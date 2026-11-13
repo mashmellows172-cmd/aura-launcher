@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta76 Local instalada, 12 de noviembre de 2026. 0.54.0-beta76/código 76. Mensaje PS4 junto al logo de Aura, sin línea extra bajo reloj/clima; 18 frases propias y rotación cada cinco minutos usando el reloj existente. Compilación/lint correctos (3m6s, 0 errores, 40 advertencias, 3 avisos); install -r, firma, versión y hash verificados. Revisión visual pendiente. [Ficha](BETA76.md).
+
 Beta75 Local instalada, 12 de noviembre de 2026. 0.53.0-beta75, código 75. Marco PS4 móvil durante scroll con destello al asentarse; ficha desde el icono por pulsación larga con acciones de favoritas e iconos. Un toque conserva la apertura. Compilación/lint correctos (3m31s; 0 errores, 40 advertencias y 3 avisos). Install -r con firma y hash verificados; original beta72 intacta. Validación visual pendiente. [Ficha](BETA75.md).
 
 Beta74 Local instalada por ADB inalámbrico con paquete dev.senda.launcher.local. Código 74 y hash verificados. Beta72 sigue como Inicio predeterminado. La importación del respaldo actual queda pendiente. [Ficha y diagnóstico](BETA74.md).

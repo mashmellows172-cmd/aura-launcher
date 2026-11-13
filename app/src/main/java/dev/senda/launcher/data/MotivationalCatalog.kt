@@ -7,6 +7,11 @@ import java.time.LocalTime
 object MotivationalCatalog {
     fun timeBucket(time: LocalTime): Int = when (time.hour) { in 5..11 -> 0; in 12..18 -> 1; else -> 2 }
     private val phrases = mapOf(
+        LauncherTheme.PS4 to listOf(
+            listOf("Hoy empieza otra aventura.", "A tu ritmo, sube de nivel.", "Un paso y vamos por más.", "Tu próxima meta empieza aquí.", "Buen día para avanzar.", "Dale espacio a lo que disfrutas."),
+            listOf("Cada avance cuenta.", "Sigue jugando a tu manera.", "Una pausa y retomamos.", "Tu siguiente logro está cerca.", "Disfruta también el camino.", "Vamos bien, sin apuro."),
+            listOf("Guarda tus logros de hoy.", "También se vale poner pausa.", "Mañana seguimos la aventura.", "Buen momento para descansar.", "Lo de hoy ya suma.", "Cierra el día a tu ritmo.")
+        ),
         LauncherTheme.NOTHING to listOf(
             listOf("Hoy, con enfoque.", "Lo esencial va primero.", "Tu ritmo tiene valor.", "Una cosa a la vez.", "Comienza con intención.", "Haz espacio para lo bueno."),
             listOf("Lo simple también suma.", "Cada avance cuenta.", "Sigue con calma.", "Menos ruido, más rumbo.", "Un paso claro, y seguimos.", "Hoy también cuenta."),
@@ -39,9 +44,9 @@ object MotivationalCatalog {
         )
     )
 
-    /** Deterministic for a theme, local date and time bucket; reuses the Home clock updates. */
+    /** Five-minute rotation reusing Home clock updates; no additional timer or random recomposition. */
     fun phraseFor(theme: LauncherTheme, date: LocalDate = LocalDate.now(), time: LocalTime = LocalTime.now()): String {
         val list = (phrases[theme] ?: phrases.getValue(LauncherTheme.NOTHING))[timeBucket(time)]
-        return list[Math.floorMod(date.toEpochDay() + theme.ordinal * 17L, list.size.toLong()).toInt()]
+        return list[Math.floorMod(date.toEpochDay() + theme.ordinal * 17L + time.toSecondOfDay() / 300, list.size.toLong()).toInt()]
     }
 }
