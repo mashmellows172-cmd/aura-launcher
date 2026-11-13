@@ -45,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
 import dev.senda.launcher.data.LocalAppearance
@@ -160,22 +159,8 @@ internal fun Ps4AppDetails(
     val close = { motion.close(reduced, onDismiss) }
     var destination by remember { mutableStateOf<Rect?>(null) }
     val accent = MaterialTheme.colorScheme.primary
-    val transition = if (reduced) Modifier else Modifier.graphicsLayer {
-            val p = motion.progress.value
-            val target = destination
-            val source = origin
-            alpha = p
-            if (source != null && target != null && target.width > 0f && target.height > 0f) {
-                val startScale = minOf(source.width / target.width, source.height / target.height).coerceIn(.15f, .75f)
-                scaleX = startScale + (1f - startScale) * p
-                scaleY = scaleX
-                translationX = (source.center.x - target.center.x) * (1f - p)
-                translationY = (source.center.y - target.center.y) * (1f - p)
-            } else {
-                scaleX = .9f + .1f * p
-                scaleY = scaleX
-            }
-        }
+    val transition = Modifier.ps4PanelTransform(motion.progress.asState(), motion.effect,
+        origin = { origin }, destination = { destination })
     val heading: @Composable () -> Unit = {
             Row(Modifier.fillMaxWidth().then(if (reduced) Modifier else Modifier.ps4HeaderSweep(motion.progress.asState(), accent, .65f)),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),

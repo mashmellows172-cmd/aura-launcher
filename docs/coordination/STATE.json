@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta78 Local 0.55.0/code78 installed. PS4 tile plates, two reactive waves, compact header and alphabet capsule. Build/lint successful. Signature, version and installed hash verified. Visual review pending. See docs/BETA78.md.",
+  "latestCheckpoint": "Beta79 Local 0.56.0/code79 installed. Configurable PS4 panel transitions with preview. Build/lint passed. Signature, version and hash verified. Visual review pending. See docs/BETA79.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

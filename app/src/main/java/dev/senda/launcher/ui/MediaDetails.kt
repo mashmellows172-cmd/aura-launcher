@@ -50,6 +50,12 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
     var artTarget by remember { mutableStateOf<Rect?>(null) }
     var rootPosition by remember { mutableStateOf(Offset.Zero) }
     val close = { motion.close(reduced, onDismiss) }
+    val expandArt = motion.effect == "SPRING" && origin != null
+    val art = info.artwork?.takeUnless { it.isRecycled }
+    val artwork: @Composable () -> Unit = {
+        if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+        else Ps4ChromeIcon("play", Modifier.size(48.dp))
+    }
     LaunchedEffect(info, lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             do { position = positionAt(info); if (info.isPlaying) delay(500) } while (info.isPlaying)
@@ -60,13 +66,17 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
         Box(Modifier.matchParentSize().background(MaterialTheme.colorScheme.scrim.copy(alpha = .5f))
             .clickable(onClickLabel = "Cerrar detalle multimedia", onClick = close))
         Surface(Modifier.align(Alignment.Center).safeDrawingPadding().padding(24.dp).widthIn(max = 560.dp).fillMaxWidth()
-            .heightIn(max = (maxHeight - 48.dp).coerceAtLeast(120.dp)).graphicsLayer { alpha = motion.progress.value }
+            .heightIn(max = (maxHeight - 48.dp).coerceAtLeast(120.dp))
+            .ps4PanelTransform(motion.progress.asState(), if (motion.effect == "SPRING") "FADE" else motion.effect)
             .pointerInput(Unit) { detectTapGestures {} }, shape = MaterialTheme.shapes.large) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(info.title ?: info.appLabel ?: "Reproducción", style = MaterialTheme.typography.titleLarge)
-            Box(Modifier.size(120.dp).onGloballyPositioned {
-                val p = it.positionOnScreen(); artTarget = Rect(p.x, p.y, p.x + it.size.width, p.y + it.size.height)
-            })
+            Box(Modifier.size(120.dp).then(if (expandArt) Modifier.onGloballyPositioned {
+                val p = it.positionOnScreen()
+                artTarget = Rect(p.x, p.y, p.x + it.size.width, p.y + it.size.height)
+            } else Modifier), contentAlignment = Alignment.Center) {
+                if (!expandArt) artwork()
+            }
             Text(info.artist ?: info.appLabel ?: "", style = MaterialTheme.typography.bodyMedium)
             val duration = info.durationMs
             val current = position
@@ -92,19 +102,18 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             TextButton(onClick = close) { Text("Cerrar") }
         }
         }
-        val art = info.artwork?.takeUnless { it.isRecycled }
         val target = artTarget
-        if (target != null) Box(Modifier.size(120.dp).graphicsLayer {
-            val p = if (reduced) 1f else motion.progress.value
-            val start = origin ?: target
+        if (expandArt && origin != null && target != null) Box(Modifier.size(120.dp).graphicsLayer {
+            val p = motion.progress.value.coerceIn(0f, 1f)
+            val start = origin
+            alpha = p
             transformOrigin = TransformOrigin(0f, 0f)
             translationX = start.left + (target.left - start.left) * p - rootPosition.x
             translationY = start.top + (target.top - start.top) * p - rootPosition.y
             scaleX = (start.width + (target.width - start.width) * p) / size.width.coerceAtLeast(1f)
             scaleY = (start.height + (target.height - start.height) * p) / size.height.coerceAtLeast(1f)
         }, contentAlignment = Alignment.Center) {
-            if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            else Ps4ChromeIcon("play", Modifier.size(48.dp))
+            artwork()
         }
         }
     }

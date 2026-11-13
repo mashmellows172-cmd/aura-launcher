@@ -85,11 +85,7 @@ internal fun Ps4QuickMenu(
                         .widthIn(max = 360.dp)
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .graphicsLayer {
-                            val progress = entrance.value
-                            alpha = progress
-                            translationX = -size.width * .16f * (1f - progress)
-                        }
+                        .ps4PanelTransform(entrance.asState(), motion.effect, lateral = true)
                         .semantics { paneTitle = "Menú rápido" },
                     shape = RectangleShape,
                     color = panel,

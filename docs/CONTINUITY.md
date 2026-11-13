@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta79 Local instalada el 13 de noviembre de 2026. 0.56.0-beta79, código 79. Transiciones PS4 configurables con vista previa para menú rápido, ficha de app, multimedia y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Revisión visual pendiente. [Ficha](BETA79.md).
+
 Beta78 Local instalada el 13 de noviembre de 2026. 0.55.0-beta78, código 78. PS4 con placas azules, dos ondas reactivas, cabecera compacta y cápsula A–Z. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Revisión visual pendiente. [Ficha](BETA78.md).
 
 Beta77 Local instalada el 13 de noviembre de 2026. 0.54.1-beta77, código 77. Marco PS4 alineado con la baldosa durante el scroll en Inicio y búsqueda. Compilación y lint correctos, 0 errores. Firma, versión y hash instalado verificados. Prueba visual de scroll rápido pendiente. [Ficha](BETA77.md).

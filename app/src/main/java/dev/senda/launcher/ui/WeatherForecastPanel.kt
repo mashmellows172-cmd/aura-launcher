@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
@@ -101,22 +100,9 @@ internal fun WeatherForecastPanel(
                     .safeDrawingPadding()
                     .onGloballyPositioned { coordinates -> destination = Rect(coordinates.positionOnScreen(), Size(
                         coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) }
-                    .graphicsLayer {
-                        if (!still) {
-                            val p = motion.progress.value
-                            alpha = p
-                            val target = destination
-                            val source = origin
-                            val start = if (source != null && target != null && target.width > 0f)
-                                (source.width / target.width).coerceIn(.2f, .8f) else .94f
-                            scaleX = start + (1f - start) * p
-                            scaleY = scaleX
-                            if (source != null && target != null) {
-                                translationX = (source.center.x - target.center.x) * (1f - p)
-                                translationY = (source.center.y - target.center.y) * (1f - p)
-                            }
-                        }
-                    }.semantics { paneTitle = "Clima y pronóstico" },
+                    .ps4PanelTransform(motion.progress.asState(), motion.effect,
+                        origin = { origin }, destination = { destination })
+                    .semantics { paneTitle = "Clima y pronóstico" },
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surface,
             ) {
