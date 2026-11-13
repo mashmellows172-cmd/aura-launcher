@@ -378,9 +378,9 @@ fun HomeScreen(
         it.component.flattenToString() == state.lastLaunchedComponent
     } else null
     val mediaAvailable = state.headerSettings.showAudioWidget && state.audioInfo.isPlaying
-    val mediaInList = mediaAvailable && !state.headerSettings.audioInMenuOnly
     val hasPs4Session = state.theme == LauncherTheme.PS4 && state.audioInfo.sessionId != null && !state.audioInfo.generic
     val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && hasPs4Session)
+    val mediaInList = mediaControlsAvailable && !state.headerSettings.audioInMenuOnly
     LaunchedEffect(mediaControlsAvailable) {
         if (!mediaControlsAvailable) showMediaControls = false
     }
@@ -457,6 +457,7 @@ fun HomeScreen(
             reduceMotion = state.visualSettings.reduceMotion,
             weatherMotion = state.headerSettings.weatherMotion,
             clockMotion = state.headerSettings.ps4ClockMotion,
+            headerDialogueEnabled = state.visualSettings.headerDialogueEnabled,
             confirmation = themeSaved,
             onAvatar = { showAvatar = true },
             onWeatherConnection = { showWeatherConnection = true },
@@ -487,7 +488,7 @@ fun HomeScreen(
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
-            onOpenMediaControls = if (mediaAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
+            onOpenMediaControls = if (mediaControlsAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
             quickMedia = { closeMenu ->
                 if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
                     audioInfo = state.audioInfo, theme = state.theme,
@@ -582,6 +583,7 @@ fun HomeScreen(
                                     showMediaControls = true
                                 },
                                 onPause = { viewModel.pauseAudio(state.audioInfo.sessionId) },
+                                onResume = { viewModel.resumeAudio(state.audioInfo.sessionId) },
                             )
                         }) else null,
                         favoriteApps = favoriteApps,
@@ -816,6 +818,7 @@ internal fun Header(
     clockSize: Int = 48,
     headerHeight: Int = 120,
     onWeatherPanel: ((androidx.compose.ui.geometry.Rect?) -> Unit)? = null,
+    headerDialogueEnabled: Boolean = true,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -850,6 +853,17 @@ internal fun Header(
             ?: weatherCondition
         val scenePhase = rememberPs4WeatherPhase("${sceneCondition.name}:${weatherCondition.name}:${reading?.place}:${reading?.temperature}",
             weatherMotion, motionReduced, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
+        // Only scene boundaries recompose the header; animation frames stay in drawing.
+        val weatherSceneActive by remember(scenePhase) { derivedStateOf { scenePhase.value < 1f } }
+        val headerDialogueActive = headerDialogueEnabled && !compactHeader
+        val clockReduced = motionReduced || (headerDialogueActive && weatherSceneActive)
+        val clockToWeather = dev.senda.launcher.ui.theme.rememberClockChange(
+            clockTime, theme, clockReduced || !headerDialogueActive ||
+                weatherMotion.mode == dev.senda.launcher.data.WeatherMotionMode.OFF,
+            durationMs = 620,
+            ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO,
+            easing = androidx.compose.animation.core.LinearEasing,
+        )
         Column(Modifier.fillMaxWidth().then(signal)
             .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -874,7 +888,7 @@ internal fun Header(
                     } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, motionReduced, clockMotion, onOpenAlarms)
+                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
                     modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir menú rápido" }) {
                     Ps4ChromeIcon("settings", Modifier.size(24.dp))
@@ -882,7 +896,11 @@ internal fun Header(
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
             Box(Modifier.fillMaxWidth()) {
-            Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
+            if (headerDialogueActive) {
+                Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
+                Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),
+                    fromRight = false, showWeatherScene = false, suppressedBy = scenePhase)
+            }
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
@@ -896,7 +914,7 @@ internal fun Header(
                     }.coerceAtLeast(18f)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (!compactHeader) {
-                            Ps4HeaderClock(clockTime, fittedClock.sp, motionReduced, clockMotion, onOpenAlarms)
+                            Ps4HeaderClock(clockTime, fittedClock.sp, clockReduced, clockMotion, onOpenAlarms)
                             Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
                                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
                         }

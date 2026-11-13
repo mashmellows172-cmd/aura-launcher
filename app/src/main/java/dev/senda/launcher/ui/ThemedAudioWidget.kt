@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -46,6 +47,26 @@ import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.*
 import kotlin.math.sin
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import androidx.core.graphics.drawable.toBitmap
+
+@Composable
+internal fun MediaCoverFallback(info: ActiveAudioInfo, theme: LauncherTheme, modifier: Modifier = Modifier) {
+    val manager = LocalContext.current.packageManager
+    val icon by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, manager, info.packageName) {
+        value = info.packageName?.let { name ->
+            withContext(Dispatchers.IO) {
+                runCatching { manager.getApplicationIcon(name).toBitmap(96, 96).asImageBitmap() }.getOrNull()
+            }
+        }
+    }
+    Box(modifier, contentAlignment = Alignment.Center) {
+        val image = icon
+        if (image != null) Image(image, null, Modifier.fillMaxSize().padding(3.dp), contentScale = ContentScale.Fit)
+        else ThemeSystemIcon("play", theme)
+    }
+}
 
 @Composable
 internal fun CompactAudioWidget(
@@ -53,6 +74,7 @@ internal fun CompactAudioWidget(
     theme: LauncherTheme,
     onOpenControls: ((Rect?) -> Unit)? = null,
     onPause: (() -> Unit)? = null,
+    onResume: (() -> Unit)? = null,
 ) {
     var coverCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     val detailsModifier = if (onOpenControls == null) Modifier else Modifier.clickable(
@@ -71,8 +93,11 @@ internal fun CompactAudioWidget(
             Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val colors = MaterialTheme.colorScheme
             val artwork = audioInfo.artwork?.takeUnless { it.isRecycled }
+            val visual = LocalMotionSettings.current
+            val animateCover = theme == LauncherTheme.PS4 && visual.mediaDetailsMotionEnabled &&
+                !visual.reduceMotion && !LocalSystemPowerSaving.current && !LocalThemePreview.current &&
+                !dev.senda.launcher.data.LocalAppearance.current.highContrast && android.animation.ValueAnimator.areAnimatorsEnabled()
             Row(
                 Modifier.weight(1f).heightIn(min = 48.dp).then(detailsModifier).padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -86,10 +111,10 @@ internal fun CompactAudioWidget(
                     Modifier.onGloballyPositioned { coverCoordinates = it }
                 } else Modifier
                 Box(Modifier.size(32.dp).then(positionModifier).clip(coverShape), contentAlignment = Alignment.Center) {
-                    if (artwork != null) {
-                        Image(artwork.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    } else {
-                        ThemedAudioVisualizer(theme, colors.primary, reduceMotion = true, modifier = Modifier.fillMaxSize())
+                    Crossfade(artwork, animationSpec = tween(if (animateCover) 280 else 0), label = "compact-cover") { cover ->
+                        if (cover != null && !cover.isRecycled) {
+                            Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                        } else MediaCoverFallback(audioInfo, theme, Modifier.fillMaxSize())
                     }
                 }
                 Text(
@@ -101,11 +126,15 @@ internal fun CompactAudioWidget(
                 )
                 if (onOpenControls != null) ThemeSystemIcon("more", theme)
             }
-            if (onPause != null && audioInfo.canPause) {
+            val playbackAction = if (audioInfo.isPlaying) onPause?.takeIf { audioInfo.canPause }
+                else onResume?.takeIf { audioInfo.canPlay }
+            if (playbackAction != null) {
                 IconButton(
-                    onClick = onPause,
-                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Pausar reproducción" },
-                ) { ThemeSystemIcon("pause", theme) }
+                    onClick = playbackAction,
+                    modifier = Modifier.size(48.dp).semantics {
+                        contentDescription = if (audioInfo.isPlaying) "Pausar reproducción" else "Reanudar reproducción"
+                    },
+                ) { ThemeSystemIcon(if (audioInfo.isPlaying) "pause" else "play", theme) }
             }
         }
     }

@@ -43,6 +43,13 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                     onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.menuEffect != "NONE",
                     modifier = Modifier.semantics { contentDescription = "Duración de los paneles PS4" })
                 Ps4PanelPreview(draft)
+                MotionToggle("Pulso entre reloj y clima", draft.headerDialogueEnabled) {
+                    commit(draft.copy(headerDialogueEnabled = it))
+                }
+                MotionToggle("Animar el reproductor", draft.mediaDetailsMotionEnabled) {
+                    commit(draft.copy(mediaDetailsMotionEnabled = it))
+                }
+                Ps4MediaSample(reduced = draft.reduceMotion || !draft.mediaDetailsMotionEnabled)
                 HorizontalDivider()
                 EffectChoice("Fondo PS4", draft.wallpaperMode, listOf("STATIC" to "Estático", "REACTIVE" to "Reactivo")) {
                     commit(draft.copy(wallpaperMode = it))

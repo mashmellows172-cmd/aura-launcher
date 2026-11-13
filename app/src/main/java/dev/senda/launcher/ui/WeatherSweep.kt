@@ -45,6 +45,7 @@ internal fun rememberPs4WeatherPhase(event: String, settings: WeatherMotionSetti
 @Composable
 internal fun Ps4WeatherRibbon(condition: WeatherCondition, settings: WeatherMotionSettings, phase: State<Float>,
     modifier: Modifier = Modifier, fromRight: Boolean = true,
+    showWeatherScene: Boolean = true, suppressedBy: State<Float>? = null,
 ) {
     if (settings.mode == WeatherMotionMode.OFF || LocalSystemPowerSaving.current ||
         LocalAppearance.current.highContrast || LocalThemePreview.current) return
@@ -58,7 +59,7 @@ internal fun Ps4WeatherRibbon(condition: WeatherCondition, settings: WeatherMoti
         val glow = Brush.horizontalGradient(listOf(Color.Transparent, Color(0xFF90DFFF), Color.Transparent))
         onDrawBehind {
             val p = phase.value
-            if (p <= 0f || p >= 1f) return@onDrawBehind
+            if (p <= 0f || p >= 1f || (suppressedBy?.value ?: 1f) < 1f) return@onDrawBehind
             val width = size.width
             val height = size.height
             val intro = (p / .18f).coerceIn(0f, 1f)
@@ -73,7 +74,7 @@ internal fun Ps4WeatherRibbon(condition: WeatherCondition, settings: WeatherMoti
             clipRect(max(0f, head - width * .42f), 0f, min(width, head + width * .42f), height) {
                 if (!constrained.value) drawPath(ribbon, glow, alpha = strength * .32f, style = Stroke(5.dp.toPx()))
                 drawPath(ribbon, glow, alpha = strength * .84f, style = Stroke(1.dp.toPx()))
-                if (!constrained.value) drawWeatherScene(p, condition.atmosphericScene(), WeatherTreatment.CONSOLE_WAVE,
+                if (showWeatherScene && !constrained.value) drawWeatherScene(p, condition.atmosphericScene(), WeatherTreatment.CONSOLE_WAVE,
                     accent, strength * .57f, cloudPixels, paths)
             }
         }

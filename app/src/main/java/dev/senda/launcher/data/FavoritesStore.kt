@@ -38,6 +38,8 @@ data class VisualSettings(
     val railDurationMs: Int = 220,
     val railBubbleSize: Int = 56,
     val railBubbleHoldMs: Int = 420,
+    val headerDialogueEnabled: Boolean = true,
+    val mediaDetailsMotionEnabled: Boolean = true,
 )
 
 /** Stores the user's favorites and appearance choice locally. */
@@ -265,6 +267,8 @@ class FavoritesStore(private val context: Context) {
             railDurationMs = (prefs[railDurationKey] ?: 220).coerceIn(80, 600),
             railBubbleSize = (prefs[railBubbleSizeKey] ?: 56).coerceIn(40, 84),
             railBubbleHoldMs = (prefs[railBubbleHoldKey] ?: 420).coerceIn(0, 1000),
+            headerDialogueEnabled = prefs[booleanPreferencesKey("ps4_header_dialogue")] ?: true,
+            mediaDetailsMotionEnabled = prefs[booleanPreferencesKey("ps4_media_details_motion")] ?: true,
         ) }
 
     suspend fun setVisualSettings(settings: VisualSettings) {
@@ -284,6 +288,8 @@ class FavoritesStore(private val context: Context) {
             prefs[railDurationKey] = settings.railDurationMs.coerceIn(80, 600)
             prefs[railBubbleSizeKey] = settings.railBubbleSize.coerceIn(40, 84)
             prefs[railBubbleHoldKey] = settings.railBubbleHoldMs.coerceIn(0, 1000)
+            prefs[booleanPreferencesKey("ps4_header_dialogue")] = settings.headerDialogueEnabled
+            prefs[booleanPreferencesKey("ps4_media_details_motion")] = settings.mediaDetailsMotionEnabled
         }
     }
 
