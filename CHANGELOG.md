@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta84 Local compilada el 13 de noviembre de 2026. 0.60.0-beta84, código 84. Centro rápido PS4 con acceso inferior y tarjetas de música, alarma y agenda. Compilación y lint correctos. Instalación pendiente por desconexión de ADB. [Ficha](docs/BETA84.md).
+
 Beta83 Local instalada el 13 de noviembre de 2026. 0.59.1-beta83, código 83. El buscador conserva el cursor y la composición del teclado en un estado local. Compilación y lint correctos. Firma, versión y hash instalado verificados. Prueba con teclado real pendiente. [Ficha](docs/BETA83.md).
 
 Beta82 Local compilada el 13 de noviembre de 2026. 0.59.0-beta82, código 82. Reloj y clima coordinados, buscador con apertura de luz y reproductor con carátula, minimización táctil y progreso confirmado. Compilación y lint correctos. Instalada por ADB inalámbrico el 13 de noviembre de 2026, con firma, versión y hash verificados. [Ficha](docs/BETA82.md).

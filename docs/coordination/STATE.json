@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta83 Local 0.59.1/code83 installed. Search preserves IME composition and cursor in local editor state. Build/lint passed. Signature, version and hash verified. Keyboard review pending. See docs/BETA83.md.",
+  "latestCheckpoint": "Beta84 Local 0.60.0/code84 built and linted. PS4 quick center with real media, alarm and event cards. ADB disconnected. Install and visual review pending. See docs/BETA84.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

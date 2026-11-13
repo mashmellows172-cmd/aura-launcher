@@ -104,7 +104,7 @@ fun openNextAlarm(context: Context) {
     runCatching { context.startActivity(Intent(AlarmClock.ACTION_SHOW_ALARMS)) }
 }
 
-private fun openAgenda(context: Context, event: AgendaEvent?) {
+internal fun openAgenda(context: Context, event: AgendaEvent?) {
     val intent = if (event == null) Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_CALENDAR)
         else Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id))
             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.begin).putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.end)

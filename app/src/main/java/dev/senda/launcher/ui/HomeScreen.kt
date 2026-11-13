@@ -247,6 +247,7 @@ fun HomeScreen(
     var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
     var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
+    var showQuickCenter by rememberSaveable { mutableStateOf(false) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
     var showWeatherConnection by rememberSaveable { mutableStateOf(false) }
@@ -324,6 +325,7 @@ fun HomeScreen(
             showWeatherPicker = false
             showWidgetPicker = false
             showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
+            showQuickCenter = false
             showMediaControls = false
             showAvatar = false; showWeatherConnection = false; showDashboard = false; showForecast = false
             showNotificationHelp = false
@@ -623,10 +625,35 @@ fun HomeScreen(
             }
         }
         }
+        if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
+            QuickCenterButton {
+                soundFeedback.play(SoundEvent.MENU)
+                showQuickCenter = true
+            }
+        }
         }
     }
 
     } // Motion controller provider
+
+    if (showQuickCenter && state.theme == LauncherTheme.PS4) {
+        val audio = state.audioInfo
+        QuickCenter(
+            audio = audio.takeIf { mediaControlsAvailable },
+            alarmAt = state.headerInfo.alarmAt.takeIf { state.headerSettings.showAlarm },
+            event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
+            reduced = sonyMotionReduced,
+            onDismiss = { showQuickCenter = false },
+            onMedia = { origin -> showQuickCenter = false; mediaArtworkOrigin = origin; showMediaControls = true },
+            onPlayback = {
+                if (audio.isPlaying) viewModel.pauseAudio(audio.sessionId)
+                else viewModel.resumeAudio(audio.sessionId)
+            },
+            onNext = { viewModel.nextAudio(audio.sessionId) },
+            onAlarm = { showQuickCenter = false; openNextAlarm(context) },
+            onEvent = { showQuickCenter = false; openAgenda(context, it) },
+        )
+    }
 
     if (showIconSource) AuraAlertDialog(onDismissRequest = { showIconSource = false; iconTargetPackage = null },
         title = { Text("Elegir icono") }, text = {
