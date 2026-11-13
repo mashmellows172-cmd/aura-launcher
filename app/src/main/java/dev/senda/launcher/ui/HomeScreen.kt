@@ -927,7 +927,7 @@ internal fun Header(
                 }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
-            Box(Modifier.fillMaxWidth()) {
+            Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
             if (headerDialogueActive) {
                 Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
                 Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),

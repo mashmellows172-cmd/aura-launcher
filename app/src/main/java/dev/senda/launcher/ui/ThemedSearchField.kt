@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -42,7 +43,9 @@ internal fun ThemedSearchField(
 ) {
     val profile = LocalHistoricalProfile.current
     val halo = profile?.readableAccent(LocalSkinStyle.current.accent) ?: MaterialTheme.colorScheme.primary
-    val radius = (profile?.radius ?: 18).dp
+    val ps4Glass = theme == LauncherTheme.PS4 && !dev.senda.launcher.data.LocalAppearance.current.highContrast
+    val radius = (if (ps4Glass) 12 else profile?.radius ?: 18).dp
+    val shape = if (ps4Glass) RoundedCornerShape(radius) else profile.chromeShape()
     val fieldHeight = heightDp.coerceIn(56, 88)
     val fieldStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = (16 + (fieldHeight - 56) / 8).sp)
     val settings = LocalMotionSettings.current
@@ -53,7 +56,7 @@ internal fun ThemedSearchField(
         android.animation.ValueAnimator.areAnimatorsEnabled()
     val lens = animateFloatAsState(if (animateLens && focused.value) 1f else 0f,
         tween(if (animateLens) 270 else 0, easing = Ps4Motion.easing), label = "search-field-lens")
-    HistoricalPanel(theme, Modifier.fillMaxWidth().drawWithCache {
+    val panel = Modifier.fillMaxWidth().drawWithCache {
         val rings = (3 downTo 1).map { ring ->
             val inset = ring * 2.8.dp.toPx()
             Triple(Offset(-inset, -inset), Size(size.width + inset * 2, size.height + inset * 2), Stroke((8 - ring).dp.toPx()))
@@ -65,7 +68,8 @@ internal fun ThemedSearchField(
                 drawRoundRect(halo.copy(alpha = alpha * .09f / (3 - index)), origin, bounds, corner, style = stroke)
             }
         }
-    }) {
+    }
+    val field: @Composable () -> Unit = {
         OutlinedTextField(
             value = query, onValueChange = onQuery,
             modifier = Modifier.fillMaxWidth().heightIn(min = fieldHeight.dp).focusRequester(focus)
@@ -95,7 +99,7 @@ internal fun ThemedSearchField(
             trailingIcon = if (query.text.isNotEmpty()) ({
                 IconButton(onClick = onClear, modifier = Modifier.semantics { contentDescription = "Borrar búsqueda" }) { ThemeSystemIcon("close", theme) }
             }) else null,
-            singleLine = true, readOnly = readOnly, shape = profile.chromeShape(),
+            singleLine = true, readOnly = readOnly, shape = shape,
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent, focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -104,4 +108,7 @@ internal fun ThemedSearchField(
             keyboardActions = KeyboardActions(onSearch = { onSearch() }),
         )
     }
+    if (ps4Glass) androidx.compose.foundation.layout.Box(panel.ps4ControlGlass(shape, translucent = true)) {
+        field()
+    } else HistoricalPanel(theme, panel) { field() }
 }

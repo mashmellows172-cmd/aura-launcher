@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -37,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import dev.senda.launcher.data.ActiveAudioInfo
 import dev.senda.launcher.data.AgendaEvent
 import dev.senda.launcher.data.LauncherTheme
+import dev.senda.launcher.data.LocalAppearance
 import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.LocalDate
@@ -49,16 +51,28 @@ private val quickMuted = Color(0xFFCDDEF5)
 private val quickBlue = Color(0xFF65CEFF)
 private val quickEdge = Color(0xFF456EAD)
 
+/** A lighter version of the sheet material lets the wallpaper show through on Inicio. */
+@Composable
+internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false): Modifier {
+    if (LocalAppearance.current.highContrast) return this
+    val opacity = if (translucent) .66f else 1f
+    return background(Brush.verticalGradient(listOf(
+        Color(0xFF1C3359).copy(alpha = opacity), Color(0xFF101E39).copy(alpha = opacity),
+    )), shape).border(1.dp, quickEdge.copy(alpha = if (translucent) .65f else 1f), shape)
+}
+
 @Composable
 internal fun QuickCenterButton(onClick: () -> Unit) {
+    val contrast = LocalAppearance.current.highContrast
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 8.dp)
-            .heightIn(min = 48.dp),
+            .heightIn(min = 48.dp).ps4ControlGlass(CircleShape),
         shape = CircleShape,
-        border = BorderStroke(1.5.dp, quickBlue),
+        border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else quickBlue),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color(0xFF0B1935), contentColor = quickInk,
+            containerColor = Color.Transparent,
+            contentColor = if (contrast) MaterialTheme.colorScheme.onBackground else quickInk,
         ),
     ) {
         ThemeSystemIcon("layers", LauncherTheme.PS4)
@@ -111,7 +125,7 @@ internal fun QuickCenter(
             ) {
                 Column(Modifier.background(Brush.verticalGradient(listOf(Color(0xFF142447), Color(0xFF081328))))
                     .border(BorderStroke(1.dp, quickEdge), shape)
-                    .navigationBarsPadding().verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
                     .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Spacer(Modifier.align(Alignment.CenterHorizontally).width(44.dp).height(4.dp)
@@ -124,6 +138,8 @@ internal fun QuickCenter(
                             ThemeSystemIcon("close", LauncherTheme.PS4)
                         }
                     }
+                    Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (audio != null) QuickMediaCard(audio, onMedia, onPlayback, onNext)
                     if (alarmAt != null) {
                         val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
@@ -144,6 +160,7 @@ internal fun QuickCenter(
                         Text("No hay música, alarmas ni eventos para mostrar.", color = quickMuted,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp))
                     }
+                    }
                 }
             }
         }
@@ -153,9 +170,7 @@ internal fun QuickCenter(
 @Composable
 private fun QuickCard(content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(16.dp)
-    Box(Modifier.fillMaxWidth().clip(shape)
-        .background(Brush.horizontalGradient(listOf(Color(0xFF172C51), Color(0xFF10203D))))
-        .border(1.dp, quickEdge, shape).padding(12.dp)) {
+    Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).padding(12.dp)) {
         content()
     }
 }
