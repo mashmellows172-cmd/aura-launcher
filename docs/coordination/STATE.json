@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta85 Local 0.60.1/code85 built and linted. Refined PS4 quick center media card. ADB connection failed. Install and visual review pending. See docs/BETA85.md.",
+  "latestCheckpoint": "Beta85 Local 0.60.1/code85 built and linted. Refined PS4 quick center media card. Installed via wireless ADB. Signature, version and hash verified. Visual review pending. See docs/BETA85.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

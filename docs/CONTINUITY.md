@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Beta85 Local compilada el 13 de noviembre de 2026. 0.60.1-beta85, código 85. Tarjeta multimedia del Centro rápido con carátula adaptable, progreso celeste y controles circulares. Compilación y lint correctos. Instalación y revisión visual pendientes por conexión ADB. [Ficha](BETA85.md).
+Beta85 Local compilada el 13 de noviembre de 2026. 0.60.1-beta85, código 85. Tarjeta multimedia del Centro rápido con carátula adaptable, progreso celeste y controles circulares. Compilación y lint correctos. Instalada por ADB inalámbrico sobre beta83, con firma, versión y hash verificados. Revisión visual pendiente. [Ficha](BETA85.md).
 
 Beta84 Local compilada el 13 de noviembre de 2026. 0.60.0-beta84, código 84. Centro rápido PS4 con acceso inferior y tarjetas de música, alarma y agenda. Compilación y lint correctos. Instalación pendiente por desconexión de ADB. [Ficha](BETA84.md).
 
