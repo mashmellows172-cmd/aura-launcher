@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta75 Local instalada, 12 de noviembre de 2026. 0.53.0-beta75, código 75. Marco PS4 móvil durante scroll con destello al asentarse; ficha desde el icono por pulsación larga con acciones de favoritas e iconos. Un toque conserva la apertura. Compilación/lint correctos (3m31s; 0 errores, 40 advertencias y 3 avisos). Install -r con firma y hash verificados; original beta72 intacta. Validación visual pendiente. [Ficha](docs/BETA75.md).
+
 Beta74 Local, 0.52.0-beta74/código 74. Edición instalable en paralelo con beta72 mediante paquete propio. Compilación y lint correctos, 0 errores. Instalada por ADB inalámbrico tras reconectar. Código y hash verificados. Beta72 conserva el rol Inicio. Respaldo actual pendiente. [Ficha](docs/BETA74.md).
 
 Beta74 candidata, 12 de noviembre de 2026. 0.52.0-beta74, código 74. Unifica el mini reproductor y «Multimedia solo en el menú» con la ficha PS4, progreso y calidad adaptativa de beta73. Compilación y lint correctos, 0 errores, 38 advertencias y 3 avisos. No instalada por firma local distinta de la del Motorola. [Ficha y registro](docs/BETA74.md).

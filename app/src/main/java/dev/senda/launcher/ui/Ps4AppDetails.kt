@@ -113,6 +113,10 @@ internal fun Ps4AppDetails(
     onLaunch: () -> Unit,
     onDismiss: () -> Unit,
     origin: Rect? = null,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
+    onChooseIcon: () -> Unit,
+    onMoreOptions: () -> Unit,
 ) {
     val context = LocalContext.current
     val locales = LocalConfiguration.current.locales.toLanguageTags()
@@ -253,6 +257,17 @@ internal fun Ps4AppDetails(
                         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             heading()
                             content(Modifier.weight(1f, fill = false))
+                            Column(Modifier.fillMaxWidth()) {
+                                TextButton(onClick = onToggleFavorite, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                    Text(if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas")
+                                }
+                                TextButton(onClick = { motion.close(reduced, onChooseIcon) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                    Text("Cambiar icono")
+                                }
+                                TextButton(onClick = { motion.close(reduced, onMoreOptions) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                    Text("Más opciones")
+                                }
+                            }
                             Column(Modifier.align(Alignment.End), horizontalAlignment = Alignment.End) {
                                 Button(onClick = { if (!motion.closing) onLaunch() }, shape = RoundedCornerShape(2.dp),
                                     modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }

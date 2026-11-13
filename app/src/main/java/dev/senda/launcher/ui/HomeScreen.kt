@@ -1285,7 +1285,18 @@ private fun AppRow(
     val category = if (console) rememberPs4AppCategory(app, centered, listState?.isScrollInProgress == true) else ""
     var plateCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var plateBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    val openDetails = {
+        plateBounds = plateCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
+            val position = coordinates.positionOnScreen()
+            if (position.x.isFinite() && position.y.isFinite()) androidx.compose.ui.geometry.Rect(position,
+                androidx.compose.ui.geometry.Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
+        }
+        detailsShown = true
+    }
     if (detailsShown) Ps4AppDetails(app, customIconUri, onLoadIcon, origin = plateBounds,
+        isFavorite = isFavorite, onToggleFavorite = onToggleFavorite,
+        onChooseIcon = { detailsShown = false; onChooseIcon() },
+        onMoreOptions = { detailsShown = false; actionsExpanded = true },
         onLaunch = { detailsShown = false; onLaunch() }, onDismiss = { detailsShown = false })
     val still = visualSettings.reduceMotion || appearance.highContrast || LocalThemePreview.current ||
         LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
@@ -1336,7 +1347,10 @@ private fun AppRow(
                     ) { onToggleFavorite(); true })
                 }
                 .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
-                    onClick = onLaunch, onLongClickLabel = "Opciones de ${app.label}", onLongClick = { actionsExpanded = true })
+                    onClick = onLaunch, onLongClickLabel = "Opciones de ${app.label}", onLongClick = {
+                        if (skinName == LauncherTheme.PS4.name) { feedback.play(SoundEvent.MENU); openDetails() }
+                        else actionsExpanded = true
+                    })
                 .padding(start = if(console)8.dp else 4.dp, top=if(console)8.dp else 0.dp, bottom=if(console)8.dp else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -1363,15 +1377,8 @@ private fun AppRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (skinName == LauncherTheme.PS4.name) IconButton(onClick = {
-                plateBounds = plateCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
-                    val position = coordinates.positionOnScreen()
-                    if (position.x.isFinite() && position.y.isFinite()) {
-                        androidx.compose.ui.geometry.Rect(position,
-                            androidx.compose.ui.geometry.Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
-                    } else null
-                }
                 feedback.play(SoundEvent.MENU)
-                detailsShown = true
+                openDetails()
             }, modifier = Modifier.size(48.dp).semantics { contentDescription = "Detalles y accesos de ${app.label}" }) {
                 Ps4ChromeIcon("more", Modifier.size(20.dp))
             }

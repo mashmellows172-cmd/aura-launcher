@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta74 candidate 0.52.0/code74. Beta73 plus local beta59 compact media and menu-only setting. Build/lint 3m46s, 0 errors/38 warnings/3 hints. Local certificate differs from installed beta72. See docs/BETA74.md for operations and failures.",
+  "latestCheckpoint": "Beta75 Local 0.53.0/code75 installed. PS4 moving focus and long-press app details actions. Build/lint 3m31s, 0 errors/40 warnings/3 hints. Signature/version/installed hash verified. Original beta72 preserved. Visual validation pending. See docs/BETA75.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

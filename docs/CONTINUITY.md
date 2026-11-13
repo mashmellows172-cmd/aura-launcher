@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta75 Local instalada, 12 de noviembre de 2026. 0.53.0-beta75, código 75. Marco PS4 móvil durante scroll con destello al asentarse; ficha desde el icono por pulsación larga con acciones de favoritas e iconos. Un toque conserva la apertura. Compilación/lint correctos (3m31s; 0 errores, 40 advertencias y 3 avisos). Install -r con firma y hash verificados; original beta72 intacta. Validación visual pendiente. [Ficha](BETA75.md).
+
 Beta74 Local instalada por ADB inalámbrico con paquete dev.senda.launcher.local. Código 74 y hash verificados. Beta72 sigue como Inicio predeterminado. La importación del respaldo actual queda pendiente. [Ficha y diagnóstico](BETA74.md).
 
 Beta74 candidata, 12 de noviembre de 2026. 0.52.0-beta74, código 74. Unifica el mini reproductor y «Multimedia solo en el menú» con la ficha PS4, progreso y calidad adaptativa de beta73. Compilación y lint correctos, 0 errores, 38 advertencias y 3 avisos. No instalada por firma local distinta de la del Motorola. [Ficha y registro](BETA74.md).
