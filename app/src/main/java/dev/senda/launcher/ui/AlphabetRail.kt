@@ -47,6 +47,7 @@ private object RailTokens {
 fun AlphabetRail(
     letters: List<String>, theme: LauncherTheme = LauncherTheme.NOTHING, modifier: Modifier = Modifier,
     selectedLetter: String?, visualSettings: VisualSettings, onClick: (String) -> Unit, onScrub: (String) -> Unit,
+    onRelease: ((String) -> Unit)? = null,
 ) {
     if (letters.isEmpty()) return
     val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
@@ -87,6 +88,7 @@ fun AlphabetRail(
         held=true;releaseToken++
     }
     val currentSelect by rememberUpdatedState(select)
+    val currentRelease by rememberUpdatedState(onRelease)
     BoxWithConstraints(modifier.padding(vertical=4.dp)) {
         val columns=(maxWidth/RailTokens.column).toInt().coerceAtLeast(1)
         val rows=((letters.size+columns-1)/columns).coerceAtLeast(1)
@@ -114,7 +116,14 @@ fun AlphabetRail(
             }
             detectDragGestures(onDragStart={dragging=true;previous=-1;move(it)},
                 onDrag={change,_->change.consume();move(change.position)},
-                onDragEnd={dragging=false;releaseToken++},onDragCancel={dragging=false;releaseToken++})
+                onDragEnd={
+                    dragging=false;releaseToken++
+                    val release = currentRelease
+                    if (release != null && previous in letters.indices) {
+                        held = false
+                        release(letters[previous])
+                    }
+                },onDragCancel={dragging=false;releaseToken++})
         }){
             repeat(columns){column->
                 Column(Modifier.weight(1f).fillMaxHeight()){

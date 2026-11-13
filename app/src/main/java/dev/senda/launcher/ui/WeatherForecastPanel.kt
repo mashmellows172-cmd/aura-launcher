@@ -2,6 +2,7 @@ package dev.senda.launcher.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,6 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -91,6 +95,41 @@ internal fun WeatherForecastPanel(
         ?: reading?.place?.ifBlank { "Clima" } ?: "Clima"
     val heroPhase = rememberPs4WeatherPhase("$heroTitle:$heroCondition:$heroTemperature", settings, still,
         ready = reading != null || selectedHour != null)
+    val hours = report?.hours.orEmpty()
+    val stepHour by rememberUpdatedState<(Int) -> Boolean> { direction ->
+        val index = hours.indexOf(selectedHour)
+        if (direction < 0 && index == 0) {
+            selectedHour = null
+            true
+        } else {
+            val next = hours.getOrNull(index + direction)
+            if (next != null) selectedHour = next
+            next != null
+        }
+    }
+    val hourScrub = if (hours.isEmpty()) Modifier else Modifier
+        .pointerInput(hours) {
+            val threshold = 32.dp.toPx()
+            var distance = 0f
+            detectHorizontalDragGestures(
+                onDragStart = { distance = 0f },
+                onHorizontalDrag = { change, delta ->
+                    change.consume()
+                    distance += delta
+                    while (kotlin.math.abs(distance) >= threshold) {
+                        val direction = if (distance < 0f) 1 else -1
+                        distance += direction * threshold
+                        if (!stepHour(direction)) { distance = 0f; break }
+                    }
+                },
+            )
+        }
+        .semantics {
+            customActions = listOf(
+                CustomAccessibilityAction("Hora anterior") { stepHour(-1) },
+                CustomAccessibilityAction("Hora siguiente") { stepHour(1) },
+            )
+        }
 
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(Modifier.fillMaxSize()) {
@@ -114,7 +153,7 @@ internal fun WeatherForecastPanel(
                         Text("Clima", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                         TextButton(onClick = close) { Text("Cerrar") }
                     }
-                    Box(Modifier.fillMaxWidth().ps4Material()) {
+                    Box(Modifier.fillMaxWidth().then(hourScrub).ps4Material()) {
                     Ps4WeatherRibbon(heroCondition, settings, heroPhase, Modifier.matchParentSize(), fromRight = false)
                     Row(Modifier.fillMaxWidth().heightIn(min = 132.dp).padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -123,7 +162,8 @@ internal fun WeatherForecastPanel(
                             Text(heroTemperature, style = MaterialTheme.typography.headlineLarge,
                                 maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(heroTitle, style = MaterialTheme.typography.titleMedium)
-                            Text(if (selectedHour == null) "Lectura del widget" else "Pronóstico de Open-Meteo",
+                            Text(if (hours.isNotEmpty()) "Desliza para explorar por hora"
+                                else if (selectedHour == null) "Lectura del widget" else "Pronóstico de Open-Meteo",
                                 style = MaterialTheme.typography.labelSmall)
                         }
                     }

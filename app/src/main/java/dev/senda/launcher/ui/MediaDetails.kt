@@ -1,6 +1,8 @@
 package dev.senda.launcher.ui
 
 import android.os.SystemClock
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,9 +55,20 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
     val expandArt = motion.effect == "SPRING" && origin != null
     val art = info.artwork?.takeUnless { it.isRecycled }
     val artwork: @Composable () -> Unit = {
-        if (art != null) Image(art.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-        else Ps4ChromeIcon("play", Modifier.size(48.dp))
+        Crossfade(art, modifier = Modifier.fillMaxSize(),
+            animationSpec = tween(if (motion.effect == "NONE") 0 else 320), label = "media-artwork") { image ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (image != null && !image.isRecycled)
+                    Image(image.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                else Ps4ChromeIcon("play", Modifier.size(48.dp))
+            }
+        }
     }
+    val trackCue = dev.senda.launcher.ui.theme.rememberClockChange(
+        "${info.sessionId}:${info.title}:${info.artist}", dev.senda.launcher.data.LauncherTheme.PS4,
+        motion.effect == "NONE", durationMs = 380,
+    )
+    val accent = MaterialTheme.colorScheme.primary
     LaunchedEffect(info, lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             do { position = positionAt(info); if (info.isPlaying) delay(500) } while (info.isPlaying)
@@ -69,7 +82,8 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             .heightIn(max = (maxHeight - 48.dp).coerceAtLeast(120.dp))
             .ps4PanelTransform(motion.progress.asState(), if (motion.effect == "SPRING") "FADE" else motion.effect)
             .pointerInput(Unit) { detectTapGestures {} }, shape = MaterialTheme.shapes.large) {
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.fillMaxWidth().ps4HeaderSweep(trackCue, accent, .65f)
+            .verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(info.title ?: info.appLabel ?: "Reproducción", style = MaterialTheme.typography.titleLarge)
             Box(Modifier.size(120.dp).then(if (expandArt) Modifier.onGloballyPositioned {
                 val p = it.positionOnScreen()
@@ -77,6 +91,13 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             } else Modifier), contentAlignment = Alignment.Center) {
                 if (!expandArt) artwork()
             }
+            Column(Modifier.fillMaxWidth().graphicsLayer {
+                if (expandArt) {
+                    val p = motion.progress.value.coerceIn(0f, 1f)
+                    translationY = -18.dp.toPx() * (1f - p)
+                    alpha = ((p - .18f) / .82f).coerceIn(0f, 1f)
+                }
+            }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(info.artist ?: info.appLabel ?: "", style = MaterialTheme.typography.bodyMedium)
             val duration = info.durationMs
             val current = position
@@ -100,6 +121,7 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             }
             TextButton(onClick = { onOpen(info.sessionId) }) { Text("Abrir reproductor") }
             TextButton(onClick = close) { Text("Cerrar") }
+            }
         }
         }
         val target = artTarget

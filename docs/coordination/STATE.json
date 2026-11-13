@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta80 Local 0.57.0/code80 installed. Extended PS4 weather scene on home, forecast and preview. Build/lint passed. Signature, version and hash verified. Visual review pending. See docs/BETA80.md.",
+  "latestCheckpoint": "Beta81 Local 0.58.0/code81 built and linted. Five Vita/Xperia inspired transitions. ADB disconnected; install and visual review pending. See docs/BETA81.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

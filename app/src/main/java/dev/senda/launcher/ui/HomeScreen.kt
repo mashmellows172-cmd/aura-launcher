@@ -208,6 +208,14 @@ fun HomeScreen(
     val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
     val keyboard = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
     val listState = rememberLazyListState()
+    val searchListState = rememberLazyListState()
+    val sonyTheme = state.theme == LauncherTheme.PS4 || state.theme == LauncherTheme.XPERIA
+    val sonyMotionReduced = state.visualSettings.reduceMotion || state.appearance.highContrast ||
+        LocalSystemPowerSaving.current || !android.animation.ValueAnimator.areAnimatorsEnabled()
+    val themeReveal = dev.senda.launcher.ui.theme.rememberClockChange(
+        "${state.theme.name}:${state.themeFinishes[state.theme.name]}", state.theme,
+        sonyMotionReduced, durationMs = 520, ready = !state.isLoading)
+    var letterArrival by remember { mutableStateOf("" to 0) }
     val scope = rememberCoroutineScope()
     val motionController = rememberAuraMotion(listState, state.visualSettings)
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
@@ -271,6 +279,11 @@ fun HomeScreen(
     }
     val searchInteractions = remember { MutableInteractionSource() }
     val searchFocused by searchInteractions.collectIsFocusedAsState()
+    val lens = androidx.compose.animation.core.animateFloatAsState(
+        if (sonyTheme && !sonyMotionReduced && state.visualSettings.glowEnabled &&
+            (searchFocused || state.query.isNotBlank())) 1f else 0f,
+        tween(if (sonyMotionReduced) 0 else 300), label = "search-lens",
+    )
     val glowAlpha by androidx.compose.animation.core.animateFloatAsState(
         targetValue = if (searchFocused && state.visualSettings.glowEnabled) state.visualSettings.glowStrength / 100f else 0f,
         animationSpec = tween(if (state.visualSettings.reduceMotion) 100 else state.visualSettings.durationMs),
@@ -385,11 +398,19 @@ fun HomeScreen(
         alphabetJob?.cancel()
         alphabetJob = scope.launch {
             listState.animateScrollToItem(targetIndexFor(letter))
+            letterArrival = letter to (letterArrival.second + 1)
         }
     }
     val onScrubLetter: (String) -> Unit = { letter ->
         alphabetJob?.cancel()
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
+    }
+    val onReleaseLetter: (String) -> Unit = { letter ->
+        val jump = alphabetJob
+        scope.launch {
+            jump?.join()
+            if (alphabetJob === jump && state.query.isBlank()) letterArrival = letter to (letterArrival.second + 1)
+        }
     }
 
     val decorationQuality = rememberDecorationQuality()
@@ -421,6 +442,7 @@ fun HomeScreen(
             .fillMaxSize()
             .background(if (consoleBackground) Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color.Transparent, androidx.compose.ui.graphics.Color.Transparent)) else if (wallpaperBitmap == null || state.appearance.highContrast) skin.wallpaper else wallpaperReadabilityScrim(state.themeFinishes[state.theme.name]?.wallpaperDim ?: 64, MaterialTheme.colorScheme.onBackground))
             .then(if (wallpaperBitmap == null && !state.appearance.highContrast && !consoleBackground) Modifier.skinPattern(skin) else Modifier)
+            .then(Modifier.sonyThemeReveal(skin.accent, MaterialTheme.colorScheme.surface) { themeReveal.value })
             .imePadding()
             .padding(WindowInsets.statusBars.union(WindowInsets.navigationBars).asPaddingValues())
             .padding(horizontal = 22.dp),
@@ -503,6 +525,10 @@ fun HomeScreen(
         }
 
         Spacer(Modifier.height(8.dp))
+        Box(Modifier.fillMaxWidth().weight(1f).then(
+            if (sonyTheme && !sonyMotionReduced) Modifier.sonySearchLens(skin.accent) { lens.value }
+            else Modifier
+        )) {
         when {
             state.isLoading && state.apps.isEmpty() -> LoadingState()
             state.apps.isEmpty() -> EmptyState(
@@ -516,13 +542,16 @@ fun HomeScreen(
                 onRefresh = { if (state.query.isBlank()) showHiddenApps = true else viewModel.setQuery("") },
                 actionLabel = if (state.query.isBlank()) "Gestionar apps" else "Limpiar búsqueda",
             )
-            state.query.isNotBlank() -> SearchResults(
+            state.query.isNotBlank() -> {
+                val searchKey = rememberPs4FocusedKey(searchListState, state.theme == LauncherTheme.PS4, ps4InputFocus)
+                androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey) {
+                SearchResults(
                 apps = filteredApps,
                 favoritePackages = state.favoritePackages.toSet(),
                 skinName = state.theme.name,
                 skinTitle = state.theme.title,
                 skinIcons = state.skinIcons,
-                listState = listState,
+                listState = searchListState,
                 visualSettings = state.visualSettings,
                 onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
                 onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
@@ -530,10 +559,12 @@ fun HomeScreen(
                 onHide = viewModel::toggleHidden,
                 onChooseIcon = onChooseIcon,
                 onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
-            )
+                )
+                }
+            }
             else -> {
                 Row(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AppSections(
@@ -569,6 +600,7 @@ fun HomeScreen(
                         onHide = viewModel::toggleHidden,
                         onChooseIcon = onChooseIcon,
                         onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
+                        letterArrival = letterArrival,
                     )
                     AlphabetRail(
                         theme = state.theme,
@@ -578,9 +610,11 @@ fun HomeScreen(
                         visualSettings = state.visualSettings,
                         onClick = onSelectLetter,
                         onScrub = onScrubLetter,
+                        onRelease = if (sonyTheme && !sonyMotionReduced) onReleaseLetter else null,
                     )
                 }
             }
+        }
         }
         }
     }
@@ -1150,9 +1184,14 @@ internal fun AppSections(
     onLoadIcon: (LaunchableApp) -> Drawable,
     onChooseIcon: (LaunchableApp) -> Unit,
     onResetIcon: (LaunchableApp) -> Unit,
+    letterArrival: Pair<String, Int> = "" to 0,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val collator = remember(locale) { Collator.getInstance(locale) }
+    val theme = LauncherTheme.valueOf(skinName)
+    val arrival = dev.senda.launcher.ui.theme.rememberClockChange(letterArrival.second.toString(), theme,
+        visualSettings.reduceMotion || LocalAppearance.current.highContrast || LocalSystemPowerSaving.current ||
+            (theme != LauncherTheme.PS4 && theme != LauncherTheme.XPERIA), durationMs = 400)
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("aura-app-list")
             .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name, visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled())
@@ -1188,7 +1227,9 @@ internal fun AppSections(
             item(key = "section-$letter", contentType = "letter") {
                 Text(
                     letter,
-                    modifier = Modifier.padding(start = 4.dp, top = 12.dp, bottom = 2.dp),
+                    modifier = Modifier.fillMaxWidth().then(if (letterArrival.first == letter)
+                        Modifier.ps4HeaderSweep(arrival, MaterialTheme.colorScheme.primary, .85f)
+                    else Modifier).padding(start = 4.dp, top = 12.dp, bottom = 2.dp),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
