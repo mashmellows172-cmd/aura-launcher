@@ -248,6 +248,7 @@ fun HomeScreen(
     var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showQuickCenter by rememberSaveable { mutableStateOf(false) }
+    var quickCenterOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
     var showWeatherConnection by rememberSaveable { mutableStateOf(false) }
@@ -626,7 +627,8 @@ fun HomeScreen(
         }
         }
         if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
-            QuickCenterButton {
+            QuickCenterButton { origin ->
+                quickCenterOrigin = origin
                 soundFeedback.play(SoundEvent.MENU)
                 viewModel.refreshHeader()
                 showQuickCenter = true
@@ -644,6 +646,7 @@ fun HomeScreen(
             alarmAt = state.headerInfo.alarmAt,
             event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
             reduced = sonyMotionReduced,
+            origin = quickCenterOrigin,
             onDismiss = { showQuickCenter = false },
             onSearch = {
                 showQuickCenter = false
@@ -662,6 +665,19 @@ fun HomeScreen(
             onNext = { viewModel.nextAudio(audio.sessionId) },
             onAlarm = { showQuickCenter = false; openNextAlarm(context) },
             onEvent = { showQuickCenter = false; openAgenda(context, it) },
+            onCalendar = { showQuickCenter = false; openCalendar(context) },
+            onOpenPlayer = {
+                showQuickCenter = false
+                if (audio.sessionId != null) viewModel.openAudioApp(audio.sessionId)
+                else {
+                    searchInput = androidx.compose.ui.text.input.TextFieldValue("música")
+                    scope.launch {
+                        androidx.compose.runtime.withFrameNanos { }
+                        searchFocus.requestFocus()
+                        keyboard?.show()
+                    }
+                }
+            },
         )
     }
 

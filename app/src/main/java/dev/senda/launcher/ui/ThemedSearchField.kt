@@ -42,8 +42,9 @@ internal fun ThemedSearchField(
     glow: () -> Float, readOnly: Boolean = false, heightDp: Int = 56,
 ) {
     val profile = LocalHistoricalProfile.current
-    val halo = profile?.readableAccent(LocalSkinStyle.current.accent) ?: MaterialTheme.colorScheme.primary
     val ps4Glass = theme == LauncherTheme.PS4 && !dev.senda.launcher.data.LocalAppearance.current.highContrast
+    val halo = if (ps4Glass) quickBlue else
+        profile?.readableAccent(LocalSkinStyle.current.accent) ?: MaterialTheme.colorScheme.primary
     val radius = (if (ps4Glass) 12 else profile?.radius ?: 18).dp
     val shape = if (ps4Glass) RoundedCornerShape(radius) else profile.chromeShape()
     val fieldHeight = heightDp.coerceIn(56, 88)
@@ -102,7 +103,7 @@ internal fun ThemedSearchField(
             singleLine = true, readOnly = readOnly, shape = shape,
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent, focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = Color.Transparent, focusedBorderColor = if (ps4Glass) quickBlue else MaterialTheme.colorScheme.primary,
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onSearch() }),

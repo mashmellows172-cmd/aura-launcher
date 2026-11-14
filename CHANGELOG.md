@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta89 Local instalada el 13 de noviembre de 2026. 0.62.0-beta89, código 89. Transición desde Inicio, tarjetas y accesos ordenables, estados vacíos útiles, progreso multimedia confirmado y acento PS4 compartido. Compilación y lint correctos. Firma, versión y hash verificados. Interacción pendiente de revisión. [Ficha](docs/BETA89.md).
+
 Beta88 Local instalada el 13 de noviembre de 2026. 0.61.0-beta88, código 88. Accesos configurables, tarjeta multimedia expandible y selección A–Z integrada con el material del Centro rápido. Compilación y lint correctos. Firma, versión y hash verificados. Pruebas de interacción pendientes. [Ficha](docs/BETA88.md).
 
 Beta87 Local instalada el 13 de noviembre de 2026. 0.60.3-beta87, código 87. El Centro rápido consulta la próxima alarma al abrir y funciona aunque su tarjeta de Inicio esté oculta. Compilación y lint correctos. Firma, versión y hash verificados. Prueba de la tarjeta pendiente. [Ficha](docs/BETA87.md).

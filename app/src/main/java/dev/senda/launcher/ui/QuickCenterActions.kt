@@ -27,6 +27,33 @@ import dev.senda.launcher.data.LauncherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.ui.semantics.contentDescription
+
+internal fun quickOrder(saved: String?, defaults: List<String>): List<String> =
+    (saved.orEmpty().split('|').filter { it in defaults } + defaults).distinct()
+
+@Composable
+internal fun QuickOrderEditor(order: List<String>, onMove: (List<String>) -> Unit,
+    extra: @Composable (String) -> Unit,
+) {
+    order.forEachIndexed { index, label ->
+        Row(Modifier.widthIn(min = 260.dp).padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(label, Modifier.weight(1f))
+            extra(label)
+            for (direction in listOf(-1, 1)) {
+                val target = index + direction
+                IconButton(enabled = target in order.indices, onClick = {
+                    if (target in order.indices) onMove(order.toMutableList().apply {
+                        add(target, removeAt(index))
+                    })
+                }, modifier = Modifier.semantics {
+                    contentDescription = if (direction < 0) "Subir $label" else "Bajar $label"
+                }) { Text(if (direction < 0) "↑" else "↓") }
+            }
+        }
+    }
+}
 
 @Composable
 internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -> Unit) {
@@ -45,11 +72,14 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
         }
     }
     var torch by remember(cameraId) { mutableStateOf<Boolean?>(null) }
+    var torchUnavailable by remember(cameraId) { mutableStateOf(false) }
     var permitted by remember {
         mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
     }
     var configuring by rememberSaveable { mutableStateOf(false) }
     val preferences = remember(context) { context.getSharedPreferences("quick_center_shortcuts", 0) }
+    val defaults = listOf("Linterna", "Buscar apps", "Ajustes rápidos")
+    var order by remember(preferences) { mutableStateOf(quickOrder(preferences.getString("shortcut_order", null), defaults)) }
     var showTorch by remember { mutableStateOf(preferences.getBoolean("torch", true)) }
     var showSearch by remember { mutableStateOf(preferences.getBoolean("search", true)) }
     var showSettings by remember { mutableStateOf(preferences.getBoolean("settings", true)) }
@@ -69,10 +99,10 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
     DisposableEffect(manager, cameraId, permitted, showTorch) {
         val callback = object : CameraManager.TorchCallback() {
             override fun onTorchModeChanged(id: String, enabled: Boolean) {
-                if (id == cameraId) torch = enabled
+                if (id == cameraId) { torch = enabled; torchUnavailable = false }
             }
             override fun onTorchModeUnavailable(id: String) {
-                if (id == cameraId) torch = null
+                if (id == cameraId) { torch = null; torchUnavailable = true }
             }
         }
         val registered = manager != null && cameraId != null && showTorch &&
@@ -80,11 +110,14 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
         onDispose { if (registered) manager?.unregisterTorchCallback(callback) }
     }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (showTorch) QuickShortcut("torch", "Linterna", Modifier.weight(1f), enabled = cameraId != null && (!permitted || torch != null), active = torch) {
+        for (label in order) key(label) {
+        when (label) {
+        "Linterna" -> if (showTorch) QuickShortcut("torch", label, Modifier.weight(1f), enabled = cameraId != null && (!permitted || torch != null),
+            active = torch, detail = if (permitted && torchUnavailable) "Flash ocupado o bloqueado" else null) {
             if (permitted) toggleTorch(torch != true) else permission.launch(Manifest.permission.CAMERA)
         }
-        if (showSearch) QuickShortcut("search", "Buscar apps", Modifier.weight(1f), onClick = onSearch)
-        if (showSettings) QuickShortcut("settings", "Ajustes rápidos", Modifier.weight(1f)) {
+        "Buscar apps" -> if (showSearch) QuickShortcut("search", label, Modifier.weight(1f), onClick = onSearch)
+        else -> if (showSettings) QuickShortcut("settings", label, Modifier.weight(1f)) {
             onSettings {
                 if (!NotificationShadeService.openQuickSettings()) {
                     runCatching { context.startActivity(Intent(Settings.ACTION_SETTINGS)) }
@@ -92,10 +125,17 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
                 }
             }
         }
+        }
+        }
     }
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         TextButton(onClick = { configuring = true }) { Text("Personalizar accesos") }
         DropdownMenu(expanded = configuring, onDismissRequest = { configuring = false }) {
+            QuickOrderEditor(order, onMove = {
+                order = it
+                preferences.edit().putString("shortcut_order", it.joinToString("|")).apply()
+            }) { }
+            HorizontalDivider()
             QuickShortcutToggle("Linterna", showTorch) {
                 showTorch = it
                 preferences.edit().putBoolean("torch", it).apply()
@@ -122,15 +162,20 @@ private fun QuickShortcutToggle(label: String, checked: Boolean, onChange: (Bool
 
 @Composable
 private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabled: Boolean = true,
-    active: Boolean? = null, onClick: () -> Unit,
+    active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(12.dp)
     TextButton(onClick = onClick, enabled = enabled, shape = shape, contentPadding = PaddingValues(6.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         modifier = modifier.heightIn(min = 64.dp).ps4ControlGlass(shape, translucent = active != true)
-            .semantics { if (active != null) stateDescription = if (active) "Encendida" else "Apagada" }) {
+            .semantics {
+                if (detail != null) stateDescription = detail
+                else if (active != null) stateDescription = if (active) "Encendida" else "Apagada"
+            }) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             ThemeSystemIcon(icon, LauncherTheme.PS4)
             Text(label, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelSmall)
+            if (detail != null) Text(detail, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelSmall)
         }
     }
 }

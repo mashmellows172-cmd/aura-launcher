@@ -24,6 +24,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
@@ -48,7 +55,7 @@ import java.time.format.DateTimeFormatter
 
 private val quickInk = Color(0xFFF4F8FF)
 private val quickMuted = Color(0xFFCDDEF5)
-private val quickBlue = Color(0xFF65CEFF)
+internal val quickBlue = Color(0xFF65CEFF)
 private val quickEdge = Color(0xFF456EAD)
 
 /** A lighter version of the sheet material lets the wallpaper show through on Inicio. */
@@ -62,12 +69,17 @@ internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false
 }
 
 @Composable
-internal fun QuickCenterButton(onClick: () -> Unit) {
+internal fun QuickCenterButton(onClick: (Rect?) -> Unit) {
     val contrast = LocalAppearance.current.highContrast
+    var bounds by remember { mutableStateOf<Rect?>(null) }
     OutlinedButton(
-        onClick = onClick,
+        onClick = { onClick(bounds) },
         modifier = Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 8.dp)
-            .heightIn(min = 48.dp).ps4ControlGlass(CircleShape),
+            .heightIn(min = 48.dp).onGloballyPositioned { coordinates ->
+                val point = coordinates.positionOnScreen()
+                bounds = if (point.x.isFinite() && point.y.isFinite()) Rect(point,
+                    Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
+            }.ps4ControlGlass(CircleShape),
         shape = CircleShape,
         border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else quickBlue),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -87,6 +99,7 @@ internal fun QuickCenter(
     alarmAt: Long?,
     event: AgendaEvent?,
     reduced: Boolean,
+    origin: Rect?,
     onDismiss: () -> Unit,
     onSearch: () -> Unit,
     onPrevious: () -> Unit,
@@ -95,6 +108,8 @@ internal fun QuickCenter(
     onNext: () -> Unit,
     onAlarm: () -> Unit,
     onEvent: (AgendaEvent) -> Unit,
+    onCalendar: () -> Unit,
+    onOpenPlayer: () -> Unit,
 ) {
     val motion = rememberPs4PanelMotion(reduced)
     val close = { motion.close(reduced, onDismiss) }
@@ -103,6 +118,12 @@ internal fun QuickCenter(
     val date = remember(locale) { DateTimeFormatter.ofPattern("EEE d MMM", locale) }
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
+    var destination by remember { mutableStateOf<Rect?>(null) }
+    val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0)
+    val cards = listOf("Música", "Alarma", "Agenda")
+    var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs.getString("card_order", null), cards)) }
+    var pinned by remember(prefs) { mutableStateOf(prefs.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
+    var editing by remember { mutableStateOf(false) }
     Dialog(
         onDismissRequest = close,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
@@ -117,10 +138,13 @@ internal fun QuickCenter(
             Surface(
                 modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding()
                     .widthIn(max = 560.dp).fillMaxWidth().heightIn(max = sheetMax)
-                    .graphicsLayer {
-                        val p = motion.progress.value
-                        translationY = (1f - p) * size.height
-                    }.semantics { paneTitle = "Centro rápido" },
+                    .onGloballyPositioned { coordinates ->
+                        val point = coordinates.positionOnScreen()
+                        destination = if (point.x.isFinite() && point.y.isFinite()) Rect(point,
+                            Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
+                    }
+                    .ps4PanelTransform(motion.progress.asState(), motion.effect, origin = { origin }, destination = { destination })
+                    .semantics { paneTitle = "Centro rápido" },
                 shape = shape,
                 color = Color(0xFF0B1730),
                 contentColor = quickInk,
@@ -142,9 +166,19 @@ internal fun QuickCenter(
                     }
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (audio != null) QuickMediaCard(audio, motion.effect != "NONE" &&
+                    val visibleCards = cardOrder.sortedBy { it !in pinned }.filter {
+                        it in pinned || when (it) {
+                            "Música" -> audio != null
+                            "Alarma" -> alarmAt != null
+                            else -> event != null
+                        }
+                    }
+                    for (card in visibleCards) key(card) {
+                    when (card) {
+                    "Música" -> if (audio != null) QuickMediaCard(audio, motion.effect != "NONE" &&
                         LocalMotionSettings.current.mediaDetailsMotionEnabled, onPlayback, onPrevious, onNext, onSeek)
-                    if (alarmAt != null) {
+                    else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
+                    "Alarma" -> if (alarmAt != null) {
                         val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
                         val day = when (at.toLocalDate()) {
                             today -> "Hoy"
@@ -152,20 +186,37 @@ internal fun QuickCenter(
                             else -> date.format(at)
                         }
                         QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
-                    }
-                    if (event != null) {
+                    } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
+                    "Agenda" -> if (event != null) {
                         val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
                         val whenText = if (event.allDay) date.format(at) else
                             if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
                         QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
+                    } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
                     }
-                    if (audio == null && alarmAt == null && event == null) {
+                    }
+                    if (visibleCards.isEmpty()) {
                         Text("No hay música, alarmas ni eventos para mostrar.", color = quickMuted,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp))
                     }
                     }
                     QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
                         onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
+                        DropdownMenu(expanded = editing, onDismissRequest = { editing = false }) {
+                            QuickOrderEditor(cardOrder, onMove = { order ->
+                                cardOrder = order
+                                prefs.edit().putString("card_order", order.joinToString("|")).apply()
+                            }) { label ->
+                                val selected = label in pinned
+                                TextButton(onClick = {
+                                    pinned = if (selected) pinned - label else pinned + label
+                                    prefs.edit().putStringSet("pinned_cards", pinned).apply()
+                                }) { Text(if (selected) "Desfijar" else "Fijar") }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -205,9 +256,25 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, onPlayback
 ) {
     val cover = audio.artwork?.takeUnless { it.isRecycled }
     var expanded by remember(audio.sessionId) { mutableStateOf(false) }
-    var scrub by remember(audio.sessionId, audio.title) { mutableStateOf<Float?>(null) }
+    var scrub by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
+    var pendingSeek by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
+    var seekStatus by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<String?>(null) }
     val duration = audio.durationMs?.takeIf { it > 0L }
     var position by remember(audio.sessionId, audio.title) { mutableStateOf(audio.positionMs) }
+    LaunchedEffect(pendingSeek, audio.positionMs, audio.positionUpdatedAt) {
+        val request = pendingSeek ?: return@LaunchedEffect
+        val reported = audio.positionMs ?: return@LaunchedEffect
+        if (audio.positionUpdatedAt >= request.second && kotlin.math.abs(reported - request.first) <= 2_000L) {
+            pendingSeek = null
+            seekStatus = "Posición actualizada"
+        }
+    }
+    LaunchedEffect(pendingSeek) {
+        if (pendingSeek == null) return@LaunchedEffect
+        delay(2_200)
+        pendingSeek = null
+        seekStatus = "El reproductor no confirmó el salto"
+    }
     LaunchedEffect(audio.positionMs, audio.positionUpdatedAt, audio.isPlaying, audio.speed, duration) {
         val base = audio.positionMs
         do {
@@ -266,14 +333,33 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, onPlayback
             }
             val current = position
             if (duration != null && current != null) {
-                val fraction = scrub ?: (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                val fraction = scrub ?: ((pendingSeek?.first ?: current).toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                if (audio.canSeek) BoxWithConstraints(Modifier.fillMaxWidth().heightIn(min = 28.dp)) {
+                    val bubbleWidth = 68.dp.coerceAtMost(maxWidth)
+                    scrub?.let { active ->
+                        Text(quickMediaTime((active.toDouble() * duration).toLong()),
+                            modifier = Modifier.offset(x = (maxWidth * active - bubbleWidth / 2)
+                                .coerceIn(0.dp, maxWidth - bubbleWidth))
+                                .width(bubbleWidth).ps4ControlGlass(RoundedCornerShape(8.dp)).padding(3.dp),
+                            color = quickInk, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            style = MaterialTheme.typography.labelMedium)
+                    }
+                }
                 if (audio.canSeek) Slider(value = fraction, onValueChange = { scrub = it },
                     onValueChangeFinished = {
-                        scrub?.let { onSeek((it.toDouble() * duration).toLong()) }
+                        scrub?.let {
+                            val target = (it.toDouble() * duration).toLong().coerceIn(0, duration)
+                            seekStatus = null
+                            pendingSeek = target to android.os.SystemClock.elapsedRealtime()
+                            onSeek(target)
+                        }
                         scrub = null
                     }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
                 Text("${quickMediaTime((fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
                     color = quickMuted, style = MaterialTheme.typography.labelMedium)
+                val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
+                if (status != null) Text(status, color = quickMuted, style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically) {

@@ -106,7 +106,8 @@ fun AlphabetRail(
                 indicatorY.value.coerceIn(0.dp,(maxHeight-slot).coerceAtLeast(0.dp)).roundToPx())
         }.width(columnWidth).height(slot).padding(1.dp)
             .then(marker)
-            .border(1.dp,MaterialTheme.colorScheme.primary.copy(alpha=if(ps4 && !held) .36f else .65f),markerShape))
+            .border(1.dp,(if (ps4) quickBlue else MaterialTheme.colorScheme.primary)
+                .copy(alpha=if(ps4 && !held) .36f else .65f),markerShape))
         Row(Modifier.fillMaxSize().pointerInput(letters,columns,rows){
             var previous=-1
             fun move(position:Offset){
@@ -175,7 +176,7 @@ fun AlphabetRail(
                     val capsule = RoundedCornerShape(28)
                     Box(Modifier.size(bubbleSize)
                         .background(Brush.linearGradient(listOf(Color(0xFF174B91), Color(0xFF08275C))), capsule)
-                        .border(1.dp, Color(0xFF8DD5FF), capsule)
+                        .border(1.dp, quickBlue, capsule)
                         .clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
                         Text(letters[selectedIndex], color = Color.White, fontWeight = FontWeight.SemiBold,
                             fontSize = (bubbleSize.value * .56f).sp, maxLines = 1)

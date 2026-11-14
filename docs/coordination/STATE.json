@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta88 Local 0.61.0/code88 installed. Configurable quick actions, inline media expansion and shared A-Z material. Build/lint passed. Signature, version and hash verified. Interaction review pending. See docs/BETA88.md.",
+  "latestCheckpoint": "Beta89 Local 0.62.0/code89 installed. Quick center origin transition, pin/order, fallback states and seek feedback. Build/lint passed. Signature, version and hash verified. Interaction review pending. See docs/BETA89.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
