@@ -53,6 +53,8 @@ import dev.senda.launcher.data.ActiveAudioInfo
 import dev.senda.launcher.data.AgendaEvent
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.LocalAppearance
+import dev.senda.launcher.data.QuickTimer
+import dev.senda.launcher.data.QuickTimers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -109,6 +111,13 @@ internal fun QuickCenter(
     event: AgendaEvent?,
     reduced: Boolean,
     origin: Rect?,
+    target: QuickCenterTarget,
+    miniTarget: QuickCenterTarget,
+    onMiniTargetChange: (QuickCenterTarget) -> Unit,
+    pinnedNote: String,
+    onSavePinnedNote: (String) -> Unit,
+    timers: List<QuickTimer>,
+    timerStore: QuickTimers,
     onDismiss: () -> Unit,
     onSearch: () -> Unit,
     onPrevious: () -> Unit,
@@ -123,7 +132,9 @@ internal fun QuickCenter(
 ) {
     val motion = rememberPs4PanelMotion(reduced)
     val close = { motion.close(reduced, onDismiss) }
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.MEDIA) }
+    var timersExpanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.TIMERS) }
+    var showNote by rememberSaveable { mutableStateOf(target == QuickCenterTarget.NOTE) }
     val hasMedia = audio != null
     val mediaExpanded = expanded && hasMedia
     val animated = motion.effect != "NONE" && LocalMotionSettings.current.mediaDetailsMotionEnabled
@@ -142,7 +153,17 @@ internal fun QuickCenter(
         }
     }
     LaunchedEffect(hasMedia) { if (!hasMedia) expanded = false }
-    LaunchedEffect(mediaExpanded) { if (mediaExpanded) cardsScroll.scrollTo(0) }
+    LaunchedEffect(mediaExpanded, timersExpanded) {
+        if (mediaExpanded || timersExpanded) cardsScroll.scrollTo(0)
+    }
+    fun expandMedia(value: Boolean) {
+        expanded = value
+        if (value) timersExpanded = false
+    }
+    fun expandTimers(value: Boolean) {
+        timersExpanded = value
+        if (value) expanded = false
+    }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val time = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
     val date = remember(locale) { DateTimeFormatter.ofPattern("EEE d MMM", locale) }
@@ -150,10 +171,11 @@ internal fun QuickCenter(
     val today = LocalDate.now(zone)
     var destination by remember { mutableStateOf<Rect?>(null) }
     val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0)
-    val cards = listOf("Música", "Alarma", "Agenda")
+    val cards = listOf("Música", "Alarma", "Agenda", "Temporizadores")
     var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs.getString("card_order", null), cards)) }
     var pinned by remember(prefs) { mutableStateOf(prefs.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
     var editing by remember { mutableStateOf(false) }
+    var selectingMini by remember { mutableStateOf(false) }
     Dialog(
         onDismissRequest = close,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
@@ -184,7 +206,7 @@ internal fun QuickCenter(
             ) {
                 Column(Modifier.background(Brush.verticalGradient(listOf(Color(0xFF142447), Color(0xFF081328))))
                     .border(BorderStroke(1.dp, quickEdge), shape)
-                    .navigationBarsPadding()
+                    .navigationBarsPadding().imePadding()
                     .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Box(Modifier.fillMaxWidth().heightIn(min = 48.dp)
@@ -213,7 +235,7 @@ internal fun QuickCenter(
                                         when {
                                             distance >= closeDistance -> latestClose()
                                             distance >= expandDistance && mediaExpanded -> { expanded = false; settle() }
-                                            distance <= -expandDistance && hasMedia -> { expanded = true; settle() }
+                                            distance <= -expandDistance && hasMedia -> { expandMedia(true); settle() }
                                             else -> settle()
                                         }
                                     }
@@ -226,7 +248,7 @@ internal fun QuickCenter(
                             customActions = buildList {
                                 if (hasMedia) add(CustomAccessibilityAction(
                                     if (mediaExpanded) "Contraer reproductor" else "Ampliar reproductor",
-                                ) { expanded = !mediaExpanded; true })
+                                ) { expandMedia(!mediaExpanded); true })
                                 add(CustomAccessibilityAction("Cerrar Centro rápido") { close(); true })
                             }
                         }, contentAlignment = Alignment.Center) {
@@ -243,60 +265,78 @@ internal fun QuickCenter(
                     }
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    val visibleCards = cardOrder.sortedBy {
-                        when {
-                            mediaExpanded && it == "Música" -> 0
-                            it in pinned -> 1
-                            else -> 2
+                        if (showNote) QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
+                        val visibleCards = cardOrder.sortedBy {
+                            when {
+                                (mediaExpanded || target == QuickCenterTarget.MEDIA && !hasMedia && !timersExpanded) &&
+                                    it == "Música" -> 0
+                                timersExpanded && it == "Temporizadores" -> 0
+                                it in pinned -> 1
+                                else -> 2
+                            }
+                        }.filter {
+                            it in pinned || when (it) {
+                                "Música" -> audio != null || target == QuickCenterTarget.MEDIA
+                                "Alarma" -> alarmAt != null
+                                "Temporizadores" -> true
+                                else -> event != null
+                            }
                         }
-                    }.filter {
-                        it in pinned || when (it) {
-                            "Música" -> audio != null
-                            "Alarma" -> alarmAt != null
-                            else -> event != null
+                        for (card in visibleCards) key(card) {
+                            when (card) {
+                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded,
+                                    onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource)
+                                else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
+                                "Temporizadores" -> QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
+                                "Alarma" -> if (alarmAt != null) {
+                                    val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
+                                    val day = when (at.toLocalDate()) {
+                                        today -> "Hoy"
+                                        today.plusDays(1) -> "Mañana"
+                                        else -> date.format(at)
+                                    }
+                                    QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
+                                } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
+                                "Agenda" -> if (event != null) {
+                                    val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
+                                    val whenText = if (event.allDay) date.format(at) else
+                                        if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
+                                    QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
+                                } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
+                            }
                         }
-                    }
-                    for (card in visibleCards) key(card) {
-                    when (card) {
-                    "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded,
-                        onExpandedChange = { expanded = it }, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource)
-                    else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
-                    "Alarma" -> if (alarmAt != null) {
-                        val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
-                        val day = when (at.toLocalDate()) {
-                            today -> "Hoy"
-                            today.plusDays(1) -> "Mañana"
-                            else -> date.format(at)
-                        }
-                        QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
-                    } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
-                    "Agenda" -> if (event != null) {
-                        val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
-                        val whenText = if (event.allDay) date.format(at) else
-                            if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
-                        QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
-                    } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
-                    }
-                    }
-                    if (visibleCards.isEmpty()) {
-                        Text("No hay música, alarmas ni eventos para mostrar.", color = quickMuted,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp))
-                    }
                     }
                     QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
                         onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
-                        DropdownMenu(expanded = editing, onDismissRequest = { editing = false }) {
-                            QuickOrderEditor(cardOrder, onMove = { order ->
-                                cardOrder = order
-                                prefs.edit().putString("card_order", order.joinToString("|")).apply()
-                            }) { label ->
-                                val selected = label in pinned
-                                TextButton(onClick = {
-                                    pinned = if (selected) pinned - label else pinned + label
-                                    prefs.edit().putStringSet("pinned_cards", pinned).apply()
-                                }) { Text(if (selected) "Desfijar" else "Fijar") }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
+                            DropdownMenu(expanded = editing, onDismissRequest = { editing = false }) {
+                                QuickOrderEditor(cardOrder, onMove = { order ->
+                                    cardOrder = order
+                                    prefs.edit().putString("card_order", order.joinToString("|")).apply()
+                                }) { label ->
+                                    val selected = label in pinned
+                                    TextButton(onClick = {
+                                        pinned = if (selected) pinned - label else pinned + label
+                                        prefs.edit().putStringSet("pinned_cards", pinned).apply()
+                                    }) { Text(if (selected) "Desfijar" else "Fijar") }
+                                }
+                            }
+                        }
+                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            TextButton(onClick = { selectingMini = true }) { Text("Miniatura") }
+                            DropdownMenu(expanded = selectingMini, onDismissRequest = { selectingMini = false }) {
+                                for (option in QuickCenterTarget.entries) {
+                                    DropdownMenuItem(text = { Text(option.label) },
+                                        trailingIcon = if (option == miniTarget) ({ Text("Activa") }) else null,
+                                        onClick = {
+                                            onMiniTargetChange(option)
+                                            showNote = option == QuickCenterTarget.NOTE
+                                            if (showNote) scope.launch { cardsScroll.scrollTo(0) }
+                                            selectingMini = false
+                                        })
+                                }
                             }
                         }
                     }
@@ -307,7 +347,7 @@ internal fun QuickCenter(
 }
 
 @Composable
-private fun QuickCard(content: @Composable () -> Unit) {
+internal fun QuickCard(content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(16.dp)
     Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).padding(12.dp)) {
         content()

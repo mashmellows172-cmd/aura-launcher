@@ -248,6 +248,7 @@ fun HomeScreen(
     var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showQuickCenter by rememberSaveable { mutableStateOf(false) }
+    var quickTarget by rememberSaveable { mutableStateOf(QuickCenterTarget.PANEL) }
     var quickCenterOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
@@ -263,6 +264,15 @@ fun HomeScreen(
     val skin = LocalSkinStyle.current
     val context = LocalContext.current
     var clockTime by remember(locale) { mutableStateOf(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm", locale))) }
+    val quickPrefs = remember(context) { context.getSharedPreferences("quick_center_shortcuts", 0) }
+    var miniTarget by remember(quickPrefs) {
+        mutableStateOf(QuickCenterTarget.entries.firstOrNull {
+            it.name == quickPrefs.getString("miniature", null)
+        } ?: QuickCenterTarget.PANEL)
+    }
+    var pinnedQuickNote by remember(quickPrefs) { mutableStateOf(quickPrefs.getString("pinned_note", "").orEmpty()) }
+    val timerStore = remember(context) { dev.senda.launcher.data.QuickTimers.get(context) }
+    val quickTimers by timerStore.timers.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -627,12 +637,20 @@ fun HomeScreen(
         }
         }
         if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
-            QuickCenterButton { origin ->
+            fun openQuickCenter(origin: androidx.compose.ui.geometry.Rect?, target: QuickCenterTarget) {
                 quickCenterOrigin = origin
+                quickTarget = target
                 soundFeedback.play(SoundEvent.MENU)
                 viewModel.refreshHeader()
+                timerStore.expire()
                 showQuickCenter = true
             }
+            if (miniTarget != QuickCenterTarget.PANEL) {
+                QuickCenterMiniature(miniTarget,
+                    state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
+                    pinnedQuickNote, quickTimers, timerStore) { openQuickCenter(it, miniTarget) }
+            }
+            QuickCenterButton { openQuickCenter(it, QuickCenterTarget.PANEL) }
         }
         }
     }
@@ -647,6 +665,19 @@ fun HomeScreen(
             event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
             reduced = sonyMotionReduced,
             origin = quickCenterOrigin,
+            target = quickTarget,
+            miniTarget = miniTarget,
+            onMiniTargetChange = {
+                miniTarget = it
+                quickPrefs.edit().putString("miniature", it.name).apply()
+            },
+            pinnedNote = pinnedQuickNote,
+            onSavePinnedNote = {
+                pinnedQuickNote = it
+                quickPrefs.edit().putString("pinned_note", it).apply()
+            },
+            timers = quickTimers,
+            timerStore = timerStore,
             onDismiss = { showQuickCenter = false },
             onSearch = {
                 showQuickCenter = false
