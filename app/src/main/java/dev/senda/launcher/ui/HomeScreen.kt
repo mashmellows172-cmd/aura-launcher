@@ -663,6 +663,10 @@ fun HomeScreen(
                 else viewModel.resumeAudio(audio.sessionId)
             },
             onNext = { viewModel.nextAudio(audio.sessionId) },
+            onOpenMediaSource = {
+                showQuickCenter = false
+                viewModel.openAudioApp(audio.sessionId)
+            },
             onAlarm = { showQuickCenter = false; openNextAlarm(context) },
             onEvent = { showQuickCenter = false; openAgenda(context, it) },
             onCalendar = { showQuickCenter = false; openCalendar(context) },

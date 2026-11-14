@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta90 Local compilada el 13 de noviembre de 2026. 0.63.0-beta90, código 90. Gestos para ampliar, contraer y cerrar Centro rápido, y saltos de −10/+30 s en sesiones compatibles. Compilación y lint correctos. Instalación pendiente por ADB fuera de línea. [Ficha](docs/BETA90.md).
+
 Beta89 Local instalada el 13 de noviembre de 2026. 0.62.0-beta89, código 89. Transición desde Inicio, tarjetas y accesos ordenables, estados vacíos útiles, progreso multimedia confirmado y acento PS4 compartido. Compilación y lint correctos. Firma, versión y hash verificados. Interacción pendiente de revisión. [Ficha](docs/BETA89.md).
 
 Beta88 Local instalada el 13 de noviembre de 2026. 0.61.0-beta88, código 88. Accesos configurables, tarjeta multimedia expandible y selección A–Z integrada con el material del Centro rápido. Compilación y lint correctos. Firma, versión y hash verificados. Pruebas de interacción pendientes. [Ficha](docs/BETA88.md).
