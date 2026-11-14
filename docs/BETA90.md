@@ -12,3 +12,5 @@
 - assembleBeta y lintBeta correctos en 3m39s.
 - APK de Aura Local código 90 con certificado coincidente con beta89. SHA-256: CBCC53286E4D2A8E2384D7824CD2755247ACFBB4A54A5044F927787F29FEA646.
 - ADB mostró el Motorola fuera de línea y no se descubrió un puerto nuevo. Instalación y prueba de gestos y video pendientes.
+
+- El 13 de noviembre de 2026, se recuperó la conexión inalámbrica y se actualizó el Motorola de beta89 a beta90 con install -r. Certificado coincidente, versión 0.63.0-beta90 y hash instalado verificados. Prueba interactiva pendiente.

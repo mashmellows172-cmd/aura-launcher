@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta90 Local 0.63.0/code90 built and linted. Quick center swipe gestures, larger media and skip controls. APK signature verified. ADB offline. See docs/BETA90.md.",
+  "latestCheckpoint": "Beta90 Local 0.63.0/code90 built and linted. Quick center swipe gestures, larger media and skip controls. Installed via wireless ADB. Signature, version and hash verified. Interaction review pending. See docs/BETA90.md.",
   "checkpointBranch": "codex/beta74-unified-media",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
