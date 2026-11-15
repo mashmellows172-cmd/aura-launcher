@@ -21,8 +21,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -200,7 +203,8 @@ internal fun QuickCenter(
                     onClickLabel = "Cerrar Centro rápido", onClick = close))
             val compact = maxHeight < 490.dp || LocalDensity.current.fontScale >= 1.35f
             val sheetMax = (maxHeight - 16.dp).coerceAtLeast(120.dp)
-            val shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+            val cornerRadius = 24.dp
+            val shape = RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
             CompositionLocalProvider(LocalQuickAccent provides accent) {
             Surface(
                 modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding()
@@ -217,10 +221,11 @@ internal fun QuickCenter(
                 color = panel,
                 contentColor = ink,
             ) {
-                val surfaceFinish = if (contrast) Modifier else Modifier.background(Brush.verticalGradient(
-                    listOf(lerp(Color(0xFF142447), accent, .17f), panel, Color(0xFF081328))))
-                Column(Modifier.then(surfaceFinish)
-                    .border(BorderStroke(1.dp, edge), shape)
+                val surfaceFinish = if (contrast) Modifier else Modifier
+                    .background(Brush.verticalGradient(listOf(Color(0xFF142447), panel, Color(0xFF081328))))
+                    .quickCenterCornerLight(accent, cornerRadius)
+                Column(Modifier.border(BorderStroke(1.dp, if (contrast) edge else quickEdge), shape)
+                    .then(surfaceFinish)
                     .navigationBarsPadding().imePadding()
                     .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -372,6 +377,39 @@ internal fun QuickCenter(
             }
             }
         }
+    }
+}
+
+private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: androidx.compose.ui.unit.Dp) = drawWithCache {
+    val strokeWidth = 1.5.dp.toPx()
+    val inset = strokeWidth
+    val right = size.width - inset
+    val radius = (cornerRadius.toPx() - inset).coerceAtMost((right - inset) / 2f)
+    val depth = (cornerRadius * 2.4f).toPx().coerceAtMost(size.height - inset)
+    if (radius <= 0f || depth <= radius + inset) return@drawWithCache onDrawBehind { }
+
+    val outline = Path().apply {
+        moveTo(inset, depth)
+        lineTo(inset, inset + radius)
+        arcTo(Rect(inset, inset, inset + 2f * radius, inset + 2f * radius), 180f, 90f, false)
+        lineTo(right - radius, inset)
+        arcTo(Rect(right - 2f * radius, inset, right, inset + 2f * radius), 270f, 90f, false)
+        lineTo(right, depth)
+    }
+    val rim = Brush.verticalGradient(
+        0f to accent.copy(alpha = .78f),
+        .45f to accent.copy(alpha = .37f),
+        1f to accent.copy(alpha = 0f),
+        startY = inset,
+        endY = depth,
+    )
+    val bloom = Brush.verticalGradient(
+        listOf(accent.copy(alpha = .12f), accent.copy(alpha = 0f)), endY = depth,
+    )
+    val stroke = Stroke(strokeWidth)
+    onDrawBehind {
+        drawRect(bloom, size = Size(size.width, depth))
+        drawPath(outline, rim, style = stroke)
     }
 }
 

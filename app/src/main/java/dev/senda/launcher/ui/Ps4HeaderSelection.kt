@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.graphics.drawable.toBitmap
@@ -116,14 +117,23 @@ private fun sampleAppAccent(bitmap: Bitmap, fallback: Color): Color {
 
 internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier = drawWithCache {
     val accent = tint.value
+    if (size.width <= 0f || size.height <= 0f) return@drawWithCache onDrawBehind { }
+    val center = Offset(size.width * .57f, size.height * .49f)
+    val radiusY = size.height * .46f
+    val stretch = size.width * .42f / radiusY
     val wash = Brush.radialGradient(
-        listOf(accent.copy(alpha = .38f), accent.copy(alpha = .17f), Color.Transparent),
-        center = Offset(size.width * .64f, size.height * .15f),
-        radius = size.width.coerceAtLeast(size.height) * .74f,
+        0f to accent.copy(alpha = .42f),
+        .48f to accent.copy(alpha = .22f),
+        .78f to accent.copy(alpha = .06f),
+        1f to accent.copy(alpha = 0f),
+        center = center,
+        radius = radiusY,
     )
     val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .85f), Color.Transparent))
     onDrawBehind {
-        drawRect(wash)
+        scale(scaleX = stretch, scaleY = 1f, pivot = center) {
+            drawCircle(wash, radius = radiusY, center = center)
+        }
         val height = 1.5.dp.toPx()
         drawRect(edge, topLeft = Offset(0f, (size.height - height).coerceAtLeast(0f)),
             size = androidx.compose.ui.geometry.Size(size.width, height))
