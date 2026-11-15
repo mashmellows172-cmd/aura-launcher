@@ -226,7 +226,10 @@ fun HomeScreen(
     var letterFlight by remember { mutableStateOf<LetterFlight?>(null) }
     val flyLetter = sonyTheme && !sonyMotionReduced && state.visualSettings.railEffect != "NONE"
     val scope = rememberCoroutineScope()
-    val motionController = rememberAuraMotion(listState, state.visualSettings)
+    val motionController = if (state.theme != LauncherTheme.PS4 && !state.appearance.highContrast &&
+        !state.visualSettings.reduceMotion && state.visualSettings.motion != "NONE") {
+        rememberAuraMotion(listState, state.visualSettings)
+    } else null
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
     val ps4FocusedKey = rememberPs4FocusedKey(listState, state.theme == LauncherTheme.PS4 && !state.appearance.highContrast, ps4InputFocus)
     var themeSaved by remember { mutableIntStateOf(0) }

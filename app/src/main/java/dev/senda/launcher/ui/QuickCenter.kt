@@ -1,6 +1,11 @@
 package dev.senda.launcher.ui
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animate
 import androidx.compose.foundation.BorderStroke
@@ -53,6 +58,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.ActiveAudioInfo
 import dev.senda.launcher.data.AgendaEvent
 import dev.senda.launcher.data.LauncherTheme
@@ -494,12 +502,12 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         pendingSeek = bounded to android.os.SystemClock.elapsedRealtime()
         onSeek(bounded)
     }
-    var position by remember(audio.sessionId, audio.title) { mutableStateOf(audio.positionMs) }
+    val position = remember(audio.sessionId, audio.title) { mutableStateOf(audio.positionMs) }
     LaunchedEffect(pendingSeek, audio.positionMs, audio.positionUpdatedAt) {
         val request = pendingSeek ?: return@LaunchedEffect
         val reported = audio.positionMs ?: return@LaunchedEffect
         if (audio.positionUpdatedAt >= request.second && kotlin.math.abs(reported - request.first) <= 2_000L) {
-            position = reported.coerceIn(0L, duration ?: Long.MAX_VALUE)
+            position.value = reported.coerceIn(0L, duration ?: Long.MAX_VALUE)
             pendingSeek = null
             seekStatus = "Posición actualizada"
         }
@@ -510,17 +518,22 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         pendingSeek = null
         seekStatus = "El reproductor no confirmó el salto"
     }
-    LaunchedEffect(audio.positionMs, audio.positionUpdatedAt, audio.isPlaying, audio.speed, duration) {
-        val base = audio.positionMs
-        do {
-            val elapsed = if (audio.isPlaying && audio.positionUpdatedAt > 0)
-                (android.os.SystemClock.elapsedRealtime() - audio.positionUpdatedAt).coerceAtLeast(0) else 0L
-            position = base?.let { (it + (elapsed * audio.speed).toLong()).coerceIn(0L, duration ?: Long.MAX_VALUE) }
-            if (audio.isPlaying && base != null && duration != null) delay(500) else break
-        } while (duration != null && (position ?: 0L) < duration)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(lifecycle, position, audio.positionMs, audio.positionUpdatedAt, audio.isPlaying, audio.speed, duration) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            val base = audio.positionMs
+            while (true) {
+                val elapsed = if (audio.isPlaying && audio.positionUpdatedAt > 0)
+                    (android.os.SystemClock.elapsedRealtime() - audio.positionUpdatedAt).coerceAtLeast(0) else 0L
+                val current = base?.let { (it + (elapsed * audio.speed).toLong()).coerceIn(0L, duration ?: Long.MAX_VALUE) }
+                position.value = current
+                if (!audio.isPlaying || audio.speed == 0f || current == null || duration == null || current >= duration) break
+                delay(500)
+            }
+        }
     }
     QuickCard {
-        Column(Modifier.fillMaxWidth().then(if (animated) Modifier.animateContentSize(tween(260, easing = Ps4Motion.easing)) else Modifier),
+        Column(Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val compactCover = when {
@@ -544,16 +557,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                         style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    val current = position
-                    if (duration != null && current != null) {
-                        val fraction = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
-                        Box(Modifier.fillMaxWidth().padding(top = 8.dp).height(4.dp)
-                            .semantics { progressBarRangeInfo = ProgressBarRangeInfo(fraction, 0f..1f) }
-                            .background(Color(0xFF304B73), CircleShape)) {
-                            if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction).fillMaxHeight()
-                                .background(LocalQuickAccent.current, CircleShape))
-                        }
-                    }
+                    if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     QuickMediaButton(if (audio.isPlaying) "pause" else "play",
@@ -565,64 +569,94 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         }
         if (!expanded && compact) TextButton(onClick = { onExpandedChange(true) },
             modifier = Modifier.heightIn(min = 48.dp)) { Text("Ampliar reproductor") }
-        if (expanded) {
-            audio.artist?.takeIf { it.isNotBlank() }?.let {
-                Text(it, color = muted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
-            }
-            val current = position
-            if (duration != null && current != null) {
-                val actual = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
-                val fraction = scrub ?: actual
-                val requested = pendingSeek?.let { (it.first.toDouble() / duration).toFloat().coerceIn(0f, 1f) }
-                if (audio.canSeek) BoxWithConstraints(Modifier.fillMaxWidth().heightIn(min = 28.dp)) {
-                    val bubbleWidth = 68.dp.coerceAtMost(maxWidth)
-                    scrub?.let { active ->
-                        Text(quickMediaTime((active.toDouble() * duration).toLong()),
-                            modifier = Modifier.offset(x = (maxWidth * active - bubbleWidth / 2)
-                                .coerceIn(0.dp, maxWidth - bubbleWidth))
-                                .width(bubbleWidth).ps4ControlGlass(RoundedCornerShape(8.dp)).padding(3.dp),
-                            color = ink, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            style = MaterialTheme.typography.labelMedium)
-                    }
+        AnimatedVisibility(
+            visible = expanded,
+            enter = if (animated) expandVertically(tween(220, easing = Ps4Motion.easing), expandFrom = Alignment.Top) +
+                fadeIn(tween(160)) else androidx.compose.animation.EnterTransition.None,
+            exit = if (animated) shrinkVertically(tween(180, easing = Ps4Motion.easing), shrinkTowards = Alignment.Top) +
+                fadeOut(tween(110)) else androidx.compose.animation.ExitTransition.None,
+        ) {
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                audio.artist?.takeIf { it.isNotBlank() }?.let {
+                    Text(it, color = muted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
                 }
-                if (audio.canSeek) Slider(value = fraction, onValueChange = { scrub = it },
-                    onValueChangeFinished = {
-                        scrub?.let {
-                            seek((it.toDouble() * duration).toLong())
+                val current = position.value
+                if (duration != null && current != null) {
+                    val actual = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                    val fraction = scrub ?: actual
+                    val requested = pendingSeek?.let { (it.first.toDouble() / duration).toFloat().coerceIn(0f, 1f) }
+                    if (audio.canSeek) BoxWithConstraints(Modifier.fillMaxWidth().heightIn(min = 28.dp)) {
+                        val bubbleWidth = 68.dp.coerceAtMost(maxWidth)
+                        scrub?.let { active ->
+                            Text(quickMediaTime((active.toDouble() * duration).toLong()),
+                                modifier = Modifier.offset(x = (maxWidth * active - bubbleWidth / 2)
+                                    .coerceIn(0.dp, maxWidth - bubbleWidth))
+                                    .width(bubbleWidth).ps4ControlGlass(RoundedCornerShape(8.dp)).padding(3.dp),
+                                color = ink, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                style = MaterialTheme.typography.labelMedium)
                         }
-                        scrub = null
-                    }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
-                if (audio.canSeek) key(audio.sessionId, audio.title, duration) {
-                    MediaSeekCue(requested, actual, confirmed = seekStatus == "Posición actualizada", animated = animated)
-                }
-                Text("${quickMediaTime(pendingSeek?.first?.takeIf { scrub == null } ?: (fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
-                    color = muted, style = MaterialTheme.typography.labelMedium)
-                val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
-                if (status != null) Text(status, color = muted, style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                if (audio.canSeek) {
-                    val baseline = pendingSeek?.first ?: current
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = baseline > 0,
-                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
-                                .semantics { contentDescription = "Retroceder 10 segundos" }) { Text("−10 s") }
-                        OutlinedButton(onClick = { seek(baseline + 30_000L) }, enabled = baseline < duration,
-                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
-                                .semantics { contentDescription = "Adelantar 30 segundos" }) { Text("+30 s") }
+                    }
+                    if (audio.canSeek) Slider(value = fraction, onValueChange = { scrub = it },
+                        onValueChangeFinished = {
+                            scrub?.let {
+                                seek((it.toDouble() * duration).toLong())
+                            }
+                            scrub = null
+                        }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
+                    if (audio.canSeek) key(audio.sessionId, audio.title, duration) {
+                        MediaSeekCue(requested, actual, confirmed = seekStatus == "Posición actualizada", animated = animated)
+                    }
+                    Text("${quickMediaTime(pendingSeek?.first?.takeIf { scrub == null } ?: (fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
+                        color = muted, style = MaterialTheme.typography.labelMedium)
+                    val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
+                    if (status != null) Text(status, color = muted, style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                    if (audio.canSeek) {
+                        val baseline = pendingSeek?.first ?: current
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = baseline > 0,
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                    .semantics { contentDescription = "Retroceder 10 segundos" }) { Text("−10 s") }
+                            OutlinedButton(onClick = { seek(baseline + 30_000L) }, enabled = baseline < duration,
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                    .semantics { contentDescription = "Adelantar 30 segundos" }) { Text("+30 s") }
+                        }
                     }
                 }
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
-                if (audio.sessionId != null) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
-                    Text("Abrir app", color = LocalQuickAccent.current)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
+                    if (audio.sessionId != null) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
+                        Text("Abrir app", color = LocalQuickAccent.current)
+                    }
+                    TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = LocalQuickAccent.current) }
                 }
-                TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = LocalQuickAccent.current) }
             }
         }
         }
     }
+}
+
+@Composable
+private fun QuickMediaProgress(position: State<Long?>, duration: Long) {
+    val accent = LocalQuickAccent.current
+    Box(Modifier.fillMaxWidth().padding(top = 8.dp).height(4.dp)
+        .semantics {
+            val fraction = ((position.value ?: 0L).toDouble() / duration).toFloat().coerceIn(0f, 1f)
+            progressBarRangeInfo = ProgressBarRangeInfo(fraction, 0f..1f)
+        }
+        .drawBehind {
+            val current = position.value ?: return@drawBehind
+            val fraction = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+            val radius = androidx.compose.ui.geometry.CornerRadius(size.height / 2f)
+            drawRoundRect(Color(0xFF304B73), cornerRadius = radius)
+            if (fraction > 0f) {
+                val width = size.width * fraction
+                val x = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) size.width - width else 0f
+                drawRoundRect(accent, topLeft = androidx.compose.ui.geometry.Offset(x, 0f),
+                    size = Size(width, size.height), cornerRadius = radius)
+            }
+        })
 }
 
 private fun quickMediaTime(ms: Long) = "${ms / 60_000}:${(ms / 1_000 % 60).toString().padStart(2, '0')}"

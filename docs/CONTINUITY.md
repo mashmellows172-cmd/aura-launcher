@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta96 Local instalada el 14 de noviembre de 2026. 0.66.1-beta96, código 96. Menos trabajo por fotograma en desplazamiento, acentos y reproductor PS4. Compilación y lint correctos. Firma, versión y hash instalados verificados. Comparación de fluidez pendiente. [Ficha](BETA96.md).
+
 Beta95 Local instalada el 14 de noviembre de 2026. 0.66.0-beta95, código 95. Centro rápido con fila fija y plegable y estudio de temas con vista previa interactiva. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión interactiva pendiente. [Ficha](BETA95.md).
 
 Beta94 Local instalada el 14 de noviembre de 2026. 0.65.2-beta94, código 94. Halo elíptico en la cabecera PS4 y luz que sigue las curvas superiores del Centro rápido. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión visual pendiente. [Ficha](BETA94.md).

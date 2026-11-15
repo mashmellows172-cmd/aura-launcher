@@ -13,6 +13,8 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.scale
@@ -124,27 +126,27 @@ internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier {
     val intensity = LocalPs4AccentIntensity.current
     if (intensity == 0f) return this
     return drawWithCache {
-        val accent = tint.value
         if (size.width <= 0f || size.height <= 0f) return@drawWithCache onDrawBehind { }
         val center = Offset(size.width * .57f, size.height * .49f)
         val radiusY = size.height * .46f
         val stretch = size.width * .42f / radiusY
         val wash = Brush.radialGradient(
-            0f to accent.copy(alpha = .42f * intensity),
-            .48f to accent.copy(alpha = .22f * intensity),
-            .78f to accent.copy(alpha = .06f * intensity),
-            1f to accent.copy(alpha = 0f),
+            0f to Color.White.copy(alpha = .42f * intensity),
+            .48f to Color.White.copy(alpha = .22f * intensity),
+            .78f to Color.White.copy(alpha = .06f * intensity),
+            1f to Color.White.copy(alpha = 0f),
             center = center,
             radius = radiusY,
         )
-        val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .85f * intensity), Color.Transparent))
+        val edge = Brush.horizontalGradient(listOf(Color.Transparent, Color.White.copy(alpha = .85f * intensity), Color.Transparent))
         onDrawBehind {
+            val filter = ColorFilter.tint(tint.value, BlendMode.SrcIn)
             scale(scaleX = stretch, scaleY = 1f, pivot = center) {
-                drawCircle(wash, radius = radiusY, center = center)
+                drawCircle(wash, radius = radiusY, center = center, colorFilter = filter)
             }
             val height = 1.5.dp.toPx()
             drawRect(edge, topLeft = Offset(0f, (size.height - height).coerceAtLeast(0f)),
-                size = androidx.compose.ui.geometry.Size(size.width, height))
+                size = androidx.compose.ui.geometry.Size(size.width, height), colorFilter = filter)
         }
     }
 }

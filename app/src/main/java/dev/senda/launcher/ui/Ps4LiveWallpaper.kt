@@ -44,10 +44,10 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     }
     val targetPalette = dev.senda.launcher.ui.theme.ps4PaletteColors(
         dev.senda.launcher.ui.theme.LocalPs4Palette.current, dev.senda.launcher.ui.theme.LocalPs4Ambient.current)
-    val middle by androidx.compose.animation.animateColorAsState(targetPalette.middle,
+    val middle = androidx.compose.animation.animateColorAsState(targetPalette.middle,
         androidx.compose.animation.core.tween(if (reduced || saver) 0 else 700), label = "ps4-ambient-middle")
     val skin = dev.senda.launcher.ui.theme.LocalSkinStyle.current
-    val palette = targetPalette.copy(top = skin.backgroundTop, middle = middle, bottom = skin.backgroundBottom)
+    val palette = targetPalette.copy(top = skin.backgroundTop, bottom = skin.backgroundBottom)
     val whitePalette = dev.senda.launcher.ui.theme.LocalPs4Palette.current == dev.senda.launcher.data.Ps4Palette.WHITE
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
@@ -71,7 +71,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         }
     }
     Box(modifier.drawWithCache {
-        val base=Brush.linearGradient(listOf(palette.top,palette.middle,palette.bottom),end=Offset(size.width*.8f,size.height))
+        val base=Brush.linearGradient(listOf(palette.top,middle.value,palette.bottom),end=Offset(size.width*.8f,size.height))
         onDrawBehind { drawRect(base) }
     }) {
     Box(Modifier.matchParentSize().graphicsLayer {
@@ -87,9 +87,8 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         scaleY = 1.04f - depth * .012f * amount
         translationX += opening * size.width * .065f
         translationY += opening * size.height * .045f
-        alpha=1f // Keep the full-screen layer opaque; avoid an offscreen alpha buffer.
+        alpha=1f // Keep the wave layer at full opacity to avoid an offscreen alpha buffer.
     }.drawWithCache {
-        val backdrop=Brush.linearGradient(listOf(palette.top,palette.middle,palette.bottom),end=Offset(size.width*.8f,size.height))
         val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f*decorationStrength),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
         val ribbons=List(2) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
@@ -103,7 +102,6 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         )
         ribbons.forEach { it.surface(1f) }
         onDrawBehind {
-            drawRect(backdrop)
             drawRect(atmosphere)
             val time=.7f
             val drift=0f
