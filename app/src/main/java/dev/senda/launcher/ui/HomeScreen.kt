@@ -226,12 +226,16 @@ fun HomeScreen(
     var letterFlight by remember { mutableStateOf<LetterFlight?>(null) }
     val flyLetter = sonyTheme && !sonyMotionReduced && state.visualSettings.railEffect != "NONE"
     val scope = rememberCoroutineScope()
-    val motionController = if (state.theme != LauncherTheme.PS4 && !state.appearance.highContrast &&
-        !state.visualSettings.reduceMotion && state.visualSettings.motion != "NONE") {
+    val reducedList = listMotionReduced(state.visualSettings)
+    val landingFocus = state.visualSettings.motion == "LANDING_FOCUS"
+    val dots = state.visualSettings.motion == "DOT_PULSE"
+    val animateRows = state.theme != LauncherTheme.PS4 &&
+        state.visualSettings.motion != "NONE" && modernListProfiles.none { it.first == state.visualSettings.motion }
+    val motionController = if (!reducedList && (animateRows || dots)) {
         rememberAuraMotion(listState, state.visualSettings)
     } else null
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
-    val ps4FocusedKey = rememberPs4FocusedKey(listState, state.theme == LauncherTheme.PS4 && !state.appearance.highContrast, ps4InputFocus)
+    val ps4FocusedKey = rememberPs4FocusedKey(listState, (state.theme == LauncherTheme.PS4 || landingFocus && !reducedList) && !state.appearance.highContrast, ps4InputFocus)
     var themeSaved by remember { mutableIntStateOf(0) }
     var alphabetJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     var previousWidgetCount by remember { mutableStateOf(widgetController.widgets.size) }
@@ -595,8 +599,13 @@ fun HomeScreen(
                 actionLabel = if (query.isBlank()) "Gestionar apps" else "Limpiar búsqueda",
             )
             query.isNotBlank() -> {
-                val searchKey = rememberPs4FocusedKey(searchListState, state.theme == LauncherTheme.PS4, ps4InputFocus)
-                androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey) {
+                val searchKey = rememberPs4FocusedKey(searchListState,
+                    state.theme == LauncherTheme.PS4 || landingFocus && !reducedList, ps4InputFocus)
+                val searchMotion = if (!reducedList && (animateRows || dots)) {
+                    rememberAuraMotion(searchListState, state.visualSettings)
+                } else null
+                androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey,
+                    LocalMotionController provides searchMotion) {
                 SearchResults(
                 apps = filteredApps,
                 favoritePackages = state.favoritePackages.toSet(),
@@ -1354,12 +1363,18 @@ internal fun AppSections(
     val arrival = dev.senda.launcher.ui.theme.rememberClockChange(letterArrival.second.toString(), theme,
         visualSettings.reduceMotion || LocalAppearance.current.highContrast || LocalSystemPowerSaving.current ||
             (theme != LauncherTheme.PS4 && theme != LauncherTheme.XPERIA), durationMs = 400)
+    val listReduced = listMotionReduced(visualSettings)
+    val console = theme == LauncherTheme.PS4
+    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("aura-app-list")
-            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name,
-                visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled(), selectionTint)
-            .nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
+            .listDotPulse(listState, visualSettings, console)
+            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", selectionTint,
+                landing = landing, intensity = visualSettings.scrollIntensity)
+            .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
+        flingBehavior = rememberListFling(visualSettings),
+        overscrollEffect = if (listReduced || visualSettings.motion == "NONE") null else androidx.compose.foundation.rememberOverscrollEffect(),
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -1442,11 +1457,17 @@ private fun SearchResults(
     onChooseIcon: (LaunchableApp) -> Unit,
     onResetIcon: (LaunchableApp) -> Unit,
 ) {
+    val console = skinName == LauncherTheme.PS4.name
+    val listReduced = listMotionReduced(visualSettings)
+    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
-            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name, visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled())
-            .nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
+        modifier = Modifier.fillMaxSize().listDotPulse(listState, visualSettings, console)
+            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", landing = landing,
+                intensity = visualSettings.scrollIntensity)
+            .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
+        flingBehavior = rememberListFling(visualSettings),
+        overscrollEffect = if (listReduced || visualSettings.motion == "NONE") null else androidx.compose.foundation.rememberOverscrollEffect(),
         contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -1565,11 +1586,11 @@ private fun AppRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .then(if (console) Modifier.graphicsLayer { scaleX = pressScale.value; scaleY = pressScale.value }
-                    .onFocusChanged { focus ->
-                        if (focus.hasFocus) inputFocus?.value = rowKey
-                        else if (inputFocus?.value == rowKey) inputFocus?.value = null
-                    } else Modifier)
+                .then(if (console) Modifier.graphicsLayer { scaleX = pressScale.value; scaleY = pressScale.value } else Modifier)
+                .then(if (console || visualSettings.motion == "LANDING_FOCUS") Modifier.onFocusChanged { focus ->
+                    if (focus.hasFocus) inputFocus?.value = rowKey
+                    else if (inputFocus?.value == rowKey) inputFocus?.value = null
+                } else Modifier)
                 .then(if (favoriteCue != null && !still) Modifier.ps4HeaderSweep(favoriteCue.asState(), rowAccent, .65f) else Modifier)
                 .semantics(mergeDescendants = true) {
                     stateDescription = if (isFavorite) "Favorita" else "No favorita"

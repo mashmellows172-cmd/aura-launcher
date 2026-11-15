@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta97 Local instalada el 14 de noviembre de 2026. 0.67.0-beta97, código 97. Inercia elástica, Foco al aterrizar y Pulso de puntos para las listas de Inicio y búsqueda. Vista previa e intensidad ajustable. Compilación, lint y verificación de firma, versión y hash correctos. Prueba táctil de los efectos pendiente. [Ficha](docs/BETA97.md).
+
 Beta96 Local instalada el 14 de noviembre de 2026. 0.66.1-beta96, código 96. Menos trabajo por fotograma en desplazamiento, acentos y reproductor PS4. Compilación y lint correctos. Firma, versión y hash instalados verificados. Comparación de fluidez pendiente. [Ficha](docs/BETA96.md).
 
 Beta95 Local instalada el 14 de noviembre de 2026. 0.66.0-beta95, código 95. Centro rápido con fila fija y plegable y estudio de temas con vista previa interactiva. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión interactiva pendiente. [Ficha](docs/BETA95.md).

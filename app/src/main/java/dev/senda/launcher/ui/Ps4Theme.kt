@@ -71,11 +71,13 @@ internal fun rememberPs4FocusedKey(list: LazyListState, enabled: Boolean, input:
 @Composable
 internal fun Modifier.ps4TravelFrame(
     list: LazyListState, enabled: Boolean, reduced: Boolean, tint: State<Color>? = null,
+    landing: Boolean = false, intensity: Int = 100,
 ): Modifier {
     if (!enabled || LocalAppearance.current.highContrast || (LocalThemePreview.current && tint == null)) return this
     val focus = LocalPs4FocusedKey.current
     val arrival = remember(list) { Animatable(0f) }
     val quiet = reduced || LocalSystemPowerSaving.current
+    val emphasis = intensity.coerceIn(10, 100) / 100f
     val colors = MaterialTheme.colorScheme
     LaunchedEffect(list, focus, quiet) {
         snapshotFlow { if (list.isScrollInProgress) null else focus.value }.collectLatest { settledKey ->
@@ -100,10 +102,22 @@ internal fun Modifier.ps4TravelFrame(
             if (size.width > inset * 4 && item.size > inset * 4) {
                 val topLeft = Offset(inset, y)
                 val frameSize = Size(size.width - 2 * inset, item.size - 2 * inset)
-                val flash = if (quiet || list.isScrollInProgress) 0f else arrival.value
+                val moving = list.isScrollInProgress
+                val flash = if (quiet || moving) 0f else arrival.value
                 val accent = tint?.value ?: colors.primary
-                drawRoundRect(accent.copy(alpha = .12f + .18f * flash), topLeft, frameSize, corner, style = halo)
-                drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
+                if (landing && !quiet) {
+                    if (moving) {
+                        drawRoundRect(accent.copy(alpha = .14f), topLeft, frameSize, corner, style = outer)
+                    } else {
+                        drawRoundRect(accent.copy(alpha = .11f * flash * emphasis), topLeft, frameSize, corner)
+                        drawRoundRect(accent.copy(alpha = (.06f + .28f * flash) * emphasis),
+                            topLeft, frameSize, corner, style = halo)
+                        drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
+                    }
+                } else {
+                    drawRoundRect(accent.copy(alpha = .12f + .18f * flash), topLeft, frameSize, corner, style = halo)
+                    drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
+                }
             }
         }
     }

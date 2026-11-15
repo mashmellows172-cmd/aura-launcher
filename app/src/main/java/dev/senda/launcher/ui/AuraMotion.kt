@@ -200,8 +200,9 @@ internal fun GraphicsLayerScope.applyAuraMotion(position: Float, velocity: Float
 fun Modifier.auraListMotion(list: LazyListState?, key: String?, settings: VisualSettings): Modifier {
     val controller = LocalMotionController.current
     val highContrast = LocalAppearance.current.highContrast
+    if (controller == null || modernListProfiles.any { it.first == settings.motion }) return this
     return graphicsLayer {
-        val velocity = controller?.velocity ?: 0f
+        val velocity = controller.velocity
         if (highContrast || settings.reduceMotion || settings.motion == "NONE" || abs(velocity) < MotionTokens.idleEpsilon) {
             applyAuraMotion(0f, 0f, settings)
             return@graphicsLayer

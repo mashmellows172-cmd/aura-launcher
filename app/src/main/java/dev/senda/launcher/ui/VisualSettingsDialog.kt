@@ -59,6 +59,7 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                 Slider(draft.wallpaperIntensity.toFloat(), { draft = draft.copy(wallpaperIntensity = it.toInt()) }, valueRange = 0f..100f,
                     onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.wallpaperMode == "REACTIVE",
                     modifier = Modifier.semantics { contentDescription = "Intensidad del fondo PS4" })
+                HorizontalDivider()
             } else {
                 Text("Siete despliegues por tema: puntos, pliegue, gota, capas, onda, bisagra y foco. Reloj, clima y widgets usan el estilo del tema; movimiento reducido los desactiva.",style=MaterialTheme.typography.bodySmall)
                 Text("El efecto sigue la velocidad real del desplazamiento y vuelve suavemente al reposo.", style = MaterialTheme.typography.bodySmall)
@@ -66,8 +67,17 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                     TextButton(onClick = { commit(draft.copy(motion = "DEPTH", scrollIntensity = 65, durationMs = 340, railEffect = "MAGNET", menuEffect = "SPRING", reduceMotion = false)) }, Modifier.weight(1f)) { Text("Equilibrado") }
                     TextButton(onClick = { commit(draft.copy(motion = "FOLD", scrollIntensity = 95, durationMs = 440, railEffect = "SPRING", menuEffect = "SPRING", reduceMotion = false)) }, Modifier.weight(1f)) { Text("Intenso") }
                 }
-                EffectChoice("Lista de aplicaciones", draft.motion, profiles) { commit(draft.copy(motion = it)) }
-                Text(when (draft.motion) {
+            }
+            val choices = if (ps4) modernListProfiles + listOf("DEPTH" to "Marco clásico PS4", "NONE" to "Sin efecto")
+                else modernListProfiles + profiles
+            val selected = draft.motion.takeIf { motion -> choices.any { it.first == motion } } ?: "DEPTH"
+            EffectChoice("Animaciones de lista", selected, choices) { commit(draft.copy(motion = it)) }
+            Text(when (selected) {
+                    "DEPTH" -> if (ps4) "Marco clásico de Aura con un pulso breve al llegar a otra fila."
+                        else "Las filas se alejan y giran al aproximarse a los bordes."
+                    "IOS_INERTIA" -> "Desaceleración gradual y rebote en los extremos. Más intensidad, más recorrido."
+                    "LANDING_FOCUS" -> "El marco se atenúa durante el desplazamiento e ilumina la fila al detenerse."
+                    "DOT_PULSE" -> "Los puntos siguen el sentido del gesto y se apagan al detenerse."
                     "FOLD" -> "Las filas se pliegan con perspectiva al cruzar los bordes."
                     "WAVE" -> "Una onda lateral recorre las filas mientras deslizas."
                     "ORBIT" -> "Las aplicaciones siguen un arco con giro lateral."
@@ -78,11 +88,14 @@ fun VisualSettingsDialog(current: VisualSettings, onChange: (VisualSettings) -> 
                     "NONE" -> "Desplazamiento nativo, sin transformación de filas."
                     else -> "Las filas se alejan y giran al aproximarse a los bordes."
                 }, style = MaterialTheme.typography.bodySmall)
-                MotionPreview(draft)
-                Text("Intensidad de la lista · ${draft.scrollIntensity}%")
-                Slider(draft.scrollIntensity.toFloat(), { draft = draft.copy(scrollIntensity = it.toInt()) }, valueRange = 10f..100f,
-                    onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.motion != "NONE",
-                    modifier = Modifier.semantics { contentDescription = "Intensidad de la lista" })
+            val selectedModern = modernListProfiles.any { it.first == draft.motion }
+            if (selectedModern) ListScrollProfilePreview(draft)
+            else if (!ps4) MotionPreview(draft)
+            Text("Intensidad de la lista · ${draft.scrollIntensity}%")
+            Slider(draft.scrollIntensity.toFloat(), { draft = draft.copy(scrollIntensity = it.toInt()) }, valueRange = 10f..100f,
+                onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion && draft.motion != "NONE" && (!ps4 || selectedModern),
+                modifier = Modifier.semantics { contentDescription = "Intensidad de la lista" })
+            if (!ps4) {
                 Text("Respuesta y transición · ${draft.durationMs} ms")
                 Slider(draft.durationMs.toFloat(), { draft = draft.copy(durationMs = it.toInt()) }, valueRange = 150f..800f,
                     onValueChangeFinished = { onChange(draft) }, enabled = !draft.reduceMotion,
