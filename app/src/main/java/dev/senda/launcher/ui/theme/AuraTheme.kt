@@ -124,7 +124,7 @@ fun AuraTheme(theme: LauncherTheme, systemIsDark: Boolean, highContrast: Boolean
     MaterialTheme(colorScheme = animatedScheme,
         typography = variantTypography(fontChoice) ?: if (industrial) IndustrialTypography else if (retro.enabled) retroTypography(theme) else androidx.compose.material3.Typography(),
         shapes = if (industrial) IndustrialShapes else if (retro.enabled) retroShapes(theme) else androidx.compose.material3.Shapes(), content = {
-        CompositionLocalProvider(LocalPs4Ambient provides ambient, LocalPs4Palette provides finish.ps4Palette, LocalHistoricalProfile provides historicalProfile(theme)?.withPs4Palette(finish.ps4Palette).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
+        CompositionLocalProvider(dev.senda.launcher.ui.LocalPs4AccentIntensity provides (finish.ps4AccentIntensity.coerceIn(0, 100) / 100f), LocalPs4Ambient provides ambient, LocalPs4Palette provides finish.ps4Palette, LocalHistoricalProfile provides historicalProfile(theme)?.withPs4Palette(finish.ps4Palette).takeUnless { highContrast }, LocalContentColor provides animatedScheme.onBackground, LocalSkinStyle provides animatedStyle,
             LocalIconTreatment provides finish.icons, LocalRetroStyle provides if (highContrast) RetroStyle() else retro,
             LocalIndustrialStyle provides IndustrialStyle(industrial, finish.icons == IconTreatment.MONOCHROME || (industrial && finish.icons == IconTreatment.AUTO)), content = content)
     })

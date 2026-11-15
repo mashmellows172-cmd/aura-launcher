@@ -72,7 +72,7 @@ internal fun rememberPs4FocusedKey(list: LazyListState, enabled: Boolean, input:
 internal fun Modifier.ps4TravelFrame(
     list: LazyListState, enabled: Boolean, reduced: Boolean, tint: State<Color>? = null,
 ): Modifier {
-    if (!enabled || LocalAppearance.current.highContrast || LocalThemePreview.current) return this
+    if (!enabled || LocalAppearance.current.highContrast || (LocalThemePreview.current && tint == null)) return this
     val focus = LocalPs4FocusedKey.current
     val arrival = remember(list) { Animatable(0f) }
     val quiet = reduced || LocalSystemPowerSaving.current

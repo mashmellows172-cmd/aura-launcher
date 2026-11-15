@@ -137,7 +137,7 @@ internal fun QuickOrderEditor(order: List<String>, onMove: (List<String>) -> Uni
 }
 
 @Composable
-internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -> Unit) {
+internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -> Unit, compact: Boolean = false) {
     val context = LocalContext.current
     val manager = remember(context) { context.getSystemService(CameraManager::class.java) }
     val scope = rememberCoroutineScope()
@@ -193,12 +193,12 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         for (label in order) key(label) {
         when (label) {
-        "Linterna" -> if (showTorch) QuickShortcut("torch", label, Modifier.weight(1f), enabled = cameraId != null && (!permitted || torch != null),
+        "Linterna" -> if (showTorch) QuickShortcut("torch", label, Modifier.weight(1f), compact = compact, enabled = cameraId != null && (!permitted || torch != null),
             active = torch, detail = if (permitted && torchUnavailable) "Flash ocupado o bloqueado" else null) {
             if (permitted) toggleTorch(torch != true) else permission.launch(Manifest.permission.CAMERA)
         }
-        "Buscar apps" -> if (showSearch) QuickShortcut("search", label, Modifier.weight(1f), onClick = onSearch)
-        else -> if (showSettings) QuickShortcut("settings", label, Modifier.weight(1f)) {
+        "Buscar apps" -> if (showSearch) QuickShortcut("search", label, Modifier.weight(1f), compact = compact, onClick = onSearch)
+        else -> if (showSettings) QuickShortcut("settings", label, Modifier.weight(1f), compact = compact) {
             onSettings {
                 if (!NotificationShadeService.openQuickSettings()) {
                     runCatching { context.startActivity(Intent(Settings.ACTION_SETTINGS)) }
@@ -210,7 +210,7 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
         }
     }
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        TextButton(onClick = { configuring = true }) { Text("Personalizar accesos") }
+        TextButton(onClick = { configuring = true }) { Text(if (compact) "Editar accesos" else "Personalizar accesos") }
         DropdownMenu(expanded = configuring, onDismissRequest = { configuring = false }) {
             QuickOrderEditor(order, onMove = {
                 order = it
@@ -242,13 +242,22 @@ private fun QuickShortcutToggle(label: String, checked: Boolean, onChange: (Bool
 }
 
 @Composable
+internal fun QuickCenterPreviewActions() {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        QuickShortcut("torch", "Linterna", Modifier.weight(1f), enabled = false) {}
+        QuickShortcut("search", "Buscar apps", Modifier.weight(1f), enabled = false) {}
+        QuickShortcut("settings", "Ajustes rápidos", Modifier.weight(1f), enabled = false) {}
+    }
+}
+
+@Composable
 private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabled: Boolean = true,
-    active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
+    compact: Boolean = false, active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(12.dp)
     TextButton(onClick = onClick, enabled = enabled, shape = shape, contentPadding = PaddingValues(6.dp),
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-        modifier = modifier.heightIn(min = 64.dp).ps4ControlGlass(shape, translucent = active != true)
+        modifier = modifier.heightIn(min = if (compact) 48.dp else 64.dp).ps4ControlGlass(shape, translucent = active != true)
             .semantics {
                 if (detail != null) stateDescription = detail
                 else if (active != null) stateDescription = if (active) "Encendida" else "Apagada"

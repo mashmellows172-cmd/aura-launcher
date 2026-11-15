@@ -959,11 +959,12 @@ internal fun Header(
     selectionTint: androidx.compose.runtime.State<androidx.compose.ui.graphics.Color>? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
+    val preview = LocalThemePreview.current
     var themeMenuExpanded by remember { mutableStateOf(false) }
     var unlockSettings by remember { mutableStateOf(false) }
     var diagnosticsShown by remember { mutableStateOf(false) }
-    if (diagnosticsShown) FrameDiagnosticsDialog(LocalLightMode.current, LocalSetLightMode.current) { diagnosticsShown = false }
-    if (unlockSettings) UnlockSettingsDialog(theme) { unlockSettings = false }
+    if (!preview && diagnosticsShown) FrameDiagnosticsDialog(LocalLightMode.current, LocalSetLightMode.current) { diagnosticsShown = false }
+    if (!preview && unlockSettings) UnlockSettingsDialog(theme) { unlockSettings = false }
     val soundFeedback = LocalSoundFeedback.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM", locale))
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
@@ -1007,7 +1008,7 @@ internal fun Header(
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
                     .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
-                        onLongClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true }, onDoubleClick = onDoubleTap)
+                        onLongClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true }, onDoubleClick = onDoubleTap)
                     .semantics { contentDescription = "Cambiar avatar de Aura"; role = Role.Button
                         customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
                     }, contentAlignment = Alignment.Center) {
@@ -1027,7 +1028,7 @@ internal fun Header(
                         color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
-                IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
+                IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true },
                     modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir menú rápido" }) {
                     Ps4ChromeIcon("settings", Modifier.size(24.dp))
                 }
@@ -1073,7 +1074,7 @@ internal fun Header(
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
-        if (themeMenuExpanded) {
+        if (!preview && themeMenuExpanded) {
             fun action(label: String, enabled: Boolean = true, callback: () -> Unit) =
                 Ps4QuickAction(label, enabled) { themeMenuExpanded = false; callback() }
             Ps4QuickMenu(listOf(
@@ -1140,12 +1141,12 @@ internal fun Header(
         }
         Box {
             IconButton(
-                onClick = { soundFeedback.play(SoundEvent.MENU); themeMenuExpanded = true },
+                onClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true },
                 modifier = Modifier.size(48.dp).semantics { contentDescription = "Personalizar tema. Actual: ${theme.title}" },
             ) {
                 ThemeSystemIcon("settings", theme)
             }
-            DropdownMenu(expanded = themeMenuExpanded, onDismissRequest = { themeMenuExpanded = false }, modifier = Modifier.animateContentSize(tween(240))) {
+            DropdownMenu(expanded = !preview && themeMenuExpanded, onDismissRequest = { themeMenuExpanded = false }, modifier = Modifier.animateContentSize(tween(240))) {
                 if (onOpenMediaControls != null) {
                     DropdownMenuItem(text = { Text("Reproductor") }, onClick = {
                         themeMenuExpanded = false
@@ -1495,6 +1496,7 @@ private fun AppRow(
     onResetIcon: () -> Unit,
     onLoadIcon: (LaunchableApp) -> Drawable,
 ) {
+    val preview = LocalThemePreview.current
     var actionsExpanded by remember(app.packageName) { mutableStateOf(false) }
     var detailsShown by remember(app.packageName) { mutableStateOf(false) }
     val appearance = LocalAppearance.current
@@ -1568,15 +1570,15 @@ private fun AppRow(
                 .then(if (favoriteCue != null && !still) Modifier.ps4HeaderSweep(favoriteCue.asState(), rowAccent, .65f) else Modifier)
                 .semantics(mergeDescendants = true) {
                     stateDescription = if (isFavorite) "Favorita" else "No favorita"
-                    customActions = listOf(androidx.compose.ui.semantics.CustomAccessibilityAction(
+                    if (!preview) customActions = listOf(androidx.compose.ui.semantics.CustomAccessibilityAction(
                         if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas"
                     ) { onToggleFavorite(); true })
                 }
                 .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
-                    onClick = onLaunch, onLongClickLabel = "Opciones de ${app.label}", onLongClick = {
+                    onClick = onLaunch, onLongClickLabel = if (preview) null else "Opciones de ${app.label}", onLongClick = if (preview) null else ({
                         if (skinName == LauncherTheme.PS4.name) { feedback.play(SoundEvent.MENU); openDetails() }
                         else actionsExpanded = true
-                    })
+                    }))
                 .padding(start = if(console)8.dp else 4.dp, top=if(console)8.dp else 0.dp, bottom=if(console)8.dp else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -1602,7 +1604,7 @@ private fun AppRow(
                     style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            if (skinName == LauncherTheme.PS4.name) IconButton(onClick = {
+            if (!preview && skinName == LauncherTheme.PS4.name) IconButton(onClick = {
                 feedback.play(SoundEvent.MENU)
                 openDetails()
             }, modifier = Modifier.size(48.dp).semantics { contentDescription = "Detalles y accesos de ${app.label}" }) {

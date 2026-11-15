@@ -125,7 +125,7 @@ internal fun QuickCenter(
     pinnedNote: String,
     onSavePinnedNote: (String) -> Unit,
     timers: List<QuickTimer>,
-    timerStore: QuickTimers,
+    timerStore: QuickTimers?,
     onDismiss: () -> Unit,
     onSearch: () -> Unit,
     onPrevious: () -> Unit,
@@ -139,6 +139,8 @@ internal fun QuickCenter(
     onOpenMediaSource: () -> Unit,
 ) {
     val contrast = LocalAppearance.current.highContrast
+    val preview = LocalThemePreview.current
+    val intensity = LocalPs4AccentIntensity.current
     val colors = MaterialTheme.colorScheme
     val accent = if (contrast) colors.primary else appAccent ?: quickBlue
     val edge = if (contrast) colors.outline else lerp(quickEdge, accent, .46f)
@@ -184,10 +186,10 @@ internal fun QuickCenter(
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
     var destination by remember { mutableStateOf<Rect?>(null) }
-    val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0)
+    val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0).takeUnless { preview }
     val cards = listOf("Música", "Alarma", "Agenda", "Temporizadores")
-    var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs.getString("card_order", null), cards)) }
-    var pinned by remember(prefs) { mutableStateOf(prefs.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
+    var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs?.getString("card_order", null), cards)) }
+    var pinned by remember(prefs) { mutableStateOf(prefs?.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
     var editing by remember { mutableStateOf(false) }
     var selectingMini by remember { mutableStateOf(false) }
     Dialog(
@@ -201,7 +203,13 @@ internal fun QuickCenter(
                 .background(Color.Black.copy(alpha = .52f))
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null,
                     onClickLabel = "Cerrar Centro rápido", onClick = close))
-            val compact = maxHeight < 490.dp || LocalDensity.current.fontScale >= 1.35f
+            val density = LocalDensity.current
+            val imeBottom = with(density) { WindowInsets.ime.getBottom(this).toDp() }
+            val availableHeight = maxHeight - imeBottom
+            val compact = availableHeight < 490.dp || density.fontScale >= 1.35f
+            val dockInPopup = availableHeight < 380.dp
+            var dockExpanded by rememberSaveable(compact) { mutableStateOf(!compact) }
+            var dockPopup by remember { mutableStateOf(false) }
             val sheetMax = (maxHeight - 16.dp).coerceAtLeast(120.dp)
             val cornerRadius = 24.dp
             val shape = RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
@@ -223,7 +231,7 @@ internal fun QuickCenter(
             ) {
                 val surfaceFinish = if (contrast) Modifier else Modifier
                     .background(Brush.verticalGradient(listOf(Color(0xFF142447), panel, Color(0xFF081328))))
-                    .quickCenterCornerLight(accent, cornerRadius)
+                    .quickCenterCornerLight(accent, cornerRadius, intensity)
                 Column(Modifier.border(BorderStroke(1.dp, if (contrast) edge else quickEdge), shape)
                     .then(surfaceFinish)
                     .navigationBarsPadding().imePadding()
@@ -290,11 +298,39 @@ internal fun QuickCenter(
                             ThemeSystemIcon("close", LauncherTheme.PS4)
                         }
                     }
-                    val shortcuts: @Composable () -> Unit = {
-                        HorizontalDivider(color = edge.copy(alpha = .65f))
-                        Spacer(Modifier.height(6.dp))
-                        QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
-                            onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
+                    val configuration: @Composable () -> Unit = {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
+                                DropdownMenu(expanded = editing, onDismissRequest = { editing = false }) {
+                                    QuickOrderEditor(cardOrder, onMove = { order ->
+                                        cardOrder = order
+                                        prefs?.edit()?.putString("card_order", order.joinToString("|"))?.apply()
+                                    }) { label ->
+                                        val selected = label in pinned
+                                        TextButton(onClick = {
+                                            pinned = if (selected) pinned - label else pinned + label
+                                            prefs?.edit()?.putStringSet("pinned_cards", pinned)?.apply()
+                                        }) { Text(if (selected) "Desfijar" else "Fijar") }
+                                    }
+                                }
+                            }
+                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                TextButton(onClick = { selectingMini = true }) { Text("Miniatura") }
+                                DropdownMenu(expanded = selectingMini, onDismissRequest = { selectingMini = false }) {
+                                    for (option in QuickCenterTarget.entries) {
+                                        DropdownMenuItem(text = { Text(option.label) },
+                                            trailingIcon = if (option == miniTarget) ({ Text("Activa") }) else null,
+                                            onClick = {
+                                                onMiniTargetChange(option)
+                                                showNote = option == QuickCenterTarget.NOTE
+                                                if (showNote) scope.launch { cardsScroll.scrollTo(0) }
+                                                selectingMini = false
+                                            })
+                                    }
+                                }
+                            }
+                        }
                     }
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -320,7 +356,10 @@ internal fun QuickCenter(
                                 "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact,
                                     onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource)
                                 else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
-                                "Temporizadores" -> QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
+                                "Temporizadores" -> if (!preview && timerStore != null) {
+                                    QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
+                                } else QuickActionCard("clock", "Temporizadores", "Ejemplo · 5 min",
+                                    if (timersExpanded) "Contraer" else "Ver") { expandTimers(!timersExpanded) }
                                 "Alarma" -> if (alarmAt != null) {
                                     val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
                                     val day = when (at.toLocalDate()) {
@@ -338,41 +377,30 @@ internal fun QuickCenter(
                                 } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
                             }
                         }
-                        if (compact) shortcuts()
+                        if (compact && !preview) configuration()
                     }
-                    if (!compact) shortcuts()
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
-                            DropdownMenu(expanded = editing, onDismissRequest = { editing = false }) {
-                                QuickOrderEditor(cardOrder, onMove = { order ->
-                                    cardOrder = order
-                                    prefs.edit().putString("card_order", order.joinToString("|")).apply()
-                                }) { label ->
-                                    val selected = label in pinned
-                                    TextButton(onClick = {
-                                        pinned = if (selected) pinned - label else pinned + label
-                                        prefs.edit().putStringSet("pinned_cards", pinned).apply()
-                                    }) { Text(if (selected) "Desfijar" else "Fijar") }
-                                }
+                    HorizontalDivider(color = edge.copy(alpha = .65f))
+                    val shortcuts: @Composable () -> Unit = {
+                        if (preview) QuickCenterPreviewActions()
+                        else QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
+                            onSettings = { action -> motion.close(reduced) { onDismiss(); action() } }, compact = compact)
+                    }
+                    if (compact) {
+                        Box(Modifier.fillMaxWidth()) {
+                            TextButton(onClick = {
+                                if (dockInPopup) dockPopup = true else dockExpanded = !dockExpanded
+                            }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics {
+                                stateDescription = if (dockExpanded && !dockInPopup) "Ampliados" else "Plegados"
+                            }) {
+                                Text(if (dockExpanded && !dockInPopup) "Plegar accesos rápidos" else "Ver accesos rápidos")
                             }
-                        }
-                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            TextButton(onClick = { selectingMini = true }) { Text("Miniatura") }
-                            DropdownMenu(expanded = selectingMini, onDismissRequest = { selectingMini = false }) {
-                                for (option in QuickCenterTarget.entries) {
-                                    DropdownMenuItem(text = { Text(option.label) },
-                                        trailingIcon = if (option == miniTarget) ({ Text("Activa") }) else null,
-                                        onClick = {
-                                            onMiniTargetChange(option)
-                                            showNote = option == QuickCenterTarget.NOTE
-                                            if (showNote) scope.launch { cardsScroll.scrollTo(0) }
-                                            selectingMini = false
-                                        })
-                                }
+                            if (dockInPopup) DropdownMenu(expanded = dockPopup, onDismissRequest = { dockPopup = false }) {
+                                Box(Modifier.width(290.dp).padding(8.dp)) { shortcuts() }
                             }
                         }
                     }
+                    if (dockExpanded && !dockInPopup) shortcuts()
+                    if (!preview && !compact) configuration()
                 }
             }
             }
@@ -380,13 +408,13 @@ internal fun QuickCenter(
     }
 }
 
-private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: androidx.compose.ui.unit.Dp) = drawWithCache {
+private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: androidx.compose.ui.unit.Dp, intensity: Float) = drawWithCache {
     val strokeWidth = 1.5.dp.toPx()
     val inset = strokeWidth
     val right = size.width - inset
     val radius = (cornerRadius.toPx() - inset).coerceAtMost((right - inset) / 2f)
     val depth = (cornerRadius * 2.4f).toPx().coerceAtMost(size.height - inset)
-    if (radius <= 0f || depth <= radius + inset) return@drawWithCache onDrawBehind { }
+    if (intensity == 0f || radius <= 0f || depth <= radius + inset) return@drawWithCache onDrawBehind { }
 
     val outline = Path().apply {
         moveTo(inset, depth)
@@ -397,14 +425,14 @@ private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: android
         lineTo(right, depth)
     }
     val rim = Brush.verticalGradient(
-        0f to accent.copy(alpha = .78f),
-        .45f to accent.copy(alpha = .37f),
+        0f to accent.copy(alpha = .78f * intensity),
+        .45f to accent.copy(alpha = .37f * intensity),
         1f to accent.copy(alpha = 0f),
         startY = inset,
         endY = depth,
     )
     val bloom = Brush.verticalGradient(
-        listOf(accent.copy(alpha = .12f), accent.copy(alpha = 0f)), endY = depth,
+        listOf(accent.copy(alpha = .12f * intensity), accent.copy(alpha = 0f)), endY = depth,
     )
     val stroke = Stroke(strokeWidth)
     onDrawBehind {

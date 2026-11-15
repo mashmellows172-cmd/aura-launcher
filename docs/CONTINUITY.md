@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta95 Local instalada el 14 de noviembre de 2026. 0.66.0-beta95, código 95. Centro rápido con fila fija y plegable y estudio de temas con vista previa interactiva. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión interactiva pendiente. [Ficha](BETA95.md).
+
 Beta94 Local instalada el 14 de noviembre de 2026. 0.65.2-beta94, código 94. Halo elíptico en la cabecera PS4 y luz que sigue las curvas superiores del Centro rápido. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión visual pendiente. [Ficha](BETA94.md).
 
 Beta93 Local instalada el 14 de noviembre de 2026. 0.65.1-beta93, código 93. Se retiró Actividades de Inicio y Compartir. El acento de selección PS4 conecta cabecera, marco, botón y Centro rápido. El panel añade controles visibles de expansión y aprovecha mejor las pantallas bajas. Compilación y lint correctos. Firma, versión y hash instalados verificados. Revisión visual pendiente. [Ficha](BETA93.md).

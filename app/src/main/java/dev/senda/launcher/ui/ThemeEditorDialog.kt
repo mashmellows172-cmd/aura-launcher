@@ -53,7 +53,7 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                     TextButton(onClick={editor.cancel(onDismiss)},enabled=!busy){Text("Cancelar")}
                     TextButton(onClick=editor::undo,enabled=undo&&!busy){Text("Deshacer")}
                     TextButton(onClick=editor::redo,enabled=redo&&!busy){Text("Rehacer")}
-                    TextButton(onClick={fullPreview=!fullPreview}){Text(if(fullPreview)"Controles" else "Ampliar")}
+                    TextButton(onClick={fullPreview=!fullPreview}){Text(if(fullPreview)"Controles" else "Probar Inicio")}
                 }
                 val value=draft
                 if(value==null){Box(Modifier.weight(1f)){CircularProgressIndicator()}}
@@ -79,6 +79,7 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                                         }
                                         Text("Vista previa de fondo, superficies y texto. Guarda y usa para aplicar.", style=MaterialTheme.typography.bodySmall)
                                         EditorSlider("Intensidad del fondo",(100-value.dim)*100/40,25..100,!busy,{editor.edit(value.copy(dim=100-it*40/100),false)},editor::finishGesture)
+                                        EditorSlider("Intensidad del acento de la app",value.ps4AccentIntensity,0..100,!busy,{compareOriginal=false;editor.edit(value.copy(ps4AccentIntensity=it),false)},editor::finishGesture)
                                         EditorSlider("Tamaño de las placas",value.iconSize,32..60,!busy,{editor.edit(value.copy(iconSize=it),false)},editor::finishGesture)
                                     }
                                     EditorChoice("Acento",value.accent,AccentChoice.entries.map{it.name to it.label},!busy){editor.edit(value.copy(accent=it))}
@@ -103,7 +104,7 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                                     TextButton(onClick={editor.edit(value.copy(wallpaper=null))},enabled=!busy){Text("Restablecer fondo predeterminado")}
                                     if(value.theme in RetroAssets.themes)TextButton(onClick={libraryPicker.launch(arrayOf("application/zip","application/octet-stream"))},enabled=!busy&&!state.retroImportBusy){Text(if(state.retroImportBusy)"Importando colección…" else "Importar colección de fondos (ZIP)")}
                                     state.retroImportMessage?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
-                                    EditorSlider("Protección de lectura",value.dim,60..90,!busy,{editor.edit(value.copy(dim=it),false)},editor::finishGesture)
+                                    EditorSlider("Protección de lectura",value.dim,60..90,!busy,{compareOriginal=false;editor.edit(value.copy(dim=it),false)},editor::finishGesture)
                                     Text("La imagen se copia al guardar. La configuración base se conserva.",style=MaterialTheme.typography.bodySmall)
                                 }
                                 3->{

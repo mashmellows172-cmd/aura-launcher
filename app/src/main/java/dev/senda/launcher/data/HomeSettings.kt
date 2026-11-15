@@ -46,7 +46,7 @@ enum class IconTreatment(val label: String) { AUTO("Temáticos"), ORIGINAL("Norm
 
 enum class Ps4Palette(val label: String) { CLASSIC("Azul clásico"), MIDNIGHT("Medianoche"), WHITE("Blanco") }
 
-data class ThemeFinish(val accent: AccentChoice = AccentChoice.DEFAULT, val shape: ShapeChoice = ShapeChoice.DEFAULT, val icons: IconTreatment = IconTreatment.AUTO, val wallpaperDim: Int = 64, val ps4Palette: Ps4Palette = Ps4Palette.CLASSIC)
+data class ThemeFinish(val accent: AccentChoice = AccentChoice.DEFAULT, val shape: ShapeChoice = ShapeChoice.DEFAULT, val icons: IconTreatment = IconTreatment.AUTO, val wallpaperDim: Int = 64, val ps4Palette: Ps4Palette = Ps4Palette.CLASSIC, val ps4AccentIntensity: Int = 100)
 
 /** Optional double tap; accessibility permission is never granted by this preference. */
 enum class LockGesture(val label: String) {

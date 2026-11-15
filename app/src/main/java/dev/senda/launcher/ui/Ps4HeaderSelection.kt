@@ -31,6 +31,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 
+internal val LocalPs4AccentIntensity = staticCompositionLocalOf { 1f }
+
 @Stable
 internal class Ps4AppAccent(val settled: State<Color>, val animated: State<Color>)
 
@@ -46,6 +48,7 @@ internal fun rememberPs4HeaderSelection(
     onLoadIcon: (LaunchableApp) -> Drawable,
 ): Ps4AppAccent {
     val base = MaterialTheme.colorScheme.primary
+    val intensity = LocalPs4AccentIntensity.current
     val context = LocalContext.current
     val treatment = LocalIconTreatment.current
     val original = treatment == IconTreatment.ORIGINAL
@@ -85,9 +88,10 @@ internal fun rememberPs4HeaderSelection(
             }.also { cache.put(cacheKey, it) }
         }
     }
-    val animated = animateColorAsState(if (enabled) accent.value else base, tween(if (reduced || !enabled) 0 else 220,
+    val visualAccent = remember(base, intensity, accent) { derivedStateOf { lerp(base, accent.value, intensity) } }
+    val animated = animateColorAsState(if (enabled) visualAccent.value else base, tween(if (reduced || !enabled) 0 else 220,
         easing = Ps4Motion.easing), label = "ps4-header-selection")
-    return remember(accent, animated) { Ps4AppAccent(accent, animated) }
+    return remember(visualAccent, animated) { Ps4AppAccent(visualAccent, animated) }
 }
 
 private fun sampleAppAccent(bitmap: Bitmap, fallback: Color): Color {
@@ -115,27 +119,32 @@ private fun sampleAppAccent(bitmap: Bitmap, fallback: Color): Color {
     return lerp(color, Color.White, .25f)
 }
 
-internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier = drawWithCache {
-    val accent = tint.value
-    if (size.width <= 0f || size.height <= 0f) return@drawWithCache onDrawBehind { }
-    val center = Offset(size.width * .57f, size.height * .49f)
-    val radiusY = size.height * .46f
-    val stretch = size.width * .42f / radiusY
-    val wash = Brush.radialGradient(
-        0f to accent.copy(alpha = .42f),
-        .48f to accent.copy(alpha = .22f),
-        .78f to accent.copy(alpha = .06f),
-        1f to accent.copy(alpha = 0f),
-        center = center,
-        radius = radiusY,
-    )
-    val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .85f), Color.Transparent))
-    onDrawBehind {
-        scale(scaleX = stretch, scaleY = 1f, pivot = center) {
-            drawCircle(wash, radius = radiusY, center = center)
+@Composable
+internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier {
+    val intensity = LocalPs4AccentIntensity.current
+    if (intensity == 0f) return this
+    return drawWithCache {
+        val accent = tint.value
+        if (size.width <= 0f || size.height <= 0f) return@drawWithCache onDrawBehind { }
+        val center = Offset(size.width * .57f, size.height * .49f)
+        val radiusY = size.height * .46f
+        val stretch = size.width * .42f / radiusY
+        val wash = Brush.radialGradient(
+            0f to accent.copy(alpha = .42f * intensity),
+            .48f to accent.copy(alpha = .22f * intensity),
+            .78f to accent.copy(alpha = .06f * intensity),
+            1f to accent.copy(alpha = 0f),
+            center = center,
+            radius = radiusY,
+        )
+        val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .85f * intensity), Color.Transparent))
+        onDrawBehind {
+            scale(scaleX = stretch, scaleY = 1f, pivot = center) {
+                drawCircle(wash, radius = radiusY, center = center)
+            }
+            val height = 1.5.dp.toPx()
+            drawRect(edge, topLeft = Offset(0f, (size.height - height).coerceAtLeast(0f)),
+                size = androidx.compose.ui.geometry.Size(size.width, height))
         }
-        val height = 1.5.dp.toPx()
-        drawRect(edge, topLeft = Offset(0f, (size.height - height).coerceAtLeast(0f)),
-            size = androidx.compose.ui.geometry.Size(size.width, height))
     }
 }

@@ -122,7 +122,8 @@ class FavoritesStore(private val context: Context) {
             ShapeChoice.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_shape_${theme.name}")] } ?: ShapeChoice.DEFAULT,
             IconTreatment.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_icons_${theme.name}")] } ?: IconTreatment.AUTO,
             (prefs[intPreferencesKey("skin_dim_${theme.name}")] ?: 64).coerceIn(60, 90),
-            Ps4Palette.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_ps4_palette_${theme.name}")] } ?: Ps4Palette.CLASSIC)
+            Ps4Palette.entries.firstOrNull { it.name == prefs[stringPreferencesKey("skin_ps4_palette_${theme.name}")] } ?: Ps4Palette.CLASSIC,
+            if (theme == LauncherTheme.PS4) (prefs[intPreferencesKey("ps4_accent_intensity")] ?: 100).coerceIn(0, 100) else 100)
     } }
     suspend fun setHeaderSettings(value: HeaderSettings) { store.edit {
         it[booleanPreferencesKey("header_show_alarm")] = value.showAlarm
@@ -156,6 +157,7 @@ class FavoritesStore(private val context: Context) {
             prefs[stringPreferencesKey("skin_shape_${theme.name}")] = finish.shape.name
             prefs[stringPreferencesKey("skin_icons_${theme.name}")] = finish.icons.name
             prefs[intPreferencesKey("skin_dim_${theme.name}")] = finish.wallpaperDim.coerceIn(60, 90)
+            if (theme == LauncherTheme.PS4) prefs[intPreferencesKey("ps4_accent_intensity")] = finish.ps4AccentIntensity.coerceIn(0, 100)
             if (theme.name in RetroAssets.themes) prefs[booleanPreferencesKey("retro_assets_${theme.name}")] = retroEnabled
             val packKey = stringPreferencesKey("icon_pack_${theme.name}")
             if (iconPack == null) prefs.remove(packKey) else prefs[packKey] = iconPack
