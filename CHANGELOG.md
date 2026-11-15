@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta92 Local instalada el 14 de noviembre de 2026. 0.65.0-beta92, código 92. Ficha Vita, tarjetas de actividad PS5 y cabecera PS4 reactiva. Salto A–Z con llegada visual, confirmación de saltos multimedia, reordenamiento con deshacer y cierre de ficha por gesto. Compilación y lint correctos. Actualización ADB sobre beta91 con firma, versión y hash verificados. Revisión interactiva pendiente. [Ficha](docs/BETA92.md).
+
 Beta91 Local instalada el 14 de noviembre de 2026. 0.64.0-beta91, código 91. El Centro rápido PS4 incorpora temporizadores simultáneos y una miniatura opcional de reproductor, temporizadores o nota fijada. Compilación y lint correctos. Actualización ADB sobre beta90 con firma, versión y hash verificados. Interacción y avisos con pantalla apagada pendientes de prueba. [Ficha](docs/BETA91.md).
 
 Beta90 Local compilada el 13 de noviembre de 2026. 0.63.0-beta90, código 90. Gestos para ampliar, contraer y cerrar Centro rápido, y saltos de −10/+30 s en sesiones compatibles. Compilación y lint correctos. Instalada por ADB inalámbrico sobre beta89, con firma, versión y hash verificados. Pruebas de gestos pendientes. [Ficha](docs/BETA90.md).

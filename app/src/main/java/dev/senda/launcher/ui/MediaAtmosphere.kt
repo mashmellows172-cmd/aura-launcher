@@ -39,7 +39,7 @@ internal fun rememberMediaAtmosphere(info: ActiveAudioInfo, reduced: Boolean, en
     return remember(color, presence) { MediaAtmosphere(color, presence) }
 }
 
-private fun sampleCoverAccent(bitmap: Bitmap, fallback: Color): Color {
+internal fun sampleCoverAccent(bitmap: Bitmap, fallback: Color): Color {
     return try {
         var red = 0f; var green = 0f; var blue = 0f; var weight = 0f
         val width = bitmap.width; val height = bitmap.height

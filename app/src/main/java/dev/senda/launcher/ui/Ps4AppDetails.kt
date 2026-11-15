@@ -14,6 +14,14 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import kotlinx.coroutines.launch
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -24,6 +32,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
@@ -43,6 +55,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -159,10 +177,65 @@ internal fun Ps4AppDetails(
     val close = { motion.close(reduced, onDismiss) }
     var destination by remember { mutableStateOf<Rect?>(null) }
     val accent = MaterialTheme.colorScheme.primary
-    val transition = Modifier.ps4PanelTransform(motion.progress.asState(), motion.effect,
+    val scope = rememberCoroutineScope()
+    val drag = remember { Animatable(0f) }
+    var dragFraction by remember { mutableFloatStateOf(0f) }
+    var followsOrigin by remember { mutableStateOf(false) }
+    val latestClose by rememberUpdatedState(close)
+    val displayedProgress = remember(motion) {
+        derivedStateOf { motion.progress.value * (1f - dragFraction) }
+    }
+    val transition = Modifier.ps4PanelTransform(displayedProgress,
+        if (followsOrigin && !reduced && origin != null) "SPRING" else motion.effect,
         origin = { origin }, destination = { destination })
+    val dragToClose = Modifier.pointerInput(reduced, motion) {
+        var distance = 0f
+        var accepted = false
+        val threshold = 78.dp.toPx()
+        fun restore() {
+            scope.launch {
+                if (reduced) dragFraction = 0f else {
+                    drag.snapTo(dragFraction)
+                    drag.animateTo(0f, tween(210, easing = Ps4Motion.easing)) { dragFraction = value }
+                }
+                followsOrigin = false
+            }
+        }
+        detectVerticalDragGestures(
+            onDragStart = {
+                accepted = !motion.closing && motion.progress.value > .97f && !followsOrigin
+                distance = 0f
+            },
+            onVerticalDrag = { change, amount ->
+                if (accepted) {
+                    distance = (distance + amount).coerceAtLeast(0f)
+                    if (distance > 0f || followsOrigin) {
+                        change.consume()
+                        if (!reduced) {
+                            followsOrigin = true
+                            dragFraction = (distance / (threshold * 2.8f)).coerceIn(0f, .72f)
+                        }
+                    }
+                }
+            },
+            onDragCancel = { if (accepted) restore() },
+            onDragEnd = {
+                if (accepted && distance >= threshold) latestClose()
+                else if (accepted) restore()
+            },
+        )
+    }
     val heading: @Composable () -> Unit = {
-            Row(Modifier.fillMaxWidth().then(if (reduced) Modifier else Modifier.ps4HeaderSweep(motion.progress.asState(), accent, .65f)),
+            val contrast = LocalAppearance.current.highContrast
+            val coverShape = RoundedCornerShape(12.dp)
+            val coverBase = MaterialTheme.colorScheme.surfaceVariant
+            val coverBrush = remember(coverBase, accent, contrast) {
+                Brush.horizontalGradient(listOf(if (contrast) coverBase else accent.copy(alpha = .24f), coverBase))
+            }
+            Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = 106.dp).clip(coverShape)
+                    .background(coverBrush).border(1.dp, accent.copy(alpha = .6f), coverShape)
+                    .then(if (reduced) Modifier else Modifier.ps4HeaderSweep(motion.progress.asState(), accent, .65f))
+                    .padding(14.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(64.dp)
@@ -172,6 +245,8 @@ internal fun Ps4AppDetails(
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Ficha de aplicación", style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(ps4ReadableLabel(app.label, "Aplicación"), style = MaterialTheme.typography.titleLarge,
                         maxLines = 3, overflow = TextOverflow.Ellipsis)
                     Text(category, style = MaterialTheme.typography.bodyMedium,
@@ -181,7 +256,7 @@ internal fun Ps4AppDetails(
     }
     val content: @Composable (Modifier) -> Unit = { modifier ->
             Column(
-                modifier = modifier.fillMaxWidth().heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                modifier = modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .4f))
@@ -189,10 +264,13 @@ internal fun Ps4AppDetails(
                 if (state.message.isNotEmpty()) Text(state.message, style = MaterialTheme.typography.bodyMedium)
                 state.shortcuts.forEach { shortcut ->
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .2f))
-                    TextButton(
+                    OutlinedButton(
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                         onClick = {
-                            if (motion.closing) return@TextButton
+                            if (motion.closing) return@OutlinedButton
                             launchError = null
                             try {
                                 if (launcherApps == null || !launcherApps.hasShortcutHostPermission()) {
@@ -239,23 +317,33 @@ internal fun Ps4AppDetails(
                         shape = RoundedCornerShape(2.dp),
                         color = MaterialTheme.colorScheme.surface,
                     ) {
-                        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            heading()
-                            content(Modifier.weight(1f, fill = false))
-                            Column(Modifier.fillMaxWidth()) {
-                                TextButton(onClick = onToggleFavorite, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                    Text(if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas")
-                                }
-                                TextButton(onClick = { motion.close(reduced, onChooseIcon) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                    Text("Cambiar icono")
-                                }
-                                TextButton(onClick = { motion.close(reduced, onMoreOptions) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                    Text("Más opciones")
+                        Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Box(Modifier.fillMaxWidth().heightIn(min = 48.dp).then(dragToClose)
+                                .semantics { contentDescription = "Asa para deslizar y cerrar la ficha" },
+                                contentAlignment = Alignment.Center) {
+                                Box(Modifier.width(44.dp).height(4.dp)
+                                    .background(MaterialTheme.colorScheme.outline, CircleShape))
+                            }
+                            Column(Modifier.weight(1f, fill = false).fillMaxWidth()
+                                .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                heading()
+                                Button(onClick = { if (!motion.closing) onLaunch() }, shape = RoundedCornerShape(8.dp),
+                                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Abrir aplicación") }
+                                content(Modifier)
+                                Column(Modifier.fillMaxWidth()) {
+                                    TextButton(onClick = onToggleFavorite, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text(if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas")
+                                    }
+                                    TextButton(onClick = { motion.close(reduced, onChooseIcon) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text("Cambiar icono")
+                                    }
+                                    TextButton(onClick = { motion.close(reduced, onMoreOptions) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text("Más opciones")
+                                    }
                                 }
                             }
                             Column(Modifier.align(Alignment.End), horizontalAlignment = Alignment.End) {
-                                Button(onClick = { if (!motion.closing) onLaunch() }, shape = RoundedCornerShape(2.dp),
-                                    modifier = Modifier.heightIn(min = 48.dp)) { Text("Abrir aplicación") }
                                 TextButton(onClick = close, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cerrar") }
                             }
                         }

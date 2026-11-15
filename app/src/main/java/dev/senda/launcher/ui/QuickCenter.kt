@@ -396,6 +396,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         val request = pendingSeek ?: return@LaunchedEffect
         val reported = audio.positionMs ?: return@LaunchedEffect
         if (audio.positionUpdatedAt >= request.second && kotlin.math.abs(reported - request.first) <= 2_000L) {
+            position = reported.coerceIn(0L, duration ?: Long.MAX_VALUE)
             pendingSeek = null
             seekStatus = "Posición actualizada"
         }
@@ -465,7 +466,9 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             }
             val current = position
             if (duration != null && current != null) {
-                val fraction = scrub ?: ((pendingSeek?.first ?: current).toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                val actual = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                val fraction = scrub ?: actual
+                val requested = pendingSeek?.let { (it.first.toDouble() / duration).toFloat().coerceIn(0f, 1f) }
                 if (audio.canSeek) BoxWithConstraints(Modifier.fillMaxWidth().heightIn(min = 28.dp)) {
                     val bubbleWidth = 68.dp.coerceAtMost(maxWidth)
                     scrub?.let { active ->
@@ -484,7 +487,10 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                         }
                         scrub = null
                     }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
-                Text("${quickMediaTime((fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
+                if (audio.canSeek) key(audio.sessionId, audio.title, duration) {
+                    MediaSeekCue(requested, actual, confirmed = seekStatus == "Posición actualizada", animated = animated)
+                }
+                Text("${quickMediaTime(pendingSeek?.first?.takeIf { scrub == null } ?: (fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
                     color = quickMuted, style = MaterialTheme.typography.labelMedium)
                 val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
                 if (status != null) Text(status, color = quickMuted, style = MaterialTheme.typography.labelSmall,

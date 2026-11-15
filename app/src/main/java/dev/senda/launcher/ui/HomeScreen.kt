@@ -116,6 +116,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -220,6 +221,10 @@ fun HomeScreen(
         "${state.theme.name}:${state.themeFinishes[state.theme.name]}", state.theme,
         sonyMotionReduced, durationMs = 520, ready = !state.isLoading)
     var letterArrival by remember { mutableStateOf("" to 0) }
+    val railOrigins = remember { mutableMapOf<String, androidx.compose.ui.layout.LayoutCoordinates>() }
+    val letterHeadings = remember { mutableMapOf<String, androidx.compose.ui.layout.LayoutCoordinates>() }
+    var letterFlight by remember { mutableStateOf<LetterFlight?>(null) }
+    val flyLetter = sonyTheme && !sonyMotionReduced && state.visualSettings.railEffect != "NONE"
     val scope = rememberCoroutineScope()
     val motionController = rememberAuraMotion(listState, state.visualSettings)
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
@@ -412,22 +417,41 @@ fun HomeScreen(
         derivedStateOf { starts.entries.lastOrNull { it.value <= listState.firstVisibleItemIndex }?.key ?: groupLetters.firstOrNull() }
     }
     val targetIndexFor: (String) -> Int = { letter -> starts[letter] ?: 0 }
+    val rtl = androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl
+    suspend fun arriveAtLetter(letter: String, origin: androidx.compose.ui.geometry.Offset?) {
+        if (!query.isBlank()) return
+        if (flyLetter && origin != null) {
+            androidx.compose.runtime.withFrameNanos { }
+            val destination = letterHeadings[letter]?.takeIf { it.isAttached }?.boundsInRoot()
+            if (destination != null && !destination.isEmpty) {
+                val inset = destination.height * .48f
+                val x = if (rtl) destination.right - inset else destination.left + inset
+                letterFlight = LetterFlight(letter, origin, androidx.compose.ui.geometry.Offset(x, destination.center.y))
+                return
+            }
+        }
+        letterArrival = letter to (letterArrival.second + 1)
+    }
     val onSelectLetter: (String) -> Unit = { letter ->
         alphabetJob?.cancel()
+        letterFlight = null
+        val origin = railOrigins[letter]?.takeIf { it.isAttached }?.boundsInRoot()?.center
         alphabetJob = scope.launch {
             listState.animateScrollToItem(targetIndexFor(letter))
-            letterArrival = letter to (letterArrival.second + 1)
+            arriveAtLetter(letter, origin)
         }
     }
     val onScrubLetter: (String) -> Unit = { letter ->
         alphabetJob?.cancel()
+        letterFlight = null
         alphabetJob = scope.launch { listState.scrollToItem(targetIndexFor(letter)) }
     }
     val onReleaseLetter: (String) -> Unit = { letter ->
         val jump = alphabetJob
-        scope.launch {
+        val origin = railOrigins[letter]?.takeIf { it.isAttached }?.boundsInRoot()?.center
+        alphabetJob = scope.launch {
             jump?.join()
-            if (alphabetJob === jump && query.isBlank()) letterArrival = letter to (letterArrival.second + 1)
+            if (query.isBlank()) arriveAtLetter(letter, origin)
         }
     }
 
@@ -466,8 +490,15 @@ fun HomeScreen(
             .padding(horizontal = 22.dp),
     ) {
         Spacer(Modifier.height(if (compact) 4.dp else 14.dp))
+        val contextualHeader = state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank() &&
+            !sonyMotionReduced && state.visualSettings.menuEffect != "NONE"
+        val selectionTint = rememberPs4HeaderSelection(contextualHeader, sonyMotionReduced, listState,
+            ps4FocusedKey, visibleApps, recentApp,
+            state.skinIcons,
+            viewModel::icon)
         Header(
             theme = state.theme,
+            selectionTint = selectionTint.takeIf { contextualHeader },
             clockTime = clockTime,
             avatarUri = state.avatarUri,
             widgetController = widgetController,
@@ -621,6 +652,7 @@ fun HomeScreen(
                         onChooseIcon = onChooseIcon,
                         onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
                         letterArrival = letterArrival,
+                        onHeadingPositioned = if (flyLetter) ({ letter, coordinates -> letterHeadings[letter] = coordinates }) else null,
                     )
                     AlphabetRail(
                         theme = state.theme,
@@ -631,11 +663,13 @@ fun HomeScreen(
                         onClick = onSelectLetter,
                         onScrub = onScrubLetter,
                         onRelease = if (sonyTheme && !sonyMotionReduced) onReleaseLetter else null,
+                        onLetterPositioned = if (flyLetter) ({ letter, coordinates -> railOrigins[letter] = coordinates }) else null,
                     )
                 }
             }
         }
         }
+        ActivityShelf(showShelf = !searchFocused && query.isBlank(), ps4 = state.theme == LauncherTheme.PS4)
         if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
             fun openQuickCenter(origin: androidx.compose.ui.geometry.Rect?, target: QuickCenterTarget) {
                 quickCenterOrigin = origin
@@ -652,6 +686,16 @@ fun HomeScreen(
             }
             QuickCenterButton { openQuickCenter(it, QuickCenterTarget.PANEL) }
         }
+        }
+        if (flyLetter && query.isBlank() && !searchFocused) {
+            letterFlight?.let { flight ->
+                LetterTravel(flight, Modifier.align(androidx.compose.ui.AbsoluteAlignment.TopLeft)) {
+                    if (letterFlight == flight) {
+                        letterFlight = null
+                        letterArrival = flight.letter to (letterArrival.second + 1)
+                    }
+                }
+            }
         }
     }
 
@@ -912,6 +956,7 @@ internal fun Header(
     headerHeight: Int = 120,
     onWeatherPanel: ((androidx.compose.ui.geometry.Rect?) -> Unit)? = null,
     headerDialogueEnabled: Boolean = true,
+    selectionTint: androidx.compose.runtime.State<androidx.compose.ui.graphics.Color>? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     var themeMenuExpanded by remember { mutableStateOf(false) }
@@ -957,7 +1002,7 @@ internal fun Header(
             ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO,
             easing = androidx.compose.animation.core.LinearEasing,
         )
-        Column(Modifier.fillMaxWidth().then(signal)
+        Column(Modifier.fillMaxWidth().then(if (selectionTint != null) Modifier.ps4SelectionGlow(selectionTint) else Modifier).then(signal)
             .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
@@ -1296,6 +1341,7 @@ internal fun AppSections(
     onChooseIcon: (LaunchableApp) -> Unit,
     onResetIcon: (LaunchableApp) -> Unit,
     letterArrival: Pair<String, Int> = "" to 0,
+    onHeadingPositioned: ((String, androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val collator = remember(locale) { Collator.getInstance(locale) }
@@ -1340,7 +1386,10 @@ internal fun AppSections(
                     letter,
                     modifier = Modifier.fillMaxWidth().then(if (letterArrival.first == letter)
                         Modifier.ps4HeaderSweep(arrival, MaterialTheme.colorScheme.primary, .85f)
-                    else Modifier).padding(start = 4.dp, top = 12.dp, bottom = 2.dp),
+                    else Modifier).padding(start = 4.dp, top = 12.dp, bottom = 2.dp)
+                        .then(if (onHeadingPositioned == null) Modifier else Modifier.onGloballyPositioned {
+                            onHeadingPositioned(letter, it)
+                        }),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,

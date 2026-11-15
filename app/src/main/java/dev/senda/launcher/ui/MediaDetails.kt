@@ -193,7 +193,8 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             val current = position
             if (duration != null && current != null) {
                 val displayed = pendingSeek?.target ?: current
-                val fraction = (displayed.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                val fraction = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
+                val requested = pendingSeek?.let { (it.target.toDouble() / duration).toFloat().coerceIn(0f, 1f) }
                 val smoothPosition by animateFloatAsState(fraction,
                     if (!animateDismiss || drag != null || pendingSeek != null) snap()
                     else tween(420, easing = LinearEasing), label = "media-progress")
@@ -213,6 +214,9 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
                             onSeek(sessionId, target)
                         }
                     }, enabled = sessionId != null && info.canSeek)
+                if (info.canSeek && sessionId != null) androidx.compose.runtime.key(sessionId, info.title, duration) {
+                    MediaSeekCue(requested, fraction, confirmed = seekResult == "Posición actualizada", animated = animateDismiss)
+                }
                 Text("${mediaTime(drag?.let { (duration * it).toLong() } ?: displayed)} / ${mediaTime(duration)}")
                 val status = if (pendingSeek != null) "Esperando al reproductor…" else seekResult
                 if (status != null) Text(status, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

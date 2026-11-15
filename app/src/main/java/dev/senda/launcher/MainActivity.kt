@@ -4,6 +4,7 @@ import android.app.role.RoleManager
 import android.Manifest
 import android.content.pm.ActivityInfo
 import dev.senda.launcher.data.HomeRotation
+import dev.senda.launcher.data.ActivityCard
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -31,6 +32,7 @@ import dev.senda.launcher.widgets.WidgetController
 
 class MainActivity : ComponentActivity() {
     private val viewModel: LauncherViewModel by viewModels()
+    private var sharedActivity by mutableStateOf<ActivityCard?>(null)
     private var isDefaultHome by mutableStateOf(false)
     private lateinit var unlockEvents: dev.senda.launcher.ui.UnlockEvents
     private lateinit var diagnostics: dev.senda.launcher.ui.FrameDiagnostics
@@ -58,6 +60,13 @@ class MainActivity : ComponentActivity() {
         soundFeedback = dev.senda.launcher.audio.SoundFeedbackController(applicationContext)
         widgets = WidgetController(this)
         updateHomeState()
+        sharedActivity = if (savedInstanceState == null) ActivityCard.fromShare(intent) else {
+            savedInstanceState.getString("shared_activity_id")?.let { id ->
+                ActivityCard(id, savedInstanceState.getString("shared_activity_title").orEmpty(),
+                    savedInstanceState.getString("shared_activity_link").orEmpty(),
+                    savedInstanceState.getInt("shared_activity_cover"))
+            }
+        }
         setContent {
             val storedUiState by viewModel.uiState.collectAsStateWithLifecycle()
             val performance = dev.senda.launcher.ui.rememberPerformancePreferences()
@@ -97,6 +106,7 @@ class MainActivity : ComponentActivity() {
                 LocalRetroAssets provides uiState.retroLibrary[uiState.theme.name]?.takeIf { uiState.retroEnabled[uiState.theme.name] == true }) {
             AuraTheme(uiState.theme, systemIsDark, highContrast = uiState.appearance.highContrast, finish = uiState.themeFinishes[uiState.theme.name] ?: dev.senda.launcher.data.ThemeFinish(), reduceMotion = uiState.visualSettings.reduceMotion, fontChoice = uiState.fontChoice, ps4Ambient = uiState.headerSettings.ps4Ambient) {
                 dev.senda.launcher.ui.UnlockEntry(unlockEvents.sequence, uiState.theme, uiState.visualSettings.reduceMotion || uiState.appearance.highContrast) {
+                dev.senda.launcher.ui.ActivityShareScope(sharedActivity, { sharedActivity = null }) {
                 HomeScreen(
                     viewModel = viewModel,
                     isDefaultHome = isDefaultHome || packageName.endsWith(".benchmark"),
@@ -108,6 +118,7 @@ class MainActivity : ComponentActivity() {
                     onExportSettings = { exportSettings.launch("Aura-respaldo-${java.time.LocalDate.now()}.json") },
                     onImportSettings = { importSettings.launch(arrayOf("application/json", "application/octet-stream", "text/plain")) },
                 )
+                }
                 }
             }
             }
@@ -130,7 +141,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        ActivityCard.fromShare(intent)?.let { sharedActivity = it }
         if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_HOME)) viewModel.returnHome()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        sharedActivity?.let {
+            outState.putString("shared_activity_id", it.id)
+            outState.putString("shared_activity_title", it.title)
+            outState.putString("shared_activity_link", it.link)
+            outState.putInt("shared_activity_cover", it.cover)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onStart() { super.onStart(); soundFeedback.setVisible(true); widgets.start(); viewModel.setHomeVisible(true) }

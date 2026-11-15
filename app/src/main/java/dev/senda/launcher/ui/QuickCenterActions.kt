@@ -7,6 +7,17 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.provider.Settings
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.zIndex
+import dev.senda.launcher.data.moveListItem
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -36,22 +47,92 @@ internal fun quickOrder(saved: String?, defaults: List<String>): List<String> =
 internal fun QuickOrderEditor(order: List<String>, onMove: (List<String>) -> Unit,
     extra: @Composable (String) -> Unit,
 ) {
-    order.forEachIndexed { index, label ->
-        Row(Modifier.widthIn(min = 260.dp).padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(label, Modifier.weight(1f))
-            extra(label)
-            for (direction in listOf(-1, 1)) {
-                val target = index + direction
-                IconButton(enabled = target in order.indices, onClick = {
-                    if (target in order.indices) onMove(order.toMutableList().apply {
-                        add(target, removeAt(index))
-                    })
-                }, modifier = Modifier.semantics {
-                    contentDescription = if (direction < 0) "Subir $label" else "Bajar $label"
-                }) { Text(if (direction < 0) "↑" else "↓") }
+    val list = rememberLazyListState()
+    val latestOrder by rememberUpdatedState(order)
+    var preview by remember { mutableStateOf<List<String>?>(null) }
+    var undo by remember { mutableStateOf<List<String>?>(null) }
+    var dragged by remember { mutableStateOf<String?>(null) }
+    var center by remember { mutableFloatStateOf(0f) }
+    val commit by rememberUpdatedState(onMove)
+    val current = preview ?: order
+    val animated = !LocalMotionSettings.current.reduceMotion && LocalMotionSettings.current.menuEffect != "NONE" &&
+        !LocalSystemPowerSaving.current &&
+        !dev.senda.launcher.data.LocalAppearance.current.highContrast && android.animation.ValueAnimator.areAnimatorsEnabled()
+    val height = 56.dp
+    val accent = MaterialTheme.colorScheme.primary
+    Column(Modifier.width(294.dp)) {
+        LazyColumn(
+            state = list,
+            modifier = Modifier.fillMaxWidth().height(height * order.size).pointerInput(list) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = { point ->
+                        list.layoutInfo.visibleItemsInfo.firstOrNull { point.y >= it.offset && point.y < it.offset + it.size }?.let {
+                            preview = latestOrder
+                            dragged = it.key as? String
+                            center = it.offset + it.size / 2f
+                        }
+                    },
+                    onDrag = { change, amount ->
+                        val draft = preview
+                        val key = dragged
+                        if (draft != null && key != null) {
+                            change.consume()
+                            center = (center + amount.y).coerceIn(0f, size.height.toFloat() - 1f)
+                            val target = list.layoutInfo.visibleItemsInfo.firstOrNull {
+                                center >= it.offset && center < it.offset + it.size
+                            }
+                            val from = draft.indexOf(key)
+                            if (from >= 0 && target != null && target.index != from) {
+                                preview = moveListItem(draft, from, target.index)
+                            }
+                        }
+                    },
+                    onDragEnd = {
+                        preview?.takeIf { it != latestOrder }?.let {
+                            undo = latestOrder
+                            commit(it)
+                        }
+                        dragged = null
+                        preview = null
+                    },
+                    onDragCancel = { dragged = null; preview = null },
+                )
+            },
+        ) {
+            itemsIndexed(current, key = { _, label -> label }) { index, label ->
+                val active = dragged == label
+                Box(Modifier.height(height).fillMaxWidth().zIndex(if (active) 1f else 0f)
+                    .animateItem(fadeInSpec = null,
+                        placementSpec = if (animated && !active) tween(175, easing = Ps4Motion.easing) else null,
+                        fadeOutSpec = null)) {
+                    if (active) Box(Modifier.matchParentSize().background(accent.copy(alpha = .16f))
+                        .border(1.dp, accent.copy(alpha = .7f)))
+                    Row(Modifier.fillMaxSize().graphicsLayer {
+                        if (active) translationY = list.layoutInfo.visibleItemsInfo.firstOrNull { it.key == label }
+                            ?.let { center - it.offset - it.size / 2f } ?: 0f
+                    }.then(if (active) Modifier.background(MaterialTheme.colorScheme.primaryContainer) else Modifier)
+                        .padding(horizontal = 8.dp)
+                        .semantics { stateDescription = "Posición ${index + 1} de ${current.size}" },
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(label, Modifier.weight(1f), maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        extra(label)
+                        for (direction in listOf(-1, 1)) {
+                            val target = index + direction
+                            IconButton(enabled = dragged == null && target in current.indices, onClick = {
+                                undo = order
+                                onMove(moveListItem(current, index, target))
+                            }, modifier = Modifier.semantics {
+                                contentDescription = if (direction < 0) "Subir $label" else "Bajar $label"
+                            }) { Text(if (direction < 0) "↑" else "↓") }
+                        }
+                    }
+                }
             }
         }
+        if (undo != null) TextButton(onClick = {
+            undo?.let(onMove)
+            undo = null
+        }, enabled = dragged == null, modifier = Modifier.heightIn(min = 48.dp)) { Text("Deshacer movimiento") }
     }
 }
 

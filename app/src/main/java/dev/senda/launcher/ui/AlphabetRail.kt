@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -48,6 +49,7 @@ fun AlphabetRail(
     letters: List<String>, theme: LauncherTheme = LauncherTheme.NOTHING, modifier: Modifier = Modifier,
     selectedLetter: String?, visualSettings: VisualSettings, onClick: (String) -> Unit, onScrub: (String) -> Unit,
     onRelease: ((String) -> Unit)? = null,
+    onLetterPositioned: ((String, androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null,
 ) {
     if (letters.isEmpty()) return
     val soundFeedback = dev.senda.launcher.audio.LocalSoundFeedback.current
@@ -134,7 +136,9 @@ fun AlphabetRail(
                         val index=column*rows+row;val letter=letters.getOrNull(index)
                         Box(Modifier.weight(1f).fillMaxWidth().then(if(letter==null)Modifier else Modifier
                             .semantics { contentDescription="Saltar a la sección $letter";role=Role.Button;selected=index==selectedIndex }
-                            .clickable {select(index,false)}),contentAlignment=Alignment.Center){
+                            .then(if (onLetterPositioned == null) Modifier else Modifier.onGloballyPositioned {
+                                onLetterPositioned(letter, it)
+                            }).clickable {select(index,false)}),contentAlignment=Alignment.Center){
                             if(letter!=null)Text(letter,Modifier.graphicsLayer {
                                 // Hot state is read only in the graphics layer; no per-pixel Home recomposition.
                                 translationX=0f;translationY=0f;rotationX=0f;rotationY=0f;rotationZ=0f;scaleX=1f;scaleY=1f;alpha=1f

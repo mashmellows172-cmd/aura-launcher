@@ -1,5 +1,6 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
@@ -39,13 +40,19 @@ internal fun FavoritesReorderDialog(
     onDismiss: () -> Unit,
 ) {
     var ordered by remember { mutableStateOf(favorites) }
+    var undo by remember { mutableStateOf<List<LaunchableApp>?>(null) }
+    val animated = !LocalMotionSettings.current.reduceMotion && LocalMotionSettings.current.menuEffect != "NONE" &&
+        !LocalSystemPowerSaving.current &&
+        !dev.senda.launcher.data.LocalAppearance.current.highContrast && android.animation.ValueAnimator.areAnimatorsEnabled()
     val list = rememberLazyListState()
     val edgePx = with(LocalDensity.current) { 72.dp.toPx() }
     var dragged by remember { mutableStateOf<String?>(null) }
+    var dragStart by remember { mutableStateOf<List<LaunchableApp>?>(null) }
     var center by remember { mutableFloatStateOf(0f) }
     var pointerY by remember { mutableFloatStateOf(0f) }
     fun move(from: Int, to: Int) {
         if (from !in ordered.indices || to !in ordered.indices || from == to) return
+        if (dragged == null) undo = ordered
         ordered = moveListItem(ordered, from, to)
     }
     fun settleTarget() {
@@ -91,13 +98,22 @@ internal fun FavoritesReorderDialog(
                         detectDragGesturesAfterLongPress(
                             onDragStart = { point ->
                                 list.layoutInfo.visibleItemsInfo.firstOrNull { point.y >= it.offset && point.y < it.offset + it.size }?.let {
+                                    dragStart = ordered
                                     dragged = it.key as? String
                                     center = it.offset + it.size / 2f
                                     pointerY = point.y
                                 }
                             },
-                            onDragEnd = { dragged = null },
-                            onDragCancel = { dragged = null },
+                            onDragEnd = {
+                                dragStart?.takeIf { it != ordered }?.let { undo = it }
+                                dragged = null
+                                dragStart = null
+                            },
+                            onDragCancel = {
+                                dragStart?.let { ordered = it }
+                                dragged = null
+                                dragStart = null
+                            },
                             onDrag = { change, amount ->
                                 if (dragged != null) {
                                     change.consume()
@@ -111,37 +127,46 @@ internal fun FavoritesReorderDialog(
                 ) {
                     itemsIndexed(ordered, key = { _, app -> app.packageName }) { index, app ->
                         val active = dragged == app.packageName
-                        Row(
-                            Modifier.fillMaxWidth().heightIn(min = 64.dp).zIndex(if (active) 1f else 0f)
-                                .graphicsLayer {
-                                    translationY = if (active) list.layoutInfo.visibleItemsInfo.firstOrNull { it.key == app.packageName }
-                                        ?.let { center - it.offset - it.size / 2f } ?: 0f else 0f
+                        Box(Modifier.zIndex(if (active) 1f else 0f)
+                            .animateItem(fadeInSpec = null,
+                                placementSpec = if (animated && !active) tween(175, easing = Ps4Motion.easing) else null,
+                                fadeOutSpec = null)) {
+                            if (active) Box(Modifier.matchParentSize().background(accent.copy(alpha = .16f))
+                                .border(1.dp, accent.copy(alpha = .7f)))
+                            Row(
+                                Modifier.fillMaxWidth().heightIn(min = 64.dp)
+                                    .graphicsLayer {
+                                        translationY = if (active) list.layoutInfo.visibleItemsInfo.firstOrNull { it.key == app.packageName }
+                                            ?.let { center - it.offset - it.size / 2f } ?: 0f else 0f
+                                    }
+                                    .background(if (active) surface else MaterialTheme.colorScheme.surface)
+                                    .then(if (active) Modifier.border(2.dp, accent) else Modifier)
+                                    .semantics {
+                                        stateDescription = "Posición ${index + 1} de ${ordered.size}" + if (active) ", moviendo" else ""
+                                        customActions = listOf(
+                                            CustomAccessibilityAction("Subir") { if (index > 0) { move(index, index - 1); true } else false },
+                                            CustomAccessibilityAction("Bajar") { if (index < ordered.lastIndex) { move(index, index + 1); true } else false },
+                                        )
+                                    },
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(Icons.Default.Menu, null, Modifier.padding(end = 8.dp).size(20.dp))
+                                Text(app.label, Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                IconButton(onClick = { move(index, index - 1) }, enabled = index > 0 && dragged == null, modifier = Modifier.size(48.dp)) {
+                                    Icon(Icons.Default.KeyboardArrowUp, "Subir ${app.label}")
                                 }
-                                .background(if (active) surface else MaterialTheme.colorScheme.surface)
-                                .then(if (active) Modifier.border(2.dp, accent) else Modifier)
-                                .semantics {
-                                    stateDescription = "Posición ${index + 1} de ${ordered.size}" + if (active) ", moviendo" else ""
-                                    customActions = listOf(
-                                        CustomAccessibilityAction("Subir") { if (index > 0) { move(index, index - 1); true } else false },
-                                        CustomAccessibilityAction("Bajar") { if (index < ordered.lastIndex) { move(index, index + 1); true } else false },
-                                    )
-                                },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(Icons.Default.Menu, null, Modifier.padding(end = 8.dp).size(20.dp))
-                            Text(app.label, Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
-                            IconButton(onClick = { move(index, index - 1) }, enabled = index > 0 && dragged == null, modifier = Modifier.size(48.dp)) {
-                                Icon(Icons.Default.KeyboardArrowUp, "Subir ${app.label}")
-                            }
-                            IconButton(onClick = { move(index, index + 1) }, enabled = index < ordered.lastIndex && dragged == null, modifier = Modifier.size(48.dp)) {
-                                Icon(Icons.Default.KeyboardArrowDown, "Bajar ${app.label}")
-                            }
-                            IconButton(onClick = { ordered = ordered.filterNot { it.packageName == app.packageName } }, enabled = dragged == null, modifier = Modifier.size(48.dp)) {
-                                Icon(Icons.Default.Close, "Quitar ${app.label} de favoritas")
+                                IconButton(onClick = { move(index, index + 1) }, enabled = index < ordered.lastIndex && dragged == null, modifier = Modifier.size(48.dp)) {
+                                    Icon(Icons.Default.KeyboardArrowDown, "Bajar ${app.label}")
+                                }
+                                IconButton(onClick = { undo = ordered; ordered = ordered.filterNot { it.packageName == app.packageName } }, enabled = dragged == null, modifier = Modifier.size(48.dp)) {
+                                    Icon(Icons.Default.Close, "Quitar ${app.label} de favoritas")
+                                }
                             }
                         }
                     }
                 }
+                if (undo != null) TextButton(onClick = { undo?.let { ordered = it }; undo = null },
+                    enabled = dragged == null, modifier = Modifier.heightIn(min = 48.dp)) { Text("Deshacer movimiento") }
             }
         },
         confirmButton = { TextButton(onClick = { onSave(ordered.map { it.packageName }); onDismiss() }, enabled = dragged == null) { Text("Guardar") } },
