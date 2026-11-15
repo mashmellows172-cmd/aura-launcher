@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -68,19 +69,21 @@ private val quickInk = Color(0xFFF4F8FF)
 private val quickMuted = Color(0xFFCDDEF5)
 internal val quickBlue = Color(0xFF65CEFF)
 private val quickEdge = Color(0xFF456EAD)
+private val LocalQuickAccent = compositionLocalOf { quickBlue }
 
 /** A lighter version of the sheet material lets the wallpaper show through on Inicio. */
 @Composable
 internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false): Modifier {
     if (LocalAppearance.current.highContrast) return this
     val opacity = if (translucent) .66f else 1f
+    val accent = LocalQuickAccent.current
     return background(Brush.verticalGradient(listOf(
-        Color(0xFF1C3359).copy(alpha = opacity), Color(0xFF101E39).copy(alpha = opacity),
-    )), shape).border(1.dp, quickEdge.copy(alpha = if (translucent) .65f else 1f), shape)
+        lerp(Color(0xFF1C3359), accent, .12f).copy(alpha = opacity), Color(0xFF101E39).copy(alpha = opacity),
+    )), shape).border(1.dp, lerp(quickEdge, accent, .38f).copy(alpha = if (translucent) .65f else 1f), shape)
 }
 
 @Composable
-internal fun QuickCenterButton(onClick: (Rect?) -> Unit) {
+internal fun QuickCenterButton(tint: State<Color>?, onClick: (Rect?) -> Unit) {
     val contrast = LocalAppearance.current.highContrast
     var bounds by remember { mutableStateOf<Rect?>(null) }
     OutlinedButton(
@@ -90,7 +93,8 @@ internal fun QuickCenterButton(onClick: (Rect?) -> Unit) {
                 val point = coordinates.positionOnScreen()
                 bounds = if (point.x.isFinite() && point.y.isFinite()) Rect(point,
                     Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
-            }.ps4ControlGlass(CircleShape),
+            }.clip(CircleShape).ps4ControlGlass(CircleShape)
+            .then(if (tint != null && !contrast) Modifier.ps4SelectionGlow(tint) else Modifier),
         shape = CircleShape,
         border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else quickBlue),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -111,6 +115,7 @@ internal fun QuickCenter(
     event: AgendaEvent?,
     reduced: Boolean,
     origin: Rect?,
+    appAccent: Color?,
     target: QuickCenterTarget,
     miniTarget: QuickCenterTarget,
     onMiniTargetChange: (QuickCenterTarget) -> Unit,
@@ -130,6 +135,12 @@ internal fun QuickCenter(
     onOpenPlayer: () -> Unit,
     onOpenMediaSource: () -> Unit,
 ) {
+    val contrast = LocalAppearance.current.highContrast
+    val colors = MaterialTheme.colorScheme
+    val accent = if (contrast) colors.primary else appAccent ?: quickBlue
+    val edge = if (contrast) colors.outline else lerp(quickEdge, accent, .46f)
+    val panel = if (contrast) colors.surface else Color(0xFF0B1730)
+    val ink = if (contrast) colors.onSurface else quickInk
     val motion = rememberPs4PanelMotion(reduced)
     val close = { motion.close(reduced, onDismiss) }
     var expanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.MEDIA) }
@@ -187,8 +198,10 @@ internal fun QuickCenter(
                 .background(Color.Black.copy(alpha = .52f))
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null,
                     onClickLabel = "Cerrar Centro rápido", onClick = close))
-            val sheetMax = (maxHeight - 24.dp).coerceAtLeast(120.dp)
+            val compact = maxHeight < 490.dp || LocalDensity.current.fontScale >= 1.35f
+            val sheetMax = (maxHeight - 16.dp).coerceAtLeast(120.dp)
             val shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+            CompositionLocalProvider(LocalQuickAccent provides accent) {
             Surface(
                 modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding()
                     .widthIn(max = 560.dp).fillMaxWidth().heightIn(max = sheetMax)
@@ -201,14 +214,16 @@ internal fun QuickCenter(
                     .graphicsLayer { if (animated) translationY = dragOffset }
                     .semantics { paneTitle = "Centro rápido" },
                 shape = shape,
-                color = Color(0xFF0B1730),
-                contentColor = quickInk,
+                color = panel,
+                contentColor = ink,
             ) {
-                Column(Modifier.background(Brush.verticalGradient(listOf(Color(0xFF142447), Color(0xFF081328))))
-                    .border(BorderStroke(1.dp, quickEdge), shape)
+                val surfaceFinish = if (contrast) Modifier else Modifier.background(Brush.verticalGradient(
+                    listOf(lerp(Color(0xFF142447), accent, .17f), panel, Color(0xFF081328))))
+                Column(Modifier.then(surfaceFinish)
+                    .border(BorderStroke(1.dp, edge), shape)
                     .navigationBarsPadding().imePadding()
-                    .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(Modifier.fillMaxWidth().heightIn(min = 48.dp)
                         .pointerInput(hasMedia, mediaExpanded, animated) {
                             val expandDistance = 44.dp.toPx()
@@ -253,15 +268,28 @@ internal fun QuickCenter(
                             }
                         }, contentAlignment = Alignment.Center) {
                         Spacer(Modifier.width(if (mediaExpanded) 58.dp else 44.dp).height(4.dp)
-                            .background(if (mediaExpanded) quickBlue else Color(0xFF59749F), CircleShape))
+                            .background(if (mediaExpanded) accent else edge, CircleShape))
                     }
                     Row(Modifier.fillMaxWidth().padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         ThemeSystemIcon("layers", LauncherTheme.PS4, Modifier.size(26.dp))
-                        Text("Centro rápido", Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall)
+                        Text("Centro rápido", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                        if (hasMedia && !compact) {
+                            TextButton(onClick = { expandMedia(!mediaExpanded) },
+                                colors = ButtonDefaults.textButtonColors(contentColor = accent),
+                                modifier = Modifier.heightIn(min = 48.dp).semantics {
+                                    contentDescription = if (mediaExpanded) "Contraer reproductor" else "Ampliar reproductor"
+                                }) { Text(if (mediaExpanded) "Contraer" else "Ampliar") }
+                        }
                         IconButton(onClick = close, modifier = Modifier.semantics { contentDescription = "Cerrar Centro rápido" }) {
                             ThemeSystemIcon("close", LauncherTheme.PS4)
                         }
+                    }
+                    val shortcuts: @Composable () -> Unit = {
+                        HorizontalDivider(color = edge.copy(alpha = .65f))
+                        Spacer(Modifier.height(6.dp))
+                        QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
+                            onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
                     }
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -284,7 +312,7 @@ internal fun QuickCenter(
                         }
                         for (card in visibleCards) key(card) {
                             when (card) {
-                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded,
+                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact,
                                     onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource)
                                 else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
                                 "Temporizadores" -> QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
@@ -305,9 +333,9 @@ internal fun QuickCenter(
                                 } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
                             }
                         }
+                        if (compact) shortcuts()
                     }
-                    QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
-                        onSettings = { action -> motion.close(reduced) { onDismiss(); action() } })
+                    if (!compact) shortcuts()
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             TextButton(onClick = { editing = true }) { Text("Ordenar y fijar tarjetas") }
@@ -342,6 +370,7 @@ internal fun QuickCenter(
                     }
                 }
             }
+            }
         }
     }
 }
@@ -349,24 +378,29 @@ internal fun QuickCenter(
 @Composable
 internal fun QuickCard(content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(16.dp)
-    Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).padding(12.dp)) {
+    val cardContrast = if (LocalAppearance.current.highContrast) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape) else Modifier
+    Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).then(cardContrast).padding(12.dp)) {
         content()
     }
 }
 
 @Composable
 private fun QuickActionCard(icon: String, label: String, value: String, action: String, onClick: () -> Unit) {
+    val contrast = LocalAppearance.current.highContrast
+    val ink = if (contrast) MaterialTheme.colorScheme.onSurface else quickInk
+    val muted = if (contrast) MaterialTheme.colorScheme.onSurfaceVariant else quickMuted
     QuickCard {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Box(Modifier.size(46.dp).background(Color(0xFF214479), RoundedCornerShape(12.dp)),
+            Box(Modifier.size(46.dp).background(if (contrast) MaterialTheme.colorScheme.surfaceVariant
+                else Color(0xFF214479), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center) { ThemeSystemIcon(icon, LauncherTheme.PS4, Modifier.size(26.dp)) }
             Column(Modifier.weight(1f)) {
-                Text(label, color = quickMuted, style = MaterialTheme.typography.bodyMedium)
+                Text(label, color = muted, style = MaterialTheme.typography.bodyMedium)
                 Text(value, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             OutlinedButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 12.dp),
-                border = BorderStroke(1.dp, quickBlue),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = quickInk),
+                border = BorderStroke(1.dp, LocalQuickAccent.current),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = ink),
                 modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = "$action · $label" },
             ) { Text(action) }
         }
@@ -374,10 +408,13 @@ private fun QuickActionCard(icon: String, label: String, value: String, action: 
 }
 
 @Composable
-private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: Boolean,
+private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: Boolean, compact: Boolean,
     onExpandedChange: (Boolean) -> Unit, onPlayback: () -> Unit,
     onPrevious: () -> Unit, onNext: () -> Unit, onSeek: (Long) -> Unit, onOpenSource: () -> Unit,
 ) {
+    val contrast = LocalAppearance.current.highContrast
+    val ink = if (contrast) MaterialTheme.colorScheme.onSurface else quickInk
+    val muted = if (contrast) MaterialTheme.colorScheme.onSurfaceVariant else quickMuted
     val cover = audio.artwork?.takeUnless { it.isRecycled }
     var scrub by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
     var pendingSeek by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
@@ -437,7 +474,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = quickMuted,
+                    Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = muted,
                         style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -448,7 +485,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                             .semantics { progressBarRangeInfo = ProgressBarRangeInfo(fraction, 0f..1f) }
                             .background(Color(0xFF304B73), CircleShape)) {
                             if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction).fillMaxHeight()
-                                .background(quickBlue, CircleShape))
+                                .background(LocalQuickAccent.current, CircleShape))
                         }
                     }
                 }
@@ -460,9 +497,11 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 }
         }
         }
+        if (!expanded && compact) TextButton(onClick = { onExpandedChange(true) },
+            modifier = Modifier.heightIn(min = 48.dp)) { Text("Ampliar reproductor") }
         if (expanded) {
             audio.artist?.takeIf { it.isNotBlank() }?.let {
-                Text(it, color = quickMuted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
+                Text(it, color = muted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
             }
             val current = position
             if (duration != null && current != null) {
@@ -476,7 +515,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                             modifier = Modifier.offset(x = (maxWidth * active - bubbleWidth / 2)
                                 .coerceIn(0.dp, maxWidth - bubbleWidth))
                                 .width(bubbleWidth).ps4ControlGlass(RoundedCornerShape(8.dp)).padding(3.dp),
-                            color = quickInk, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            color = ink, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             style = MaterialTheme.typography.labelMedium)
                     }
                 }
@@ -491,9 +530,9 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     MediaSeekCue(requested, actual, confirmed = seekStatus == "Posición actualizada", animated = animated)
                 }
                 Text("${quickMediaTime(pendingSeek?.first?.takeIf { scrub == null } ?: (fraction.toDouble() * duration).toLong())} / ${quickMediaTime(duration)}",
-                    color = quickMuted, style = MaterialTheme.typography.labelMedium)
+                    color = muted, style = MaterialTheme.typography.labelMedium)
                 val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
-                if (status != null) Text(status, color = quickMuted, style = MaterialTheme.typography.labelSmall,
+                if (status != null) Text(status, color = muted, style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 if (audio.canSeek) {
                     val baseline = pendingSeek?.first ?: current
@@ -511,9 +550,9 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 verticalAlignment = Alignment.CenterVertically) {
                 QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
                 if (audio.sessionId != null) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
-                    Text("Abrir app", color = quickBlue)
+                    Text("Abrir app", color = LocalQuickAccent.current)
                 }
-                TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = quickBlue) }
+                TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = LocalQuickAccent.current) }
             }
         }
         }
@@ -524,13 +563,18 @@ private fun quickMediaTime(ms: Long) = "${ms / 60_000}:${(ms / 1_000 % 60).toStr
 
 @Composable
 private fun QuickMediaButton(icon: String, label: String, enabled: Boolean, onClick: () -> Unit) {
+    val contrast = LocalAppearance.current.highContrast
+    val ink = if (contrast) MaterialTheme.colorScheme.onSurface else quickInk
+    val edge = if (contrast) MaterialTheme.colorScheme.outline else lerp(quickEdge, LocalQuickAccent.current, .46f)
+    val fill = if (contrast) listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surfaceVariant)
+        else listOf(Color(0xFF2C4A79), Color(0xFF1A3056))
     IconButton(onClick = onClick, enabled = enabled,
         modifier = Modifier.size(48.dp).semantics { contentDescription = label }) {
         Box(Modifier.size(36.dp)
-            .background(Brush.verticalGradient(listOf(Color(0xFF2C4A79), Color(0xFF1A3056))), CircleShape)
-            .border(1.dp, quickEdge.copy(alpha = if (enabled) .65f else .3f), CircleShape),
+            .background(Brush.verticalGradient(fill), CircleShape)
+            .border(1.dp, edge.copy(alpha = if (enabled) .65f else .3f), CircleShape),
             contentAlignment = Alignment.Center) {
-            CompositionLocalProvider(LocalContentColor provides quickInk.copy(alpha = if (enabled) 1f else .4f)) {
+            CompositionLocalProvider(LocalContentColor provides ink.copy(alpha = if (enabled) 1f else .4f)) {
                 ThemeSystemIcon(icon, LauncherTheme.SYSTEM, Modifier.size(20.dp))
             }
         }

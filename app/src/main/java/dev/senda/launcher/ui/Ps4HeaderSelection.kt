@@ -1,6 +1,8 @@
 package dev.senda.launcher.ui
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.util.LruCache
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
@@ -12,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.graphics.drawable.toBitmap
@@ -19,12 +22,16 @@ import androidx.core.net.toUri
 import dev.senda.launcher.data.LaunchableApp
 import dev.senda.launcher.data.LocalIconPack
 import dev.senda.launcher.data.IconTreatment
+import dev.senda.launcher.data.LocalRetroAssets
 import dev.senda.launcher.data.loadLocalImage
 import dev.senda.launcher.ui.theme.LocalIconTreatment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
+
+@Stable
+internal class Ps4AppAccent(val settled: State<Color>, val animated: State<Color>)
 
 @Composable
 internal fun rememberPs4HeaderSelection(
@@ -36,16 +43,19 @@ internal fun rememberPs4HeaderSelection(
     recent: LaunchableApp?,
     customIcons: Map<String, String>,
     onLoadIcon: (LaunchableApp) -> Drawable,
-): State<Color> {
+): Ps4AppAccent {
     val base = MaterialTheme.colorScheme.primary
     val context = LocalContext.current
-    val original = LocalIconTreatment.current == IconTreatment.ORIGINAL
+    val treatment = LocalIconTreatment.current
+    val original = treatment == IconTreatment.ORIGINAL
     val pack = LocalIconPack.current.takeUnless { original }
+    val retro = LocalRetroAssets.current.takeIf { treatment == IconTreatment.AUTO && pack == null }
     val currentLoader by rememberUpdatedState(onLoadIcon)
-    var accent by remember(base) { mutableStateOf(base) }
-    LaunchedEffect(enabled, reduced, base, list, focus, apps, recent, customIcons, original, pack) {
-        if (!enabled || reduced) {
-            accent = base
+    val accent = remember(base) { mutableStateOf(base) }
+    val cache = remember(base, treatment, pack, retro) { LruCache<Pair<String, String?>, Color>(48) }
+    LaunchedEffect(enabled, base, list, focus, apps, recent, customIcons, treatment, pack, retro) {
+        if (!enabled) {
+            accent.value = base
             return@LaunchedEffect
         }
         snapshotFlow { list.isScrollInProgress to focus.value }.collectLatest { (scrolling, focused) ->
@@ -58,39 +68,63 @@ internal fun rememberPs4HeaderSelection(
                 else -> null
             }
             if (app == null) {
-                accent = base
+                accent.value = base
                 return@collectLatest
             }
-            delay(160)
-            val customUri = customIcons["PS4_${app.packageName}"].takeUnless { original }
-            accent = withContext(Dispatchers.IO) {
+            delay(120)
+            val customUri = if (original) null else customIcons["PS4_${app.packageName}"]
+                ?: retro?.icon(app.packageName, dev.senda.launcher.ui.theme.glyphFor(app.packageName)?.name)
+            val cacheKey = "${app.component.flattenToString()}:${app.revision}" to customUri
+            accent.value = cache.get(cacheKey) ?: withContext(Dispatchers.IO) {
                 runCatching {
-                    val bitmap = customUri?.let { loadLocalImage(context, it.toUri(), 48) }
-                    if (bitmap != null) {
-                        sampleCoverAccent(bitmap.asAndroidBitmap(), base)
-                    } else {
-                        val icon = pack?.drawable(app) ?: currentLoader(app)
-                        sampleCoverAccent(icon.toBitmap(32, 32, android.graphics.Bitmap.Config.ARGB_8888), base)
-                    }
+                    val personal = customUri?.let { loadLocalImage(context, it.toUri(), 48)?.asAndroidBitmap() }
+                    val icon = personal ?: (pack?.drawable(app) ?: currentLoader(app)).toBitmap(32, 32, Bitmap.Config.ARGB_8888)
+                    sampleAppAccent(icon, base)
                 }.getOrDefault(base)
-            }
+            }.also { cache.put(cacheKey, it) }
         }
     }
-    return animateColorAsState(if (enabled) accent else base, tween(if (reduced || !enabled) 0 else 260,
+    val animated = animateColorAsState(if (enabled) accent.value else base, tween(if (reduced || !enabled) 0 else 220,
         easing = Ps4Motion.easing), label = "ps4-header-selection")
+    return remember(accent, animated) { Ps4AppAccent(accent, animated) }
+}
+
+private fun sampleAppAccent(bitmap: Bitmap, fallback: Color): Color {
+    if (bitmap.isRecycled || bitmap.config == Bitmap.Config.HARDWARE) return fallback
+    val bins = FloatArray(12)
+    val hsv = FloatArray(3)
+    for (y in 0 until 12) for (x in 0 until 12) {
+        val pixel = bitmap.getPixel((x * bitmap.width / 12).coerceIn(0, bitmap.width - 1),
+            (y * bitmap.height / 12).coerceIn(0, bitmap.height - 1))
+        android.graphics.Color.colorToHSV(pixel, hsv)
+        if (hsv[1] < .23f || hsv[2] < .24f) continue
+        val normalizedHue = hsv[0] / 30f
+        val bin = normalizedHue.toInt() % bins.size
+        val weight = (android.graphics.Color.alpha(pixel) / 255f) * hsv[1] * hsv[1] * hsv[2]
+        val fraction = normalizedHue - normalizedHue.toInt()
+        bins[bin] += weight * (1f - fraction)
+        bins[(bin + 1) % bins.size] += weight * fraction
+    }
+    val strongest = bins.indices.maxBy { bins[it] }
+    if (bins[strongest] < .28f) return fallback
+    val previous = bins[(strongest + bins.lastIndex) % bins.size]
+    val next = bins[(strongest + 1) % bins.size]
+    val hue = ((strongest + (next - previous) / (previous + bins[strongest] + next)) * 30f + 360f) % 360f
+    val color = Color.hsv(hue, .72f, 1f)
+    return lerp(color, Color.White, .25f)
 }
 
 internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier = drawWithCache {
     val accent = tint.value
     val wash = Brush.radialGradient(
-        listOf(accent.copy(alpha = .24f), accent.copy(alpha = .10f), Color.Transparent),
+        listOf(accent.copy(alpha = .38f), accent.copy(alpha = .17f), Color.Transparent),
         center = Offset(size.width * .64f, size.height * .15f),
         radius = size.width.coerceAtLeast(size.height) * .74f,
     )
-    val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .54f), Color.Transparent))
+    val edge = Brush.horizontalGradient(listOf(Color.Transparent, accent.copy(alpha = .85f), Color.Transparent))
     onDrawBehind {
         drawRect(wash)
-        val height = 1.dp.toPx()
+        val height = 1.5.dp.toPx()
         drawRect(edge, topLeft = Offset(0f, (size.height - height).coerceAtLeast(0f)),
             size = androidx.compose.ui.geometry.Size(size.width, height))
     }

@@ -69,7 +69,9 @@ internal fun rememberPs4FocusedKey(list: LazyListState, enabled: Boolean, input:
 
 /** The outline tracks the selected row's bounds directly, including during a fling. */
 @Composable
-internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, reduced: Boolean): Modifier {
+internal fun Modifier.ps4TravelFrame(
+    list: LazyListState, enabled: Boolean, reduced: Boolean, tint: State<Color>? = null,
+): Modifier {
     if (!enabled || LocalAppearance.current.highContrast || LocalThemePreview.current) return this
     val focus = LocalPs4FocusedKey.current
     val arrival = remember(list) { Animatable(0f) }
@@ -99,8 +101,9 @@ internal fun Modifier.ps4TravelFrame(list: LazyListState, enabled: Boolean, redu
                 val topLeft = Offset(inset, y)
                 val frameSize = Size(size.width - 2 * inset, item.size - 2 * inset)
                 val flash = if (quiet || list.isScrollInProgress) 0f else arrival.value
-                drawRoundRect(colors.primary.copy(alpha = .12f + .16f * flash), topLeft, frameSize, corner, style = halo)
-                drawRoundRect(colors.primary, topLeft, frameSize, corner, style = outer)
+                val accent = tint?.value ?: colors.primary
+                drawRoundRect(accent.copy(alpha = .12f + .18f * flash), topLeft, frameSize, corner, style = halo)
+                drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
             }
         }
     }

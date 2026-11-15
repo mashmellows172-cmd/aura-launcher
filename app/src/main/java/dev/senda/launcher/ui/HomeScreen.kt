@@ -455,6 +455,11 @@ fun HomeScreen(
         }
     }
 
+    val contextualAccent = state.theme == LauncherTheme.PS4 && !state.appearance.highContrast &&
+        !searchFocused && query.isBlank()
+    val selectionTint = rememberPs4HeaderSelection(contextualAccent,
+        sonyMotionReduced || state.visualSettings.menuEffect == "NONE", listState,
+        ps4FocusedKey, visibleApps, recentApp, state.skinIcons, viewModel::icon)
     val decorationQuality = rememberDecorationQuality()
     val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
@@ -490,15 +495,9 @@ fun HomeScreen(
             .padding(horizontal = 22.dp),
     ) {
         Spacer(Modifier.height(if (compact) 4.dp else 14.dp))
-        val contextualHeader = state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank() &&
-            !sonyMotionReduced && state.visualSettings.menuEffect != "NONE"
-        val selectionTint = rememberPs4HeaderSelection(contextualHeader, sonyMotionReduced, listState,
-            ps4FocusedKey, visibleApps, recentApp,
-            state.skinIcons,
-            viewModel::icon)
         Header(
             theme = state.theme,
-            selectionTint = selectionTint.takeIf { contextualHeader },
+            selectionTint = selectionTint.animated.takeIf { contextualAccent },
             clockTime = clockTime,
             avatarUri = state.avatarUri,
             widgetController = widgetController,
@@ -652,6 +651,7 @@ fun HomeScreen(
                         onChooseIcon = onChooseIcon,
                         onResetIcon = { viewModel.setSkinIcon(state.theme, it, null) },
                         letterArrival = letterArrival,
+                        selectionTint = selectionTint.animated.takeIf { contextualAccent },
                         onHeadingPositioned = if (flyLetter) ({ letter, coordinates -> letterHeadings[letter] = coordinates }) else null,
                     )
                     AlphabetRail(
@@ -669,7 +669,6 @@ fun HomeScreen(
             }
         }
         }
-        ActivityShelf(showShelf = !searchFocused && query.isBlank(), ps4 = state.theme == LauncherTheme.PS4)
         if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
             fun openQuickCenter(origin: androidx.compose.ui.geometry.Rect?, target: QuickCenterTarget) {
                 quickCenterOrigin = origin
@@ -684,7 +683,7 @@ fun HomeScreen(
                     state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
                     pinnedQuickNote, quickTimers, timerStore) { openQuickCenter(it, miniTarget) }
             }
-            QuickCenterButton { openQuickCenter(it, QuickCenterTarget.PANEL) }
+            QuickCenterButton(selectionTint.animated.takeIf { contextualAccent }) { openQuickCenter(it, QuickCenterTarget.PANEL) }
         }
         }
         if (flyLetter && query.isBlank() && !searchFocused) {
@@ -709,6 +708,7 @@ fun HomeScreen(
             event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
             reduced = sonyMotionReduced,
             origin = quickCenterOrigin,
+            appAccent = selectionTint.settled.value.takeIf { contextualAccent },
             target = quickTarget,
             miniTarget = miniTarget,
             onMiniTargetChange = {
@@ -1341,6 +1341,7 @@ internal fun AppSections(
     onChooseIcon: (LaunchableApp) -> Unit,
     onResetIcon: (LaunchableApp) -> Unit,
     letterArrival: Pair<String, Int> = "" to 0,
+    selectionTint: androidx.compose.runtime.State<androidx.compose.ui.graphics.Color>? = null,
     onHeadingPositioned: ((String, androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
@@ -1351,7 +1352,8 @@ internal fun AppSections(
             (theme != LauncherTheme.PS4 && theme != LauncherTheme.XPERIA), durationMs = 400)
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("aura-app-list")
-            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name, visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled())
+            .ps4TravelFrame(listState, skinName == LauncherTheme.PS4.name,
+                visualSettings.reduceMotion || !android.animation.ValueAnimator.areAnimatorsEnabled(), selectionTint)
             .nestedScroll(LocalMotionController.current?.connection ?: remember { object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {} }),
         state = listState,
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
