@@ -138,6 +138,33 @@ internal fun Ps4Mark() {
     }
 }
 
+/** Procedural PS4 blue beveled tile for newly installed or unmapped applications. */
+@Composable
+internal fun Ps4FallbackArtwork(label: String, modifier: Modifier = Modifier) {
+    val initial = label.firstOrNull()?.uppercaseChar()?.toString() ?: "•"
+    Box(
+        modifier = modifier.drawWithCache {
+            val plateBrush = Brush.verticalGradient(listOf(Color(0xFF003CA8), Color(0xFF002060), Color(0xFF060F26)))
+            val rimBrush = Brush.verticalGradient(listOf(Color(0xFFA9EAFF).copy(alpha = .65f), Color(0xFF0070D1).copy(alpha = .25f)))
+            val stroke = Stroke(1.dp.toPx())
+            val corner = CornerRadius(4.dp.toPx())
+            onDrawBehind {
+                drawRoundRect(plateBrush, cornerRadius = corner)
+                drawRoundRect(rimBrush, cornerRadius = corner, style = stroke)
+            }
+        },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = initial,
+            color = Color(0xFFF3FAFF),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            maxLines = 1
+        )
+    }
+}
+
 /** Shared finite timing for PS4 focus, overlays and media. */
 internal object Ps4Motion {
     const val focusMs = 160

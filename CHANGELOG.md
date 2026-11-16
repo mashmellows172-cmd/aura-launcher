@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta98 Local preparada el 16 de noviembre de 2026. 0.68.0-beta98, código 98. Unificación completa de ramas sobre la línea de trabajo activa de Codex (beta38–beta97). Incorpora la suite de sonido nativo PS4 verificada, ondas refinadas y cobertura total de iconos en PS4 mediante placa procedural Ps4FallbackArtwork para aplicaciones no inventariadas. Conserva estrictamente la ergonomía vertical de Aura, el Centro rápido PS4, el reproductor multimedia y los perfiles de inercia y foco.
+
 Beta97 Local instalada el 14 de noviembre de 2026. 0.67.0-beta97, código 97. Inercia elástica, Foco al aterrizar y Pulso de puntos para las listas de Inicio y búsqueda. Vista previa e intensidad ajustable. Compilación, lint y verificación de firma, versión y hash correctos. Prueba táctil de los efectos pendiente. [Ficha](docs/BETA97.md).
 
 Beta96 Local instalada el 14 de noviembre de 2026. 0.66.1-beta96, código 96. Menos trabajo por fotograma en desplazamiento, acentos y reproductor PS4. Compilación y lint correctos. Firma, versión y hash instalados verificados. Comparación de fluidez pendiente. [Ficha](docs/BETA96.md).

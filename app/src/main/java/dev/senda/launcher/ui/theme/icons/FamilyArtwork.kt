@@ -40,7 +40,11 @@ private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boo
 /** Exact package matches use authored system objects; third-party identities retain their own art. */
 @Composable
 fun renderFamilyAppIcon(app: LaunchableApp, theme: LauncherTheme, customHolder: Boolean): Boolean {
-    if (theme == LauncherTheme.PS4) return renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)
+    if (theme == LauncherTheme.PS4) {
+        if (renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)) return true
+        dev.senda.launcher.ui.Ps4FallbackArtwork(app.label, Modifier.size(LocalAppearance.current.iconSize.dp))
+        return true
+    }
     if (theme !in iconFamilyThemes) return false
     // FamilyCatalog contains explicit package aliases only, never category/name guesses.
     if (theme != LauncherTheme.TOUCHWIZ) familyIconFor(app.packageName)?.let { icon ->
