@@ -177,7 +177,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta73 candidate 0.51.0/code73 compiled/lint 57s, 0 errors/42 warnings/3 hints; APK version/signature/hash verified locally. Media details and adaptive decoration implemented. NOT installed; real media and quality acceptance pending. Last installed beta72. Branch codex/beta73-media-quality; docs/BETA73.md.",
+  "latestCheckpoint": "Beta73 installed over beta72 via wireless ADB on 2026-11-16. Version 0.51.0-beta73/code73 and installed SHA-256 verified. Real playback and adaptive decoration measurement pending. Branch codex/beta73-media-quality; docs/BETA73.md.",
   "checkpointBranch": "codex/beta73-media-quality",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
