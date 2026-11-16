@@ -268,5 +268,50 @@
     "channels": 1,
     "peak_limit": 0.22,
     "sha256": "117cd0377a152d6b3b7a55e9dbd0256bf4949bd4d25637defd9721139b3a8524"
+  },
+  {
+    "theme": "ps4",
+    "event": "launch",
+    "duration_ms": 105,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "847e720b3be693b42153aefa99f5d27ec4fc7cd708f5ebab3514e2a77e460806"
+  },
+  {
+    "theme": "ps4",
+    "event": "menu",
+    "duration_ms": 135,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "d2597971a461d570c56b70e9d20aef486cdf0cc7cb2ed4148e4f549102d6f71c"
+  },
+  {
+    "theme": "ps4",
+    "event": "select",
+    "duration_ms": 85,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "72fbe1195725de5321be82671cbfeef8797501ed23b2dae61ebe563fb9e55afb"
+  },
+  {
+    "theme": "ps4",
+    "event": "favorite",
+    "duration_ms": 175,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "cb29ddcd62c6d796024d5b00acf77a16dd416fc9ae74a3c167fadc8515bb318c"
+  },
+  {
+    "theme": "ps4",
+    "event": "index",
+    "duration_ms": 45,
+    "rate": 22050,
+    "channels": 1,
+    "peak_limit": 0.22,
+    "sha256": "7c8484c90d8a931d97342bcbd8d812508d468c7a6de6497ffc8a5bddc3be096a"
   }
 ]

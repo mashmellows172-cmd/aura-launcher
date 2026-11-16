@@ -1,6 +1,6 @@
 # Continuidad del proyecto
 
-Última entrega instalada y verificada:0.26.2-beta37/code37. Consultar BETA37.md; revisión visual física todavía pendiente. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
+Última entrega preparada: 0.26.3-beta38 (revisión de interfaz, audio y cobertura PS4). Última instalada en teléfono: 0.26.2-beta37/code37. Ver [historial](../CHANGELOG.md), [validación](BETA37.md) y [configuración](DEVELOPMENT.md).
 
 ## Retomar
 

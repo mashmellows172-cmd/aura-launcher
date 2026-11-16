@@ -1076,9 +1076,7 @@ private fun AppRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         Row(
             modifier = Modifier.heightIn(min = 48.dp)
-                .then(if (console) Modifier.fillMaxWidth()
-                    .background(if (pressed || rowFocused) MaterialTheme.colorScheme.primary.copy(alpha=.16f) else androidx.compose.ui.graphics.Color.Transparent, consoleShape)
-                    .border(1.dp,if(rowFocused)MaterialTheme.colorScheme.onSurface else androidx.compose.ui.graphics.Color.Transparent,consoleShape) else Modifier)
+                .then(if (console) Modifier.fillMaxWidth().ps4RowChrome(pressed, rowFocused) else Modifier)
                 .onFocusChanged { rowFocused = it.hasFocus }
                 .combinedClickable(interactionSource=rowInteractions,indication=androidx.compose.foundation.LocalIndication.current,
                     onClick = onLaunch, onLongClick = { actionsExpanded = true })

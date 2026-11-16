@@ -13,10 +13,11 @@ internal object SoundAssets {
         intArrayOf(R.raw.aura_sound_optimus_launch, R.raw.aura_sound_optimus_menu, R.raw.aura_sound_optimus_select, R.raw.aura_sound_optimus_favorite, R.raw.aura_sound_optimus_index),
         intArrayOf(R.raw.aura_sound_xperia_launch, R.raw.aura_sound_xperia_menu, R.raw.aura_sound_xperia_select, R.raw.aura_sound_xperia_favorite, R.raw.aura_sound_xperia_index),
         intArrayOf(R.raw.aura_sound_razr_launch, R.raw.aura_sound_razr_menu, R.raw.aura_sound_razr_select, R.raw.aura_sound_razr_favorite, R.raw.aura_sound_razr_index),
+        intArrayOf(R.raw.aura_sound_ps4_launch, R.raw.aura_sound_ps4_menu, R.raw.aura_sound_ps4_select, R.raw.aura_sound_ps4_favorite, R.raw.aura_sound_ps4_index),
     )
     fun resource(theme: LauncherTheme, event: SoundEvent): Int = rows[when(theme) {
         LauncherTheme.SENSE -> 1; LauncherTheme.TOUCHWIZ -> 2; LauncherTheme.OPTIMUS -> 3
-        LauncherTheme.XPERIA -> 4; LauncherTheme.RAZR -> 5; else -> 0
+        LauncherTheme.XPERIA -> 4; LauncherTheme.RAZR -> 5; LauncherTheme.PS4 -> 6; else -> 0
     }][event.ordinal]
     val allResources: List<Int> = rows.flatMap { it.asList() }
 }

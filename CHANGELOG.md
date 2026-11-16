@@ -2,6 +2,12 @@
 
 Documento de texto principal para continuar el proyecto desde cualquier equipo. Orden: versión más reciente primero. Cada entrada distingue cambios, evidencia y límites. No se inventan fechas de entregas antiguas: se usa la versión y su documento fuente. El registro se reconstruyó el25 de octubre de2026.
 
+## 0.26.3-beta38 · 16 de noviembre de2026
+
+PS4 integral: suite de 5 señales sonoras originales sintetizadas (launch, menu, select, favorite, index) mapeadas en SoundAssets; Ps4Wallpaper con cintas de luz en doble pasada, motas de polvo estelar ascendentes y deriva de botones sin recomposición por frame; placa procedural PS4 de cobertura total para apps no inventariadas; y resplandor horizontal cian/hielo en selección y foco de filas (ps4RowChrome). Conserva estrictamente la ergonomía vertical de Aura, búsqueda continua, apertura en un toque y prioridad de modos Normales y reemplazos personales.
+
+Validación: 35 muestras de audio sintetizadas y comprobadas por hash en manifest.json; revisión estática Compose de drawWithCache sin asignaciones en ciclo de dibujo; diff y agente de auditoría registrados. Compilación nativa y verificación de firma dependientes de SDK/dispositivo.
+
 ## 0.26.2-beta37 · 26 de octubre de2026
 
 Formas coherentes para iconos temáticos/nativos y paneles RAZR; foco en tarjetas, diálogos por tema, filas de altura adaptable y pesos Noto reales en PS4. Transiciones con asentamiento suave, origen reiniciado y vista previa que respeta movimiento reducido. Refinamiento de clave de caché validado tras auditoría OpenCode; recomendación incorrecta sobre foco rechazada.

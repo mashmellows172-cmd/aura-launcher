@@ -8,7 +8,7 @@ import struct
 import wave
 
 ROOT = Path(__file__).resolve().parents[1]
-THEMES = ('nothing','sense','touchwiz','optimus','xperia','razr')
+THEMES = ('nothing','sense','touchwiz','optimus','xperia','razr','ps4')
 EVENTS = ('launch','menu','select','favorite','index')
 DURATIONS = (.105,.135,.085,.175,.045)
 RATE = 22050
@@ -35,6 +35,9 @@ def synth(theme, event):
             value=(math.sin(math.tau*740*shift*t)+.28*math.sin(math.tau*1130*shift*t))*decay
         elif theme=='xperia':
             value=(math.sin(math.tau*1640*shift*t)+.4*math.sin(math.tau*2467*shift*t)+.1*math.sin(math.tau*4210*t))*decay
+        elif theme=='ps4':
+            base_f = 480 * shift
+            value = (math.sin(math.tau * base_f * t) + .38 * math.sin(math.tau * base_f * 2 * t) + .12 * math.sin(math.tau * base_f * 3 * t) + .05 * math.sin(math.tau * base_f * 4.5 * t)) * math.exp(-t / (duration * .32))
         else:
             value=(math.sin(math.tau*880*shift*t)+.22*math.sin(math.tau*1760*shift*t))*min(1,t/.002)*math.exp(-t/.04)
         if event=='favorite':value *= .7+.3*math.sin(math.pi*t/duration)
@@ -68,7 +71,7 @@ internal object SoundAssets {
     )
     fun resource(theme: LauncherTheme, event: SoundEvent): Int = rows[when(theme) {
         LauncherTheme.SENSE -> 1; LauncherTheme.TOUCHWIZ -> 2; LauncherTheme.OPTIMUS -> 3
-        LauncherTheme.XPERIA -> 4; LauncherTheme.RAZR -> 5; else -> 0
+        LauncherTheme.XPERIA -> 4; LauncherTheme.RAZR -> 5; LauncherTheme.PS4 -> 6; else -> 0
     }][event.ordinal]
     val allResources: List<Int> = rows.flatMap { it.asList() }
 }
