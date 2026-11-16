@@ -246,6 +246,8 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             }
         }
         }
+        }
+        // The target is measured in the drag layer, so draw the cover in that same layer.
         val target = artTarget
         if (expandArt && origin != null && target != null) Box(Modifier.size(120.dp).graphicsLayer {
             val p = motion.progress.value.coerceIn(0f, 1f)
@@ -260,7 +262,6 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             scaleY = (start.height + (target.height - start.height) * p) / size.height.coerceAtLeast(1f)
         }, contentAlignment = Alignment.Center) {
             artwork()
-        }
         }
         }
         }
