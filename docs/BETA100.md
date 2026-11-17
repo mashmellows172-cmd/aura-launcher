@@ -21,3 +21,10 @@ Las recomendaciones de Antigravity se contrastaron con la aplicación actual. In
 ## APK y pendientes físicos
 
 AAPT verificó `dev.senda.launcher.local`, 0.68.2-beta100, código 100. APK local de 15 941 889 bytes con SHA-256 `9accfbe58383de5f277596edde48e86ad742850ba8f68db4f4e1c3777c0176e5`. Apksigner verificó el certificado `2eb417c5` en este equipo. La última firma verificada de Aura Local en el Motorola empieza por `915f891c`. La instalación de esta candidata requiere firmar con la clave compatible. Pendientes revisar carátula y búsqueda dentro de la pista, escuchar los nuevos sonidos y medir el deslizamiento en el dispositivo.
+
+
+## Instalación de la variante Aura Launcher
+
+El 17 de noviembre de 2026, a petición del usuario, se compiló el mismo código de beta100 (`aa47a2a`) con `-PauraSideBySide=false assembleBeta lintBeta`. Terminó en 1 min 26 s con 0 errores, 57 advertencias y 3 avisos. El paquete `dev.senda.launcher.debug` usa el certificado compatible con la beta73 de esa copia. Se actualizó por ADB inalámbrico mediante `install -r` y Android confirmó 0.68.2-beta100, código 100.
+
+El SHA-256 instalado coincide con el APK local `245119473c522f2122e487a75c38d5c28cdc2c53c1b1e90298b387cda64638a1`, de 15 941 809 bytes. La variante Aura Launcher Local con firma distinta sigue en beta97 y es el Inicio predeterminado, verificado después de la instalación. La revisión de los cambios en pantalla y el audio siguen pendientes.

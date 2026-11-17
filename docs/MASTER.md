@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta100 instalada el 17 de noviembre de 2026 por ADB inalámbrico sobre Aura Launcher (`dev.senda.launcher.debug`). Versión 0.68.2-beta100, código 100 y SHA-256 instalado verificados. Aura Launcher Local beta97 continúa como Inicio predeterminado. [Ficha](BETA100.md).
+
 Beta100 Local candidata del 17 de noviembre de 2026. 0.68.2-beta100, código 100. Integra las entregas publicadas de Antigravity con la corrección multimedia de beta99, el acabado de pulsación PS4 y cinco sonidos originales sintetizados. Compilación y lint correctos con 0 errores, 56 advertencias y 3 avisos. Revisión física pendiente. [Ficha](BETA100.md).
 
 Beta99 Local candidata del 16 de noviembre de 2026. 0.68.1-beta99, código 99. Corrige la carátula de la ficha PS4 que en beta97 cubría la barra y el contador. Base beta98. Compilación y lint correctos en 9 min 15 s con 0 errores, 56 advertencias y 3 avisos. Instalación pendiente por firma incompatible con beta97. [Ficha](BETA99.md).

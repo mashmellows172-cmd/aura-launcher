@@ -179,7 +179,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta100 Local integration candidate on codex/beta100-agent-integration. Build and lint passed with 0 errors. Requires compatible signing and physical review. Last verified Aura Local installation: beta97. See docs/BETA100.md.",
+  "latestCheckpoint": "Beta100 installed on Motorola on 2026-11-17 as dev.senda.launcher.debug over beta73. Version/code/installed SHA-256 verified. Aura Local beta97 remains selected as Home; the Local beta100 artifact requires compatible signing. Physical review pending. See docs/BETA100.md.",
   "checkpointBranch": "codex/beta100-agent-integration",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
