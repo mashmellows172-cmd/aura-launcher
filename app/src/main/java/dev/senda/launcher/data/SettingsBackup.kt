@@ -17,7 +17,7 @@ data class PreparedBackup(val settings: Map<String, Any>, val images: Map<String
 class SettingsBackup(private val context: Context) {
     companion object {
         private const val LIMIT = 24 * 1024 * 1024
-        private val stringKeys = setOf("ps4_wallpaper_mode", "sound_family", "favorite_packages", "hidden_packages", "launcher_theme", "visual_motion", "weather_app_package", "home_rotation", "gesture_up", "gesture_down", "gesture_left", "gesture_right", "double_tap_lock", "rail_effect", "menu_effect", "block_order", "weather_motion_mode", "weather_scene_condition", "ps4_clock_motion") + HomeBlock.entries.map { "block_anchor_${it.name}" }
+        private val stringKeys = setOf("ps4_wallpaper_mode", "sound_family", "favorite_packages", "hidden_packages", "launcher_theme", "visual_motion", "weather_app_package", "home_rotation", "gesture_up", "gesture_down", "gesture_left", "gesture_right", "double_tap_lock", "rail_effect", "menu_effect", "block_order", "weather_motion_mode", "weather_scene_condition", "ps4_clock_motion", "ps4_list_profile") + HomeBlock.entries.map { "block_anchor_${it.name}" }
         private val integerRanges = mapOf("ps4_wallpaper_intensity" to 0..100, "sound_volume" to 0..SoundSettings.MAX_VOLUME,"weather_motion_duration" to 3000..12000,"weather_motion_intensity" to 20..100,"visual_duration_ms" to 150..800, "scroll_motion_intensity" to 10..100,
             "rail_intensity" to 0..100,"rail_duration_ms" to 80..600,"rail_bubble_size" to 40..84,"rail_bubble_hold_ms" to 0..1000,
             "search_glow_strength" to 10..100, "appearance_text_size" to 14..24, "appearance_icon_size" to 32..60, "appearance_row_spacing" to 0..20,
@@ -46,6 +46,7 @@ class SettingsBackup(private val context: Context) {
                         key == "launcher_theme" -> require(value in themes) { "Tema desconocido" }
                         key == "weather_scene_condition" -> require(value in WeatherCondition.entries.map { it.name }) { "Escena del clima no válida" }
                         key == "ps4_wallpaper_mode" -> require(value in setOf("STATIC", "REACTIVE")) { "Fondo PS4 no válido" }
+                        key == "ps4_list_profile" -> require(Ps4ListProfile.fromId(value) != null) { "Perfil de lista PS4 no válido" }
                         key == "ps4_clock_motion" -> require(Ps4ClockMotion.entries.any { it.name == value }) { "Intensidad de reloj no válida" }
                         key == "weather_motion_mode" -> require(value in WeatherMotionMode.entries.map { it.name }) { "Animación del clima no válida" }
                         key == "double_tap_lock" -> require(value in LockGesture.entries.map { it.name }) { "Gesto de bloqueo no válido" }

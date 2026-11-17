@@ -41,6 +41,7 @@ data class VisualSettings(
     val railBubbleHoldMs: Int = 420,
     val headerDialogueEnabled: Boolean = true,
     val mediaDetailsMotionEnabled: Boolean = true,
+    val ps4ListProfile: Ps4ListProfile? = null,
 )
 
 /** Stores the user's favorites and appearance choice locally. */
@@ -57,6 +58,7 @@ class FavoritesStore(private val context: Context) {
     private val themeKey = stringPreferencesKey("launcher_theme")
     private val wallpaperPrefix = "skin_wallpaper_"
     private val motionKey = stringPreferencesKey("visual_motion")
+    private val ps4ListProfileKey = stringPreferencesKey("ps4_list_profile")
     private val durationKey = intPreferencesKey("visual_duration_ms")
     private val scrollIntensityKey = intPreferencesKey("scroll_motion_intensity")
     private val glowKey = booleanPreferencesKey("search_glow_enabled")
@@ -254,6 +256,7 @@ class FavoritesStore(private val context: Context) {
         .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }
         .map { prefs -> VisualSettings(
             motion = canonicalMotion(prefs[motionKey]),
+            ps4ListProfile = Ps4ListProfile.fromId(prefs[ps4ListProfileKey]),
             railEffect = prefs[stringPreferencesKey("rail_effect")]?.takeIf { it in RailEffects.ids } ?: "MAGNET",
             menuEffect = prefs[stringPreferencesKey("menu_effect")]?.takeIf { it in setOf("SPRING", "SLIDE", "FADE", "NONE") } ?: "SPRING",
             railHaptics = prefs[booleanPreferencesKey("rail_haptics")] ?: false,
@@ -275,6 +278,9 @@ class FavoritesStore(private val context: Context) {
     suspend fun setVisualSettings(settings: VisualSettings) {
         store.edit { prefs ->
             prefs[motionKey] = canonicalMotion(settings.motion)
+            val profile = settings.ps4ListProfile
+            if (profile == null) prefs.remove(ps4ListProfileKey)
+            else prefs[ps4ListProfileKey] = profile.name
             prefs[stringPreferencesKey("rail_effect")] = RailEffects.canonical(settings.railEffect)
             prefs[stringPreferencesKey("menu_effect")] = settings.menuEffect
             prefs[booleanPreferencesKey("rail_haptics")] = settings.railHaptics

@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta104 instalada en el Motorola el 17 de noviembre de 2026. 0.70.0-beta104, código 104. PS4 ofrece diez animaciones de lista y un plegado gradual de reloj y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Revisión visual y medición comparativa pendientes. [Ficha](BETA104.md).
+
 Beta103 instalada en el Motorola el 17 de noviembre de 2026. 0.69.1-beta103, código 103. La cabecera PS4 cambia de tamaño con la lista en reposo. El Centro rápido decide sus prioridades al abrir. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Muestras de deslizamiento registradas: P95 de 19 y 20 ms frente a 17 ms en beta102. El orden contextual con sesiones reales sigue pendiente de comprobación. [Ficha](BETA103.md).
 
 Beta102 instalada en el Motorola el 17 de noviembre de 2026. 0.69.0-beta102, código 102. Cabecera PS4 que se recoge al deslizar, Centro rápido dedicado a acciones del momento y ondas reactivas al tocar. Compilación y lint correctos con 0 errores. Firma, versión y hash instalados verificados. Cabecera y separación de menús comprobadas en el teléfono. Medición de ondas pendiente. [Ficha](BETA102.md).

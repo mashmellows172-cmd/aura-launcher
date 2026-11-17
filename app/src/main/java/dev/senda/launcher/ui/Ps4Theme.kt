@@ -75,14 +75,14 @@ internal fun Modifier.ps4TravelFrame(
 ): Modifier {
     if (!enabled || LocalAppearance.current.highContrast || (LocalThemePreview.current && tint == null)) return this
     val focus = LocalPs4FocusedKey.current
-    val arrival = remember(list) { Animatable(0f) }
     val quiet = reduced || LocalSystemPowerSaving.current
+    val arrival = if (quiet) null else remember(list) { Animatable(0f) }
     val emphasis = intensity.coerceIn(10, 100) / 100f
     val colors = MaterialTheme.colorScheme
-    LaunchedEffect(list, focus, quiet) {
+    if (arrival != null) LaunchedEffect(list, focus) {
         snapshotFlow { if (list.isScrollInProgress) null else focus.value }.collectLatest { settledKey ->
             arrival.snapTo(0f)
-            if (!quiet && settledKey != null) {
+            if (settledKey != null) {
                 arrival.snapTo(1f)
                 arrival.animateTo(0f, tween(240, easing = Ps4Motion.easing))
             }
@@ -103,7 +103,7 @@ internal fun Modifier.ps4TravelFrame(
                 val topLeft = Offset(inset, y)
                 val frameSize = Size(size.width - 2 * inset, item.size - 2 * inset)
                 val moving = list.isScrollInProgress
-                val flash = if (quiet || moving) 0f else arrival.value
+                val flash = if (moving) 0f else arrival?.value ?: 0f
                 val accent = tint?.value ?: colors.primary
                 if (landing && !quiet) {
                     if (moving) {

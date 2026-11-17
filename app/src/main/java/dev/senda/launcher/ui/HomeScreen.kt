@@ -1,9 +1,5 @@
 package dev.senda.launcher.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.snapshotFlow
 
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -166,6 +162,7 @@ import androidx.compose.ui.focus.focusRequester
 import dev.senda.launcher.data.LocalAppearance
 import dev.senda.launcher.data.LocalIconPack
 import dev.senda.launcher.data.VisualSettings
+import dev.senda.launcher.data.activePs4ListProfile
 import dev.senda.launcher.data.moveListItem
 import dev.senda.launcher.data.normalizeSearchText
 import dev.senda.launcher.data.sectionLetterFor
@@ -232,13 +229,17 @@ fun HomeScreen(
     var letterFlight by remember { mutableStateOf<LetterFlight?>(null) }
     val flyLetter = sonyTheme && !sonyMotionReduced && state.visualSettings.railEffect != "NONE"
     val scope = rememberCoroutineScope()
-    val reducedList = listMotionReduced(state.visualSettings)
-    val landingFocus = state.visualSettings.motion == "LANDING_FOCUS"
-    val dots = state.visualSettings.motion == "DOT_PULSE"
+    val listSettings = if (state.theme == LauncherTheme.PS4) {
+        state.visualSettings.copy(motion = state.visualSettings.activePs4ListProfile().name)
+    } else state.visualSettings
+    val reducedList = listMotionReduced(listSettings)
+    val landingFocus = listSettings.motion == "LANDING_FOCUS"
+    val observeGesture = listSettings.motion == "DOT_PULSE" ||
+        (state.theme == LauncherTheme.PS4 && state.visualSettings.activePs4ListProfile().usesScrollInk)
     val animateRows = state.theme != LauncherTheme.PS4 &&
         state.visualSettings.motion != "NONE" && modernListProfiles.none { it.first == state.visualSettings.motion }
-    val motionController = if (!reducedList && (animateRows || dots)) {
-        rememberAuraMotion(listState, state.visualSettings)
+    val motionController = if (!reducedList && (animateRows || observeGesture)) {
+        rememberAuraMotion(listState, listSettings)
     } else null
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
     val ps4FocusedKey = rememberPs4FocusedKey(listState, (state.theme == LauncherTheme.PS4 || landingFocus && !reducedList) && !state.appearance.highContrast, ps4InputFocus)
@@ -474,7 +475,7 @@ fun HomeScreen(
     val selectionTint = rememberPs4HeaderSelection(contextualAccent,
         sonyMotionReduced || state.visualSettings.menuEffect == "NONE", listState,
         ps4FocusedKey, visibleApps, recentApp, state.skinIcons, viewModel::icon)
-    val ps4HeaderCompact = rememberScrolledPs4Header(listState, state.theme == LauncherTheme.PS4)
+    val ps4HeaderFold = if (state.theme == LauncherTheme.PS4) rememberPs4HeaderFold(listState, reducedList) else null
     val decorationQuality = rememberDecorationQuality()
     val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
@@ -551,7 +552,7 @@ fun HomeScreen(
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
-            compactOnScroll = ps4HeaderCompact,
+            foldProgress = ps4HeaderFold,
             onDeviceShortcuts = { showDeviceShortcuts = true },
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
             onOpenMediaControls = if (mediaControlsAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
@@ -603,8 +604,8 @@ fun HomeScreen(
             query.isNotBlank() -> {
                 val searchKey = rememberPs4FocusedKey(searchListState,
                     state.theme == LauncherTheme.PS4 || landingFocus && !reducedList, ps4InputFocus)
-                val searchMotion = if (!reducedList && (animateRows || dots)) {
-                    rememberAuraMotion(searchListState, state.visualSettings)
+                val searchMotion = if (!reducedList && (animateRows || observeGesture)) {
+                    rememberAuraMotion(searchListState, listSettings)
                 } else null
                 androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey,
                     LocalMotionController provides searchMotion) {
@@ -615,7 +616,7 @@ fun HomeScreen(
                 skinTitle = state.theme.title,
                 skinIcons = state.skinIcons,
                 listState = searchListState,
-                visualSettings = state.visualSettings,
+                visualSettings = listSettings,
                 onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
                 onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
                 onLoadIcon = viewModel::icon,
@@ -644,7 +645,7 @@ fun HomeScreen(
                         skinName = state.theme.name,
                         skinTitle = state.theme.title,
                         skinIcons = state.skinIcons,
-                        visualSettings = state.visualSettings,
+                        visualSettings = listSettings,
                         listState = listState,
                         onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
                         onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
@@ -969,7 +970,7 @@ internal fun Header(
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
     onOpenMediaControls: (() -> Unit)? = null,
-    compactOnScroll: Boolean = false,
+    foldProgress: androidx.compose.runtime.State<Float>? = null,
     onDeviceShortcuts: () -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
     confirmation: Int = 0,
@@ -995,6 +996,9 @@ internal fun Header(
             window.height.toDp() < 530.dp || window.width.toDp() < 350.dp || fontScale > 1.35f
         }
         val motionReduced = reduceMotion || LocalAppearance.current.highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current
+        val compactOnScroll by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) >= PS4_HEADER_COMPACT_PHASE } }
+        val fullyOpen by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) == 0f } }
+        val hasExpandedPanel by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) < 1f } }
         val entry = LocalPs4EntryProgress.current
         val entryIntensity = LocalPs4EntryIntensity.current
         val commit = dev.senda.launcher.ui.theme.rememberClockChange(confirmation.toString(), theme, motionReduced, durationMs = 320)
@@ -1012,10 +1016,10 @@ internal fun Header(
         val sceneCondition = weatherMotion.condition.takeUnless { it == dev.senda.launcher.data.WeatherCondition.AUTO }
             ?: weatherCondition
         val scenePhase = rememberPs4WeatherPhase("${sceneCondition.name}:${weatherCondition.name}:${reading?.place}:${reading?.temperature}",
-            weatherMotion, motionReduced || compactOnScroll, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
+            weatherMotion, motionReduced || !fullyOpen, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
         // Only scene boundaries recompose the header; animation frames stay in drawing.
         val weatherSceneActive by remember(scenePhase) { derivedStateOf { scenePhase.value < 1f } }
-        val headerDialogueActive = headerDialogueEnabled && !compactHeader && !compactOnScroll
+        val headerDialogueActive = headerDialogueEnabled && !compactHeader && fullyOpen
         val clockReduced = motionReduced || (headerDialogueActive && weatherSceneActive)
         val clockToWeather = dev.senda.launcher.ui.theme.rememberClockChange(
             clockTime, theme, clockReduced || !headerDialogueActive ||
@@ -1038,7 +1042,7 @@ internal fun Header(
                     else Ps4Mark()
                 }
                 if (compactOnScroll) {
-                    Row(Modifier.weight(1f).padding(horizontal = 6.dp),
+                    Row(Modifier.weight(1f).ps4HeaderTitleFold(foldProgress, compact = true).padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         val scale = LocalDensity.current.fontScale
                         Ps4HeaderClock(clockTime, (24f / scale.coerceAtLeast(1f)).coerceAtLeast(16f).sp,
@@ -1056,7 +1060,7 @@ internal fun Header(
                     }
                 } else {
                     Column(Modifier.weight(1f).heightIn(min = 56.dp)
-                        .padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
+                        .ps4HeaderTitleFold(foldProgress, compact = false).padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
                         Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
                         if (showMotivationalHeader) {
                             val message = remember(theme, today, clockTime) {
@@ -1073,14 +1077,8 @@ internal fun Header(
                     Ps4ChromeIcon("settings", Modifier.size(24.dp))
                 }
             }
-            AnimatedVisibility(
-                visible = !compactOnScroll,
-                enter = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
-                    EnterTransition.None
-                } else fadeIn(tween(140)),
-                exit = ExitTransition.None,
-            ) {
-                Column {
+            if (hasExpandedPanel) {
+                Column(Modifier.ps4HeaderPanelFold(foldProgress)) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
                     Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
                     if (headerDialogueActive) {
@@ -1403,12 +1401,10 @@ internal fun AppSections(
             (theme != LauncherTheme.PS4 && theme != LauncherTheme.XPERIA), durationMs = 400)
     val listReduced = listMotionReduced(visualSettings)
     val console = theme == LauncherTheme.PS4
-    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("aura-app-list")
             .listDotPulse(listState, visualSettings, console)
-            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", selectionTint,
-                landing = landing, intensity = visualSettings.scrollIntensity)
+            .ps4ScrollDecoration(listState, visualSettings, console, selectionTint)
             .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
         flingBehavior = rememberListFling(visualSettings),
@@ -1496,11 +1492,9 @@ private fun SearchResults(
 ) {
     val console = skinName == LauncherTheme.PS4.name
     val listReduced = listMotionReduced(visualSettings)
-    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
         modifier = Modifier.fillMaxSize().listDotPulse(listState, visualSettings, console)
-            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", landing = landing,
-                intensity = visualSettings.scrollIntensity)
+            .ps4ScrollDecoration(listState, visualSettings, console)
             .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
         flingBehavior = rememberListFling(visualSettings),
@@ -1805,39 +1799,4 @@ private fun ErrorBanner(message: String, onRetry: () -> Unit) {
             TextButton(onClick = onRetry) { Text("Reintentar") }
         }
     }
-}
-
-
-
-
-
-
-
-
-
-
-@Composable
-private fun rememberScrolledPs4Header(list: LazyListState, enabled: Boolean): Boolean {
-    var compact by remember(list, enabled) { mutableStateOf(false) }
-    val density = LocalDensity.current
-    LaunchedEffect(list, enabled, density) {
-        if (!enabled) return@LaunchedEffect
-        val collapseAt = with(density) { 64.dp.roundToPx() }
-        val expandAt = with(density) { 16.dp.roundToPx() }
-        snapshotFlow {
-            val offset = list.firstVisibleItemScrollOffset
-            when {
-                list.isScrollInProgress -> null
-                list.firstVisibleItemIndex > 0 || offset >= collapseAt -> true
-                offset <= expandAt -> false
-                else -> null
-            }
-        }.collectLatest { target ->
-            if (target == null || target == compact) return@collectLatest
-            // Coalesce brief pauses between gestures before changing the list viewport.
-            delay(120)
-            if (!list.isScrollInProgress) compact = target
-        }
-    }
-    return compact
 }
