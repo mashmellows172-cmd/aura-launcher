@@ -172,3 +172,13 @@ internal object Ps4Motion {
     const val exitMs = 160
     val easing = androidx.compose.animation.core.CubicBezierEasing(.23f, 1f, .32f, 1f)
 }
+
+
+/** Local press feedback. Focus outlines remain owned by the list. */
+internal fun Modifier.ps4PressChrome(accent: Color, constrained: State<Boolean>): Modifier = drawWithCache {
+    val glow = Brush.horizontalGradient(listOf(accent.copy(alpha = .18f), Color.Transparent))
+    val corner = CornerRadius(4.dp.toPx())
+    onDrawBehind {
+        if (!constrained.value) drawRoundRect(glow, cornerRadius = corner)
+    }
+}

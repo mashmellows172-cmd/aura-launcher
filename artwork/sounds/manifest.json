@@ -276,7 +276,7 @@
     "rate": 22050,
     "channels": 1,
     "peak_limit": 0.66,
-    "sha256": "b759d0679e9eb942480634ba78255a05d36f330c6f63bf7c15abdcb032ef501b"
+    "sha256": "92258b81ec09847957d0ebdd3cd0803223b3111bcff11d0c533174fc10e72134"
   },
   {
     "theme": "ps4",
@@ -285,7 +285,7 @@
     "rate": 22050,
     "channels": 1,
     "peak_limit": 0.66,
-    "sha256": "a5cf37e13c09818e0944695bdb485032d93a22095eb4e250124ea0c53cd45ec4"
+    "sha256": "4eb965f01dc7cd46aabe88a280e48ab002de1770fbd4c12710505098afa99647"
   },
   {
     "theme": "ps4",
@@ -294,7 +294,7 @@
     "rate": 22050,
     "channels": 1,
     "peak_limit": 0.66,
-    "sha256": "e227558df9cc99021795d49c6385102c097d50fbc5d11ac1b4ff601bf5c07c82"
+    "sha256": "a22d0ac74e89eae2f6719adce22cdd9df88d4eed7b4a46d871b6c013813ddd21"
   },
   {
     "theme": "ps4",
@@ -303,7 +303,7 @@
     "rate": 22050,
     "channels": 1,
     "peak_limit": 0.66,
-    "sha256": "3f08525cc050eea0882724c877f5ec7c9f9e67ca8b8437a7490cf8816e36c5a2"
+    "sha256": "a6bf74f53aae56628bf300f486025e0f501105f70909946eb03579a0c1dbe578"
   },
   {
     "theme": "ps4",
@@ -312,6 +312,6 @@
     "rate": 22050,
     "channels": 1,
     "peak_limit": 0.66,
-    "sha256": "c250a924af1b897408d140953f7ee1070a17934659c81e361a17c781f2dae3e1"
+    "sha256": "e7161b5c6eaadd67731059a87fdaf5a989f9ef6c839e3cab66dc41f8531f19be"
   }
 ]

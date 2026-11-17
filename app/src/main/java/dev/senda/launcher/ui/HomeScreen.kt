@@ -1587,6 +1587,10 @@ private fun AppRow(
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                 .then(if (console) Modifier.graphicsLayer { scaleX = pressScale.value; scaleY = pressScale.value } else Modifier)
+                .then(
+                    if (console && pressed && !still) Modifier.ps4PressChrome(rowAccent, LocalDecorationConstrained.current)
+                    else Modifier
+                )
                 .then(if (console || visualSettings.motion == "LANDING_FOCUS") Modifier.onFocusChanged { focus ->
                     if (focus.hasFocus) inputFocus?.value = rowKey
                     else if (inputFocus?.value == rowKey) inputFocus?.value = null

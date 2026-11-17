@@ -36,7 +36,7 @@ fun configureHighRefreshRate(window: Window) {
         val highRateMode = modes
             .filter { it.refreshRate >= 89.0f }
             .maxByOrNull { it.refreshRate }
-        
+
         if (highRateMode != null) {
             val params = window.attributes
             params.preferredDisplayModeId = highRateMode.modeId

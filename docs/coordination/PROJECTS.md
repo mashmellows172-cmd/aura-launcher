@@ -4,7 +4,7 @@ Cada proyecto es un clon Git independiente; comparte remoto, no archivos de trab
 
 | Agente | Carpeta local (desde qui/outputs) | Rama inicial | Responsabilidad |
 |---|---|---|---|
-| Codex | aura-launcher | codex/phase1-theme-editor | coordinación, revisión, integración |
+| Codex | aura-launcher | Consultar STATE.json | coordinación, revisión, integración |
 | DeepSeek Harness | aura-agents/deepseek | agents/deepseek/unlock-01 | físicas e interpolación |
 | Antigravity | aura-agents/antigravity | agents/antigravity/unlock-02 | storyboard y accesibilidad |
 | OpenCode | aura-agents/opencode | agents/opencode/unlock-03 | renderizadores Compose |

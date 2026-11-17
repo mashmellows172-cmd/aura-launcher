@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-12",
-  "integrationBranch": "codex/phase1-theme-editor",
-  "implementationBase": "9d028ed417e65a5962cff526949108cc51654278",
+  "updated": "2026-11-17",
+  "integrationBranch": "codex/beta100-agent-integration",
+  "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
   "coordinator": "codex",
   "transport": "github-asynchronous",
   "liveAgentConnectionsVerified": false,
@@ -22,14 +22,16 @@
     {
       "id": "UNLOCK-02",
       "owner": "antigravity",
-      "status": "BLOCKED_QUOTA",
+      "status": "DELIVERED_DOCS",
       "branch": "agents/antigravity/unlock-02",
       "contract": "docs/delegation/unlock-2026-10-29/antigravity.md",
       "scope": [
         "storyboards and accessibility report only"
       ],
       "dependsOn": [],
-      "baseCommit": "6d168e2d7db602a24d33e7b388368e144b663d44"
+      "baseCommit": "6d168e2d7db602a24d33e7b388368e144b663d44",
+      "deliveryCommit": "68a0f333fefe02e3f481f4b89e4b03e79aa0313c",
+      "integrationNotes": "docs/BETA100.md"
     },
     {
       "id": "UNLOCK-03",
@@ -177,8 +179,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta90 Local 0.63.0/code90 built and linted. Quick center swipe gestures, larger media and skip controls. Installed via wireless ADB. Signature, version and hash verified. Interaction review pending. See docs/BETA90.md.",
-  "checkpointBranch": "codex/beta74-unified-media",
+  "latestCheckpoint": "Beta100 Local integration candidate on codex/beta100-agent-integration. Build and lint passed with 0 errors. Requires compatible signing and physical review. Last verified Aura Local installation: beta97. See docs/BETA100.md.",
+  "checkpointBranch": "codex/beta100-agent-integration",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,

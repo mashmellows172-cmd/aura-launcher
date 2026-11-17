@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta100 Local candidata del 17 de noviembre de 2026. 0.68.2-beta100, código 100. Integra las entregas publicadas de Antigravity con la corrección multimedia de beta99, el acabado de pulsación PS4 y cinco sonidos originales sintetizados. Compilación y lint correctos con 0 errores, 56 advertencias y 3 avisos. Revisión física pendiente. [Ficha](docs/BETA100.md).
+
 Beta99 Local candidata del 16 de noviembre de 2026. 0.68.1-beta99, código 99. Corrige la carátula de la ficha PS4 que en beta97 cubría la barra y el contador. Base beta98. Compilación y lint correctos en 9 min 15 s con 0 errores, 56 advertencias y 3 avisos. Instalación pendiente por firma incompatible con beta97. [Ficha](docs/BETA99.md).
 
 Beta97 Local instalada el 14 de noviembre de 2026. 0.67.0-beta97, código 97. Inercia elástica, Foco al aterrizar y Pulso de puntos para las listas de Inicio y búsqueda. Vista previa e intensidad ajustable. Compilación, lint y verificación de firma, versión y hash correctos. Prueba táctil de los efectos pendiente. [Ficha](docs/BETA97.md).

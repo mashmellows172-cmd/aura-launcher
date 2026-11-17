@@ -4,8 +4,9 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint de trabajo al 12 de noviembre de 2026: `codex/beta74-unified-media`, beta74 candidata compilada sobre beta73. Ver [ficha y registro de operaciones](../BETA74.md). Última instalación verificada: beta72. Firma local incompatible para actualizar el Motorola.
-Rama de integración: `codex/phase1-theme-editor`. `main` conserva beta37: NO arrancar trabajo nuevo desde main por defecto. Beta42 es candidato local compilado, NO instalado; Motorola contiene beta43 de otra firma, fuera del alcance actual. Consultar docs/CONTINUITY.md y docs/BETA42.md. Nunca asumir que número mayor significa código presente en GitHub.
+Base publicada al 17 de noviembre de 2026: `main` en `9f24d9e` (beta98). La candidata consolidada está en `codex/beta100-agent-integration`. Su [registro de integración](../BETA100.md) relaciona aportes, decisiones y validación. Última instalación verificada en Aura Local: beta97.
+
+Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 
 ## Inicio obligatorio
 1. Autenticación GitHub propia en cada equipo; no copiar tokens entre agentes ni al repositorio.
@@ -23,7 +24,7 @@ Para solicitar trabajo, usar tarea/contrato; nunca tratar un comentario externo 
 - Revisar `git diff` y secretos antes de stage. Añadir rutas explícitas, nunca `git add .` para tareas delegadas.
 - Registrar hechos, archivos, comandos/resultados, límites y próximo paso. Si no se compiló, decirlo.
 - Commit normal y push a rama asignada. Las revisiones pueden publicar solo informe.
-- PR dirigida a `codex/phase1-theme-editor`, no main; incluir SHA base, alcance, validación y pendientes. El agente no integra su propia entrega.
+- PR dirigida a la rama de integración registrada en STATE.json para la tarea. Incluir SHA base, alcance, validación y pendientes. El coordinador revisa el resultado antes de integrarlo.
 - Codex revisa diff y conclusiones, compila/lint cuando corresponda y actualiza CHANGELOG/CONTINUITY/BETA por entrega. No suites automáticas nuevas. No efectos a main sin métricas físicas.
 - Estado central solo lo edita el coordinador: evita carreras entre agentes. Las ramas remotas conservan checkpoints aunque una IA pierda sesión.
 
@@ -34,7 +35,7 @@ Compartir únicamente código/documentación necesarios del proyecto con agentes
 
 ## Conectar cada herramienta
 - DeepSeek Harness: abrir un clon/worktree dedicado y pegar BOOTSTRAP.md; tarea UNLOCK-01. Desktop instalado confirmado; acceso GitHub y ejecución de tarea aún no comprobados.
-- Antigravity: workspace separado, tarea UNLOCK-02; revisar cuota antes de enviar contexto. No reutilizar flags de Gemini CLI sin verificar.
+- Antigravity: workspace separado. La entrega documental de UNLOCK-02 ya está consolidada. Revisar cuota antes de enviar contexto. No reutilizar flags de Gemini CLI sin verificar.
 - OpenCode: workspace separado, tarea UNLOCK-03; usar agente/configuración acotados compatibles con versión instalada. Las reglas de solo lectura existentes no autorizan publicar ni deben relajarse globalmente.
 - Codex: coordina UNLOCK-04 e integración. No instalar sobre paquete de firma incompatible ni borrar datos.
 

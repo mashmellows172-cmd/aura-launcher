@@ -37,9 +37,12 @@ def synth(theme, event):
         elif theme=='xperia':
             value=(math.sin(math.tau*1640*shift*t)+.4*math.sin(math.tau*2467*shift*t)+.1*math.sin(math.tau*4210*t))*decay
         elif theme=='ps4':
-            # Original glassy console cue: soft attack, harmonic fifth, no sampled Sony audio.
-            envelope=(1-math.exp(-t/.009))*math.exp(-t/(duration*.30))
-            value=(math.sin(math.tau*660*shift*t)+.32*math.sin(math.tau*990*shift*t)+.12*math.sin(math.tau*1320*shift*t))*envelope
+            # Original additive PS4-style cue, normalized with Aura's other themes.
+            base = 480 * shift
+            value = (math.sin(math.tau * base * t)
+                     + .38 * math.sin(math.tau * base * 2 * t)
+                     + .12 * math.sin(math.tau * base * 3 * t)
+                     + .05 * math.sin(math.tau * base * 4.5 * t)) * math.exp(-t / (duration * .32))
         else:
             value=(math.sin(math.tau*880*shift*t)+.22*math.sin(math.tau*1760*shift*t))*min(1,t/.002)*math.exp(-t/.04)
         if event=='favorite':value *= .7+.3*math.sin(math.pi*t/duration)
