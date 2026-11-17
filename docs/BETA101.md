@@ -19,4 +19,10 @@ La primera compilación detectó que la muestra del Centro rápido aún usaba un
 
 Se actualizó Aura Launcher beta100 mediante ADB inalámbrico con `install -r`. Android confirmó 0.68.3-beta101, código 101. El APK de 15 924 377 bytes y su copia instalada coinciden en SHA-256 `164c6fb1e7ce451b33fcd225b373760588cb60eee0fa93e360a512746025741a`. La revisión física con una sesión musical sigue pendiente.
 
-Aura Launcher Local beta97 sigue instalada y es el Inicio predeterminado. Restaurar preferencias, elegir Inicio y retirar esa copia quedan pendientes de confirmar qué configuración desea conservar el usuario.
+## Cierre de la unificación en el Motorola
+
+El 17 de noviembre de 2026, el usuario eligió conservar los ajustes de Aura Launcher beta100 y autorizó seleccionar beta101 como Inicio y retirar Aura Launcher Local. Se conservaron los ajustes de la copia actualizada mediante `install -r`. No se importó un respaldo sobre ellos.
+
+Se verificó primero que beta101 abrió como Inicio y quedó en primer plano. Después, Android retiró Aura Local beta97 del perfil principal mediante `pm uninstall -k --user 0 --versionCode 97 dev.senda.launcher.local`; `-k` conserva los directorios de datos y caché de la copia retirada. El APK original verificado queda archivado en privado. No se probó la reinstalación.
+
+La lista de paquetes del perfil principal devolvió una sola copia de Aura (`dev.senda.launcher.debug`) y el rol HOME confirmó ese mismo paquete. Se verificaron de nuevo la versión 0.68.3-beta101 y el SHA-256 instalado indicado arriba. La prueba física con música sigue pendiente.

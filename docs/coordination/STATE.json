@@ -179,7 +179,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta101 installed over Aura Launcher beta100 on Motorola via wireless ADB; version/code/hash match. Single beta package and media controls outside app list. Aura Local beta97 remains Home pending migration. See docs/BETA101.md.",
+  "latestCheckpoint": "Beta101 is the only installed Aura package and the Home role holder for the primary profile on Motorola. User chose existing Aura Launcher settings. Aura Local beta97 removed for that profile with data retention. Version and hash reverified. See docs/BETA101.md.",
   "checkpointBranch": "codex/beta100-agent-integration",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
