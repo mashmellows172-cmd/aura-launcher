@@ -178,9 +178,6 @@ internal fun QuickCenter(
         }
     }
     LaunchedEffect(hasMedia) { if (!hasMedia) expanded = false }
-    LaunchedEffect(mediaExpanded, timersExpanded) {
-        if (mediaExpanded || timersExpanded) cardsScroll.scrollTo(0)
-    }
     fun expandMedia(value: Boolean) {
         expanded = value
         if (value) timersExpanded = false
@@ -197,6 +194,13 @@ internal fun QuickCenter(
     var destination by remember { mutableStateOf<Rect?>(null) }
     val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0).takeUnless { preview }
     val cards = listOf("Música", "Temporizadores", "Alarma", "Agenda")
+    // Sample context once per opening. Playback and countdowns can update in place.
+    val playingAtOpen = rememberSaveable(target) { audio?.isPlaying == true }
+    val urgentTimerAtOpen = rememberSaveable(target) {
+        val now = android.os.SystemClock.elapsedRealtime()
+        timers.any { it.running && it.timeLeft(now) in 1L..60_000L }
+    }
+    val hasEventAtOpen = rememberSaveable(target) { event != null }
     var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs?.getString("card_order", null), cards)) }
     var pinned by remember(prefs) { mutableStateOf(prefs?.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
     var editing by remember { mutableStateOf(false) }
@@ -341,19 +345,20 @@ internal fun QuickCenter(
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (showNote) QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
-                        val visibleCards = cardOrder.sortedBy {
+                        val visibleCards = cardOrder.sortedBy { card ->
                             when {
-                                (mediaExpanded || target == QuickCenterTarget.MEDIA && !hasMedia && !timersExpanded) &&
-                                    it == "Música" -> 0
-                                timersExpanded && it == "Temporizadores" -> 0
-                                it in pinned -> 1
-                                else -> 2
+                                card == "Música" && target == QuickCenterTarget.MEDIA -> 0
+                                card == "Temporizadores" && target == QuickCenterTarget.TIMERS -> 0
+                                card == "Temporizadores" && urgentTimerAtOpen -> 1
+                                card == "Música" && playingAtOpen -> 2
+                                card in pinned -> 3
+                                else -> 4
                             }
-                        }.filter {
-                            when (it) {
+                        }.filter { card ->
+                            when (card) {
                                 "Música" -> showMusic
-                                "Alarma", "Temporizadores" -> true
-                                else -> it in pinned || event != null
+                                "Agenda" -> card in pinned || hasEventAtOpen
+                                else -> true
                             }
                         }
                         for (card in visibleCards) key(card) {

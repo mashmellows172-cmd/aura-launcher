@@ -3,10 +3,7 @@ package dev.senda.launcher.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.snapshotFlow
 
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -189,6 +186,7 @@ import dev.senda.launcher.ui.theme.skinPattern
 import androidx.compose.ui.draw.drawBehind
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.Collator
@@ -1077,10 +1075,10 @@ internal fun Header(
             }
             AnimatedVisibility(
                 visible = !compactOnScroll,
-                enter = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) EnterTransition.None else
-                    expandVertically(tween(220, easing = Ps4Motion.easing), expandFrom = Alignment.Top) + fadeIn(tween(160)),
-                exit = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) ExitTransition.None else
-                    shrinkVertically(tween(180, easing = Ps4Motion.easing), shrinkTowards = Alignment.Top) + fadeOut(tween(120)),
+                enter = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
+                    EnterTransition.None
+                } else fadeIn(tween(140)),
+                exit = ExitTransition.None,
             ) {
                 Column {
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
@@ -1829,12 +1827,16 @@ private fun rememberScrolledPs4Header(list: LazyListState, enabled: Boolean): Bo
         snapshotFlow {
             val offset = list.firstVisibleItemScrollOffset
             when {
-                list.firstVisibleItemIndex > 0 || offset >= collapseAt -> 1
-                offset <= expandAt -> -1
-                else -> 0
+                list.isScrollInProgress -> null
+                list.firstVisibleItemIndex > 0 || offset >= collapseAt -> true
+                offset <= expandAt -> false
+                else -> null
             }
-        }.collect { boundary ->
-            if (boundary != 0) compact = boundary > 0
+        }.collectLatest { target ->
+            if (target == null || target == compact) return@collectLatest
+            // Coalesce brief pauses between gestures before changing the list viewport.
+            delay(120)
+            if (!list.isScrollInProgress) compact = target
         }
     }
     return compact
