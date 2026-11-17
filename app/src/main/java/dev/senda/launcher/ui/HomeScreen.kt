@@ -257,7 +257,6 @@ fun HomeScreen(
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
     var showHomeSettings by rememberSaveable { mutableStateOf(false) }
     var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
-    var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showQuickCenter by rememberSaveable { mutableStateOf(false) }
     var quickTarget by rememberSaveable { mutableStateOf(QuickCenterTarget.PANEL) }
@@ -410,14 +409,13 @@ fun HomeScreen(
     val mediaAvailable = state.headerSettings.showAudioWidget && state.audioInfo.isPlaying
     val hasPs4Session = state.theme == LauncherTheme.PS4 && state.audioInfo.sessionId != null && !state.audioInfo.generic
     val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && hasPs4Session)
-    val mediaInList = mediaControlsAvailable && !state.headerSettings.audioInMenuOnly
     LaunchedEffect(mediaControlsAvailable) {
         if (!mediaControlsAvailable) showMediaControls = false
     }
-    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings, mediaInList) {
+    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
         sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { (_, index) ->
-            index + dashboardSections + (if (recentApp != null) 2 else 0) + (if (mediaInList) 1 else 0)
+            index + dashboardSections + (if (recentApp != null) 2 else 0)
         }
     }
     val activeLetter by remember(listState, starts) {
@@ -543,7 +541,7 @@ fun HomeScreen(
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
-            onOpenMediaControls = if (mediaControlsAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
+            onOpenMediaControls = if (mediaControlsAvailable) ({ showMediaControls = true }) else null,
             quickMedia = { closeMenu ->
                 if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
                     audioInfo = state.audioInfo, theme = state.theme,
@@ -634,18 +632,6 @@ fun HomeScreen(
                         widgetController = widgetController,
                         dashboardState = state,
                         onCalendarPermission = { showHomeSettings = true },
-                        media = if (mediaInList) ({
-                            CompactAudioWidget(
-                                audioInfo = state.audioInfo,
-                                theme = state.theme,
-                                onOpenControls = { origin ->
-                                    mediaArtworkOrigin = origin
-                                    showMediaControls = true
-                                },
-                                onPause = { viewModel.pauseAudio(state.audioInfo.sessionId) },
-                                onResume = { viewModel.resumeAudio(state.audioInfo.sessionId) },
-                            )
-                        }) else null,
                         favoriteApps = favoriteApps,
                         allApps = filteredApps,
                         groups = groups,
@@ -801,7 +787,7 @@ fun HomeScreen(
         if (hasPs4Session) {
             MediaDetails(
                 info = state.audioInfo,
-                origin = mediaArtworkOrigin,
+                origin = null,
                 reduced = reduced,
                 onDismiss = closeMedia,
                 onSeek = viewModel::seekAudio,
@@ -1336,7 +1322,6 @@ internal fun AppSections(
     widgetController: WidgetController,
     dashboardState: HomeUiState,
     onCalendarPermission: () -> Unit,
-    media: (@Composable () -> Unit)? = null,
     favoriteApps: List<LaunchableApp>,
     allApps: List<LaunchableApp>,
     groups: Map<String, List<LaunchableApp>>,
@@ -1378,7 +1363,6 @@ internal fun AppSections(
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        if (media != null) item(key = "media", contentType = "media") { media() }
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (skinName == LauncherTheme.PS4.name) {
             allApps.firstOrNull { it.component.flattenToString() == dashboardState.lastLaunchedComponent }?.let { app ->

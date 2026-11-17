@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Base publicada al 17 de noviembre de 2026: `main` en `9f24d9e` (beta98). La candidata consolidada está en `codex/beta100-agent-integration`. Su [registro de integración](../BETA100.md) relaciona aportes, decisiones y validación. Instalaciones verificadas en el Motorola: Aura Launcher beta100 y Aura Local beta97. Aura Local sigue seleccionada como Inicio.
+Base publicada al 17 de noviembre de 2026: `main` en `9f24d9e` (beta98). La candidata consolidada está en `codex/beta100-agent-integration`. Su [registro de integración](../BETA100.md) relaciona aportes, decisiones y validación. Instalaciones verificadas en el Motorola: [Aura Launcher beta101](../BETA101.md) y Aura Local beta97. Aura Local sigue seleccionada como Inicio hasta revisar la migración.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

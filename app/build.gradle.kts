@@ -16,8 +16,8 @@ android {
         manifestPlaceholders["auraAppLabel"] = "@string/app_name"
         manifestPlaceholders["auraMediaLabel"] = "Aura · Reproducción multimedia"
         manifestPlaceholders["auraGestureLabel"] = "@string/notification_shortcut_label"
-        versionCode = 100
-        versionName = "0.68.2-beta100"
+        versionCode = 101
+        versionName = "0.68.3-beta101"
     }
 
     buildTypes {
@@ -39,13 +39,7 @@ android {
         }
         create("beta") {
             initWith(getByName("release"))
-            val sideBySide = providers.gradleProperty("auraSideBySide").orNull == "true"
-            applicationIdSuffix = if (sideBySide) ".local" else ".debug"
-            if (sideBySide) {
-                manifestPlaceholders["auraAppLabel"] = "@string/app_name_local"
-                manifestPlaceholders["auraMediaLabel"] = "@string/media_service_label_local"
-                manifestPlaceholders["auraGestureLabel"] = "@string/notification_shortcut_label_local"
-            }
+            applicationIdSuffix = ".debug"
             isDebuggable = false
             isMinifyEnabled = true
             signingConfig = getByName("debug").signingConfig

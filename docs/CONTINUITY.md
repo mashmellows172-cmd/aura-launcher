@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta101 instalada sobre Aura Launcher beta100 por ADB inalámbrico el 17 de noviembre de 2026. 0.68.3-beta101, código 101. Una sola variante beta de Aura Launcher y controles multimedia en el menú, sin fila de reproducción en Inicio ni en su vista previa. Compilación y lint correctos con 0 errores. Versión y hash instalados verificados. Aura Local beta97 sigue como Inicio hasta completar la migración. [Ficha](BETA101.md).
+
 Beta100 instalada el 17 de noviembre de 2026 por ADB inalámbrico sobre Aura Launcher (`dev.senda.launcher.debug`). Versión 0.68.2-beta100, código 100 y SHA-256 instalado verificados. Aura Launcher Local beta97 continúa como Inicio predeterminado. [Ficha](BETA100.md).
 
 Beta100 Local candidata del 17 de noviembre de 2026. 0.68.2-beta100, código 100. Integra las entregas publicadas de Antigravity con la corrección multimedia de beta99, el acabado de pulsación PS4 y cinco sonidos originales sintetizados. Compilación y lint correctos con 0 errores, 56 advertencias y 3 avisos. Revisión física pendiente. [Ficha](BETA100.md).

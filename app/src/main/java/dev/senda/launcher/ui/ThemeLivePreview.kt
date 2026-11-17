@@ -79,11 +79,9 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
     val recent = if (ps4) apps.firstOrNull { it.component.flattenToString() == state.lastLaunchedComponent } else null
     val selection = rememberPs4HeaderSelection(ps4 && !state.appearance.highContrast, true,
         list, focusKey, apps, recent, state.skinIcons, viewModel::icon)
-    val audio = state.audioInfo
-    val showCompactAudio = state.headerSettings.showAudioWidget && !state.headerSettings.audioInMenuOnly && audio.isPlaying
     val prefix = listOf(BlockAnchor.BEFORE_FAVORITES, BlockAnchor.AFTER_FAVORITES)
         .count { dashboardBlocks(state, widgets, it).isNotEmpty() } +
-        (if (recent != null) 2 else 0) + (if (showCompactAudio) 1 else 0)
+        (if (recent != null) 2 else 0)
     val starts = remember(letters, groups, favorites.size, prefix) {
         sectionStartIndices(letters, groups.mapValues { it.value.size }, favorites.size, false)
             .mapValues { (_, index) -> index + prefix }
@@ -121,7 +119,6 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
             Spacer(Modifier.height(8.dp))
             Row(Modifier.weight(1f).fillMaxWidth()) {
                 AppSections(modifier=Modifier.weight(1f),widgetController=widgets,dashboardState=state,onCalendarPermission={},
-                    media = if (showCompactAudio) ({ CompactAudioWidget(state.audioInfo, state.theme) }) else null,
                     favoriteApps=favorites,allApps=apps,groups=groups,groupLetters=letters,favoritePackages=state.favoritePackages.toSet(),skinName=state.theme.name,skinTitle=state.theme.title,skinIcons=state.skinIcons,visualSettings=state.visualSettings,listState=list,selectionTint=selection.animated.takeIf { ps4 && !state.appearance.highContrast },
                     onLaunch={ app ->
                         inputFocus.value = list.layoutInfo.visibleItemsInfo.firstOrNull {
@@ -137,7 +134,7 @@ private fun PreviewScene(state:HomeUiState,viewModel:LauncherViewModel,widgets:W
         }
     }
     if (ps4 && quickPreview) {
-        QuickCenterSample(audio, selection.settled.value) { quickPreview = false }
+        QuickCenterSample(state.audioInfo, selection.settled.value) { quickPreview = false }
     }
     }
 }
