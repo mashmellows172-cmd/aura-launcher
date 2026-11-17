@@ -19,4 +19,8 @@ Se aplicaron `animate`, `accessible-animation` y `ponytail`.
 
 Se actualizó beta103 por ADB inalámbrico con `install -r`. AAPT y apksigner verificaron paquete, versión y firma. Android confirmó 0.70.0-beta104, código 104, y a Aura como Inicio predeterminado. El SHA-256 del APK instalado coincidió con el local `95ae8987940de838726e6da385892ea3bf32b3f2ead09b5191a6c45bc9a0a855`.
 
-Queda pendiente comprobar el acabado del plegado, los perfiles nuevos y su fluidez en el Motorola con Aura en primer plano. La compilación y lint no miden el tiempo de fotograma.
+## Validación en el Motorola
+
+El 17 de noviembre de 2026 se comprobó PS4 en Inicio. Se descartaron dos muestras tomadas mientras «Personalizar Aura» cubría la lista. Tras cerrar ese panel con Atrás, un deslizamiento hacia abajo en la lista mostró la versión compacta de reloj y clima, y al volver a la parte superior reapareció la tarjeta amplia. Una captura de vídeo separada mostró posiciones intermedias del buscador durante el plegado y la reapertura. En algunos cuadros del intercambio coincidieron el reloj compacto y parte del reloj grande recortado por el borde de la tarjeta. El acabado de ese intercambio sigue pendiente.
+
+Seis swipes de 450 ms, tres por dirección, con las mismas coordenadas de beta103 y `gfxinfo` reiniciado antes de la medición. Se registraron 647 cuadros, 2 con tirones (0,31 %), P50 de 11 ms y P95 de 15 ms. El contador legacy marcó 57 (8,81 %). En beta103 se habían medido P95 de 19 y 20 ms. La muestra es descriptiva. El estado del dispositivo, el fondo, la cabecera y la lista no están aislados, y `gfxinfo` no mide la presentación del compositor. Las capturas y el vídeo se guardaron fuera de Git. Falta recorrer los cinco perfiles nuevos en pantalla.
