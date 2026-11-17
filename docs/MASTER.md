@@ -1,5 +1,19 @@
 # Registro maestro de Aura Launcher
 
+Beta104 instalada en el Motorola el 17 de noviembre de 2026. 0.70.0-beta104, código 104. PS4 ofrece diez animaciones de lista y un plegado gradual de reloj y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Plegado y reapertura comprobados en PS4. Una muestra obtuvo P95 de 15 ms. Revisión de los cinco perfiles pendiente. [Ficha](BETA104.md).
+
+Beta103 instalada en el Motorola el 17 de noviembre de 2026. 0.69.1-beta103, código 103. La cabecera PS4 cambia de tamaño con la lista en reposo. El Centro rápido decide sus prioridades al abrir. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Muestras de deslizamiento registradas: P95 de 19 y 20 ms frente a 17 ms en beta102. El orden contextual con sesiones reales sigue pendiente de comprobación. [Ficha](BETA103.md).
+
+Beta102 instalada en el Motorola el 17 de noviembre de 2026. 0.69.0-beta102, código 102. Cabecera PS4 que se recoge al deslizar, Centro rápido dedicado a acciones del momento y ondas reactivas al tocar. Compilación y lint correctos con 0 errores. Firma, versión y hash instalados verificados. Cabecera y separación de menús comprobadas en el teléfono. Medición de ondas pendiente. [Ficha](BETA102.md).
+
+Beta101 instalada sobre Aura Launcher beta100 por ADB inalámbrico el 17 de noviembre de 2026. 0.68.3-beta101, código 101. Una sola variante beta de Aura Launcher y controles multimedia en el menú, sin fila de reproducción en Inicio ni en su vista previa. Compilación y lint correctos con 0 errores. Versión y hash instalados verificados. El 17 de noviembre se verificó beta101 como única copia de Aura instalada e Inicio predeterminado del perfil principal del Motorola. [Ficha](BETA101.md).
+
+Beta100 instalada el 17 de noviembre de 2026 por ADB inalámbrico sobre Aura Launcher (`dev.senda.launcher.debug`). Versión 0.68.2-beta100, código 100 y SHA-256 instalado verificados. Aura Launcher Local beta97 continúa como Inicio predeterminado. [Ficha](BETA100.md).
+
+Beta100 Local candidata del 17 de noviembre de 2026. 0.68.2-beta100, código 100. Integra las entregas publicadas de Antigravity con la corrección multimedia de beta99, el acabado de pulsación PS4 y cinco sonidos originales sintetizados. Compilación y lint correctos con 0 errores, 56 advertencias y 3 avisos. Revisión física pendiente. [Ficha](BETA100.md).
+
+Beta99 Local candidata del 16 de noviembre de 2026. 0.68.1-beta99, código 99. Corrige la carátula de la ficha PS4 que en beta97 cubría la barra y el contador. Base beta98. Compilación y lint correctos en 9 min 15 s con 0 errores, 56 advertencias y 3 avisos. Instalación pendiente por firma incompatible con beta97. [Ficha](BETA99.md).
+
 Beta74 candidata, 12 de noviembre de 2026. 0.52.0-beta74, código 74. Unifica el mini reproductor y «Multimedia solo en el menú» con la ficha PS4, progreso y calidad adaptativa de beta73. Compilación y lint correctos, 0 errores, 38 advertencias y 3 avisos. No instalada por firma local distinta de la del Motorola. [Ficha y registro](BETA74.md).
 
 Beta73 candidata, 11 de noviembre de 2026. 0.51.0-beta73, código 73. Ficha PS4 multimedia con carátula desde su origen, progreso de sesión y búsqueda soportada; calidad decorativa adaptativa por ventanas de métricas, sin limitar FPS ni modificar gestos. Compilación/lint finales correctos (0 errores, 57 s); versión y firma del APK verificadas. No instalada ni validada con una sesión real. Ver docs/BETA73.md.

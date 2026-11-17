@@ -1,5 +1,7 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.runtime.snapshotFlow
+
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.runtime.mutableIntStateOf
@@ -155,12 +157,12 @@ import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.GestureDirection
 import dev.senda.launcher.NotificationShadeService
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import dev.senda.launcher.data.LocalAppearance
 import dev.senda.launcher.data.LocalIconPack
 import dev.senda.launcher.data.VisualSettings
+import dev.senda.launcher.data.activePs4ListProfile
 import dev.senda.launcher.data.moveListItem
 import dev.senda.launcher.data.normalizeSearchText
 import dev.senda.launcher.data.sectionLetterFor
@@ -181,6 +183,7 @@ import dev.senda.launcher.ui.theme.skinPattern
 import androidx.compose.ui.draw.drawBehind
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.Collator
@@ -226,13 +229,17 @@ fun HomeScreen(
     var letterFlight by remember { mutableStateOf<LetterFlight?>(null) }
     val flyLetter = sonyTheme && !sonyMotionReduced && state.visualSettings.railEffect != "NONE"
     val scope = rememberCoroutineScope()
-    val reducedList = listMotionReduced(state.visualSettings)
-    val landingFocus = state.visualSettings.motion == "LANDING_FOCUS"
-    val dots = state.visualSettings.motion == "DOT_PULSE"
+    val listSettings = if (state.theme == LauncherTheme.PS4) {
+        state.visualSettings.copy(motion = state.visualSettings.activePs4ListProfile().name)
+    } else state.visualSettings
+    val reducedList = listMotionReduced(listSettings)
+    val landingFocus = listSettings.motion == "LANDING_FOCUS"
+    val observeGesture = listSettings.motion == "DOT_PULSE" ||
+        (state.theme == LauncherTheme.PS4 && state.visualSettings.activePs4ListProfile().usesScrollInk)
     val animateRows = state.theme != LauncherTheme.PS4 &&
         state.visualSettings.motion != "NONE" && modernListProfiles.none { it.first == state.visualSettings.motion }
-    val motionController = if (!reducedList && (animateRows || dots)) {
-        rememberAuraMotion(listState, state.visualSettings)
+    val motionController = if (!reducedList && (animateRows || observeGesture)) {
+        rememberAuraMotion(listState, listSettings)
     } else null
     val ps4InputFocus = remember { mutableStateOf<String?>(null) }
     val ps4FocusedKey = rememberPs4FocusedKey(listState, (state.theme == LauncherTheme.PS4 || landingFocus && !reducedList) && !state.appearance.highContrast, ps4InputFocus)
@@ -256,10 +263,11 @@ fun HomeScreen(
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
     var showHomeSettings by rememberSaveable { mutableStateOf(false) }
-    var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
     var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showQuickCenter by rememberSaveable { mutableStateOf(false) }
+    var showDeviceShortcuts by rememberSaveable { mutableStateOf(false) }
     var quickTarget by rememberSaveable { mutableStateOf(QuickCenterTarget.PANEL) }
     var quickCenterOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
@@ -350,6 +358,7 @@ fun HomeScreen(
             showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
             showQuickCenter = false
             showMediaControls = false
+            showDeviceShortcuts = false
             showAvatar = false; showWeatherConnection = false; showDashboard = false; showForecast = false
             showNotificationHelp = false
             showIconSource = false
@@ -410,14 +419,13 @@ fun HomeScreen(
     val mediaAvailable = state.headerSettings.showAudioWidget && state.audioInfo.isPlaying
     val hasPs4Session = state.theme == LauncherTheme.PS4 && state.audioInfo.sessionId != null && !state.audioInfo.generic
     val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && hasPs4Session)
-    val mediaInList = mediaControlsAvailable && !state.headerSettings.audioInMenuOnly
     LaunchedEffect(mediaControlsAvailable) {
         if (!mediaControlsAvailable) showMediaControls = false
     }
-    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings, mediaInList) {
+    val starts = remember(groupLetters, groups, favoriteApps, recentApp, state.theme, widgetController.widgets.isNotEmpty(), state.dashboard, state.headerSettings) {
         val dashboardSections = listOf(BlockAnchor.BEFORE_FAVORITES,BlockAnchor.AFTER_FAVORITES).count { dashboardBlocks(state,widgetController,it).isNotEmpty() }
         sectionStartIndices(groupLetters, groups.mapValues { it.value.size }, favoriteApps.size, false).mapValues { (_, index) ->
-            index + dashboardSections + (if (recentApp != null) 2 else 0) + (if (mediaInList) 1 else 0)
+            index + dashboardSections + (if (recentApp != null) 2 else 0)
         }
     }
     val activeLetter by remember(listState, starts) {
@@ -467,6 +475,7 @@ fun HomeScreen(
     val selectionTint = rememberPs4HeaderSelection(contextualAccent,
         sonyMotionReduced || state.visualSettings.menuEffect == "NONE", listState,
         ps4FocusedKey, visibleApps, recentApp, state.skinIcons, viewModel::icon)
+    val ps4HeaderFold = if (state.theme == LauncherTheme.PS4) rememberPs4HeaderFold(listState, reducedList) else null
     val decorationQuality = rememberDecorationQuality()
     val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
@@ -474,7 +483,8 @@ fun HomeScreen(
         state.visualSettings, listState, ps4FocusedKey, searchFocused)
     androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere, LocalDecorationConstrained provides decorationQuality) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
-    Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
+    Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection)
+        .then(if (state.theme == LauncherTheme.PS4) Modifier.ps4WallpaperTap(wallpaperMotion) else Modifier).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
     }.pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
@@ -542,17 +552,10 @@ fun HomeScreen(
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
+            foldProgress = ps4HeaderFold,
+            onDeviceShortcuts = { showDeviceShortcuts = true },
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
             onOpenMediaControls = if (mediaControlsAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
-            quickMedia = { closeMenu ->
-                if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
-                    audioInfo = state.audioInfo, theme = state.theme,
-                    reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
-                    onOpenAudio = { closeMenu(); viewModel.openAudioApp(it) }, onPause = viewModel::pauseAudio,
-                    onPrevious = viewModel::previousAudio, onNext = viewModel::nextAudio, onSeek = viewModel::seekAudio, onResume = viewModel::resumeAudio,
-                    onEnableAccess = { closeMenu(); showHomeSettings = true },
-                )
-            },
         )
         if (dashboardBlocks(state,widgetController,BlockAnchor.HEADER).isNotEmpty()) {
             val dashboardLimit = with(LocalDensity.current) { (LocalWindowInfo.current.containerSize.height * .28f).toDp() }.coerceIn(120.dp,300.dp)
@@ -601,8 +604,8 @@ fun HomeScreen(
             query.isNotBlank() -> {
                 val searchKey = rememberPs4FocusedKey(searchListState,
                     state.theme == LauncherTheme.PS4 || landingFocus && !reducedList, ps4InputFocus)
-                val searchMotion = if (!reducedList && (animateRows || dots)) {
-                    rememberAuraMotion(searchListState, state.visualSettings)
+                val searchMotion = if (!reducedList && (animateRows || observeGesture)) {
+                    rememberAuraMotion(searchListState, listSettings)
                 } else null
                 androidx.compose.runtime.CompositionLocalProvider(LocalPs4FocusedKey provides searchKey,
                     LocalMotionController provides searchMotion) {
@@ -613,7 +616,7 @@ fun HomeScreen(
                 skinTitle = state.theme.title,
                 skinIcons = state.skinIcons,
                 listState = searchListState,
-                visualSettings = state.visualSettings,
+                visualSettings = listSettings,
                 onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
                 onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
                 onLoadIcon = viewModel::icon,
@@ -634,18 +637,6 @@ fun HomeScreen(
                         widgetController = widgetController,
                         dashboardState = state,
                         onCalendarPermission = { showHomeSettings = true },
-                        media = if (mediaInList) ({
-                            CompactAudioWidget(
-                                audioInfo = state.audioInfo,
-                                theme = state.theme,
-                                onOpenControls = { origin ->
-                                    mediaArtworkOrigin = origin
-                                    showMediaControls = true
-                                },
-                                onPause = { viewModel.pauseAudio(state.audioInfo.sessionId) },
-                                onResume = { viewModel.resumeAudio(state.audioInfo.sessionId) },
-                            )
-                        }) else null,
                         favoriteApps = favoriteApps,
                         allApps = filteredApps,
                         groups = groups,
@@ -654,7 +645,7 @@ fun HomeScreen(
                         skinName = state.theme.name,
                         skinTitle = state.theme.title,
                         skinIcons = state.skinIcons,
-                        visualSettings = state.visualSettings,
+                        visualSettings = listSettings,
                         listState = listState,
                         onLaunch = { soundFeedback.play(SoundEvent.LAUNCH); keyboard?.hide(); viewModel.launch(it) },
                         onToggleFavorite = { app -> viewModel.toggleFavorite(app) { soundFeedback.play(SoundEvent.FAVORITE) } },
@@ -735,14 +726,11 @@ fun HomeScreen(
             timers = quickTimers,
             timerStore = timerStore,
             onDismiss = { showQuickCenter = false },
-            onSearch = {
-                showQuickCenter = false
-                scope.launch {
-                    androidx.compose.runtime.withFrameNanos { }
-                    searchFocus.requestFocus()
-                    keyboard?.show()
-                }
-            },
+            showMusic = state.headerSettings.showAudioWidget,
+            onOpenMediaDetails = if (hasPs4Session) ({ origin ->
+                mediaArtworkOrigin = origin
+                showMediaControls = true
+            }) else null,
             onPrevious = { viewModel.previousAudio(audio.sessionId) },
             onSeek = { viewModel.seekAudio(audio.sessionId, it) },
             onPlayback = {
@@ -769,6 +757,27 @@ fun HomeScreen(
                     }
                 }
             },
+        )
+    }
+
+    if (showDeviceShortcuts && state.theme == LauncherTheme.PS4) {
+        AuraAlertDialog(
+            onDismissRequest = { showDeviceShortcuts = false },
+            title = { Text("Accesos del dispositivo") },
+            text = {
+                QuickCenterActions(
+                    onSearch = {
+                        showDeviceShortcuts = false
+                        scope.launch {
+                            androidx.compose.runtime.withFrameNanos { }
+                            searchFocus.requestFocus()
+                            keyboard?.show()
+                        }
+                    },
+                    onSettings = { action -> showDeviceShortcuts = false; action() },
+                )
+            },
+            confirmButton = { TextButton(onClick = { showDeviceShortcuts = false }) { Text("Cerrar") } },
         )
     }
 
@@ -961,7 +970,8 @@ internal fun Header(
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
     onOpenMediaControls: (() -> Unit)? = null,
-    quickMedia: @Composable (() -> Unit) -> Unit = {},
+    foldProgress: androidx.compose.runtime.State<Float>? = null,
+    onDeviceShortcuts: () -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
     confirmation: Int = 0,
     clockSize: Int = 48,
@@ -986,6 +996,9 @@ internal fun Header(
             window.height.toDp() < 530.dp || window.width.toDp() < 350.dp || fontScale > 1.35f
         }
         val motionReduced = reduceMotion || LocalAppearance.current.highContrast || LocalThemePreview.current || LocalSystemPowerSaving.current
+        val compactOnScroll by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) >= PS4_HEADER_COMPACT_PHASE } }
+        val fullyOpen by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) == 0f } }
+        val hasExpandedPanel by remember(foldProgress) { derivedStateOf { (foldProgress?.value ?: 0f) < 1f } }
         val entry = LocalPs4EntryProgress.current
         val entryIntensity = LocalPs4EntryIntensity.current
         val commit = dev.senda.launcher.ui.theme.rememberClockChange(confirmation.toString(), theme, motionReduced, durationMs = 320)
@@ -1003,10 +1016,10 @@ internal fun Header(
         val sceneCondition = weatherMotion.condition.takeUnless { it == dev.senda.launcher.data.WeatherCondition.AUTO }
             ?: weatherCondition
         val scenePhase = rememberPs4WeatherPhase("${sceneCondition.name}:${weatherCondition.name}:${reading?.place}:${reading?.temperature}",
-            weatherMotion, motionReduced, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
+            weatherMotion, motionReduced || !fullyOpen, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
         // Only scene boundaries recompose the header; animation frames stay in drawing.
         val weatherSceneActive by remember(scenePhase) { derivedStateOf { scenePhase.value < 1f } }
-        val headerDialogueActive = headerDialogueEnabled && !compactHeader
+        val headerDialogueActive = headerDialogueEnabled && !compactHeader && fullyOpen
         val clockReduced = motionReduced || (headerDialogueActive && weatherSceneActive)
         val clockToWeather = dev.senda.launcher.ui.theme.rememberClockChange(
             clockTime, theme, clockReduced || !headerDialogueActive ||
@@ -1019,7 +1032,7 @@ internal fun Header(
             .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
-                    .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
+                    .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir ajustes de Aura",
                         onLongClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true }, onDoubleClick = onDoubleTap)
                     .semantics { contentDescription = "Cambiar avatar de Aura"; role = Role.Button
                         customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
@@ -1028,63 +1041,86 @@ internal fun Header(
                     if (avatar != null) Image(avatar, null, Modifier.size(36.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
                     else Ps4Mark()
                 }
-                Column(Modifier.weight(1f).heightIn(min = 56.dp)
-                    .padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
-                    Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
-                    if (showMotivationalHeader) {
-                        val message = remember(theme, today, clockTime) {
-                            dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme)
+                if (compactOnScroll) {
+                    Row(Modifier.weight(1f).ps4HeaderTitleFold(foldProgress, compact = true).padding(horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        val scale = LocalDensity.current.fontScale
+                        Ps4HeaderClock(clockTime, (24f / scale.coerceAtLeast(1f)).coerceAtLeast(16f).sp,
+                            true, clockMotion, onOpenAlarms)
+                        if (reading != null) {
+                            TextButton(onClick = { onWeatherPanel?.invoke(null) ?: onOpenWeather() },
+                                contentPadding = PaddingValues(horizontal = 6.dp),
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics {
+                                    contentDescription = "Abrir clima, ${reading.place}, ${reading.temperature}"
+                                }) {
+                                Text(reading.temperature, style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            }
                         }
-                        ThemedHeaderCaption(theme, message, motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled())
-                    } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                } else {
+                    Column(Modifier.weight(1f).heightIn(min = 56.dp)
+                        .ps4HeaderTitleFold(foldProgress, compact = false).padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
+                        Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
+                        if (showMotivationalHeader) {
+                            val message = remember(theme, today, clockTime) {
+                                dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme)
+                            }
+                            ThemedHeaderCaption(theme, message, motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled())
+                        } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                    if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
                 }
-                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true },
-                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir menú rápido" }) {
+                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir ajustes de Aura" }) {
                     Ps4ChromeIcon("settings", Modifier.size(24.dp))
                 }
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
-            Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
-            if (headerDialogueActive) {
-                Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
-                Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),
-                    fromRight = false, showWeatherScene = false, suppressedBy = scenePhase)
-            }
-            Row(
-                Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
-                    .padding(horizontal = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                BoxWithConstraints(Modifier.weight(1f)) {
-                    val fittedClock = with(LocalDensity.current) {
-                        minOf(clockSize.coerceIn(32, 64) * .8f, (maxWidth.value - 64f) / (3.1f * fontScale))
-                    }.coerceAtLeast(18f)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (!compactHeader) {
-                            Ps4HeaderClock(clockTime, fittedClock.sp, clockReduced, clockMotion, onOpenAlarms)
-                            Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
-                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
-                        }
-                        HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
+            if (hasExpandedPanel) {
+                Column(Modifier.ps4HeaderPanelFold(foldProgress)) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
+                    Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
+                    if (headerDialogueActive) {
+                        Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
+                        Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),
+                            fromRight = false, showWeatherScene = false, suppressedBy = scenePhase)
                     }
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                            .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
+                            .padding(horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        BoxWithConstraints(Modifier.weight(1f)) {
+                            val fittedClock = with(LocalDensity.current) {
+                                minOf(clockSize.coerceIn(32, 64) * .8f, (maxWidth.value - 64f) / (3.1f * fontScale))
+                            }.coerceAtLeast(18f)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (!compactHeader) {
+                                    Ps4HeaderClock(clockTime, fittedClock.sp, clockReduced, clockMotion, onOpenAlarms)
+                                    Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
+                                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
+                                }
+                                HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
+                            }
+                        }
+                        Box(Modifier.width(1.dp).height(28.dp)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
+                        HeaderWeather(
+                            widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
+                            onOpenWeather, onWeatherConnection,
+                            modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
+                            ps4Motion = weatherMotion,
+                            onOpenPanel = onWeatherPanel,
+                            scenePhase = scenePhase,
+                        )
+                    }
+                    }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
                 }
-                Box(Modifier.width(1.dp).height(28.dp)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
-                HeaderWeather(
-                    widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
-                    onOpenWeather, onWeatherConnection,
-                    modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
-                    ps4Motion = weatherMotion,
-                    onOpenPanel = onWeatherPanel,
-                    scenePhase = scenePhase,
-                )
             }
-            }
-            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
         if (!preview && themeMenuExpanded) {
             fun action(label: String, enabled: Boolean = true, callback: () -> Unit) =
@@ -1099,6 +1135,7 @@ internal fun Header(
                 action("Elegir app del clima", callback = onChooseWeatherApp),
                 action("Cambiar avatar", callback = onAvatar),
                 action("Inicio y gestos", callback = onHomeSettings),
+                action("Accesos del dispositivo", callback = onDeviceShortcuts),
                 action("Personalización y respaldo", callback = onPersonalization),
                 action("Sonidos y respuesta", callback = onSoundSettings),
                 action("Barra A–Z", callback = onAlphabetSettings),
@@ -1107,7 +1144,7 @@ internal fun Header(
                 action("Centro de estado", callback = onStatusCenter),
                 action("Diagnóstico de fluidez", callback = { diagnosticsShown = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
-            ), onDismiss = { themeMenuExpanded = false }, mediaContent = { close -> quickMedia(close) })
+            ), onDismiss = { themeMenuExpanded = false })
         }
         return
     }
@@ -1336,7 +1373,6 @@ internal fun AppSections(
     widgetController: WidgetController,
     dashboardState: HomeUiState,
     onCalendarPermission: () -> Unit,
-    media: (@Composable () -> Unit)? = null,
     favoriteApps: List<LaunchableApp>,
     allApps: List<LaunchableApp>,
     groups: Map<String, List<LaunchableApp>>,
@@ -1365,12 +1401,10 @@ internal fun AppSections(
             (theme != LauncherTheme.PS4 && theme != LauncherTheme.XPERIA), durationMs = 400)
     val listReduced = listMotionReduced(visualSettings)
     val console = theme == LauncherTheme.PS4
-    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("aura-app-list")
             .listDotPulse(listState, visualSettings, console)
-            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", selectionTint,
-                landing = landing, intensity = visualSettings.scrollIntensity)
+            .ps4ScrollDecoration(listState, visualSettings, console, selectionTint)
             .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
         flingBehavior = rememberListFling(visualSettings),
@@ -1378,7 +1412,6 @@ internal fun AppSections(
         contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        if (media != null) item(key = "media", contentType = "media") { media() }
         if (dashboardBlocks(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES).isNotEmpty()) item(key="dashboard-before", contentType="dashboard") { DashboardGroup(dashboardState,widgetController,BlockAnchor.BEFORE_FAVORITES,onCalendarPermission) }
         if (skinName == LauncherTheme.PS4.name) {
             allApps.firstOrNull { it.component.flattenToString() == dashboardState.lastLaunchedComponent }?.let { app ->
@@ -1459,11 +1492,9 @@ private fun SearchResults(
 ) {
     val console = skinName == LauncherTheme.PS4.name
     val listReduced = listMotionReduced(visualSettings)
-    val landing = visualSettings.motion == "LANDING_FOCUS"
     LazyColumn(
         modifier = Modifier.fillMaxSize().listDotPulse(listState, visualSettings, console)
-            .ps4TravelFrame(listState, console || landing && !listReduced, listReduced || visualSettings.motion == "NONE", landing = landing,
-                intensity = visualSettings.scrollIntensity)
+            .ps4ScrollDecoration(listState, visualSettings, console)
             .then(LocalMotionController.current?.let { Modifier.nestedScroll(it.connection) } ?: Modifier),
         state = listState,
         flingBehavior = rememberListFling(visualSettings),
@@ -1587,6 +1618,10 @@ private fun AppRow(
         Row(
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                 .then(if (console) Modifier.graphicsLayer { scaleX = pressScale.value; scaleY = pressScale.value } else Modifier)
+                .then(
+                    if (console && pressed && !still) Modifier.ps4PressChrome(rowAccent, LocalDecorationConstrained.current)
+                    else Modifier
+                )
                 .then(if (console || visualSettings.motion == "LANDING_FOCUS") Modifier.onFocusChanged { focus ->
                     if (focus.hasFocus) inputFocus?.value = rowKey
                     else if (inputFocus?.value == rowKey) inputFocus?.value = null
@@ -1765,11 +1800,3 @@ private fun ErrorBanner(message: String, onRetry: () -> Unit) {
         }
     }
 }
-
-
-
-
-
-
-
-

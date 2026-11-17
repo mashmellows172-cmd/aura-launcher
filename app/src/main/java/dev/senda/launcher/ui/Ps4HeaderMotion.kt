@@ -1,9 +1,13 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -15,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -24,17 +30,29 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.Ps4ClockMotion
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.rememberClockChange
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 @Composable
 internal fun Ps4HeaderClock(
@@ -116,3 +134,77 @@ internal fun Modifier.ps4HeaderSweep(
             }
         }
     }
+
+
+internal const val PS4_HEADER_COMPACT_PHASE = .46f
+private val headerFoldEasing = CubicBezierEasing(.24f, 0f, .18f, 1f)
+
+/** Changes the viewport only after the gesture and inertial motion have come to rest. */
+@Composable
+internal fun rememberPs4HeaderFold(list: LazyListState, reduced: Boolean): State<Float> {
+    val density = LocalDensity.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val collapseAt = with(density) { 64.dp.roundToPx() }
+    val expandAt = with(density) { 16.dp.roundToPx() }
+    val initial = remember(list) {
+        if (list.firstVisibleItemIndex > 0 || list.firstVisibleItemScrollOffset >= collapseAt) 1f else 0f
+    }
+    val progress = remember(list) { Animatable(initial) }
+    var target by remember(list) { mutableStateOf(initial) }
+    LaunchedEffect(list, lifecycle, reduced, collapseAt, expandAt) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            snapshotFlow {
+                val offset = list.firstVisibleItemScrollOffset
+                when {
+                    list.isScrollInProgress -> null
+                    list.firstVisibleItemIndex > 0 || offset >= collapseAt -> 1f
+                    offset <= expandAt -> 0f
+                    else -> target
+                }
+            }.collectLatest { destination ->
+                if (destination == null) return@collectLatest
+                if (destination == progress.value && destination == target) return@collectLatest
+                delay(120)
+                // Cancellation freezes the current height if the next gesture starts early.
+                target = destination
+                if (reduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
+                    progress.snapTo(destination)
+                } else {
+                    val remaining = abs(destination - progress.value)
+                    val fullDuration = if (destination == 1f) 240 else 280
+                    val duration = (fullDuration * remaining).roundToInt().coerceAtLeast(100)
+                    progress.animateTo(destination, tween(duration, easing = headerFoldEasing))
+                }
+            }
+        }
+    }
+    return progress.asState()
+}
+
+internal fun Modifier.ps4HeaderPanelFold(progress: State<Float>?): Modifier {
+    if (progress == null) return this
+    return clipToBounds().layout { measurable, constraints ->
+        val panel = measurable.measure(constraints.copy(minHeight = 0))
+        val height = (panel.height * (1f - progress.value)).roundToInt()
+        layout(panel.width, constraints.constrainHeight(height)) { panel.placeRelative(0, 0) }
+    }.graphicsLayer {
+        val phase = progress.value
+        compositingStrategy = CompositingStrategy.ModulateAlpha
+        transformOrigin = TransformOrigin(.5f, 0f)
+        translationY = -8.dp.toPx() * phase
+        scaleX = 1f - .035f * phase
+        alpha = 1f - phase * phase
+    }
+}
+
+internal fun Modifier.ps4HeaderTitleFold(progress: State<Float>?, compact: Boolean): Modifier {
+    if (progress == null) return this
+    return graphicsLayer {
+        val phase = progress.value
+        val handoff = PS4_HEADER_COMPACT_PHASE
+        val reveal = if (compact) (phase - handoff) / (1f - handoff) else 1f - phase / handoff
+        val visible = reveal.coerceIn(0f, 1f)
+        alpha = (if (compact) .60f else .25f) + (if (compact) .40f else .75f) * visible
+        translationY = (if (compact) 6.dp else (-4).dp).toPx() * (1f - visible)
+    }
+}

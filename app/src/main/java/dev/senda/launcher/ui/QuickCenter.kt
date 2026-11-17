@@ -135,7 +135,8 @@ internal fun QuickCenter(
     timers: List<QuickTimer>,
     timerStore: QuickTimers?,
     onDismiss: () -> Unit,
-    onSearch: () -> Unit,
+    showMusic: Boolean = true,
+    onOpenMediaDetails: ((Rect?) -> Unit)? = null,
     onPrevious: () -> Unit,
     onSeek: (Long) -> Unit,
     onPlayback: () -> Unit,
@@ -177,9 +178,6 @@ internal fun QuickCenter(
         }
     }
     LaunchedEffect(hasMedia) { if (!hasMedia) expanded = false }
-    LaunchedEffect(mediaExpanded, timersExpanded) {
-        if (mediaExpanded || timersExpanded) cardsScroll.scrollTo(0)
-    }
     fun expandMedia(value: Boolean) {
         expanded = value
         if (value) timersExpanded = false
@@ -195,7 +193,14 @@ internal fun QuickCenter(
     val today = LocalDate.now(zone)
     var destination by remember { mutableStateOf<Rect?>(null) }
     val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0).takeUnless { preview }
-    val cards = listOf("Música", "Alarma", "Agenda", "Temporizadores")
+    val cards = listOf("Música", "Temporizadores", "Alarma", "Agenda")
+    // Sample context once per opening. Playback and countdowns can update in place.
+    val playingAtOpen = rememberSaveable(target) { audio?.isPlaying == true }
+    val urgentTimerAtOpen = rememberSaveable(target) {
+        val now = android.os.SystemClock.elapsedRealtime()
+        timers.any { it.running && it.timeLeft(now) in 1L..60_000L }
+    }
+    val hasEventAtOpen = rememberSaveable(target) { event != null }
     var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs?.getString("card_order", null), cards)) }
     var pinned by remember(prefs) { mutableStateOf(prefs?.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
     var editing by remember { mutableStateOf(false) }
@@ -215,9 +220,6 @@ internal fun QuickCenter(
             val imeBottom = with(density) { WindowInsets.ime.getBottom(this).toDp() }
             val availableHeight = maxHeight - imeBottom
             val compact = availableHeight < 490.dp || density.fontScale >= 1.35f
-            val dockInPopup = availableHeight < 380.dp
-            var dockExpanded by rememberSaveable(compact) { mutableStateOf(!compact) }
-            var dockPopup by remember { mutableStateOf(false) }
             val sheetMax = (maxHeight - 16.dp).coerceAtLeast(120.dp)
             val cornerRadius = 24.dp
             val shape = RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
@@ -343,26 +345,29 @@ internal fun QuickCenter(
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (showNote) QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
-                        val visibleCards = cardOrder.sortedBy {
+                        val visibleCards = cardOrder.sortedBy { card ->
                             when {
-                                (mediaExpanded || target == QuickCenterTarget.MEDIA && !hasMedia && !timersExpanded) &&
-                                    it == "Música" -> 0
-                                timersExpanded && it == "Temporizadores" -> 0
-                                it in pinned -> 1
-                                else -> 2
+                                card == "Música" && target == QuickCenterTarget.MEDIA -> 0
+                                card == "Temporizadores" && target == QuickCenterTarget.TIMERS -> 0
+                                card == "Temporizadores" && urgentTimerAtOpen -> 1
+                                card == "Música" && playingAtOpen -> 2
+                                card in pinned -> 3
+                                else -> 4
                             }
-                        }.filter {
-                            it in pinned || when (it) {
-                                "Música" -> audio != null || target == QuickCenterTarget.MEDIA
-                                "Alarma" -> alarmAt != null
-                                "Temporizadores" -> true
-                                else -> event != null
+                        }.filter { card ->
+                            when (card) {
+                                "Música" -> showMusic
+                                "Agenda" -> card in pinned || hasEventAtOpen
+                                else -> true
                             }
                         }
                         for (card in visibleCards) key(card) {
                             when (card) {
                                 "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact,
-                                    onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource)
+                                    onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
+                                    onOpenMediaDetails?.let { open ->
+                                        { origin -> motion.close(reduced) { onDismiss(); open(origin) } }
+                                    })
                                 else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
                                 "Temporizadores" -> if (!preview && timerStore != null) {
                                     QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
@@ -388,26 +393,6 @@ internal fun QuickCenter(
                         if (compact && !preview) configuration()
                     }
                     HorizontalDivider(color = edge.copy(alpha = .65f))
-                    val shortcuts: @Composable () -> Unit = {
-                        if (preview) QuickCenterPreviewActions()
-                        else QuickCenterActions(onSearch = { motion.close(reduced, onSearch) },
-                            onSettings = { action -> motion.close(reduced) { onDismiss(); action() } }, compact = compact)
-                    }
-                    if (compact) {
-                        Box(Modifier.fillMaxWidth()) {
-                            TextButton(onClick = {
-                                if (dockInPopup) dockPopup = true else dockExpanded = !dockExpanded
-                            }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics {
-                                stateDescription = if (dockExpanded && !dockInPopup) "Ampliados" else "Plegados"
-                            }) {
-                                Text(if (dockExpanded && !dockInPopup) "Plegar accesos rápidos" else "Ver accesos rápidos")
-                            }
-                            if (dockInPopup) DropdownMenu(expanded = dockPopup, onDismissRequest = { dockPopup = false }) {
-                                Box(Modifier.width(290.dp).padding(8.dp)) { shortcuts() }
-                            }
-                        }
-                    }
-                    if (dockExpanded && !dockInPopup) shortcuts()
                     if (!preview && !compact) configuration()
                 }
             }
@@ -485,11 +470,13 @@ private fun QuickActionCard(icon: String, label: String, value: String, action: 
 private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: Boolean, compact: Boolean,
     onExpandedChange: (Boolean) -> Unit, onPlayback: () -> Unit,
     onPrevious: () -> Unit, onNext: () -> Unit, onSeek: (Long) -> Unit, onOpenSource: () -> Unit,
+    onOpenDetails: ((Rect?) -> Unit)?,
 ) {
     val contrast = LocalAppearance.current.highContrast
     val ink = if (contrast) MaterialTheme.colorScheme.onSurface else quickInk
     val muted = if (contrast) MaterialTheme.colorScheme.onSurfaceVariant else quickMuted
     val cover = audio.artwork?.takeUnless { it.isRecycled }
+    var coverCoordinates by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
     var scrub by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
     var pendingSeek by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
     var seekStatus by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<String?>(null) }
@@ -544,7 +531,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             val coverSize = if (expanded) (compactCover + 24.dp).coerceAtMost(maxWidth * .40f) else compactCover
             Row(Modifier.fillMaxWidth().heightIn(min = coverSize),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(Modifier.size(coverSize)
+                Box(Modifier.size(coverSize).onGloballyPositioned { coverCoordinates = it }
                     .clip(RoundedCornerShape(10.dp)).background(Color(0xFF122B59))
                     .clickable(onClickLabel = if (expanded) "Minimizar reproductor" else "Ampliar reproductor") {
                         onExpandedChange(!expanded)
@@ -577,6 +564,18 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 fadeOut(tween(110)) else androidx.compose.animation.ExitTransition.None,
         ) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (onOpenDetails != null) {
+                    TextButton(onClick = {
+                        val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
+                            val p = coordinates.positionOnScreen()
+                            if (p.x.isFinite() && p.y.isFinite()) Rect(p.x, p.y,
+                                p.x + coordinates.size.width, p.y + coordinates.size.height) else null
+                        }
+                        onOpenDetails(origin)
+                    }, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text("Abrir ficha multimedia")
+                    }
+                }
                 audio.artist?.takeIf { it.isNotBlank() }?.let {
                     Text(it, color = muted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
                 }

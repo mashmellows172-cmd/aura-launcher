@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LocalAppearance
+import dev.senda.launcher.data.Ps4ListProfile
 import dev.senda.launcher.data.VisualSettings
 import kotlin.math.abs
 
@@ -106,26 +107,27 @@ internal fun Modifier.listDotPulse(list: LazyListState, settings: VisualSettings
 
 
 @Composable
-internal fun ListScrollProfilePreview(settings: VisualSettings) {
+internal fun ListScrollProfilePreview(settings: VisualSettings, ps4: Boolean = false) {
     val list = rememberLazyListState()
     val reduced = listMotionReduced(settings)
     val landing = settings.motion == "LANDING_FOCUS"
     val preferred = remember { mutableStateOf<String?>(null) }
-    val focus = rememberPs4FocusedKey(list, landing && !reduced, preferred)
-    val dots = if (settings.motion == "DOT_PULSE" && !reduced) rememberAuraMotion(list, settings) else null
+    val focus = rememberPs4FocusedKey(list, ps4 || landing && !reduced, preferred)
+    val observesScroll = settings.motion == "DOT_PULSE" ||
+        ps4 && Ps4ListProfile.fromId(settings.motion)?.usesScrollInk == true
+    val motion = if (observesScroll && !reduced) rememberAuraMotion(list, settings) else null
     Text("Vista previa · desliza la lista", style = MaterialTheme.typography.labelMedium)
-    CompositionLocalProvider(LocalPs4FocusedKey provides focus, LocalMotionController provides dots) {
+    CompositionLocalProvider(LocalPs4FocusedKey provides focus, LocalMotionController provides motion) {
         val shape = RoundedCornerShape(12.dp)
         LazyColumn(
             modifier = Modifier.fillMaxWidth().height(164.dp).clip(shape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .listDotPulse(list, settings, console = false)
-                .ps4TravelFrame(list, landing && !reduced, reduced, landing = landing,
-                    intensity = settings.scrollIntensity)
-                .then(if (dots != null) Modifier.nestedScroll(dots.connection) else Modifier),
+                .listDotPulse(list, settings, console = ps4)
+                .ps4ScrollDecoration(list, settings, console = ps4)
+                .then(if (motion != null) Modifier.nestedScroll(motion.connection) else Modifier),
             state = list,
             flingBehavior = rememberListFling(settings),
-            overscrollEffect = if (reduced) null else rememberOverscrollEffect(),
+            overscrollEffect = if (reduced || settings.motion == "NONE") null else rememberOverscrollEffect(),
         ) {
             items(20, key = { "demo-$it" }, contentType = { "app" }) { index ->
                 Row(Modifier.fillMaxWidth().heightIn(min = 52.dp).padding(horizontal = 10.dp),

@@ -41,6 +41,7 @@ data class VisualSettings(
     val railBubbleHoldMs: Int = 420,
     val headerDialogueEnabled: Boolean = true,
     val mediaDetailsMotionEnabled: Boolean = true,
+    val ps4ListProfile: Ps4ListProfile? = null,
 )
 
 /** Stores the user's favorites and appearance choice locally. */
@@ -57,6 +58,7 @@ class FavoritesStore(private val context: Context) {
     private val themeKey = stringPreferencesKey("launcher_theme")
     private val wallpaperPrefix = "skin_wallpaper_"
     private val motionKey = stringPreferencesKey("visual_motion")
+    private val ps4ListProfileKey = stringPreferencesKey("ps4_list_profile")
     private val durationKey = intPreferencesKey("visual_duration_ms")
     private val scrollIntensityKey = intPreferencesKey("scroll_motion_intensity")
     private val glowKey = booleanPreferencesKey("search_glow_enabled")
@@ -106,7 +108,6 @@ class FavoritesStore(private val context: Context) {
         ).bounded(),
         showMotivationalHeader = prefs[booleanPreferencesKey("header_show_motivational")] ?: true,
         showAudioWidget = prefs[booleanPreferencesKey("header_show_audio_widget")] ?: true,
-        audioInMenuOnly = prefs[booleanPreferencesKey("header_audio_in_menu_only")] ?: false,
         ps4ClockMotion = Ps4ClockMotion.fromStored(prefs[stringPreferencesKey("ps4_clock_motion")]),
         searchHeight = (prefs[intPreferencesKey("home_search_height")] ?: 56).coerceIn(56, 88),
         clockSize = (prefs[intPreferencesKey("home_clock_size")] ?: 48).coerceIn(32, 64),
@@ -131,7 +132,6 @@ class FavoritesStore(private val context: Context) {
         it[booleanPreferencesKey("header_show_calendar")] = value.showCalendar
         it[booleanPreferencesKey("header_show_motivational")] = value.showMotivationalHeader
         it[booleanPreferencesKey("header_show_audio_widget")] = value.showAudioWidget
-        it[booleanPreferencesKey("header_audio_in_menu_only")] = value.audioInMenuOnly
         it[intPreferencesKey("home_search_height")] = value.searchHeight.coerceIn(56, 88)
         it[intPreferencesKey("home_clock_size")] = value.clockSize.coerceIn(32, 64)
         it[intPreferencesKey("home_header_height")] = value.headerHeight.coerceIn(120, 216)
@@ -256,6 +256,7 @@ class FavoritesStore(private val context: Context) {
         .catch { cause -> if (cause is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw cause }
         .map { prefs -> VisualSettings(
             motion = canonicalMotion(prefs[motionKey]),
+            ps4ListProfile = Ps4ListProfile.fromId(prefs[ps4ListProfileKey]),
             railEffect = prefs[stringPreferencesKey("rail_effect")]?.takeIf { it in RailEffects.ids } ?: "MAGNET",
             menuEffect = prefs[stringPreferencesKey("menu_effect")]?.takeIf { it in setOf("SPRING", "SLIDE", "FADE", "NONE") } ?: "SPRING",
             railHaptics = prefs[booleanPreferencesKey("rail_haptics")] ?: false,
@@ -277,6 +278,9 @@ class FavoritesStore(private val context: Context) {
     suspend fun setVisualSettings(settings: VisualSettings) {
         store.edit { prefs ->
             prefs[motionKey] = canonicalMotion(settings.motion)
+            val profile = settings.ps4ListProfile
+            if (profile == null) prefs.remove(ps4ListProfileKey)
+            else prefs[ps4ListProfileKey] = profile.name
             prefs[stringPreferencesKey("rail_effect")] = RailEffects.canonical(settings.railEffect)
             prefs[stringPreferencesKey("menu_effect")] = settings.menuEffect
             prefs[booleanPreferencesKey("rail_haptics")] = settings.railHaptics

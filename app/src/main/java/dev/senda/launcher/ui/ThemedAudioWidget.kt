@@ -9,7 +9,6 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,9 +27,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -65,78 +60,6 @@ internal fun MediaCoverFallback(info: ActiveAudioInfo, theme: LauncherTheme, mod
         val image = icon
         if (image != null) Image(image, null, Modifier.fillMaxSize().padding(3.dp), contentScale = ContentScale.Fit)
         else ThemeSystemIcon("play", theme)
-    }
-}
-
-@Composable
-internal fun CompactAudioWidget(
-    audioInfo: ActiveAudioInfo,
-    theme: LauncherTheme,
-    onOpenControls: ((Rect?) -> Unit)? = null,
-    onPause: (() -> Unit)? = null,
-    onResume: (() -> Unit)? = null,
-) {
-    var coverCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-    val detailsModifier = if (onOpenControls == null) Modifier else Modifier.clickable(
-        onClickLabel = "Abrir controles multimedia",
-    ) {
-        val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
-            val position = coordinates.positionOnScreen()
-            if (position.x.isFinite() && position.y.isFinite()) {
-                Rect(position.x, position.y, position.x + coordinates.size.width, position.y + coordinates.size.height)
-            } else null
-        }
-        onOpenControls(origin)
-    }
-    HistoricalPanel(theme, Modifier.fillMaxWidth()) {
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val artwork = audioInfo.artwork?.takeUnless { it.isRecycled }
-            val visual = LocalMotionSettings.current
-            val animateCover = theme == LauncherTheme.PS4 && visual.mediaDetailsMotionEnabled &&
-                !visual.reduceMotion && !LocalSystemPowerSaving.current && !LocalThemePreview.current &&
-                !dev.senda.launcher.data.LocalAppearance.current.highContrast && android.animation.ValueAnimator.areAnimatorsEnabled()
-            Row(
-                Modifier.weight(1f).heightIn(min = 48.dp).then(detailsModifier).padding(horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val coverShape = RoundedCornerShape(when (theme) {
-                    LauncherTheme.PS4, LauncherTheme.XPERIA, LauncherTheme.RAZR -> 2.dp
-                    else -> 8.dp
-                })
-                val positionModifier = if (theme == LauncherTheme.PS4 && onOpenControls != null) {
-                    Modifier.onGloballyPositioned { coverCoordinates = it }
-                } else Modifier
-                Box(Modifier.size(32.dp).then(positionModifier).clip(coverShape), contentAlignment = Alignment.Center) {
-                    Crossfade(artwork, animationSpec = tween(if (animateCover) 280 else 0), label = "compact-cover") { cover ->
-                        if (cover != null && !cover.isRecycled) {
-                            Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                        } else MediaCoverFallback(audioInfo, theme, Modifier.fillMaxSize())
-                    }
-                }
-                Text(
-                    audioInfo.title ?: audioInfo.appLabel ?: "En reproducción",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (onOpenControls != null) ThemeSystemIcon("more", theme)
-            }
-            val playbackAction = if (audioInfo.isPlaying) onPause?.takeIf { audioInfo.canPause }
-                else onResume?.takeIf { audioInfo.canPlay }
-            if (playbackAction != null) {
-                IconButton(
-                    onClick = playbackAction,
-                    modifier = Modifier.size(48.dp).semantics {
-                        contentDescription = if (audioInfo.isPlaying) "Pausar reproducción" else "Reanudar reproducción"
-                    },
-                ) { ThemeSystemIcon(if (audioInfo.isPlaying) "pause" else "play", theme) }
-            }
-        }
     }
 }
 

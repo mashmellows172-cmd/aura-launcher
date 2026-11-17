@@ -13,3 +13,7 @@
 - `assembleBeta lintBeta` para la variante Local completados. Lint informó 0 errores, 56 advertencias y 3 avisos.
 - Actualización inalámbrica con `adb install -r` sobre beta96. Versión, certificado y hash verificados en el Motorola Edge 50 Ultra. SHA-256 `F90D1C86D6C51E9F4FB46E4B964463A28CC8F3E369306A2F9F269483DE61DAFD`.
 - Revisión de código realizada. Quedan pendientes la prueba táctil de los tres perfiles y la medición comparativa de fluidez.
+
+## Prueba física del 16 de noviembre
+
+El hash instalado coincide con el de beta97 indicado arriba. En el tema PS4, el Centro rápido reconoció música real y mostró los controles. La ficha expandida mostró la barra de posición. Al asentarse la transición, la carátula cubría parte de la barra y el contador. Se reprodujo con dos pistas. No se confirmó un salto solicitado ni se obtuvo una medición válida de deslizamiento. La corrección está en [beta99](BETA99.md).
