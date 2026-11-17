@@ -1,5 +1,14 @@
 package dev.senda.launcher.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.snapshotFlow
+
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.runtime.mutableIntStateOf
@@ -155,7 +164,6 @@ import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.GestureDirection
 import dev.senda.launcher.NotificationShadeService
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import dev.senda.launcher.data.LocalAppearance
@@ -256,9 +264,11 @@ fun HomeScreen(
     var showWidgetPicker by rememberSaveable { mutableStateOf(false) }
     var showWeatherPicker by rememberSaveable { mutableStateOf(false) }
     var showHomeSettings by rememberSaveable { mutableStateOf(false) }
+    var mediaArtworkOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showMediaControls by remember(state.theme, state.audioInfo.sessionId, state.headerSettings.showAudioWidget) { mutableStateOf(false) }
     var showStatusCenter by rememberSaveable { mutableStateOf(false) }
     var showQuickCenter by rememberSaveable { mutableStateOf(false) }
+    var showDeviceShortcuts by rememberSaveable { mutableStateOf(false) }
     var quickTarget by rememberSaveable { mutableStateOf(QuickCenterTarget.PANEL) }
     var quickCenterOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
@@ -349,6 +359,7 @@ fun HomeScreen(
             showHomeSettings = false; showStatusCenter = false; showStatusDiagnostics = false
             showQuickCenter = false
             showMediaControls = false
+            showDeviceShortcuts = false
             showAvatar = false; showWeatherConnection = false; showDashboard = false; showForecast = false
             showNotificationHelp = false
             showIconSource = false
@@ -465,6 +476,7 @@ fun HomeScreen(
     val selectionTint = rememberPs4HeaderSelection(contextualAccent,
         sonyMotionReduced || state.visualSettings.menuEffect == "NONE", listState,
         ps4FocusedKey, visibleApps, recentApp, state.skinIcons, viewModel::icon)
+    val ps4HeaderCompact = rememberScrolledPs4Header(listState, state.theme == LauncherTheme.PS4)
     val decorationQuality = rememberDecorationQuality()
     val mediaAtmosphere = rememberMediaAtmosphere(state.audioInfo, state.visualSettings.reduceMotion,
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
@@ -472,7 +484,8 @@ fun HomeScreen(
         state.visualSettings, listState, ps4FocusedKey, searchFocused)
     androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere, LocalDecorationConstrained provides decorationQuality) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
-    Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
+    Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection)
+        .then(if (state.theme == LauncherTheme.PS4) Modifier.ps4WallpaperTap(wallpaperMotion) else Modifier).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->
         if (state.gestures[direction] != "SEARCH") executeGesture(direction)
     }.pointerInput(state.lockGesture) {
         detectTapGestures(onLongPress = { showPersonalization = true }, onDoubleTap = if (state.lockGesture.onBackground) { { lockDevice() } } else null)
@@ -540,17 +553,10 @@ fun HomeScreen(
             showMotivationalHeader = state.headerSettings.showMotivationalHeader,
             clockSize = state.headerSettings.clockSize,
             headerHeight = state.headerSettings.headerHeight,
+            compactOnScroll = ps4HeaderCompact,
+            onDeviceShortcuts = { showDeviceShortcuts = true },
             onWeatherPanel = { forecastOrigin = it; showForecast = true },
-            onOpenMediaControls = if (mediaControlsAvailable) ({ showMediaControls = true }) else null,
-            quickMedia = { closeMenu ->
-                if (state.headerSettings.showAudioWidget) ThemedAudioWidget(
-                    audioInfo = state.audioInfo, theme = state.theme,
-                    reduceMotion = state.visualSettings.reduceMotion || state.appearance.highContrast,
-                    onOpenAudio = { closeMenu(); viewModel.openAudioApp(it) }, onPause = viewModel::pauseAudio,
-                    onPrevious = viewModel::previousAudio, onNext = viewModel::nextAudio, onSeek = viewModel::seekAudio, onResume = viewModel::resumeAudio,
-                    onEnableAccess = { closeMenu(); showHomeSettings = true },
-                )
-            },
+            onOpenMediaControls = if (mediaControlsAvailable) ({ mediaArtworkOrigin = null; showMediaControls = true }) else null,
         )
         if (dashboardBlocks(state,widgetController,BlockAnchor.HEADER).isNotEmpty()) {
             val dashboardLimit = with(LocalDensity.current) { (LocalWindowInfo.current.containerSize.height * .28f).toDp() }.coerceIn(120.dp,300.dp)
@@ -721,14 +727,11 @@ fun HomeScreen(
             timers = quickTimers,
             timerStore = timerStore,
             onDismiss = { showQuickCenter = false },
-            onSearch = {
-                showQuickCenter = false
-                scope.launch {
-                    androidx.compose.runtime.withFrameNanos { }
-                    searchFocus.requestFocus()
-                    keyboard?.show()
-                }
-            },
+            showMusic = state.headerSettings.showAudioWidget,
+            onOpenMediaDetails = if (hasPs4Session) ({ origin ->
+                mediaArtworkOrigin = origin
+                showMediaControls = true
+            }) else null,
             onPrevious = { viewModel.previousAudio(audio.sessionId) },
             onSeek = { viewModel.seekAudio(audio.sessionId, it) },
             onPlayback = {
@@ -755,6 +758,27 @@ fun HomeScreen(
                     }
                 }
             },
+        )
+    }
+
+    if (showDeviceShortcuts && state.theme == LauncherTheme.PS4) {
+        AuraAlertDialog(
+            onDismissRequest = { showDeviceShortcuts = false },
+            title = { Text("Accesos del dispositivo") },
+            text = {
+                QuickCenterActions(
+                    onSearch = {
+                        showDeviceShortcuts = false
+                        scope.launch {
+                            androidx.compose.runtime.withFrameNanos { }
+                            searchFocus.requestFocus()
+                            keyboard?.show()
+                        }
+                    },
+                    onSettings = { action -> showDeviceShortcuts = false; action() },
+                )
+            },
+            confirmButton = { TextButton(onClick = { showDeviceShortcuts = false }) { Text("Cerrar") } },
         )
     }
 
@@ -787,7 +811,7 @@ fun HomeScreen(
         if (hasPs4Session) {
             MediaDetails(
                 info = state.audioInfo,
-                origin = null,
+                origin = mediaArtworkOrigin,
                 reduced = reduced,
                 onDismiss = closeMedia,
                 onSeek = viewModel::seekAudio,
@@ -947,7 +971,8 @@ internal fun Header(
     onChooseWidgets: () -> Unit,
     showMotivationalHeader: Boolean = true,
     onOpenMediaControls: (() -> Unit)? = null,
-    quickMedia: @Composable (() -> Unit) -> Unit = {},
+    compactOnScroll: Boolean = false,
+    onDeviceShortcuts: () -> Unit = {},
     clockMotion: dev.senda.launcher.data.Ps4ClockMotion = dev.senda.launcher.data.Ps4ClockMotion.MARKED,
     confirmation: Int = 0,
     clockSize: Int = 48,
@@ -989,10 +1014,10 @@ internal fun Header(
         val sceneCondition = weatherMotion.condition.takeUnless { it == dev.senda.launcher.data.WeatherCondition.AUTO }
             ?: weatherCondition
         val scenePhase = rememberPs4WeatherPhase("${sceneCondition.name}:${weatherCondition.name}:${reading?.place}:${reading?.temperature}",
-            weatherMotion, motionReduced, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
+            weatherMotion, motionReduced || compactOnScroll, ready = reading != null || weatherMotion.condition != dev.senda.launcher.data.WeatherCondition.AUTO)
         // Only scene boundaries recompose the header; animation frames stay in drawing.
         val weatherSceneActive by remember(scenePhase) { derivedStateOf { scenePhase.value < 1f } }
-        val headerDialogueActive = headerDialogueEnabled && !compactHeader
+        val headerDialogueActive = headerDialogueEnabled && !compactHeader && !compactOnScroll
         val clockReduced = motionReduced || (headerDialogueActive && weatherSceneActive)
         val clockToWeather = dev.senda.launcher.ui.theme.rememberClockChange(
             clockTime, theme, clockReduced || !headerDialogueActive ||
@@ -1005,7 +1030,7 @@ internal fun Header(
             .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier)) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).homeGestures(onGesture)
-                    .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir menú rápido",
+                    .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir ajustes de Aura",
                         onLongClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true }, onDoubleClick = onDoubleTap)
                     .semantics { contentDescription = "Cambiar avatar de Aura"; role = Role.Button
                         customActions = if (onDoubleTap == null) emptyList() else listOf(androidx.compose.ui.semantics.CustomAccessibilityAction("Bloquear pantalla") { onDoubleTap(); true })
@@ -1014,63 +1039,92 @@ internal fun Header(
                     if (avatar != null) Image(avatar, null, Modifier.size(36.dp).clip(RoundedCornerShape(4.dp)), contentScale = ContentScale.Crop)
                     else Ps4Mark()
                 }
-                Column(Modifier.weight(1f).heightIn(min = 56.dp)
-                    .padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
-                    Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
-                    if (showMotivationalHeader) {
-                        val message = remember(theme, today, clockTime) {
-                            dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme)
+                if (compactOnScroll) {
+                    Row(Modifier.weight(1f).padding(horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        val scale = LocalDensity.current.fontScale
+                        Ps4HeaderClock(clockTime, (24f / scale.coerceAtLeast(1f)).coerceAtLeast(16f).sp,
+                            true, clockMotion, onOpenAlarms)
+                        if (reading != null) {
+                            TextButton(onClick = { onWeatherPanel?.invoke(null) ?: onOpenWeather() },
+                                contentPadding = PaddingValues(horizontal = 6.dp),
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics {
+                                    contentDescription = "Abrir clima, ${reading.place}, ${reading.temperature}"
+                                }) {
+                                Text(reading.temperature, style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            }
                         }
-                        ThemedHeaderCaption(theme, message, motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled())
-                    } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                } else {
+                    Column(Modifier.weight(1f).heightIn(min = 56.dp)
+                        .padding(start = 8.dp, top = 3.dp, bottom = 3.dp)) {
+                        Text("Aura", fontWeight = FontWeight.Light, fontSize = 18.sp)
+                        if (showMotivationalHeader) {
+                            val message = remember(theme, today, clockTime) {
+                                dev.senda.launcher.data.MotivationalCatalog.phraseFor(theme)
+                            }
+                            ThemedHeaderCaption(theme, message, motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled())
+                        } else Text("Inicio", style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                    if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
                 }
-                if (compactHeader) Ps4HeaderClock(clockTime, 26.sp, clockReduced, clockMotion, onOpenAlarms)
                 IconButton(onClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true },
-                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir menú rápido" }) {
+                    modifier = Modifier.size(48.dp).semantics { contentDescription = "Abrir ajustes de Aura" }) {
                     Ps4ChromeIcon("settings", Modifier.size(24.dp))
                 }
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
-            Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
-            if (headerDialogueActive) {
-                Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
-                Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),
-                    fromRight = false, showWeatherScene = false, suppressedBy = scenePhase)
-            }
-            Row(
-                Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
-                    .padding(horizontal = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            AnimatedVisibility(
+                visible = !compactOnScroll,
+                enter = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) EnterTransition.None else
+                    expandVertically(tween(220, easing = Ps4Motion.easing), expandFrom = Alignment.Top) + fadeIn(tween(160)),
+                exit = if (motionReduced || !android.animation.ValueAnimator.areAnimatorsEnabled()) ExitTransition.None else
+                    shrinkVertically(tween(180, easing = Ps4Motion.easing), shrinkTowards = Alignment.Top) + fadeOut(tween(120)),
             ) {
-                BoxWithConstraints(Modifier.weight(1f)) {
-                    val fittedClock = with(LocalDensity.current) {
-                        minOf(clockSize.coerceIn(32, 64) * .8f, (maxWidth.value - 64f) / (3.1f * fontScale))
-                    }.coerceAtLeast(18f)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (!compactHeader) {
-                            Ps4HeaderClock(clockTime, fittedClock.sp, clockReduced, clockMotion, onOpenAlarms)
-                            Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
-                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
-                        }
-                        HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
+                Column {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f))
+                    Box(Modifier.fillMaxWidth().ps4ControlGlass(RoundedCornerShape(10.dp), translucent = true)) {
+                    if (headerDialogueActive) {
+                        Ps4WeatherRibbon(sceneCondition, weatherMotion, scenePhase, Modifier.matchParentSize())
+                        Ps4WeatherRibbon(sceneCondition, weatherMotion, clockToWeather, Modifier.matchParentSize(),
+                            fromRight = false, showWeatherScene = false, suppressedBy = scenePhase)
                     }
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                            .heightIn(min = if (compactHeader) 0.dp else (headerHeight.coerceIn(120, 216) - 56).dp)
+                            .padding(horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        BoxWithConstraints(Modifier.weight(1f)) {
+                            val fittedClock = with(LocalDensity.current) {
+                                minOf(clockSize.coerceIn(32, 64) * .8f, (maxWidth.value - 64f) / (3.1f * fontScale))
+                            }.coerceAtLeast(18f)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (!compactHeader) {
+                                    Ps4HeaderClock(clockTime, fittedClock.sp, clockReduced, clockMotion, onOpenAlarms)
+                                    Box(Modifier.padding(horizontal = 5.dp).width(1.dp).height(20.dp)
+                                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
+                                }
+                                HeaderShortcut("calendar", today, "Abrir calendario · $today", onOpenCalendar, theme = theme)
+                            }
+                        }
+                        Box(Modifier.width(1.dp).height(28.dp)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
+                        HeaderWeather(
+                            widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
+                            onOpenWeather, onWeatherConnection,
+                            modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
+                            ps4Motion = weatherMotion,
+                            onOpenPanel = onWeatherPanel,
+                            scenePhase = scenePhase,
+                        )
+                    }
+                    }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
                 }
-                Box(Modifier.width(1.dp).height(28.dp)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)))
-                HeaderWeather(
-                    widgetController, weatherPackage, weatherAppLabel ?: "Prognoza", motionReduced,
-                    onOpenWeather, onWeatherConnection,
-                    modifier = Modifier.widthIn(max = 116.dp).weight(.58f),
-                    ps4Motion = weatherMotion,
-                    onOpenPanel = onWeatherPanel,
-                    scenePhase = scenePhase,
-                )
             }
-            }
-            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = .10f))
         }
         if (!preview && themeMenuExpanded) {
             fun action(label: String, enabled: Boolean = true, callback: () -> Unit) =
@@ -1085,6 +1139,7 @@ internal fun Header(
                 action("Elegir app del clima", callback = onChooseWeatherApp),
                 action("Cambiar avatar", callback = onAvatar),
                 action("Inicio y gestos", callback = onHomeSettings),
+                action("Accesos del dispositivo", callback = onDeviceShortcuts),
                 action("Personalización y respaldo", callback = onPersonalization),
                 action("Sonidos y respuesta", callback = onSoundSettings),
                 action("Barra A–Z", callback = onAlphabetSettings),
@@ -1093,7 +1148,7 @@ internal fun Header(
                 action("Centro de estado", callback = onStatusCenter),
                 action("Diagnóstico de fluidez", callback = { diagnosticsShown = true }),
                 action("Apps ocultas", callback = onManageHiddenApps),
-            ), onDismiss = { themeMenuExpanded = false }, mediaContent = { close -> quickMedia(close) })
+            ), onDismiss = { themeMenuExpanded = false })
         }
         return
     }
@@ -1761,3 +1816,26 @@ private fun ErrorBanner(message: String, onRetry: () -> Unit) {
 
 
 
+
+
+@Composable
+private fun rememberScrolledPs4Header(list: LazyListState, enabled: Boolean): Boolean {
+    var compact by remember(list, enabled) { mutableStateOf(false) }
+    val density = LocalDensity.current
+    LaunchedEffect(list, enabled, density) {
+        if (!enabled) return@LaunchedEffect
+        val collapseAt = with(density) { 64.dp.roundToPx() }
+        val expandAt = with(density) { 16.dp.roundToPx() }
+        snapshotFlow {
+            val offset = list.firstVisibleItemScrollOffset
+            when {
+                list.firstVisibleItemIndex > 0 || offset >= collapseAt -> 1
+                offset <= expandAt -> -1
+                else -> 0
+            }
+        }.collect { boundary ->
+            if (boundary != 0) compact = boundary > 0
+        }
+    }
+    return compact
+}

@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta102 instalada en el Motorola el 17 de noviembre de 2026. 0.69.0-beta102, código 102. Cabecera PS4 que se recoge al deslizar, Centro rápido dedicado a acciones del momento y ondas reactivas al tocar. Compilación y lint correctos con 0 errores. Firma, versión y hash instalados verificados. Cabecera y separación de menús comprobadas en el teléfono. Medición de ondas pendiente. [Ficha](BETA102.md).
+
 Beta101 instalada sobre Aura Launcher beta100 por ADB inalámbrico el 17 de noviembre de 2026. 0.68.3-beta101, código 101. Una sola variante beta de Aura Launcher y controles multimedia en el menú, sin fila de reproducción en Inicio ni en su vista previa. Compilación y lint correctos con 0 errores. Versión y hash instalados verificados. El 17 de noviembre se verificó beta101 como única copia de Aura instalada e Inicio predeterminado del perfil principal del Motorola. [Ficha](BETA101.md).
 
 Beta100 instalada el 17 de noviembre de 2026 por ADB inalámbrico sobre Aura Launcher (`dev.senda.launcher.debug`). Versión 0.68.2-beta100, código 100 y SHA-256 instalado verificados. Aura Launcher Local beta97 continúa como Inicio predeterminado. [Ficha](BETA100.md).

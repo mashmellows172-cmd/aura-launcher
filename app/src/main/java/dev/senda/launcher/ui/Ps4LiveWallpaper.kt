@@ -78,12 +78,19 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         // Animate a retained display list rather than rebuilding ribbon geometry per frame.
         val amount = scene?.amount ?: 0f
         val panel = if (scene?.enabled == true) scene.panel?.value ?: 0f else 0f
-        val depth = maxOf((scene?.search ?: 0f) * .45f, panel)
-        translationX=sin(.7f)*size.width*.014f
-        translationY=cos(.7f*.8f)*size.height*.009f + (scene?.drift ?: 0f) * 9.dp.toPx() * amount
+        val search = scene?.search ?: 0f
+        val depth = maxOf(search * .45f, panel)
+        val wave = if (scene?.enabled == true && !constrained.value) {
+            if (panel > 0f) sin(PI.toFloat() * panel) * .42f
+            else maxOf(scene.light, sin(PI.toFloat() * search) * .24f)
+        } else 0f
+        val displacement = wave * amount * decorationStrength
+        translationX = sin(.7f) * size.width * .014f + displacement * 32.dp.toPx()
+        translationY = cos(.7f * .8f) * size.height * .009f +
+            ((scene?.drift ?: 0f) * 9.dp.toPx() * amount - displacement * 16.dp.toPx())
         val ribbonPhase = ((entry?.value ?: 1f) / .78f).coerceIn(0f, 1f)
         val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(ribbonPhase)) * entryIntensity
-        scaleX = 1.04f - opening * .29f - depth * .012f * amount
+        scaleX = 1.04f - opening * .29f - depth * .012f * amount + displacement * .018f
         scaleY = 1.04f - depth * .012f * amount
         translationX += opening * size.width * .065f
         translationY += opening * size.height * .045f

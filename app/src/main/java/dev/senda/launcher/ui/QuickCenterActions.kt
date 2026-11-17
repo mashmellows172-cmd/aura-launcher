@@ -242,15 +242,6 @@ private fun QuickShortcutToggle(label: String, checked: Boolean, onChange: (Bool
 }
 
 @Composable
-internal fun QuickCenterPreviewActions() {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        QuickShortcut("torch", "Linterna", Modifier.weight(1f), enabled = false) {}
-        QuickShortcut("search", "Buscar apps", Modifier.weight(1f), enabled = false) {}
-        QuickShortcut("settings", "Ajustes rápidos", Modifier.weight(1f), enabled = false) {}
-    }
-}
-
-@Composable
 private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabled: Boolean = true,
     compact: Boolean = false, active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
 ) {

@@ -2,6 +2,10 @@ package dev.senda.launcher.ui
 
 import android.animation.ValueAnimator
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -174,4 +178,25 @@ internal fun Modifier.ps4PersonalWallpaper(scene: Ps4WallpaperMotion): Modifier 
     scaleX = 1.02f + depth * .012f * scene.amount
     scaleY = scaleX
     translationY = scene.drift * 6.dp.toPx() * scene.amount
+}
+
+
+/** Observe short touch taps without interfering with the control that handles them. */
+internal fun Modifier.ps4WallpaperTap(scene: Ps4WallpaperMotion): Modifier = pointerInput(scene) {
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+        if (!scene.enabled) return@awaitEachGesture
+        do {
+            val event = awaitPointerEvent(PointerEventPass.Initial)
+            val touch = event.changes.singleOrNull()?.takeIf { it.id == down.id } ?: break
+            if ((touch.position - down.position).getDistance() > viewConfiguration.touchSlop) break
+            if (touch.uptimeMillis - down.uptimeMillis >= viewConfiguration.longPressTimeoutMillis) break
+            if (!touch.pressed) {
+                if (touch.position.x in 0f..size.width.toFloat() && touch.position.y in 0f..size.height.toFloat()) {
+                    scene.confirm(touch.position.y / size.height.coerceAtLeast(1))
+                }
+                break
+            }
+        } while (true)
+    }
 }

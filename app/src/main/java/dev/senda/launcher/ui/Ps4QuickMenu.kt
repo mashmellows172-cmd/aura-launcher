@@ -36,7 +36,6 @@ internal data class Ps4QuickAction(
 internal fun Ps4QuickMenu(
     actions: List<Ps4QuickAction>,
     onDismiss: () -> Unit,
-    mediaContent: @Composable (() -> Unit) -> Unit = {},
 ) {
     val highContrast = LocalAppearance.current.highContrast
     val settings = LocalMotionSettings.current
@@ -73,10 +72,10 @@ internal fun Ps4QuickMenu(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClickLabel = "Cerrar menú rápido",
+                        onClickLabel = "Cerrar ajustes de Aura",
                         onClick = close,
                     )
-                    .semantics { contentDescription = "Cerrar menú rápido" },
+                    .semantics { contentDescription = "Cerrar ajustes de Aura" },
             )
             // Reserve an exposed strip even on narrow phones for outside dismissal.
             Box(Modifier.fillMaxSize().padding(end = 32.dp)) {
@@ -86,7 +85,7 @@ internal fun Ps4QuickMenu(
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .ps4PanelTransform(entrance.asState(), motion.effect, lateral = true)
-                        .semantics { paneTitle = "Menú rápido" },
+                        .semantics { paneTitle = "Ajustes de Aura" },
                     shape = RectangleShape,
                     color = panel,
                     contentColor = ink,
@@ -111,13 +110,12 @@ internal fun Ps4QuickMenu(
                                 Ps4Mark()
                                 Column(Modifier.weight(1f)) {
                                     Text("Aura", style = MaterialTheme.typography.labelLarge, color = muted)
-                                    Text("Menú rápido", modifier = Modifier.semantics { heading() },
+                                    Text("Ajustes de Aura", modifier = Modifier.semantics { heading() },
                                         style = MaterialTheme.typography.headlineSmall)
                                 }
                             }
                             HorizontalDivider(color = separator.copy(alpha = .65f))
                             Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                                mediaContent(close)
                             }
                             actions.forEach { action ->
                                 val section = when (action.label) {

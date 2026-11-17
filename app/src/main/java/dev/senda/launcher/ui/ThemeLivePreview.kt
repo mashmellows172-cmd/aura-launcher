@@ -151,7 +151,7 @@ private fun QuickCenterSample(source: ActiveAudioInfo, accent: androidx.compose.
     QuickCenter(audio = audio, alarmAt = null, event = null, reduced = true, origin = null, appAccent = accent,
         target = QuickCenterTarget.PANEL, miniTarget = QuickCenterTarget.PANEL, onMiniTargetChange = {},
         pinnedNote = "", onSavePinnedNote = {}, timers = emptyList(), timerStore = null,
-        onDismiss = onDismiss, onSearch = {}, onPrevious = {}, onNext = {},
+        onDismiss = onDismiss, onPrevious = {}, onNext = {},
         onSeek = { audio = audio.copy(positionMs = it, positionUpdatedAt = SystemClock.elapsedRealtime()) },
         onPlayback = {
             val now = SystemClock.elapsedRealtime()
