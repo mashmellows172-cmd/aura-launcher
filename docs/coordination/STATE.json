@@ -179,8 +179,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta105 candidate 0.71.0/code105 built and linted, 0 errors. Localized cover glass, expanding search, panoramic media and single clock/weather folding. Not installed: Motorola beta104 signed with 2eb417c5, local APK signed with 729385fc. Compatible key pending. See docs/BETA105.md.",
-  "checkpointBranch": "codex/beta105-sony-continuity",
+  "latestCheckpoint": "Beta106 candidate 0.72.0/code106 built and linted, 0 errors. YouTube panoramic header, local thumbnail decoding, confirmed 10s seeks, paused-session recovery and supported transport. Not installed: local 729385fc incompatible with Motorola beta104 2eb417c5. Real session validation pending. See docs/BETA106.md.",
+  "checkpointBranch": "codex/beta106-youtube-center",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,

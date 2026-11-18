@@ -488,9 +488,9 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
     val muted = if (contrast) MaterialTheme.colorScheme.onSurfaceVariant else quickMuted
     val cover = audio.artwork?.takeUnless { it.isRecycled }
     var coverCoordinates by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
-    var scrub by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
-    var pendingSeek by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
-    var seekStatus by remember(audio.sessionId, audio.title, audio.durationMs) { mutableStateOf<String?>(null) }
+    var scrub by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
+    var pendingSeek by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
+    var seekStatus by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<String?>(null) }
     val duration = audio.durationMs?.takeIf { it > 0L }
     fun seek(target: Long) {
         val limit = duration ?: return
@@ -500,7 +500,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         pendingSeek = bounded to android.os.SystemClock.elapsedRealtime()
         onSeek(bounded)
     }
-    val position = remember(audio.sessionId, audio.title) { mutableStateOf(audio.positionMs) }
+    val position = remember(audio.sessionId, audio.mediaId, audio.title) { mutableStateOf(audio.positionMs) }
     LaunchedEffect(pendingSeek, audio.positionMs, audio.positionUpdatedAt) {
         val request = pendingSeek ?: return@LaunchedEffect
         val reported = audio.positionMs ?: return@LaunchedEffect
@@ -533,7 +533,13 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
     QuickCard(if (contrast) Modifier else Modifier.sonyGlassRim(mediaColor)) {
         Column(Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
+        if (audio.isYouTubeVideo) {
+            YouTubeMediaHeader(audio, expanded, animated, mediaColor,
+                onExpandedChange = { onExpandedChange(!expanded) }, onOpen = onOpenSource,
+                onCoverPositioned = { coverCoordinates = it }, secondaryInk = muted, actionInk = ink) {
+                if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration, mediaColor)
+            }
+        } else         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val compactCover = when {
                 maxWidth < 290.dp || LocalDensity.current.fontScale >= 1.4f -> 60.dp
                 maxWidth < 340.dp -> 76.dp
@@ -557,7 +563,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = muted,
+                    Text(audio.playbackLabel, color = muted,
                         style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -580,6 +586,28 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             }
             TextButton(onClick = { onExpandedChange(!expanded) },
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text(if (expanded) "Contraer" else "Ampliar") }
+        }
+        if (audio.isYouTubeVideo && audio.canSeek && duration != null && audio.positionMs != null) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = {
+                    val baseline = pendingSeek?.first ?: position.value ?: 0L
+                    seek(baseline - 10_000L)
+                }, modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .semantics { contentDescription = "Retroceder vídeo diez segundos" }) { Text("−10 s") }
+                OutlinedButton(onClick = {
+                    val baseline = pendingSeek?.first ?: position.value ?: 0L
+                    seek(baseline + 10_000L)
+                }, modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .semantics { contentDescription = "Adelantar vídeo diez segundos" }) { Text("+10 s") }
+            }
+            val seekFeedback = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
+            if (!expanded && seekFeedback != null) Text(seekFeedback, color = muted,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
+        if (audio.isYouTubeVideo && (!audio.canSeek || duration == null)) {
+            Text(if (audio.isBuffering) "Esperando datos del vídeo…" else "YouTube no comunica búsqueda temporal para esta sesión",
+                color = muted, style = MaterialTheme.typography.bodySmall)
         }
         AnimatedVisibility(
             visible = expanded,
@@ -635,7 +663,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
                     if (status != null) Text(status, color = muted, style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                    if (audio.canSeek) {
+                    if (audio.canSeek && !audio.isYouTubeVideo) {
                         val baseline = pendingSeek?.first ?: current
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = baseline > 0,
@@ -649,7 +677,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                    if (audio.sessionId != null) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
+                    if (audio.sessionId != null && !audio.isYouTubeVideo) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
                         Text("Abrir app", color = LocalQuickAccent.current)
                     }
                     TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = LocalQuickAccent.current) }

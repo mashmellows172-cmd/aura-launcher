@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta106 candidata del 18 de noviembre de 2026. 0.72.0-beta106, código 106. Centro multimedia con tarjeta YouTube panorámica, miniatura mejorada, canal/estado, saltos ±10 confirmados y recuperación de sesiones pausadas. Compilación y lint correctos con 0 errores. No instalada por firma incompatible; sesión real y revisión visual pendientes. [Ficha](docs/BETA106.md).
+
 Beta105 candidata del 18 de noviembre de 2026. 0.71.0-beta105, código 105. Cristal localizado del Centro rápido, buscador expansivo, tarjeta multimedia panorámica y reloj/clima únicos durante el plegado. Compilación y lint correctos con 0 errores. Instalación bloqueada por firma incompatible con beta104; clave compatible pendiente. Revisión visual y de fluidez pendiente. [Ficha](docs/BETA105.md).
 
 Beta104 instalada en el Motorola el 17 de noviembre de 2026. 0.70.0-beta104, código 104. PS4 ofrece diez animaciones de lista y un plegado gradual de reloj y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Plegado y reapertura comprobados en PS4. Una muestra obtuvo P95 de 15 ms. Revisión de los cinco perfiles pendiente. [Ficha](docs/BETA104.md).

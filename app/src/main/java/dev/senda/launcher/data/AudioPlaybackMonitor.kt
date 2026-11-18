@@ -3,6 +3,8 @@ package dev.senda.launcher.data
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.media.AudioManager
 import android.media.MediaMetadata
 import android.media.session.MediaController
@@ -38,7 +40,16 @@ data class ActiveAudioInfo(
     val speed: Float = 0f,
     val canSeek: Boolean = false,
     val canPlay: Boolean = false,
-)
+    val isBuffering: Boolean = false,
+    val mediaId: String? = null,
+) {
+    val isYouTubeVideo: Boolean get() = packageName == "com.google.android.youtube"
+    val playbackLabel: String get() = when {
+        isBuffering -> "Cargando…"
+        isPlaying -> "En reproducción"
+        else -> "En pausa"
+    }
+}
 
 /**
  * Monitor autonomo de reproduccion de audio.
@@ -138,10 +149,21 @@ class AudioPlaybackMonitor(context: Context) {
         if (!MediaAccessService.isEnabled(app)) { disconnect(); publishGeneric(); ensureFallback(); return }
         // Never lend a paused player's metadata or controls to another application's audio.
         val playing = entries.values.filter { runCatching { it.controller.playbackState?.state == PlaybackState.STATE_PLAYING }.getOrDefault(false) }
-        val paused = current?.takeIf { entry ->
-            entries.values.any { it.id == entry.id } && runCatching { entry.controller.playbackState?.state.let { state -> state == PlaybackState.STATE_BUFFERING || state == PlaybackState.STATE_CONNECTING || (state == PlaybackState.STATE_PAUSED && audio?.isMusicActive != true) } }.getOrDefault(false)
+        val canUsePaused = runCatching { audio?.isMusicActive != true }.getOrDefault(false)
+        val waiting = entries.values.filter { entry ->
+            runCatching {
+                val state = entry.controller.playbackState ?: return@runCatching false
+                when (state.state) {
+                    PlaybackState.STATE_BUFFERING, PlaybackState.STATE_CONNECTING -> true
+                    PlaybackState.STATE_PAUSED -> canUsePaused &&
+                        state.actions and (PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PLAY_PAUSE) != 0L &&
+                        entry.controller.metadata?.description?.title?.isNotBlank() == true
+                    else -> false
+                }
+            }.getOrDefault(false)
         }
-        val selected = playing.firstOrNull { it.id == current?.id } ?: playing.firstOrNull() ?: paused
+        val selected = playing.firstOrNull { it.id == current?.id } ?: playing.firstOrNull()
+            ?: waiting.firstOrNull { it.id == current?.id } ?: waiting.firstOrNull()
         if (selected == null) {
             current = null; artworkJob?.cancel(); artRevision++
             publishGeneric(); ensureFallback(); return
@@ -155,26 +177,34 @@ class AudioPlaybackMonitor(context: Context) {
         val actions = playback?.actions ?: 0L
         val duration = runCatching { metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION)?.takeIf { it > 0L } }.getOrNull()
         fun supports(action: Long) = actions and action != 0L
+        val canTransport = playback?.state == PlaybackState.STATE_PLAYING || playback?.state == PlaybackState.STATE_PAUSED
         val label = labels.getOrPut(controller.packageName) {
             runCatching { app.packageManager.getApplicationLabel(app.packageManager.getApplicationInfo(controller.packageName, 0)).toString() }
                 .getOrDefault("Reproductor")
         }
         fun text(key: String) = runCatching { metadata?.getString(key)?.takeIf(String::isNotBlank)?.take(240) }.getOrNull()
+        val title = text(MediaMetadata.METADATA_KEY_DISPLAY_TITLE) ?: text(MediaMetadata.METADATA_KEY_TITLE)
+        val mediaId = text(MediaMetadata.METADATA_KEY_MEDIA_ID)
+        val contentChanged = changed || mediaId != mutableState.value.mediaId || title != mutableState.value.title
         mutableState.value = ActiveAudioInfo(
             isPlaying = playback?.state == PlaybackState.STATE_PLAYING,
-            title = text(MediaMetadata.METADATA_KEY_DISPLAY_TITLE) ?: text(MediaMetadata.METADATA_KEY_TITLE),
-            artist = text(MediaMetadata.METADATA_KEY_ARTIST), packageName = controller.packageName, appLabel = label,
+            title = title,
+            artist = text(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE) ?: text(MediaMetadata.METADATA_KEY_ARTIST)
+                ?: text(MediaMetadata.METADATA_KEY_AUTHOR), packageName = controller.packageName, appLabel = label,
             sessionId = selected.id, mediaAccess = true,
             canPause = supports(PlaybackState.ACTION_PAUSE) || supports(PlaybackState.ACTION_PLAY_PAUSE),
-            canPrevious = supports(PlaybackState.ACTION_SKIP_TO_PREVIOUS), canNext = supports(PlaybackState.ACTION_SKIP_TO_NEXT),
-            artwork = if (changed || artChanged) null else mutableState.value.artwork,
+            canPrevious = canTransport && supports(PlaybackState.ACTION_SKIP_TO_PREVIOUS),
+            canNext = canTransport && supports(PlaybackState.ACTION_SKIP_TO_NEXT),
+            artwork = if (contentChanged) null else mutableState.value.artwork,
             durationMs = duration, positionMs = playback?.position?.takeIf { it >= 0L },
             positionUpdatedAt = playback?.lastPositionUpdateTime ?: 0L,
             speed = playback?.playbackSpeed?.takeIf { it.isFinite() } ?: 0f,
-            canSeek = duration != null && supports(PlaybackState.ACTION_SEEK_TO),
+            canSeek = canTransport && duration != null && supports(PlaybackState.ACTION_SEEK_TO),
+            isBuffering = playback?.state == PlaybackState.STATE_BUFFERING || playback?.state == PlaybackState.STATE_CONNECTING,
+            mediaId = mediaId,
             canPlay = playback?.state == PlaybackState.STATE_PAUSED && (supports(PlaybackState.ACTION_PLAY) || supports(PlaybackState.ACTION_PLAY_PAUSE)),
         )
-        if (changed || artChanged) loadArtwork(selected.id, metadata)
+        if (contentChanged || artChanged) loadArtwork(selected.id, metadata, controller.packageName)
     }
 
     private fun publishGeneric() {
@@ -195,18 +225,34 @@ class AudioPlaybackMonitor(context: Context) {
         }
     }
 
-    private fun loadArtwork(id: String, metadata: MediaMetadata?) {
+    private fun loadArtwork(id: String, metadata: MediaMetadata?, packageName: String) {
         artworkJob?.cancel()
         val revision = ++artRevision
         artworkJob = scope.launch {
-            val bitmap = withContext(Dispatchers.Default) {
+            val edge = if (packageName == "com.google.android.youtube") 768 else 384
+            val bitmap = withContext(Dispatchers.IO) {
                 runCatching {
-                    val source = metadata?.getBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON)
+                    val source = metadata?.getBitmap(MediaMetadata.METADATA_KEY_ART)
                         ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
-                        ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_ART)
-                    source?.takeUnless { it.isRecycled || it.width.toLong() * it.height > 16_000_000L }?.let {
-                        val factor = 384f / max(it.width, it.height).coerceAtLeast(1)
-                        if (factor < 1f) Bitmap.createScaledBitmap(it, (it.width * factor).roundToInt().coerceAtLeast(1), (it.height * factor).roundToInt().coerceAtLeast(1), true) else it
+                        ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON)
+                    val safeSource = source?.takeUnless { it.isRecycled || it.width.toLong() * it.height > 16_000_000L }
+                    if (safeSource != null) {
+                        val factor = edge.toFloat() / max(safeSource.width, safeSource.height).coerceAtLeast(1)
+                        if (factor < 1f) Bitmap.createScaledBitmap(safeSource,
+                            (safeSource.width * factor).roundToInt().coerceAtLeast(1),
+                            (safeSource.height * factor).roundToInt().coerceAtLeast(1), true) else safeSource
+                    } else {
+                        val uri = sequenceOf(MediaMetadata.METADATA_KEY_ART_URI,
+                            MediaMetadata.METADATA_KEY_ALBUM_ART_URI, MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI)
+                            .mapNotNull { key -> metadata?.getString(key)?.let(Uri::parse) }
+                            .firstOrNull { it.scheme == "content" }
+                        if (uri == null) null else ImageDecoder.decodeBitmap(ImageDecoder.createSource(app.contentResolver, uri)) { decoder, info, _ ->
+                            val longest = max(info.size.width, info.size.height).coerceAtLeast(1)
+                            val factor = minOf(1f, edge.toFloat() / longest)
+                            decoder.setTargetSize((info.size.width * factor).roundToInt().coerceAtLeast(1),
+                                (info.size.height * factor).roundToInt().coerceAtLeast(1))
+                            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                        }
                     }
                 }.getOrNull()
             }
@@ -214,11 +260,13 @@ class AudioPlaybackMonitor(context: Context) {
         }
     }
 
-    private fun control(id: String?, action: Long, command: (MediaController.TransportControls) -> Unit) {
+    private fun control(id: String?, action: Long, allowPaused: Boolean = false, command: (MediaController.TransportControls) -> Unit) {
         val selected = current?.takeIf { id != null && it.id == id } ?: return
         runCatching {
             val state = selected.controller.playbackState ?: return@runCatching
-            if (state.state != PlaybackState.STATE_PLAYING || state.actions and action == 0L) return@runCatching
+            val acceptedState = state.state == PlaybackState.STATE_PLAYING ||
+                allowPaused && state.state == PlaybackState.STATE_PAUSED
+            if (!acceptedState || state.actions and action == 0L) return@runCatching
             command(selected.controller.transportControls)
         }
     }
@@ -243,13 +291,23 @@ class AudioPlaybackMonitor(context: Context) {
     }
 
     fun pause(id: String?) = control(id, PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE) { it.pause() }
-    fun previous(id: String?) = control(id, PlaybackState.ACTION_SKIP_TO_PREVIOUS) { it.skipToPrevious() }
-    fun next(id: String?) = control(id, PlaybackState.ACTION_SKIP_TO_NEXT) { it.skipToNext() }
+    fun previous(id: String?) = control(id, PlaybackState.ACTION_SKIP_TO_PREVIOUS, allowPaused = true) { it.skipToPrevious() }
+    fun next(id: String?) = control(id, PlaybackState.ACTION_SKIP_TO_NEXT, allowPaused = true) { it.skipToNext() }
 
     fun openAudioApp(id: String? = mutableState.value.sessionId): Boolean {
         val selected = current?.takeIf { it.id == id } ?: return false
         val activity = selected.controller.sessionActivity
         if (activity != null && runCatching { activity.send(); true }.getOrDefault(false)) return true
+        if (selected.controller.packageName == "com.google.android.youtube") {
+            val mediaUri = runCatching { selected.controller.metadata?.description?.mediaUri }.getOrNull()
+            val host = mediaUri?.host?.lowercase(java.util.Locale.ROOT)
+            val trustedHost = host in setOf("youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be")
+            if (mediaUri?.scheme == "https" && trustedHost && runCatching {
+                app.startActivity(Intent(Intent.ACTION_VIEW, mediaUri)
+                    .setPackage(selected.controller.packageName).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                true
+            }.getOrDefault(false)) return true
+        }
         return runCatching {
             val intent = app.packageManager.getLaunchIntentForPackage(selected.controller.packageName) ?: return@runCatching false
             app.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); true

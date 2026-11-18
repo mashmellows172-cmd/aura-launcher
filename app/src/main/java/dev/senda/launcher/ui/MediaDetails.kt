@@ -66,10 +66,10 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
     val still = reduced || !LocalMotionSettings.current.mediaDetailsMotionEnabled
     val motion = rememberPs4PanelMotion(still)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    var position by remember(info.sessionId) { mutableStateOf(positionAt(info)) }
-    var drag by remember(info.sessionId, info.title, info.durationMs) { mutableStateOf<Float?>(null) }
-    var pendingSeek by remember(info.sessionId, info.title, info.durationMs) { mutableStateOf<MediaSeekRequest?>(null) }
-    var seekResult by remember(info.sessionId, info.title, info.durationMs) { mutableStateOf<String?>(null) }
+    var position by remember(info.sessionId, info.mediaId, info.title) { mutableStateOf(positionAt(info)) }
+    var drag by remember(info.sessionId, info.mediaId, info.title, info.durationMs) { mutableStateOf<Float?>(null) }
+    var pendingSeek by remember(info.sessionId, info.mediaId, info.title, info.durationMs) { mutableStateOf<MediaSeekRequest?>(null) }
+    var seekResult by remember(info.sessionId, info.mediaId, info.title, info.durationMs) { mutableStateOf<String?>(null) }
     var artTarget by remember { mutableStateOf<Rect?>(null) }
     var rootPosition by remember { mutableStateOf(Offset.Zero) }
     var dragLayer by remember { mutableStateOf<LayoutCoordinates?>(null) }
@@ -89,7 +89,7 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             }
         }
     }
-    val expandArt = motion.effect == "SPRING" && origin != null
+    val expandArt = motion.effect == "SPRING" && origin != null && !info.isYouTubeVideo
     val art = info.artwork?.takeUnless { it.isRecycled }
     val artwork: @Composable () -> Unit = {
         Crossfade(art, modifier = Modifier.fillMaxSize(),
@@ -110,6 +110,15 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
     val panelColor = MaterialTheme.colorScheme.surface
     val sessionId = info.sessionId
     val duration = info.durationMs?.takeIf { it > 0L }
+    fun requestSeek(target: Long) {
+        val limit = duration ?: return
+        val id = sessionId ?: return
+        if (!info.canSeek) return
+        val bounded = target.coerceIn(0L, limit)
+        seekResult = null
+        pendingSeek = MediaSeekRequest(bounded, SystemClock.elapsedRealtime())
+        onSeek(id, bounded)
+    }
     LaunchedEffect(info.positionMs, info.positionUpdatedAt, pendingSeek) {
         val request = pendingSeek ?: return@LaunchedEffect
         val reported = info.positionMs
@@ -172,6 +181,10 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             Column(Modifier.fillMaxWidth().ps4HeaderSweep(trackCue, accent, .65f)
                 .verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (info.isYouTubeVideo) {
+                YouTubeMediaHeader(info, true, animateDismiss, atmosphere.color,
+                    onExpandedChange = close, onOpen = { onOpen(info.sessionId) })
+            } else {
             Text(info.title ?: info.appLabel ?: "Reproducción", style = MaterialTheme.typography.titleLarge)
             Box(Modifier.size(120.dp).then(if (expandArt) Modifier.onGloballyPositioned {
                 val parent = dragLayer?.takeIf { coordinates -> coordinates.isAttached }
@@ -182,6 +195,7 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
             } else Modifier), contentAlignment = Alignment.Center) {
                 if (!expandArt) artwork()
             }
+            }
             Column(Modifier.fillMaxWidth().graphicsLayer {
                 if (expandArt) {
                     val p = motion.progress.value.coerceIn(0f, 1f)
@@ -189,7 +203,7 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
                     alpha = ((p - .18f) / .82f).coerceIn(0f, 1f)
                 }
             }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(info.artist ?: info.appLabel ?: "", style = MaterialTheme.typography.bodyMedium)
+            if (!info.isYouTubeVideo) Text(info.artist ?: info.appLabel ?: "", style = MaterialTheme.typography.bodyMedium)
             val current = position
             if (duration != null && current != null) {
                 val displayed = pendingSeek?.target ?: current
@@ -209,9 +223,7 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
                         val target = drag?.let { (duration * it).toLong().coerceIn(0L, duration) }
                         drag = null
                         if (target != null && sessionId != null && info.canSeek) {
-                            seekResult = null
-                            pendingSeek = MediaSeekRequest(target, SystemClock.elapsedRealtime())
-                            onSeek(sessionId, target)
+                            requestSeek(target)
                         }
                     }, enabled = sessionId != null && info.canSeek)
                 if (info.canSeek && sessionId != null) androidx.compose.runtime.key(sessionId, info.title, duration) {
@@ -221,6 +233,16 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
                 val status = if (pendingSeek != null) "Esperando al reproductor…" else seekResult
                 if (status != null) Text(status, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     style = MaterialTheme.typography.bodySmall)
+                if (info.isYouTubeVideo && info.canSeek && sessionId != null) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(onClick = { requestSeek((pendingSeek?.target ?: current) - 10_000L) },
+                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                .semantics { contentDescription = "Retroceder vídeo diez segundos" }) { Text("−10 s") }
+                        OutlinedButton(onClick = { requestSeek((pendingSeek?.target ?: current) + 10_000L) },
+                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                .semantics { contentDescription = "Adelantar vídeo diez segundos" }) { Text("+10 s") }
+                    }
+                }
                 if (!info.canSeek) Text("Este reproductor no permite buscar dentro de la pista", style = MaterialTheme.typography.bodySmall)
             } else Text("El reproductor no comunica duración o progreso", style = MaterialTheme.typography.bodySmall)
             Button(onClick = { if (info.isPlaying) onPause(info.sessionId) else onResume(info.sessionId) },
@@ -236,13 +258,13 @@ internal fun MediaDetails(info: ActiveAudioInfo, origin: Rect?, reduced: Boolean
                     }
                 }
             }
-            if (sessionId != null && info.isPlaying && (info.canPrevious || info.canNext)) {
+            if (sessionId != null && (info.canPrevious || info.canNext)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = { onPrevious(info.sessionId) }, enabled = info.canPrevious) { Text("Anterior") }
                     TextButton(onClick = { onNext(info.sessionId) }, enabled = info.canNext) { Text("Siguiente") }
                 }
             }
-            TextButton(onClick = { onOpen(info.sessionId) }, enabled = sessionId != null) { Text("Abrir reproductor") }
+            if (!info.isYouTubeVideo) TextButton(onClick = { onOpen(info.sessionId) }, enabled = sessionId != null) { Text("Abrir reproductor") }
             }
         }
         }
