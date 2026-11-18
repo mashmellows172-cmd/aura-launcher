@@ -32,3 +32,7 @@ Referencias oficiales consultadas el 18 de noviembre de 2026. [MediaController](
 ## Pendientes
 
 Probar sesión real YouTube, vídeos verticales, pausa al volver a Aura, carga, múltiples reproductores, seek confirmado, URI de miniatura, contraste y fuentes grandes en el Motorola. Compilación y revisión de fuente no certifican funcionamiento físico ni mejora de FPS. Se necesita la clave compatible para actualizar conservando datos.
+
+## Comprobación de instalación solicitada
+
+El 18 de noviembre de 2026 se reconectó el Motorola Edge 50 Ultra autorizado por ADB inalámbrico y se extrajo el APK instalado para comparar certificados. Android confirmó beta104, 0.70.0-beta104, código 104. El certificado instalado sigue siendo 2eb417c5… y beta106 está firmada con 729385fc…. La comparación canceló la actualización antes de ejecutar install -r. No se desinstaló ni se modificaron datos, permisos o ajustes. La evidencia y el APK anterior quedan fuera de Git. Instalación pendiente de firma compatible o de una migración con respaldo verificado y autorización específica.
