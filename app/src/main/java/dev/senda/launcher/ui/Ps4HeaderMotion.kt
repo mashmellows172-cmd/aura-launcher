@@ -30,7 +30,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
@@ -40,7 +39,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -61,24 +59,36 @@ internal fun Ps4HeaderClock(
     reduced: Boolean,
     motion: Ps4ClockMotion,
     onOpen: (() -> Unit)? = null,
+    fold: State<Float>? = null,
 ) {
     val progress = rememberClockChange(time, LauncherTheme.PS4, reduced, durationMs = motion.durationMs)
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
+    val rtl = androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl
     val prominent = size.value >= 40f
     val accent = MaterialTheme.colorScheme.primary
     val travel = if (prominent) motion.travelDp.dp else (motion.travelDp / 3f).dp
     Box(
-        Modifier.heightIn(min = 48.dp)
-            .then(if (!reduced) Modifier.ps4HeaderSweep(progress, accent, motion.light) else Modifier)
+        Modifier.heightIn(min = 48.dp).clipToBounds()
             .then(if (onOpen == null) Modifier else Modifier.clickable(role = Role.Button, onClick = onOpen)
                 .semantics { contentDescription = "Abrir alarmas · $time" })
+            .layout { measurable, constraints ->
+            val content = measurable.measure(constraints)
+            val scale = 1f - .24f * (fold?.value ?: 0f).coerceIn(0f, 1f)
+            layout((content.width * scale).roundToInt().coerceAtLeast(48.dp.roundToPx()), content.height) {
+                content.placeRelative(0, 0)
+            }
+        }.then(if (!reduced) Modifier.ps4HeaderSweep(progress, accent, motion.light) else Modifier)
             .padding(horizontal = 4.dp),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             time,
             modifier = Modifier.graphicsLayer {
+                val foldScale = 1f - .24f * (fold?.value ?: 0f).coerceIn(0f, 1f)
+                scaleX = foldScale
+                scaleY = foldScale
+                transformOrigin = TransformOrigin(if (rtl) 1f else 0f, .5f)
                 val p = progress.value
                 val entryPhase = (((entry?.value ?: 1f) - .16f) / .68f).coerceIn(0f, 1f)
                 val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(entryPhase)) * entryIntensity
@@ -141,7 +151,7 @@ private val headerFoldEasing = CubicBezierEasing(.24f, 0f, .18f, 1f)
 
 /** Changes the viewport only after the gesture and inertial motion have come to rest. */
 @Composable
-internal fun rememberPs4HeaderFold(list: LazyListState, reduced: Boolean): State<Float> {
+internal fun rememberPs4HeaderFold(list: LazyListState, reduced: Boolean, searching: Boolean = false): State<Float> {
     val density = LocalDensity.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val collapseAt = with(density) { 64.dp.roundToPx() }
@@ -151,12 +161,13 @@ internal fun rememberPs4HeaderFold(list: LazyListState, reduced: Boolean): State
     }
     val progress = remember(list) { Animatable(initial) }
     var target by remember(list) { mutableStateOf(initial) }
-    LaunchedEffect(list, lifecycle, reduced, collapseAt, expandAt) {
+    LaunchedEffect(list, lifecycle, reduced, collapseAt, expandAt, searching) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             snapshotFlow {
                 val offset = list.firstVisibleItemScrollOffset
                 when {
                     list.isScrollInProgress -> null
+                    searching -> 1f
                     list.firstVisibleItemIndex > 0 || offset >= collapseAt -> 1f
                     offset <= expandAt -> 0f
                     else -> target
@@ -179,32 +190,4 @@ internal fun rememberPs4HeaderFold(list: LazyListState, reduced: Boolean): State
         }
     }
     return progress.asState()
-}
-
-internal fun Modifier.ps4HeaderPanelFold(progress: State<Float>?): Modifier {
-    if (progress == null) return this
-    return clipToBounds().layout { measurable, constraints ->
-        val panel = measurable.measure(constraints.copy(minHeight = 0))
-        val height = (panel.height * (1f - progress.value)).roundToInt()
-        layout(panel.width, constraints.constrainHeight(height)) { panel.placeRelative(0, 0) }
-    }.graphicsLayer {
-        val phase = progress.value
-        compositingStrategy = CompositingStrategy.ModulateAlpha
-        transformOrigin = TransformOrigin(.5f, 0f)
-        translationY = -8.dp.toPx() * phase
-        scaleX = 1f - .035f * phase
-        alpha = 1f - phase * phase
-    }
-}
-
-internal fun Modifier.ps4HeaderTitleFold(progress: State<Float>?, compact: Boolean): Modifier {
-    if (progress == null) return this
-    return graphicsLayer {
-        val phase = progress.value
-        val handoff = PS4_HEADER_COMPACT_PHASE
-        val reveal = if (compact) (phase - handoff) / (1f - handoff) else 1f - phase / handoff
-        val visible = reveal.coerceIn(0f, 1f)
-        alpha = (if (compact) .60f else .25f) + (if (compact) .40f else .75f) * visible
-        translationY = (if (compact) 6.dp else (-4).dp).toPx() * (1f - visible)
-    }
 }

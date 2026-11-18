@@ -7,6 +7,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.animation.core.animate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -35,6 +38,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -136,6 +140,7 @@ internal fun QuickCenter(
     timerStore: QuickTimers?,
     onDismiss: () -> Unit,
     showMusic: Boolean = true,
+    decorationConstrained: State<Boolean>? = null,
     onOpenMediaDetails: ((Rect?) -> Unit)? = null,
     onPrevious: () -> Unit,
     onSeek: (Long) -> Unit,
@@ -161,6 +166,8 @@ internal fun QuickCenter(
     var timersExpanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.TIMERS) }
     var showNote by rememberSaveable { mutableStateOf(target == QuickCenterTarget.NOTE) }
     val hasMedia = audio != null
+    val atmosphere = rememberMediaAtmosphere(audio ?: ActiveAudioInfo(), reduced, showMusic)
+    val mediaColor = atmosphere.color
     val mediaExpanded = expanded && hasMedia
     val animated = motion.effect != "NONE" && LocalMotionSettings.current.mediaDetailsMotionEnabled
     val latestClose by rememberUpdatedState(close)
@@ -239,8 +246,11 @@ internal fun QuickCenter(
                 color = panel,
                 contentColor = ink,
             ) {
+                Box {
+                SonyGlassBackdrop(audio?.artwork?.takeIf { showMusic }, mediaColor, reduced,
+                    decorationConstrained ?: LocalDecorationConstrained.current)
                 val surfaceFinish = if (contrast) Modifier else Modifier
-                    .background(Brush.verticalGradient(listOf(Color(0xFF142447), panel, Color(0xFF081328))))
+                    .background(Brush.verticalGradient(listOf(Color(0x40142447), panel.copy(alpha = .88f), Color(0xFF081328))))
                     .quickCenterCornerLight(accent, cornerRadius, intensity)
                 Column(Modifier.border(BorderStroke(1.dp, if (contrast) edge else quickEdge), shape)
                     .then(surfaceFinish)
@@ -363,7 +373,7 @@ internal fun QuickCenter(
                         }
                         for (card in visibleCards) key(card) {
                             when (card) {
-                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact,
+                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
                                     onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
                                     onOpenMediaDetails?.let { open ->
                                         { origin -> motion.close(reduced) { onDismiss(); open(origin) } }
@@ -398,6 +408,7 @@ internal fun QuickCenter(
             }
             }
         }
+    }
     }
 }
 
@@ -435,10 +446,10 @@ private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: android
 }
 
 @Composable
-internal fun QuickCard(content: @Composable () -> Unit) {
+internal fun QuickCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(16.dp)
     val cardContrast = if (LocalAppearance.current.highContrast) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape) else Modifier
-    Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).then(cardContrast).padding(12.dp)) {
+    Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).then(cardContrast).then(modifier).padding(12.dp)) {
         content()
     }
 }
@@ -468,7 +479,7 @@ private fun QuickActionCard(icon: String, label: String, value: String, action: 
 
 @Composable
 private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: Boolean, compact: Boolean,
-    onExpandedChange: (Boolean) -> Unit, onPlayback: () -> Unit,
+    mediaColor: State<Color>, onExpandedChange: (Boolean) -> Unit, onPlayback: () -> Unit,
     onPrevious: () -> Unit, onNext: () -> Unit, onSeek: (Long) -> Unit, onOpenSource: () -> Unit,
     onOpenDetails: ((Rect?) -> Unit)?,
 ) {
@@ -519,7 +530,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             }
         }
     }
-    QuickCard {
+    QuickCard(if (contrast) Modifier else Modifier.sonyGlassRim(mediaColor)) {
         Column(Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
@@ -528,34 +539,48 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 maxWidth < 340.dp -> 76.dp
                 else -> 88.dp
             }
-            val coverSize = if (expanded) (compactCover + 24.dp).coerceAtMost(maxWidth * .40f) else compactCover
-            Row(Modifier.fillMaxWidth().heightIn(min = coverSize),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(Modifier.size(coverSize).onGloballyPositioned { coverCoordinates = it }
-                    .clip(RoundedCornerShape(10.dp)).background(Color(0xFF122B59))
+            val coverSize = animateDpAsState(
+                if (expanded) (compactCover + 28.dp).coerceAtMost(maxWidth * .38f) else compactCover,
+                tween(if (animated) 240 else 0, easing = Ps4Motion.easing), label = "quick-media-cover")
+            Row(Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                Box(Modifier.layout { measurable, constraints ->
+                        val side = coverSize.value.roundToPx().coerceAtMost(constraints.maxWidth)
+                        val image = measurable.measure(Constraints.fixed(side, side))
+                        layout(side, side) { image.placeRelative(0, 0) }
+                    }.onGloballyPositioned { coverCoordinates = it }
+                    .clip(RoundedCornerShape(12.dp)).background(Color(0xFF122B59))
                     .clickable(onClickLabel = if (expanded) "Minimizar reproductor" else "Ampliar reproductor") {
                         onExpandedChange(!expanded)
                     }, contentAlignment = Alignment.Center) {
                     if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
                 }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(if (audio.isPlaying) "En reproducción" else "En pausa", color = muted,
-                        style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration)
+                        fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    audio.artist?.takeIf { it.isNotBlank() }?.let {
+                        Text(it, color = muted, style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                    if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration, mediaColor)
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    QuickMediaButton(if (audio.isPlaying) "pause" else "play",
-                        if (audio.isPlaying) "Pausar" else "Reanudar",
-                        if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
-                    QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
-                }
+            }
         }
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
+                QuickMediaButton(if (audio.isPlaying) "pause" else "play",
+                    if (audio.isPlaying) "Pausar" else "Reanudar",
+                    if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
+                QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
+            }
+            TextButton(onClick = { onExpandedChange(!expanded) },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text(if (expanded) "Contraer" else "Ampliar") }
         }
-        if (!expanded && compact) TextButton(onClick = { onExpandedChange(true) },
-            modifier = Modifier.heightIn(min = 48.dp)) { Text("Ampliar reproductor") }
         AnimatedVisibility(
             visible = expanded,
             enter = if (animated) expandVertically(tween(220, easing = Ps4Motion.easing), expandFrom = Alignment.Top) +
@@ -575,9 +600,6 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     }, modifier = Modifier.heightIn(min = 48.dp)) {
                         Text("Abrir ficha multimedia")
                     }
-                }
-                audio.artist?.takeIf { it.isNotBlank() }?.let {
-                    Text(it, color = muted, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
                 }
                 val current = position.value
                 if (duration != null && current != null) {
@@ -601,7 +623,10 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                                 seek((it.toDouble() * duration).toLong())
                             }
                             scrub = null
-                        }, modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
+                        }, colors = if (contrast) SliderDefaults.colors() else SliderDefaults.colors(
+                            thumbColor = quickMediaAccent(mediaColor.value, LocalQuickAccent.current),
+                            activeTrackColor = quickMediaAccent(mediaColor.value, LocalQuickAccent.current),
+                        ), modifier = Modifier.semantics { contentDescription = "Posición de reproducción" })
                     if (audio.canSeek) key(audio.sessionId, audio.title, duration) {
                         MediaSeekCue(requested, actual, confirmed = seekStatus == "Posición actualizada", animated = animated)
                     }
@@ -624,7 +649,6 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                    QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
                     if (audio.sessionId != null) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
                         Text("Abrir app", color = LocalQuickAccent.current)
                     }
@@ -637,7 +661,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
 }
 
 @Composable
-private fun QuickMediaProgress(position: State<Long?>, duration: Long) {
+private fun QuickMediaProgress(position: State<Long?>, duration: Long, mediaColor: State<Color>) {
     val accent = LocalQuickAccent.current
     Box(Modifier.fillMaxWidth().padding(top = 8.dp).height(4.dp)
         .semantics {
@@ -652,10 +676,22 @@ private fun QuickMediaProgress(position: State<Long?>, duration: Long) {
             if (fraction > 0f) {
                 val width = size.width * fraction
                 val x = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) size.width - width else 0f
-                drawRoundRect(accent, topLeft = androidx.compose.ui.geometry.Offset(x, 0f),
+                val progressInk = quickMediaAccent(mediaColor.value, accent)
+                drawRoundRect(progressInk, topLeft = androidx.compose.ui.geometry.Offset(x, 0f),
                     size = Size(width, size.height), cornerRadius = radius)
             }
         })
+}
+
+private fun quickMediaAccent(color: Color, fallback: Color): Color {
+    val track = Color(0xFF304B73).luminance()
+    fun contrast(ink: Color) = (maxOf(ink.luminance(), track) + .05f) /
+        (minOf(ink.luminance(), track) + .05f)
+    return when {
+        contrast(color) >= 3f -> color
+        contrast(fallback) >= 3f -> fallback
+        else -> Color.White
+    }
 }
 
 private fun quickMediaTime(ms: Long) = "${ms / 60_000}:${(ms / 1_000 % 60).toString().padStart(2, '0')}"

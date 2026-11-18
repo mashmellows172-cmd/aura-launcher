@@ -21,11 +21,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.layout.ContentScale
@@ -54,6 +56,7 @@ import dev.senda.launcher.ui.theme.LocalRetroStyle
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.ui.theme.LocalSkinStyle
 import dev.senda.launcher.widgets.WidgetController
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.withContext
@@ -95,6 +98,7 @@ fun HeaderWeather(
     prominent: Boolean = false,
     onOpenPanel: ((Rect?) -> Unit)? = null,
     scenePhase: State<Float>? = null,
+    foldProgress: State<Float>? = null,
 ) {
     val id=controller.weatherWidgetId
     val info=remember(id,packageName,controller.providerRevision){controller.manager.getAppWidgetInfo(id)}
@@ -150,22 +154,35 @@ fun HeaderWeather(
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)){
                     if (ps4Motion != null) {
                         Ps4WeatherIcon(iconCondition, ps4Motion, reduceMotion || LocalThemePreview.current,
-                            Modifier.size(if (prominent) 48.dp else 34.dp), scenePhase)
+                            Modifier.size(if (prominent) 48.dp else 34.dp).graphicsLayer {
+                                val scale = 1f - .16f * (foldProgress?.value ?: 0f)
+                                scaleX = scale; scaleY = scale
+                            }, scenePhase)
                     } else {
                         reading.icon?.let { icon->Image(icon,null,Modifier.size(if (prominent) 39.dp else 30.dp),colorFilter=if(LocalIndustrialStyle.current.enabled) ColorFilter.tint(MaterialTheme.colorScheme.onSurface) else null)}
                     }
                     Text(reading.temperature, style = if (prominent) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                Text(reading.place.ifBlank{sourceLabel},style=if (prominent) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(reading.place.ifBlank{sourceLabel},modifier = Modifier.weatherPlaceFold(foldProgress),style=if (prominent) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.labelSmall,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
             }else{
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (ps4Motion != null) Ps4WeatherIcon(WeatherCondition.AMBIENT, ps4Motion, true, Modifier.size(32.dp))
                     Text(if (connected) "Sin lectura" else "Clima", style = MaterialTheme.typography.labelLarge)
                 }
-                Text(if(connected)"Abrir ajustes" else "Conectar",style=MaterialTheme.typography.labelSmall,color=LocalSkinStyle.current.accent)
+                Text(if(connected)"Abrir ajustes" else "Conectar",modifier = Modifier.weatherPlaceFold(foldProgress),style=MaterialTheme.typography.labelSmall,color=LocalSkinStyle.current.accent)
             }
         }
     }
+}
+
+/** Hide the secondary line while retaining the same provider host and condition icon. */
+private fun Modifier.weatherPlaceFold(progress: State<Float>?): Modifier {
+    if (progress == null) return this
+    return layout { measurable, constraints ->
+        val place = measurable.measure(constraints.copy(minHeight = 0))
+        val visible = (1f - progress.value / .65f).coerceIn(0f, 1f)
+        layout(place.width, (place.height * visible).roundToInt()) { place.placeRelative(0, 0) }
+    }.clipToBounds().graphicsLayer { alpha = (1f - progress.value / .65f).coerceIn(0f, 1f) }
 }
 
 @Composable

@@ -14,6 +14,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlin.math.roundToInt
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.Modifier
@@ -40,6 +45,7 @@ internal fun ThemedSearchField(
     theme: LauncherTheme, query: TextFieldValue, onQuery: (TextFieldValue) -> Unit, onClear: () -> Unit,
     onSearch: () -> Unit, focus: FocusRequester, interactions: MutableInteractionSource,
     glow: () -> Float, readOnly: Boolean = false, heightDp: Int = 56,
+    expansion: State<Float>? = null,
 ) {
     val profile = LocalHistoricalProfile.current
     val ps4Glass = theme == LauncherTheme.PS4 && !dev.senda.launcher.data.LocalAppearance.current.highContrast
@@ -52,12 +58,22 @@ internal fun ThemedSearchField(
     val settings = LocalMotionSettings.current
     val focused = interactions.collectIsFocusedAsState()
     val sony = theme == LauncherTheme.PS4 || theme == LauncherTheme.XPERIA
-    val animateLens = sony && !readOnly && settings.glowEnabled && !settings.reduceMotion &&
+    val animateMorph = sony && !readOnly && !settings.reduceMotion &&
         !dev.senda.launcher.data.LocalAppearance.current.highContrast && !LocalSystemPowerSaving.current &&
         android.animation.ValueAnimator.areAnimatorsEnabled()
-    val lens = animateFloatAsState(if (animateLens && focused.value) 1f else 0f,
-        tween(if (animateLens) 270 else 0, easing = Ps4Motion.easing), label = "search-field-lens")
-    val panel = Modifier.fillMaxWidth().drawWithCache {
+    val lens = expansion ?: animateFloatAsState(
+        if (animateMorph && (focused.value || query.text.isNotBlank())) 1f else 0f,
+        tween(if (animateMorph) 260 else 0, easing = Ps4Motion.easing), label = "search-field-lens")
+    val animateLens = animateMorph && settings.glowEnabled
+    val panel = Modifier.fillMaxWidth().then(if (animateMorph) Modifier.layout { measurable, constraints ->
+        val field = measurable.measure(constraints.copy(minHeight = 0))
+        val inset = (5.dp.toPx() * lens.value).roundToInt()
+        layout(field.width, constraints.constrainHeight(field.height + inset * 2)) {
+            field.placeRelative(0, inset)
+        }
+    }.graphicsLayer {
+        scaleX = .97f + .03f * lens.value
+    } else Modifier).drawWithCache {
         val rings = (3 downTo 1).map { ring ->
             val inset = ring * 2.8.dp.toPx()
             Triple(Offset(-inset, -inset), Size(size.width + inset * 2, size.height + inset * 2), Stroke((8 - ring).dp.toPx()))
@@ -97,8 +113,8 @@ internal fun ThemedSearchField(
             leadingIcon = {
                 ThemeSystemIcon("search", theme)
             },
-            trailingIcon = if (query.text.isNotEmpty()) ({
-                IconButton(onClick = onClear, modifier = Modifier.semantics { contentDescription = "Borrar búsqueda" }) { ThemeSystemIcon("close", theme) }
+            trailingIcon = if (query.text.isNotEmpty() || sony && focused.value) ({
+                IconButton(onClick = onClear, modifier = Modifier.semantics { contentDescription = if (query.text.isEmpty()) "Cerrar búsqueda" else "Borrar búsqueda" }) { ThemeSystemIcon("close", theme) }
             }) else null,
             singleLine = true, readOnly = readOnly, shape = shape,
             colors = OutlinedTextFieldDefaults.colors(

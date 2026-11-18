@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta105 candidata del 18 de noviembre de 2026. 0.71.0-beta105, código 105. Cristal localizado del Centro rápido, buscador expansivo, tarjeta multimedia panorámica y reloj/clima únicos durante el plegado. Compilación y lint correctos con 0 errores. Instalación bloqueada por firma incompatible con beta104; clave compatible pendiente. Revisión visual y de fluidez pendiente. [Ficha](BETA105.md).
+
 Beta104 instalada en el Motorola el 17 de noviembre de 2026. 0.70.0-beta104, código 104. PS4 ofrece diez animaciones de lista y un plegado gradual de reloj y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Plegado y reapertura comprobados en PS4. Una muestra obtuvo P95 de 15 ms. Revisión de los cinco perfiles pendiente. [Ficha](BETA104.md).
 
 Beta103 instalada en el Motorola el 17 de noviembre de 2026. 0.69.1-beta103, código 103. La cabecera PS4 cambia de tamaño con la lista en reposo. El Centro rápido decide sus prioridades al abrir. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Muestras de deslizamiento registradas: P95 de 19 y 20 ms frente a 17 ms en beta102. El orden contextual con sesiones reales sigue pendiente de comprobación. [Ficha](BETA103.md).

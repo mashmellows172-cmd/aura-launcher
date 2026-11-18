@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-17",
+  "updated": "2026-11-18",
   "integrationBranch": "codex/beta100-agent-integration",
   "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
   "coordinator": "codex",
@@ -179,8 +179,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta103 installed over beta102 on Motorola. Version/code/hash verified; build and lint 0 errors. gfxinfo P95 17 ms on beta102 and 19/20 ms on beta103, no gain established. Live Quick Center ordering pending. See docs/BETA103.md.",
-  "checkpointBranch": "codex/beta100-agent-integration",
+  "latestCheckpoint": "Beta105 candidate 0.71.0/code105 built and linted, 0 errors. Localized cover glass, expanding search, panoramic media and single clock/weather folding. Not installed: Motorola beta104 signed with 2eb417c5, local APK signed with 729385fc. Compatible key pending. See docs/BETA105.md.",
+  "checkpointBranch": "codex/beta105-sony-continuity",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,
