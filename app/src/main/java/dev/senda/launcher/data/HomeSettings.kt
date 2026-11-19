@@ -33,7 +33,7 @@ data class GestureBindings(val up: String = "SEARCH", val down: String = "NONE",
         GestureDirection.LEFT -> copy(left = action); GestureDirection.RIGHT -> copy(right = action)
     }
     companion object {
-        fun valid(value: String): Boolean = value in setOf("NONE", "SEARCH", "NOTIFICATIONS") || (value.startsWith("APP:") && Regex("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)+").matches(value.removePrefix("APP:")))
+        fun valid(value: String): Boolean = value in setOf("NONE", "SEARCH", "NOTIFICATIONS", "QUICK_MENU", "MEDIA_PANEL", "STATUS_CENTER") || (value.startsWith("APP:") && Regex("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)+").matches(value.removePrefix("APP:")))
     }
 }
 

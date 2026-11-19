@@ -52,6 +52,7 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
     val scene = if (reduced) null else LocalPs4WallpaperMotion.current
+    val media = LocalMediaAtmosphere.current
     val focusedKey = LocalPs4FocusedKey.current
     val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
@@ -79,12 +80,13 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val amount = scene?.amount ?: 0f
         val panel = if (scene?.enabled == true) scene.panel?.value ?: 0f else 0f
         val depth = maxOf((scene?.search ?: 0f) * .45f, panel)
-        translationX=sin(.7f)*size.width*.014f
+        val musicPulse = scene?.musicPulse ?: 0f
+        translationX=sin(.7f + musicPulse * .22f)*size.width*.014f
         translationY=cos(.7f*.8f)*size.height*.009f + (scene?.drift ?: 0f) * 9.dp.toPx() * amount
         val ribbonPhase = ((entry?.value ?: 1f) / .78f).coerceIn(0f, 1f)
         val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(ribbonPhase)) * entryIntensity
-        scaleX = 1.04f - opening * .29f - depth * .012f * amount
-        scaleY = 1.04f - depth * .012f * amount
+        scaleX = 1.04f - opening * .29f - depth * .012f * amount + musicPulse * .016f * amount
+        scaleY = 1.04f - depth * .012f * amount + musicPulse * .016f * amount
         translationX += opening * size.width * .065f
         translationY += opening * size.height * .045f
         alpha=1f // Keep the wave layer at full opacity to avoid an offscreen alpha buffer.
@@ -93,6 +95,17 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val ribbons=List(2) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
+        val musicPulse = scene?.musicPulse ?: 0f
+        val musicAccent = if (scene?.musicColor != null && scene.musicColor != Color.Unspecified) scene.musicColor else media.color.value
+        val musicBoost = maxOf(media.presence.value, musicPulse)
+        val dynamicEdge = if (musicBoost > 0f) {
+            Brush.horizontalGradient(listOf(
+                Color.Transparent,
+                Color(0xFF008CFF),
+                androidx.compose.ui.graphics.lerp(Color(0xFF9DEEFF), musicAccent, musicBoost * .70f),
+                Color(0xFF0070D1).copy(alpha = .1f)
+            ))
+        } else edge
         val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
         val hairline=Stroke(.65.dp.toPx())
         val foregroundShade=Brush.horizontalGradient(
@@ -108,15 +121,16 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             ribbons.forEachIndexed { band, ribbon ->
                 drawPath(ribbon.fill,glass,alpha=(if (band == 0) .76f else .98f)*decorationStrength)
                 if (!constrained.value) glowStrokes.forEachIndexed { index, stroke ->
-                    drawPath(ribbon.crest,edge,alpha=(.08f+index*.03f)*decorationStrength,style=stroke)
+                    drawPath(ribbon.crest,dynamicEdge,alpha=(.08f+index*.03f)*decorationStrength,style=stroke)
                 }
-                drawPath(ribbon.crest,edge,alpha=(if (band == 0) .38f else .56f)*decorationStrength,style=hairline)
+                drawPath(ribbon.crest,dynamicEdge,alpha=(if (band == 0) .38f else .56f)*decorationStrength,style=hairline)
             }
             // Fixed motes remain on the retained layer; no particle jobs.
             repeat(if (constrained.value) 0 else 14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
-                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=.11f*decorationStrength)
+                val moteAlpha = (.11f + musicPulse * .08f * sin(time * 2f + index).coerceAtLeast(0f)) * decorationStrength
+                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=moteAlpha)
             }
             drawRect(foregroundShade)
         }
@@ -136,7 +150,9 @@ internal fun Ps4WallpaperFeedback(scene: Ps4WallpaperMotion, modifier: Modifier,
             if (constrained.value) return@onDrawBehind
             // Separate overlay: changing light never rebuilds ribbon paths or gradients.
             val amount = scene.amount
-            if (scene.enabled) drawRect(media.color.value, alpha = media.presence.value * .10f * amount)
+            val musicTint = if (scene.musicColor != Color.Unspecified) scene.musicColor else media.color.value
+            val musicEffect = maxOf(media.presence.value * .10f, scene.musicPulse * .12f)
+            if (scene.enabled) drawRect(musicTint, alpha = musicEffect * amount)
             val panel = if (scene.enabled) scene.panel?.value ?: 0f else 0f
             drawRect(Color.Black, alpha = maxOf(scene.search * .045f, panel * .08f) * amount)
             if (scene.light > .001f) withTransform({

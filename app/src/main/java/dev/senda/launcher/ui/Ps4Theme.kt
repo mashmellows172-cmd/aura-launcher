@@ -145,11 +145,13 @@ internal fun Ps4FallbackArtwork(label: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.drawWithCache {
             val plateBrush = Brush.verticalGradient(listOf(Color(0xFF003CA8), Color(0xFF002060), Color(0xFF060F26)))
+            val topGloss = Brush.verticalGradient(listOf(Color.White.copy(alpha = .18f), Color.Transparent), endY = size.height * .45f)
             val rimBrush = Brush.verticalGradient(listOf(Color(0xFFA9EAFF).copy(alpha = .65f), Color(0xFF0070D1).copy(alpha = .25f)))
             val stroke = Stroke(1.dp.toPx())
             val corner = CornerRadius(4.dp.toPx())
             onDrawBehind {
                 drawRoundRect(plateBrush, cornerRadius = corner)
+                drawRoundRect(topGloss, cornerRadius = corner)
                 drawRoundRect(rimBrush, cornerRadius = corner, style = stroke)
             }
         },

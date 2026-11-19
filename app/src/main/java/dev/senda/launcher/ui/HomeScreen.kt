@@ -393,6 +393,12 @@ fun HomeScreen(
         when (action) {
             "SEARCH" -> { searchInput = androidx.compose.ui.text.input.TextFieldValue(); scope.launch { listState.scrollToItem(0); searchFocus.requestFocus(); keyboard?.show() } }
             "NOTIFICATIONS" -> if (!NotificationShadeService.open()) showNotificationHelp = true
+            "QUICK_MENU" -> {
+                soundFeedback.play(SoundEvent.MENU)
+                if (state.theme == LauncherTheme.PS4) showQuickCenter = true else showStatusCenter = true
+            }
+            "MEDIA_PANEL" -> { soundFeedback.play(SoundEvent.MENU); showMediaControls = true }
+            "STATUS_CENTER" -> { soundFeedback.play(SoundEvent.MENU); showStatusCenter = true }
             "NONE" -> Unit
             else -> {
                 val app = state.apps.firstOrNull { it.packageName == action.removePrefix("APP:") }
@@ -472,6 +478,9 @@ fun HomeScreen(
         state.theme == LauncherTheme.PS4 && state.headerSettings.showAudioWidget)
     val wallpaperMotion = rememberPs4WallpaperMotion(state.theme == LauncherTheme.PS4,
         state.visualSettings, listState, ps4FocusedKey, searchFocused)
+    LaunchedEffect(wallpaperMotion, state.audioInfo.isPlaying, state.audioInfo.speed, mediaAtmosphere.color.value) {
+        wallpaperMotion.applyMusicState(state.audioInfo.isPlaying, state.audioInfo.speed, mediaAtmosphere.color.value)
+    }
     androidx.compose.runtime.CompositionLocalProvider(LocalPs4WallpaperMotion provides wallpaperMotion, LocalMediaAtmosphere provides mediaAtmosphere, LocalDecorationConstrained provides decorationQuality) {
     androidx.compose.runtime.CompositionLocalProvider(LocalMotionController provides motionController, LocalPs4FocusedKey provides ps4FocusedKey, LocalPs4InputFocus provides ps4InputFocus) {
     Box(Modifier.fillMaxSize().nestedScroll(wallpaperMotion.connection).semantics { testTagsAsResourceId = true }.then(if (!state.isLoading) Modifier.testTag("aura-home-ready") else Modifier).homeGestures { direction ->

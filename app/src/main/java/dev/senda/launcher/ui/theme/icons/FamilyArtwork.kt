@@ -13,6 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LauncherTheme
@@ -41,8 +44,23 @@ private fun ArtworkResource(resource: Int, modifier: Modifier, customHolder: Boo
 @Composable
 fun renderFamilyAppIcon(app: LaunchableApp, theme: LauncherTheme, customHolder: Boolean): Boolean {
     if (theme == LauncherTheme.PS4) {
-        if (renderInstalledAppArtwork(app.packageName, theme, Modifier.size(LocalAppearance.current.iconSize.dp), customHolder)) return true
-        dev.senda.launcher.ui.Ps4FallbackArtwork(app.label, Modifier.size(LocalAppearance.current.iconSize.dp))
+        val size = Modifier.size(LocalAppearance.current.iconSize.dp)
+        if (renderInstalledAppArtwork(app.packageName, theme, size, customHolder)) return true
+        val context = LocalContext.current
+        val cached = Ps4ArtStorage.getCachedArt(context, app.packageName)
+        if (cached != null) {
+            Image(
+                bitmap = cached,
+                contentDescription = null,
+                modifier = size.clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop
+            )
+            return true
+        }
+        LaunchedEffect(app.packageName) {
+            Ps4ArtStorage.fetchRemoteArt(context, app.packageName, app.label)
+        }
+        dev.senda.launcher.ui.Ps4FallbackArtwork(app.label, size)
         return true
     }
     if (theme !in iconFamilyThemes) return false

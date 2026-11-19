@@ -175,6 +175,7 @@ fun HomeSettingsDialog(state: HomeUiState, viewModel: LauncherViewModel, onReque
 
 private fun gestureLabel(action: String, apps: List<LaunchableApp>) = when (action) {
     "NONE" -> "Sin acción"; "SEARCH" -> "Buscar apps"; "NOTIFICATIONS" -> "Abrir notificaciones"
+    "QUICK_MENU" -> "Menú Rápido (PS4)"; "MEDIA_PANEL" -> "Controles multimedia"; "STATUS_CENTER" -> "Centro de estado"
     else -> apps.firstOrNull { it.packageName == action.removePrefix("APP:") }?.label ?: "App no disponible"
 }
 
@@ -196,6 +197,9 @@ private fun GestureActionDialog(direction: GestureDirection, apps: List<Launchab
                 item { TextButton(onClick = { onSelect("NONE") }) { Text("Sin acción") } }
                 item { TextButton(onClick = { onSelect("SEARCH") }) { Text("Buscar apps") } }
                 item { TextButton(onClick = { onSelect("NOTIFICATIONS") }) { Text("Abrir notificaciones") } }
+                item { TextButton(onClick = { onSelect("QUICK_MENU") }) { Text("Menú Rápido (PS4)") } }
+                item { TextButton(onClick = { onSelect("MEDIA_PANEL") }) { Text("Controles multimedia") } }
+                item { TextButton(onClick = { onSelect("STATUS_CENTER") }) { Text("Centro de estado") } }
                 items(apps.filter { normalizeSearchText(it.label, Locale.getDefault()).contains(normalizeSearchText(query, Locale.getDefault())) }, key = { it.packageName }) { app ->
                     TextButton(onClick = { onSelect("APP:${app.packageName}") }, modifier = Modifier.fillMaxWidth()) { Text(app.label, Modifier.fillMaxWidth(), maxLines = 1, overflow = TextOverflow.Ellipsis) }
                 }

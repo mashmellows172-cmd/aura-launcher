@@ -37,6 +37,9 @@ internal class Ps4WallpaperMotion {
     var panel by mutableStateOf<State<Float>?>(null); private set
     var enabled by mutableStateOf(false); private set
     var amount by mutableFloatStateOf(.5f); private set
+    var musicPulse by mutableFloatStateOf(0f); private set
+    var musicPlaying by mutableStateOf(false); private set
+    var musicColor by mutableStateOf(androidx.compose.ui.graphics.Color.Unspecified); private set
     private var density = 1f
     private var pending = 0f
     private var pressed = false
@@ -44,6 +47,7 @@ internal class Ps4WallpaperMotion {
     private var lightTargetY = .4f
     private var pulseRemaining = 0f
     private var touch = 0f
+    private var musicTime = 0f
     private var panelOwner: Any? = null
     private val wake = Channel<Unit>(Channel.CONFLATED)
 
@@ -83,12 +87,20 @@ internal class Ps4WallpaperMotion {
         wake.trySend(Unit)
     }
 
+    fun applyMusicState(isPlaying: Boolean, speed: Float, accentColor: androidx.compose.ui.graphics.Color) {
+        if (!enabled) return
+        musicPlaying = isPlaying
+        musicColor = accentColor
+        wake.trySend(Unit)
+    }
+
     fun attachPanel(owner: Any, progress: State<Float>) { panelOwner = owner; panel = progress }
     fun detachPanel(owner: Any) { if (panelOwner === owner) { panel = null; panelOwner = null } }
 
     private fun reset() {
         pending = 0f; pressed = false; searchTarget = 0f; pulseRemaining = 0f
         drift = 0f; search = 0f; touch = 0f; light = 0f; lightY = .4f
+        musicPulse = 0f; musicPlaying = false; musicColor = androidx.compose.ui.graphics.Color.Unspecified; musicTime = 0f
         while (wake.tryReceive().isSuccess) { /* Discard hidden-screen events. */ }
     }
 
@@ -110,9 +122,19 @@ internal class Ps4WallpaperMotion {
                     lightY += (lightTargetY - lightY) * alpha
                     pulseRemaining = (pulseRemaining - dt).coerceAtLeast(0f)
                     light = maxOf(touch * .6f, sin(PI.toFloat() * pulseRemaining / .4f) * .45f)
+                    if (musicPlaying) {
+                        musicTime += dt * 3.2f
+                        val targetPulse = (sin(musicTime) * .5f + .5f)
+                        musicPulse += (targetPulse - musicPulse) * (1f - exp(-8f * dt))
+                    } else if (musicPulse > .005f) {
+                        musicPulse += (0f - musicPulse) * (1f - exp(-6f * dt))
+                    } else {
+                        musicPulse = 0f
+                        musicTime = 0f
+                    }
                     unsettled = abs(drift - targetDrift) > .001f || abs(targetDrift) > .001f ||
                         abs(searchTarget - search) > .001f || abs((if (pressed) 1f else 0f) - touch) > .001f ||
-                        abs(lightTargetY - lightY) > .001f || pulseRemaining > 0f
+                        abs(lightTargetY - lightY) > .001f || pulseRemaining > 0f || musicPlaying || musicPulse > .005f
                     if (!unsettled) {
                         drift = 0f; search = searchTarget; touch = if (pressed) 1f else 0f
                         light = touch * .6f; lightY = lightTargetY
