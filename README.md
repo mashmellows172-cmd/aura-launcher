@@ -1,6 +1,6 @@
 # Aura Launcher
 
-Beta106 candidata del 18 de noviembre de 2026. 0.72.0-beta106, código 106. Centro multimedia con tarjeta YouTube panorámica, miniatura mejorada, canal/estado, saltos ±10 confirmados y recuperación de sesiones pausadas. Compilación y lint correctos con 0 errores. No instalada por firma incompatible; sesión real y revisión visual pendientes. [Ficha](docs/BETA106.md).
+Beta106 instalada el 18 de noviembre de 2026 mediante reinstalación autorizada por cambio de firma. 0.72.0-beta106, código 106. Versión/hash y Aura como Inicio verificados. Restauración contrastada por reexportación, 111 ajustes, 9 favoritas y 5 imágenes idénticos al respaldo. Firma vigente 729385fc… con copia privada. Biblioteca retro guardada, importación y reconexión de widgets/permisos pendientes. [Ficha](docs/BETA106.md).
 
 Beta105 candidata del 18 de noviembre de 2026. 0.71.0-beta105, código 105. Cristal localizado del Centro rápido, buscador expansivo, tarjeta multimedia panorámica y reloj/clima únicos durante el plegado. Compilación y lint correctos con 0 errores. Instalación bloqueada por firma incompatible con beta104; clave compatible pendiente. Revisión visual y de fluidez pendiente. [Ficha](docs/BETA105.md).
 
