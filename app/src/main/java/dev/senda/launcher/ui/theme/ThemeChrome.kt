@@ -25,7 +25,8 @@ internal fun HistoricalProfile?.chromeShape(): Shape = when (this?.material) {
     HistoricalMaterial.DOTS -> CutCornerShape(8.dp)
     HistoricalMaterial.CHROME -> RoundedCornerShape(6.dp)
     HistoricalMaterial.PAPER -> RoundedCornerShape(3.dp)
-    HistoricalMaterial.FLOW, HistoricalMaterial.CONSOLE -> RoundedCornerShape(2.dp)
+    HistoricalMaterial.FLOW -> RoundedCornerShape(2.dp)
+    HistoricalMaterial.CONSOLE -> RoundedCornerShape(radius.dp)
     HistoricalMaterial.LCD -> CutCornerShape(4.dp)
     HistoricalMaterial.WATER -> RoundedCornerShape(18.dp)
     else -> RoundedCornerShape(22.dp)
@@ -57,7 +58,11 @@ internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherThem
         }.padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
         Text(if(console && title=="Tus favoritas") "Favoritas" else title, Modifier.weight(1f).padding(end = 8.dp), style = if(console) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleMedium,
-            fontWeight = if(console) FontWeight.Light else if (profile?.material == HistoricalMaterial.FLOW) FontWeight.Normal else FontWeight.SemiBold)
+            fontWeight = if(console) when (LocalPs4Palette.current) {
+                dev.senda.launcher.data.Ps4Palette.CLASSIC -> FontWeight.Light
+                dev.senda.launcher.data.Ps4Palette.MIDNIGHT -> FontWeight.Medium
+                dev.senda.launcher.data.Ps4Palette.WHITE -> FontWeight.Bold
+            } else if (profile?.material == HistoricalMaterial.FLOW) FontWeight.Normal else FontWeight.SemiBold)
         Text(count.toString(), Modifier.background(if(console)Color.Transparent else MaterialTheme.colorScheme.surfaceVariant, profile.chromeShape())
             .padding(horizontal = 9.dp, vertical = 3.dp), style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant)

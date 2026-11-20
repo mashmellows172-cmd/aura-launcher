@@ -79,6 +79,7 @@ internal fun Modifier.ps4TravelFrame(
     val arrival = if (quiet) null else remember(list) { Animatable(0f) }
     val emphasis = intensity.coerceIn(10, 100) / 100f
     val colors = MaterialTheme.colorScheme
+    val frameRadius = dev.senda.launcher.ui.theme.ps4Design(dev.senda.launcher.ui.theme.LocalPs4Palette.current).panelRadius
     if (arrival != null) LaunchedEffect(list, focus) {
         snapshotFlow { if (list.isScrollInProgress) null else focus.value }.collectLatest { settledKey ->
             arrival.snapTo(0f)
@@ -91,7 +92,7 @@ internal fun Modifier.ps4TravelFrame(
     return clipToBounds().drawWithCache {
         val outer = Stroke(1.5.dp.toPx())
         val halo = Stroke(6.dp.toPx())
-        val corner = CornerRadius(3.dp.toPx())
+        val corner = CornerRadius(frameRadius.dp.toPx())
         onDrawWithContent {
             drawContent()
             val key = focus.value ?: return@onDrawWithContent

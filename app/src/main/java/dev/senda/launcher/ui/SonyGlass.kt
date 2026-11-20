@@ -3,6 +3,7 @@ package dev.senda.launcher.ui
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.compose.foundation.Image
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -39,6 +40,7 @@ internal fun BoxScope.SonyGlassBackdrop(
     val enabled = !contrast && !reduced && !LocalLightMode.current && !LocalSystemPowerSaving.current &&
         !constrained.value
     if (!enabled) return
+    val background = MaterialTheme.colorScheme.background
     val image = remember(cover) { cover?.asImageBitmap() }
     Box(Modifier.align(Alignment.TopCenter).fillMaxWidth().height(200.dp).clipToBounds()) {
         if (image != null) Image(image, null,
@@ -46,7 +48,7 @@ internal fun BoxScope.SonyGlassBackdrop(
                 .then(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Modifier.blur(20.dp) else Modifier),
             contentScale = ContentScale.Crop, alpha = .38f)
         Box(Modifier.matchParentSize().background(Brush.verticalGradient(
-            listOf(Color(0x7713223B), Color(0xFF0B1730)),
+            listOf(background.copy(alpha = .30f), background),
         )).drawWithCache {
             onDrawBehind { drawRect(accent.value, alpha = .06f) }
         })

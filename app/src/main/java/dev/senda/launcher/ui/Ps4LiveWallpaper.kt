@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
@@ -26,11 +29,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import dev.senda.launcher.data.LocalAppearance
 import kotlin.math.*
 
-/** Original console light-wave scene; lifecycle/frame-clock driven, state read only in draw. */
+/** Console identity scenes; finite reactive transforms read only in the retained graphics layer. */
 @Composable
 internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listState: LazyListState? = null, strength: Float = 1f) {
     val constrained = LocalDecorationConstrained.current
-    val decorationStrength = strength.coerceIn(0f, 1f)
+    val highContrast = LocalAppearance.current.highContrast
+    val decorationStrength = if (highContrast) 0f else strength.coerceIn(0f, 1f)
     val context = LocalContext.current.applicationContext
     val power = remember(context) { context.getSystemService(PowerManager::class.java) }
     var saver by remember(power) { mutableStateOf(power?.isPowerSaveMode == true) }
@@ -45,13 +49,27 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     val targetPalette = dev.senda.launcher.ui.theme.ps4PaletteColors(
         dev.senda.launcher.ui.theme.LocalPs4Palette.current, dev.senda.launcher.ui.theme.LocalPs4Ambient.current)
     val middle = androidx.compose.animation.animateColorAsState(targetPalette.middle,
-        androidx.compose.animation.core.tween(if (reduced || saver) 0 else 700), label = "ps4-ambient-middle")
+        androidx.compose.animation.core.tween(if (reduced || saver || highContrast) 0 else 700), label = "ps4-ambient-middle")
     val skin = dev.senda.launcher.ui.theme.LocalSkinStyle.current
+    val identity = dev.senda.launcher.ui.theme.LocalPs4Palette.current
     val palette = targetPalette.copy(top = skin.backgroundTop, bottom = skin.backgroundBottom)
-    val whitePalette = dev.senda.launcher.ui.theme.LocalPs4Palette.current == dev.senda.launcher.data.Ps4Palette.WHITE
+    val identityReveal = remember { Animatable(1f) }
+    var previousIdentity by remember { mutableStateOf(identity) }
     val entry = LocalPs4EntryProgress.current
     val entryIntensity = LocalPs4EntryIntensity.current
-    val scene = if (reduced) null else LocalPs4WallpaperMotion.current
+    val motionAllowed = !reduced && !saver && !highContrast && !LocalLightMode.current &&
+        android.animation.ValueAnimator.areAnimatorsEnabled()
+    LaunchedEffect(identity, motionAllowed) {
+        if (identity != previousIdentity && motionAllowed) {
+            previousIdentity = identity
+            identityReveal.snapTo(0f)
+            identityReveal.animateTo(1f, tween(240, easing = Ps4Motion.easing))
+        } else {
+            previousIdentity = identity
+            identityReveal.snapTo(1f)
+        }
+    }
+    val scene = if (motionAllowed) LocalPs4WallpaperMotion.current else null
     val focusedKey = LocalPs4FocusedKey.current
     val feedback = dev.senda.launcher.audio.LocalSoundFeedback.current
     val disabled = reduced || saver || LocalAppearance.current.highContrast || LocalThemePreview.current
@@ -74,9 +92,9 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val base=Brush.linearGradient(listOf(palette.top,middle.value,palette.bottom),end=Offset(size.width*.8f,size.height))
         onDrawBehind { drawRect(base) }
     }) {
-    Box(Modifier.matchParentSize().graphicsLayer {
+    val backdropModifier = Modifier.matchParentSize().graphicsLayer {
         // Animate a retained display list rather than rebuilding ribbon geometry per frame.
-        val amount = scene?.amount ?: 0f
+        val amount = if (!constrained.value) scene?.amount ?: 0f else 0f
         val panel = if (scene?.enabled == true) scene.panel?.value ?: 0f else 0f
         val search = scene?.search ?: 0f
         val depth = maxOf(search * .45f, panel)
@@ -88,14 +106,19 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         translationX = sin(.7f) * size.width * .014f + displacement * 32.dp.toPx()
         translationY = cos(.7f * .8f) * size.height * .009f +
             ((scene?.drift ?: 0f) * 9.dp.toPx() * amount - displacement * 16.dp.toPx())
-        val ribbonPhase = ((entry?.value ?: 1f) / .78f).coerceIn(0f, 1f)
+        val ribbonPhase = ((if (motionAllowed && !constrained.value) entry?.value ?: 1f else 1f) / .78f).coerceIn(0f, 1f)
         val opening = (1f - androidx.compose.animation.core.FastOutSlowInEasing.transform(ribbonPhase)) * entryIntensity
         scaleX = 1.04f - opening * .29f - depth * .012f * amount + displacement * .018f
         scaleY = 1.04f - depth * .012f * amount
         translationX += opening * size.width * .065f
         translationY += opening * size.height * .045f
-        alpha=1f // Keep the wave layer at full opacity to avoid an offscreen alpha buffer.
-    }.drawWithCache {
+        // Only the retained decoration fades on identity changes; controls keep a stable ink polarity.
+        compositingStrategy = CompositingStrategy.ModulateAlpha
+        alpha = if (motionAllowed && !constrained.value) identityReveal.value else 1f
+    }
+    if (identity != dev.senda.launcher.data.Ps4Palette.CLASSIC) {
+        Ps4IdentityBackdrop(identity, palette, backdropModifier, decorationStrength)
+    } else Box(backdropModifier.drawWithCache {
         val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f*decorationStrength),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
         val ribbons=List(2) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
@@ -103,8 +126,8 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
         val hairline=Stroke(.65.dp.toPx())
         val foregroundShade=Brush.horizontalGradient(
-            0f to palette.bottom.copy(alpha=if(whitePalette).18f else .60f),
-            .46f to palette.bottom.copy(alpha=if(whitePalette).10f else .42f),
+            0f to palette.bottom.copy(alpha=.60f),
+            .46f to palette.bottom.copy(alpha=.42f),
             1f to Color.Transparent,
         )
         ribbons.forEach { it.surface(1f) }
@@ -136,8 +159,10 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
 internal fun Ps4WallpaperFeedback(scene: Ps4WallpaperMotion, modifier: Modifier, strength: Float = 1f) {
     val constrained = LocalDecorationConstrained.current
     val media = LocalMediaAtmosphere.current
+    val palette = dev.senda.launcher.ui.theme.ps4PaletteColors(
+        dev.senda.launcher.ui.theme.LocalPs4Palette.current, dev.senda.launcher.ui.theme.LocalPs4Ambient.current)
     Box(modifier.drawWithCache {
-        val light = Brush.radialGradient(listOf(Color(0xFF64CFFF).copy(alpha=.12f * strength.coerceIn(0f, 1f)), Color.Transparent),
+        val light = Brush.radialGradient(listOf(palette.accent.copy(alpha=.12f * strength.coerceIn(0f, 1f)), Color.Transparent),
             center = Offset(size.width * .65f, size.height * .5f), radius = size.height * .48f)
         onDrawBehind {
             if (constrained.value) return@onDrawBehind

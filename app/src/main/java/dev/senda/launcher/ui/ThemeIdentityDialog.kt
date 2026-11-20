@@ -26,7 +26,7 @@ internal fun ThemeIdentityDialog(initialTheme: LauncherTheme, finish: ThemeFinis
     var selected by rememberSaveable(theme) { mutableStateOf(WeatherCondition.SUN.name) }
     var playing by rememberSaveable(theme) { mutableStateOf(false) }
     val condition = WeatherCondition.valueOf(selected)
-    val profile = historicalProfile(theme)
+    val profile = historicalProfile(theme)?.withPs4Palette(previewFinish.ps4Palette)
     AuraTheme(theme, isSystemInDarkTheme(), highContrast, previewFinish, reduceMotion = reduced) {
         AuraAlertDialog(onDismissRequest = onDismiss, title = { Text("Identidad del tema") }, text = {
             Column(Modifier.heightIn(max = 520.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {

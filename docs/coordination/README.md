@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Base publicada al 17 de noviembre de 2026: `main` en `9f24d9e` (beta98). La candidata consolidada está en `codex/beta100-agent-integration`. Su [registro de integración](../BETA100.md) relaciona aportes, decisiones y validación. [Aura Launcher beta104](../BETA104.md) es la única instalación de Aura en el perfil principal del Motorola y su Inicio predeterminado.
+Checkpoint actual: rama `codex/beta107-playstation-identities`, beta107 sobre beta106 `f887378`. Consultar [BETA107](../BETA107.md) para implementación, validaciones, instalación y pendientes; STATE.json distingue este checkpoint de la rama de integración histórica. Beta106 fue instalada y restaurada el 18 de noviembre; no asumir que una beta posterior está instalada sin comprobar su ficha.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

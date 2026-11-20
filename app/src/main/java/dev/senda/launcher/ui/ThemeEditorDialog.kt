@@ -71,13 +71,13 @@ fun ThemeEditorDialog(state:HomeUiState,viewModel:LauncherViewModel,widgetContro
                                 0->{
                                     EditorChoice("Tema base",value.theme,LauncherTheme.entries.map{it.name to it.title},!busy){editor.edit(ThemeSnapshot.from(state,LauncherTheme.valueOf(it)))}
                                     if(value.theme==LauncherTheme.PS4.name) {
-                                        Text("Paleta PS4", style=MaterialTheme.typography.titleSmall)
+                                        Text("Identidad PlayStation", style=MaterialTheme.typography.titleSmall)
                                         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                                            listOf(Ps4Palette.CLASSIC to "Azul clásico", Ps4Palette.MIDNIGHT to "Medianoche", Ps4Palette.WHITE to "Blanco").forEach { (palette, title) ->
-                                                FilterChip(selected=value.ps4Palette==palette.name, onClick={compareOriginal=false;editor.edit(value.copy(ps4Palette=palette.name))}, enabled=!busy, label={Text(title)})
+                                            Ps4Palette.entries.forEach { palette ->
+                                                FilterChip(selected=value.ps4Palette==palette.name, onClick={compareOriginal=false;editor.edit(value.copy(ps4Palette=palette.name))}, enabled=!busy, label={Text(palette.label)})
                                             }
                                         }
-                                        Text("Vista previa de fondo, superficies y texto. Guarda y usa para aplicar.", style=MaterialTheme.typography.bodySmall)
+                                        Text(Ps4Palette.valueOf(value.ps4Palette).description, style=MaterialTheme.typography.bodySmall)
                                         EditorSlider("Intensidad del fondo",(100-value.dim)*100/40,25..100,!busy,{editor.edit(value.copy(dim=100-it*40/100),false)},editor::finishGesture)
                                         EditorSlider("Intensidad del acento de la app",value.ps4AccentIntensity,0..100,!busy,{compareOriginal=false;editor.edit(value.copy(ps4AccentIntensity=it),false)},editor::finishGesture)
                                         EditorSlider("Tamaño de las placas",value.iconSize,32..60,!busy,{editor.edit(value.copy(iconSize=it),false)},editor::finishGesture)

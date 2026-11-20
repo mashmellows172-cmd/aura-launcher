@@ -1618,8 +1618,7 @@ private fun AppRow(
             if (console) {
                 Box(Modifier.size((appearance.iconSize+12).dp)
                     .onGloballyPositioned { plateCoordinates = it }
-                    .clip(RoundedCornerShape(2.dp)).ps4TilePlate()
-                    .border(1.dp,MaterialTheme.colorScheme.outline.copy(alpha=.6f),RoundedCornerShape(2.dp)),contentAlignment=Alignment.Center) {
+                    .ps4TilePlate(),contentAlignment=Alignment.Center) {
                     AppIcon(app, customIconUri, onLoadIcon)
                 }
             } else AppIcon(app, customIconUri, onLoadIcon)

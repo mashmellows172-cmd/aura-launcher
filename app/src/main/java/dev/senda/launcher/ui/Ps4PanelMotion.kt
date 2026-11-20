@@ -99,10 +99,13 @@ internal class Ps4PanelMotion(
 internal fun rememberPs4PanelMotion(reduced: Boolean): Ps4PanelMotion {
     val scope = rememberCoroutineScope()
     val visual = LocalMotionSettings.current
+    val design = dev.senda.launcher.ui.theme.ps4Design(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
+    val console = dev.senda.launcher.ui.theme.LocalRetroStyle.current.theme == dev.senda.launcher.data.LauncherTheme.PS4
+    val duration = if (console) (visual.durationMs * design.motionMillis / 280).coerceIn(150, 800) else visual.durationMs
     val still = reduced || visual.reduceMotion || visual.menuEffect == "NONE" ||
         LocalAppearance.current.highContrast || LocalThemePreview.current ||
         LocalSystemPowerSaving.current || !ValueAnimator.areAnimatorsEnabled()
-    val settings = rememberUpdatedState((if (still) "NONE" else visual.menuEffect) to visual.durationMs)
+    val settings = rememberUpdatedState((if (still) "NONE" else visual.menuEffect) to duration)
     val motion = remember(scope) { Ps4PanelMotion(Animatable(if (still) 1f else 0f), scope, settings) }
     val wallpaper = LocalPs4WallpaperMotion.current
     androidx.compose.runtime.DisposableEffect(wallpaper, motion) {
@@ -112,7 +115,7 @@ internal fun rememberPs4PanelMotion(reduced: Boolean): Ps4PanelMotion {
     LaunchedEffect(still) {
         if (!motion.closing) {
             if (still) motion.progress.snapTo(1f)
-            else motion.progress.animateTo(1f, tween(ps4PanelDuration(visual.durationMs, closing = false),
+            else motion.progress.animateTo(1f, tween(ps4PanelDuration(duration, closing = false),
                 easing = ps4PanelEasing(visual.menuEffect)))
         }
     }

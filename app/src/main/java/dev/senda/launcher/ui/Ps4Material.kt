@@ -10,6 +10,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import dev.senda.launcher.data.Ps4Palette
+import dev.senda.launcher.ui.theme.LocalPs4Palette
+import dev.senda.launcher.ui.theme.ps4Design
+import dev.senda.launcher.ui.theme.LocalRetroStyle
+import dev.senda.launcher.ui.theme.LocalSkinStyle
+import dev.senda.launcher.ui.theme.animatedIconHolderShape
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.LocalAppearance
@@ -17,21 +26,41 @@ import dev.senda.launcher.data.LocalAppearance
 @Composable
 internal fun Modifier.ps4TilePlate(): Modifier {
     val colors = MaterialTheme.colorScheme
+    val palette = LocalPs4Palette.current
+    val design = ps4Design(palette)
+    val customShape = LocalRetroStyle.current.customHolder
+    val shape = if (customShape) animatedIconHolderShape(LocalSkinStyle.current.iconHolder, design.motionMillis)
+        else if (palette == Ps4Palette.WHITE) CircleShape else RoundedCornerShape(design.tileRadius.dp)
     return drawWithCache {
-        val base = Brush.linearGradient(
-            listOf(colors.primary.copy(alpha = .23f), colors.surfaceVariant, colors.surface),
+        val outline = shape.createOutline(size, layoutDirection, this)
+        val outlinePath = Path().apply {
+            when (outline) {
+                is Outline.Rectangle -> addRect(outline.rect)
+                is Outline.Rounded -> addRoundRect(outline.roundRect)
+                is Outline.Generic -> addPath(outline.path)
+            }
+        }
+        val base = if (palette == Ps4Palette.WHITE) Brush.radialGradient(
+            listOf(colors.primary.copy(alpha = .48f), colors.surfaceVariant, colors.surface),
+            center = Offset(size.width * .35f, size.height * .2f), radius = size.maxDimension,
+        ) else Brush.linearGradient(
+            listOf(colors.primary.copy(alpha = if (palette == Ps4Palette.MIDNIGHT) .08f else .23f),
+                colors.surfaceVariant, colors.surface),
             end = Offset(size.width, size.height),
         )
         val edge = Brush.linearGradient(
             listOf(colors.primary.copy(alpha = .68f), colors.outline.copy(alpha = .28f)),
             end = Offset(size.width, size.height),
         )
+        val gloss = Brush.radialGradient(
+            listOf(Color.White.copy(alpha = .25f), Color.Transparent),
+            center = Offset(size.width * .32f, size.height * .16f), radius = size.width * .7f,
+        )
         val stroke = Stroke(1.dp.toPx())
-        val inset = stroke.width / 2
         onDrawBehind {
-            drawRect(base)
-            drawRect(edge, topLeft = Offset(inset, inset),
-                size = Size(size.width - stroke.width, size.height - stroke.width), style = stroke)
+            drawPath(outlinePath, base)
+            if (palette == Ps4Palette.WHITE) drawPath(outlinePath, gloss)
+            drawPath(outlinePath, edge, style = stroke)
         }
     }
 }
@@ -41,6 +70,7 @@ internal fun Modifier.ps4TilePlate(): Modifier {
 internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
     if (LocalAppearance.current.highContrast) return this
     val scheme = MaterialTheme.colorScheme
+    val palette = LocalPs4Palette.current
     return drawWithCache {
         val base = Brush.verticalGradient(listOf(scheme.surfaceVariant, scheme.surface))
         val reflection = Path().apply {
@@ -67,8 +97,8 @@ internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
         val edgeHeight = .7.dp.toPx()
         onDrawBehind {
             drawRect(base)
-            drawPath(reflection, sheen)
-            drawPath(facet, scheme.onSurface, alpha = .025f)
+            if (palette != Ps4Palette.MIDNIGHT) drawPath(reflection, sheen)
+            if (palette == Ps4Palette.CLASSIC) drawPath(facet, scheme.onSurface, alpha = .025f)
             drawLine(scheme.onSurface, Offset(0f, edgeHeight), Offset(size.width, edgeHeight), edgeHeight, alpha = .18f)
             drawRect(edge, Offset(0f, size.height - edgeHeight), Size(size.width, edgeHeight))
             val strength = highlight?.value?.coerceIn(0f, 1f) ?: 0f

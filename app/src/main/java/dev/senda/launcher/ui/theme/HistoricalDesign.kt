@@ -172,13 +172,22 @@ fun HistoricalPanel(
             else -> Unit
         }
     }
-    if (onClick == null) Surface(modifier.then(materialMotion), shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
+    if (onClick == null) Surface(modifier.then(materialMotion), shape, bottom, foreground, border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame),
+        shadowElevation = if (console) ps4Design(LocalPs4Palette.current).elevation.dp else 0.dp, content = inner)
     else Surface(onClick = onClick, interactionSource = interactions, modifier = modifier.then(materialMotion), shape = shape, color = bottom, contentColor = foreground,
-        border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame), content = inner)
+        border = BorderStroke(if (highlighted) 2.dp else 1.dp, frame),
+        shadowElevation = if (console) ps4Design(LocalPs4Palette.current).elevation.dp else 0.dp, content = inner)
 }
 
 internal fun HistoricalProfile.withPs4Palette(palette: dev.senda.launcher.data.Ps4Palette): HistoricalProfile {
     if (material != HistoricalMaterial.CONSOLE) return this
     val c = ps4PaletteColors(palette)
-    return copy(top=c.raised,bottom=c.surface,ink=c.ink,muted=c.muted,frame=c.muted,signal=c.accent)
+    return copy(reference=palette.label, identity=palette.description,
+        era=when (palette) {
+            dev.senda.launcher.data.Ps4Palette.CLASSIC -> "PS4 / XMB · 2004–2013"
+            dev.senda.launcher.data.Ps4Palette.MIDNIGHT -> "PlayStation 5 · 2020"
+            dev.senda.launcher.data.Ps4Palette.WHITE -> "PS Vita / Xperia Play · 2011"
+        },
+        top=c.raised,bottom=c.surface,ink=c.ink,muted=c.muted,frame=c.muted,signal=c.accent,
+        radius=ps4Design(palette).panelRadius,durationMs=ps4Design(palette).motionMillis)
 }

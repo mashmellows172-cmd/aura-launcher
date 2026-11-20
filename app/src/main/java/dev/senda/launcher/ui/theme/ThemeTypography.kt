@@ -38,6 +38,24 @@ private val ps4Type=ps4Base.copy(
     titleMedium=ps4Base.titleMedium.copy(fontWeight=FontWeight.Light,fontSize=20.sp,lineHeight=28.sp),
     bodyLarge=ps4Base.bodyLarge.copy(fontWeight=FontWeight.Normal,fontSize=18.sp,lineHeight=26.sp),
     labelLarge=ps4Base.labelLarge.copy(fontWeight=FontWeight.Medium))
+private val ps5Type = ps4Type.copy(
+    headlineLarge = ps4Type.headlineLarge.copy(fontWeight = FontWeight.Medium, letterSpacing = (-.5).sp),
+    titleLarge = ps4Type.titleLarge.copy(fontWeight = FontWeight.Medium),
+    titleMedium = ps4Type.titleMedium.copy(fontWeight = FontWeight.Medium, fontSize = 19.sp),
+    labelLarge = ps4Type.labelLarge.copy(letterSpacing = .4.sp),
+)
+private val portableType = themedTypography(xperiaFont, FontWeight.Normal).copy(
+    headlineLarge = ps4Type.headlineLarge.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Normal),
+    titleMedium = ps4Type.titleMedium.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Bold),
+    bodyLarge = ps4Type.bodyLarge.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Normal),
+)
+
+internal fun ps4Typography(palette: dev.senda.launcher.data.Ps4Palette): Typography = when (palette) {
+    dev.senda.launcher.data.Ps4Palette.CLASSIC -> ps4Type
+    dev.senda.launcher.data.Ps4Palette.MIDNIGHT -> ps5Type
+    dev.senda.launcher.data.Ps4Palette.WHITE -> portableType
+}
+
 internal fun historicalTypography(theme:LauncherTheme):Typography=when(theme) {
     LauncherTheme.SENSE->senseType
     LauncherTheme.TOUCHWIZ->natureType

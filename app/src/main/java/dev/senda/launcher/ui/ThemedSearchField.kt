@@ -51,7 +51,7 @@ internal fun ThemedSearchField(
     val ps4Glass = theme == LauncherTheme.PS4 && !dev.senda.launcher.data.LocalAppearance.current.highContrast
     val halo = if (ps4Glass) quickBlue else
         profile?.readableAccent(LocalSkinStyle.current.accent) ?: MaterialTheme.colorScheme.primary
-    val radius = (if (ps4Glass) 12 else profile?.radius ?: 18).dp
+    val radius = (if (ps4Glass) ps4Design(LocalPs4Palette.current).panelRadius else profile?.radius ?: 18).dp
     val shape = if (ps4Glass) RoundedCornerShape(radius) else profile.chromeShape()
     val fieldHeight = heightDp.coerceIn(56, 88)
     val fieldStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = (16 + (fieldHeight - 56) / 8).sp)

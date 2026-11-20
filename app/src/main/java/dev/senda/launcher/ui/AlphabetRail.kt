@@ -179,7 +179,7 @@ fun AlphabetRail(
                 if (ps4) {
                     val capsule = RoundedCornerShape(28)
                     Box(Modifier.size(bubbleSize)
-                        .background(Brush.linearGradient(listOf(Color(0xFF174B91), Color(0xFF08275C))), capsule)
+                        .background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), capsule)
                         .border(1.dp, quickBlue, capsule)
                         .clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
                         Text(letters[selectedIndex], color = Color.White, fontWeight = FontWeight.SemiBold,
