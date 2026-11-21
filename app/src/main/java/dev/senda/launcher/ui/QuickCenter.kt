@@ -92,7 +92,7 @@ import java.time.format.DateTimeFormatter
 
 private val quickInk: Color
     @Composable get() = MaterialTheme.colorScheme.onSurface
-private val quickMuted: Color
+internal val quickMuted: Color
     @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
 internal val quickBlue: Color
     @Composable get() = MaterialTheme.colorScheme.primary
@@ -100,8 +100,15 @@ private val quickEdge: Color
     @Composable get() = MaterialTheme.colorScheme.outline
 private val LocalQuickAccent = compositionLocalOf<Color?> { null }
 
-private val quickAccent: Color
+internal val quickAccent: Color
     @Composable get() = LocalQuickAccent.current ?: MaterialTheme.colorScheme.primary
+
+private fun quickTargetRailCard(target: QuickCenterTarget) = when (target) {
+    QuickCenterTarget.MEDIA -> "Música"
+    QuickCenterTarget.TIMERS -> "Temporizadores"
+    QuickCenterTarget.NOTE -> "Nota"
+    QuickCenterTarget.PANEL -> "Accesos"
+}
 
 /** A lighter version of the sheet material lets the wallpaper show through on Inicio. */
 @Composable
@@ -180,9 +187,13 @@ internal fun QuickCenter(
     val panel = colors.background
     val ink = if (contrast) colors.onSurface else quickInk
     val motion = rememberPs4PanelMotion(reduced)
-    var expanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.MEDIA) }
-    var timersExpanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.TIMERS) }
+    // Every opening starts as a compact rail. A target selects its capsule but does not
+    // obscure the launcher until the user explicitly reveals that contextual detail.
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var timersExpanded by rememberSaveable { mutableStateOf(false) }
     var showNote by rememberSaveable { mutableStateOf(target == QuickCenterTarget.NOTE) }
+    var selectedRailCard by rememberSaveable { mutableStateOf(quickTargetRailCard(target)) }
+    var revealedRailCard by rememberSaveable { mutableStateOf<String?>(null) }
     val hasMedia = audio != null
     val atmosphere = rememberMediaAtmosphere(audio ?: ActiveAudioInfo(), reduced, showMusic)
     val mediaColor = atmosphere.color
@@ -204,7 +215,8 @@ internal fun QuickCenter(
     val artworkProgress = remember(panelDrag, motion, animated) { derivedStateOf {
         motion.progress.value * if (animated) (1f - panelDrag.offset.value.coerceAtLeast(0f) / panelDrag.dismissDistance).coerceIn(0f, 1f) else 1f
     } }
-    val overlayArtwork = animated && !contrast && audio?.artwork?.let { !it.isRecycled } == true
+    val overlayArtwork = animated && !contrast && selectedRailCard == "Música" &&
+        (mediaExpanded || expansion.value > .001f) && audio?.artwork?.let { !it.isRecycled } == true
     fun positionArtwork(coordinates: LayoutCoordinates) {
         if (!coordinates.isAttached) { coverBounds.value = null; visibleCoverBounds.value = null; return }
         val point = coordinates.positionOnScreen()
@@ -223,6 +235,31 @@ internal fun QuickCenter(
         timersExpanded = value
         if (value) expandMedia(false)
     }
+    fun revealRailCard(card: String) {
+        selectedRailCard = card
+        revealedRailCard = card
+        when (card) {
+            "Música" -> expandMedia(true)
+            "Temporizadores" -> expandTimers(true)
+            else -> {
+                expandMedia(false)
+                timersExpanded = false
+            }
+        }
+    }
+    fun collapseRailCard(card: String) {
+        if (revealedRailCard == card) revealedRailCard = null
+        when (card) {
+            "Música" -> expandMedia(false)
+            "Temporizadores" -> expandTimers(false)
+        }
+    }
+    fun selectRailCard(card: String) {
+        selectedRailCard = card
+        if (card != "Música") expandMedia(false)
+        if (card != "Temporizadores") timersExpanded = false
+        if (revealedRailCard != card) revealedRailCard = null
+    }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val time = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
     val date = remember(locale) { DateTimeFormatter.ofPattern("EEE d MMM", locale) }
@@ -231,13 +268,6 @@ internal fun QuickCenter(
     var destination by remember { mutableStateOf<Rect?>(null) }
     val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0).takeUnless { preview }
     val cards = listOf("Música", "Temporizadores", "Alarma", "Agenda")
-    // Sample context once per opening. Playback and countdowns can update in place.
-    val playingAtOpen = rememberSaveable(target) { audio?.isPlaying == true }
-    val urgentTimerAtOpen = rememberSaveable(target) {
-        val now = android.os.SystemClock.elapsedRealtime()
-        timers.any { it.running && it.timeLeft(now) in 1L..60_000L }
-    }
-    val hasEventAtOpen = rememberSaveable(target) { event != null }
     var cardOrder by remember(prefs) { mutableStateOf(quickOrder(prefs?.getString("card_order", null), cards)) }
     var pinned by remember(prefs) { mutableStateOf(prefs?.getStringSet("pinned_cards", emptySet()).orEmpty().toSet()) }
     var editing by remember { mutableStateOf(false) }
@@ -302,10 +332,17 @@ internal fun QuickCenter(
                                     tracker.addPosition(change.uptimeMillis, Offset(0f, trackedDistance))
                                     if (!motion.closing) panelDrag.dragBy(delta, hasMedia)
                                 },
-                                onDragCancel = { if (!motion.closing) panelDrag.cancel(animated, hasMedia) { expanded = it } },
+                                onDragCancel = { if (!motion.closing) panelDrag.cancel(animated, hasMedia) { value ->
+                                    expanded = value
+                                    if (value) { selectedRailCard = "Música"; revealedRailCard = "Música"; timersExpanded = false }
+                                } },
                                 onDragEnd = {
                                     if (!motion.closing) panelDrag.release(tracker.calculateVelocity().y, hasMedia, animated,
-                                        onExpanded = { value -> expanded = value; if (value) timersExpanded = false },
+                                        onExpanded = { value ->
+                                            expanded = value
+                                            if (value) { selectedRailCard = "Música"; revealedRailCard = "Música"; timersExpanded = false }
+                                            else if (revealedRailCard == "Música") revealedRailCard = null
+                                        },
                                         onDismiss = { latestDismiss() })
                                 },
                             )
@@ -316,7 +353,7 @@ internal fun QuickCenter(
                             customActions = buildList {
                                 if (hasMedia) add(CustomAccessibilityAction(
                                     if (mediaExpanded) "Contraer reproductor" else "Ampliar reproductor",
-                                ) { expandMedia(!mediaExpanded); true })
+                                ) { if (mediaExpanded) collapseRailCard("Música") else revealRailCard("Música"); true })
                                 add(CustomAccessibilityAction("Cerrar Centro rápido") { close(); true })
                             }
                         }, contentAlignment = Alignment.Center) {
@@ -327,13 +364,6 @@ internal fun QuickCenter(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         ThemeSystemIcon("layers", activeQuickTheme, Modifier.size(26.dp))
                         Text("Centro rápido", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
-                        if (hasMedia && !compact) {
-                            TextButton(onClick = { expandMedia(!mediaExpanded) },
-                                colors = ButtonDefaults.textButtonColors(contentColor = accent),
-                                modifier = Modifier.heightIn(min = 48.dp).semantics {
-                                    contentDescription = if (mediaExpanded) "Contraer reproductor" else "Ampliar reproductor"
-                                }) { Text(if (mediaExpanded) "Contraer" else "Ampliar") }
-                        }
                         IconButton(onClick = close, modifier = Modifier.semantics { contentDescription = "Cerrar Centro rápido" }) {
                             ThemeSystemIcon("close", activeQuickTheme)
                         }
@@ -364,6 +394,7 @@ internal fun QuickCenter(
                                             onClick = {
                                                 onMiniTargetChange(option)
                                                 showNote = option == QuickCenterTarget.NOTE
+                                                if (showNote) selectedRailCard = "Nota"
                                                 if (showNote) scope.launch { cardsScroll.scrollTo(0) }
                                                 selectingMini = false
                                             })
@@ -372,43 +403,44 @@ internal fun QuickCenter(
                             }
                         }
                     }
-                    QuickCenterActions(onSearch = {}, onSettings = { action ->
-                        panelDrag.interrupt()
-                        motion.close(reduced) { onDismiss(); action() }
-                    }, compact = true, toolsOnly = true)
-                    Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        if (showNote) QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
-                        val visibleCards = cardOrder.sortedBy { card ->
-                            when {
-                                card == "Música" && target == QuickCenterTarget.MEDIA -> 0
-                                card == "Temporizadores" && target == QuickCenterTarget.TIMERS -> 0
-                                card == "Temporizadores" && urgentTimerAtOpen -> 1
-                                card == "Música" && playingAtOpen -> 2
-                                card in pinned -> 3
-                                else -> 4
-                            }
-                        }.filter { card ->
+                    val railItems = buildList {
+                        for (card in cardOrder.sortedBy { if (it in pinned) 0 else 1 }) {
                             when (card) {
-                                "Música" -> showMusic
-                                "Agenda" -> card in pinned || hasEventAtOpen
-                                else -> true
+                                "Música" -> if (showMusic) add(QuickRailItemModel(card, "play", "Música",
+                                    audio?.title ?: "Sin reproducción"))
+                                "Temporizadores" -> add(QuickRailItemModel(card, "clock", "Temporizadores",
+                                    timers.firstOrNull { it.running }?.let { "En marcha" } ?: "Gestionar"))
+                                "Alarma" -> add(QuickRailItemModel(card, "alarm", "Alarma",
+                                    if (alarmAt == null) "Sin alarma" else "Próxima"))
+                                "Agenda" -> add(QuickRailItemModel(card, "calendar", "Agenda",
+                                    event?.title ?: "Sin eventos"))
                             }
                         }
-                        for (card in visibleCards) key(card) {
-                            when (card) {
-                                "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
+                        if (showNote || pinnedNote.isNotBlank()) add(QuickRailItemModel("Nota", "note", "Nota", "Fijada"))
+                        add(QuickRailItemModel("Accesos", "layers", "Accesos", "Herramientas"))
+                    }
+                    val resolvedRailCard = selectedRailCard.takeIf { selected -> railItems.any { it.id == selected } }
+                        ?: railItems.firstOrNull()?.id ?: "Accesos"
+                    QuickCenterRail(railItems, resolvedRailCard, revealedRailCard,
+                        onSelect = ::selectRailCard, onReveal = ::revealRailCard, onCollapse = ::collapseRailCard)
+                    Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        when (resolvedRailCard) {
+                            "Música" -> if (revealedRailCard == "Música" && (audio == null || mediaExpanded || expansion.value > .001f)) {
+                                if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
                                     onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
                                     onOpenMediaDetails?.let { open ->
                                         { origin -> panelDrag.interrupt(); motion.close(reduced) { onDismiss(); open(origin) } }
                                     }, expansion = expansion, hideArtwork = overlayArtwork,
                                     onArtworkPositioned = ::positionArtwork)
                                 else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
-                                "Temporizadores" -> if (!preview && timerStore != null) {
-                                    QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
-                                } else QuickActionCard("clock", "Temporizadores", "Ejemplo · 5 min",
-                                    if (timersExpanded) "Contraer" else "Ver") { expandTimers(!timersExpanded) }
-                                "Alarma" -> if (alarmAt != null) {
+                            }
+                            "Temporizadores" -> if (timersExpanded) {
+                                if (!preview && timerStore != null) QuickTimerCard(timers, timerStore, true, ::expandTimers)
+                                else QuickActionCard("clock", "Temporizadores", "Ejemplo · 5 min", "Contraer") { expandTimers(false) }
+                            }
+                            "Alarma" -> if (revealedRailCard == "Alarma") {
+                                if (alarmAt != null) {
                                     val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
                                     val day = when (at.toLocalDate()) {
                                         today -> "Hoy"
@@ -417,18 +449,27 @@ internal fun QuickCenter(
                                     }
                                     QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
                                 } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
-                                "Agenda" -> if (event != null) {
+                            }
+                            "Agenda" -> if (revealedRailCard == "Agenda") {
+                                if (event != null) {
                                     val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
                                     val whenText = if (event.allDay) date.format(at) else
                                         if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
                                     QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
                                 } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
                             }
+                            "Nota" -> if (revealedRailCard == "Nota") QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
+                            "Accesos" -> if (revealedRailCard == "Accesos") {
+                                QuickCenterActions(onSearch = {}, onSettings = { action ->
+                                    panelDrag.interrupt()
+                                    motion.close(reduced) { onDismiss(); action() }
+                                }, compact = true, toolsOnly = true)
+                                if (!preview) configuration()
+                            }
                         }
-                        if (compact && !preview) configuration()
                     }
                     HorizontalDivider(color = edge.copy(alpha = .65f))
-                    if (!preview && !compact) configuration()
+                    if (!preview && !compact && revealedRailCard != "Accesos") configuration()
                 }
             }
             }
@@ -712,13 +753,15 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     if (audio.canSeek) {
                         val baseline = pendingSeek?.first ?: current
+                        val forwardMs = if (audio.isYouTubeVideo) 10_000L else 30_000L
+                        val forwardLabel = if (audio.isYouTubeVideo) "Adelantar vídeo 10 segundos" else "Adelantar 30 segundos"
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = expanded && fullyRevealed && baseline > 0,
                                 modifier = Modifier.weight(1f).heightIn(min = 48.dp)
                                     .semantics { contentDescription = "Retroceder 10 segundos" }) { Text("−10 s") }
-                            OutlinedButton(onClick = { seek(baseline + 30_000L) }, enabled = expanded && fullyRevealed && baseline < duration,
+                            OutlinedButton(onClick = { seek(baseline + forwardMs) }, enabled = expanded && fullyRevealed && baseline < duration,
                                 modifier = Modifier.weight(1f).heightIn(min = 48.dp)
-                                    .semantics { contentDescription = "Adelantar 30 segundos" }) { Text("+30 s") }
+                                    .semantics { contentDescription = forwardLabel }) { Text(if (audio.isYouTubeVideo) "+10 s" else "+30 s") }
                         }
                     }
                 }

@@ -177,6 +177,23 @@
         "source-owned video action"
       ],
       "dependsOn": []
+    },
+    {
+      "id": "BETA112-PROGRESSIVE-RAIL",
+      "owner": "codex",
+      "status": "COMPILED_PENDING_DEVICE_VALIDATION",
+      "branch": "codex/beta111-media-hub",
+      "baseCommit": "07957f9191bb5c3596406f302ac8f354b81aba30",
+      "contract": "docs/superpowers/plans/2026-11-21-quick-center-progressive-rail.md",
+      "report": "docs/BETA112.md",
+      "scope": [
+        "single-row contextual rail",
+        "per-capsule progressive gesture reveal",
+        "deferred media and quick tools",
+        "YouTube symmetric seek controls"
+      ],
+      "dependsOn": ["BETA111-MEDIA-HUB"],
+      "review": "Independent source review identified two P1 and six P2 issues; all were addressed before final compile/lint."
     }
   ],
   "budget": {
@@ -224,7 +241,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta111 0.77.0/code111 compiled on Nov21 from beta110. The Quick Center media player is a single compact surface that expands with a direct vertical gesture; it keeps real MediaSession transport/seek and uses artwork movement derived from playback progress, not an idle animation. Video remains source-owned via an explicit action. assembleBeta lintBeta passed: 0 errors, 59 warnings, 4 hints. APK SHA-256 BFB35FF506F3F5E911559717120C6BA428B737FEA27B9A5073D95601635D856D. Device installation/review pending: local ADB server could not start, so beta110 remains latest verified device version. See docs/BETA111.md.",
+  "latestCheckpoint": "Beta112 0.78.0/code112 compiled on Nov21 from beta111. Quick Center is a one-row contextual rail with localized up/down reveal; media and tools render only on demand. The YouTube source-session path uses symmetric ±10s seeking when exposed by the source. Independent review findings on no-session media, artwork teardown, pinned order, note visibility, selected rail scrolling, text height, accessibility activation and handle selection were fixed before the final build. assembleBeta lintBeta passed: 0 errors, 59 warnings, 4 hints. APK SHA-256 AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A. Device installation/review pending: local ADB server could not start, so beta110 remains latest verified device version. See docs/BETA112.md.",
   "checkpointBranch": "codex/beta111-media-hub",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

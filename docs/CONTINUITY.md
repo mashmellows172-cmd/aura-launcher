@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta112 candidata el 21 de noviembre de 2026. 0.78.0-beta112, código 112. Centro rápido convertido en rail de una fila con revelado localizado por gesto: Música, Temporizadores, Alarma, Agenda, Nota y Accesos. El reproductor YouTube queda fuera hasta desplegar Música y ofrece −10/+10 cuando la sesión es compatible. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Instalación y revisión física pendientes: ADB local no inició. [Ficha](BETA112.md).
+
 Beta111 candidata el 21 de noviembre de 2026. 0.77.0-beta111, código 111. Centro multimedia rehecho como hub continuo y compacto que se expande al deslizar sobre la carátula. Mantiene controles Android reales, búsqueda temporal sólo si la sesión la permite y delegación explícita a la app fuente para vídeo. La carátula es reactiva al progreso, no un vídeo embebido. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Instalación y revisión física pendientes: ADB no pudo iniciar su servidor local. [Ficha](BETA111.md).
 
 Beta110 instalada el 21 de noviembre de 2026. 0.76.0-beta110, código 110. Reproductor dentro del Centro rápido; sin miniatura multimedia en Inicio. Accesos temáticos a linterna, calculadora y Gemini. Seis perfiles PS4 incorporan movimientos de fila distintos; vista previa y avisos de supresión alineados. Compilación/lint: 0 errores, 59 advertencias, 4 avisos. Firma, versión, hash instalado e Inicio verificados. Calculadora/Gemini abiertos desde el panel; CAMERA permanece denegado. Comparación física entre perfiles pendiente. [Ficha](BETA110.md).
