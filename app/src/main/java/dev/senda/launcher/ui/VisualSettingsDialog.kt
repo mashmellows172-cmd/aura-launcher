@@ -102,6 +102,20 @@ private fun ListMotionControls(
     onDraft: (VisualSettings) -> Unit,
     onChange: (VisualSettings) -> Unit,
 ) {
+    val blockedBy = when {
+        LocalLightMode.current -> "Modo ligero de Aura"
+        LocalSystemPowerSaving.current -> "Ahorro de batería de Android"
+        dev.senda.launcher.data.LocalAppearance.current.highContrast -> "Alto contraste"
+        draft.reduceMotion -> "Reducir movimiento"
+        !ValueAnimator.areAnimatorsEnabled() -> "Animaciones desactivadas en Android"
+        else -> null
+    }
+    if (blockedBy != null) Text("Efecto guardado, pero desactivado por: $blockedBy.",
+        color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodyMedium)
+    if (LocalLightMode.current) {
+        val setLightMode = LocalSetLightMode.current
+        OutlinedButton(onClick = { setLightMode(false) }) { Text("Desactivar modo ligero de Aura") }
+    }
     val profiles = legacyListProfiles
     val ps4Profile = if (ps4) draft.activePs4ListProfile() else null
     val selected = ps4Profile?.name ?: draft.motion
@@ -131,7 +145,7 @@ private fun ListMotionControls(
     Text("Intensidad de la lista · ${draft.scrollIntensity}%")
     Slider(draft.scrollIntensity.toFloat(), { onDraft(draft.copy(scrollIntensity = it.toInt())) }, valueRange = 10f..100f,
         onValueChangeFinished = { onChange(draft) },
-        enabled = !listMotionReduced(draft) && selected != "NONE" && (!ps4 || ps4Profile != Ps4ListProfile.DEPTH),
+        enabled = !listMotionReduced(draft) && selected != "NONE",
         modifier = Modifier.semantics { contentDescription = "Intensidad de la lista" })
 }
 

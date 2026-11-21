@@ -43,7 +43,7 @@ internal val modernListProfiles = listOf(
 
 @Composable
 internal fun listMotionReduced(settings: VisualSettings): Boolean =
-    settings.reduceMotion || LocalAppearance.current.highContrast ||
+    settings.reduceMotion || LocalLightMode.current || LocalAppearance.current.highContrast ||
         LocalSystemPowerSaving.current || !ValueAnimator.areAnimatorsEnabled()
 
 @Composable
@@ -114,7 +114,7 @@ internal fun ListScrollProfilePreview(settings: VisualSettings, ps4: Boolean = f
     val preferred = remember { mutableStateOf<String?>(null) }
     val focus = rememberPs4FocusedKey(list, ps4 || landing && !reduced, preferred)
     val observesScroll = settings.motion == "DOT_PULSE" ||
-        ps4 && Ps4ListProfile.fromId(settings.motion)?.usesScrollInk == true
+        ps4 && Ps4ListProfile.fromId(settings.motion)?.let { it.usesScrollInk || it.usesRowMotion } == true
     val motion = if (observesScroll && !reduced) rememberAuraMotion(list, settings) else null
     Text("Vista previa · desliza la lista", style = MaterialTheme.typography.labelMedium)
     CompositionLocalProvider(LocalPs4FocusedKey provides focus, LocalMotionController provides motion) {
@@ -130,7 +130,9 @@ internal fun ListScrollProfilePreview(settings: VisualSettings, ps4: Boolean = f
             overscrollEffect = if (reduced || settings.motion == "NONE") null else rememberOverscrollEffect(),
         ) {
             items(20, key = { "demo-$it" }, contentType = { "app" }) { index ->
-                Row(Modifier.fillMaxWidth().heightIn(min = 52.dp).padding(horizontal = 10.dp),
+                Row(Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                    .then(if (ps4) Modifier.ps4ListRowMotion(list, "demo-$index", settings) else Modifier)
+                    .padding(horizontal = 10.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     Box(Modifier.size(30.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(7.dp)),
                         contentAlignment = Alignment.Center) {

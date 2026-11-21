@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <queries>
         <package android:name="hr.dtakac.prognoza" />
+        <package android:name="com.google.android.apps.bard" />
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

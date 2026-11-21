@@ -277,7 +277,7 @@ fun MotionPreview(settings: VisualSettings) {
     val pulse = remember { Animatable(0f) }
     var replay by remember { mutableIntStateOf(0) }
     var dragging by remember { mutableFloatStateOf(0f) }
-    val noMotion = settings.reduceMotion || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
+    val noMotion = settings.reduceMotion || LocalLightMode.current || LocalSystemPowerSaving.current || LocalAppearance.current.highContrast || !ValueAnimator.areAnimatorsEnabled()
     LaunchedEffect(replay, settings.motion, settings.scrollIntensity, noMotion, settings.durationMs) {
         pulse.snapTo(0f)
         if (!noMotion && settings.motion != "NONE") {

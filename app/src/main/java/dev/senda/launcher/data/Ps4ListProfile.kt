@@ -1,17 +1,20 @@
 package dev.senda.launcher.data
 
 enum class Ps4ListProfile(val label: String, val description: String) {
-    DEPTH("Marco clásico PS4", "El marco acompaña la fila enfocada y se realza al detenerse."),
-    CRYSTAL("Cristal en movimiento", "Un reflejo ancho recorre el cristal en el sentido del gesto."),
-    LIGHT_RAIL("Carril de luz", "Una estela azul marca la dirección y la intensidad en el borde de la lista."),
-    RIBBONS("Cintas de seda", "Dos cintas curvas se inclinan con el impulso y se disuelven al frenar."),
-    RELIEF("Relieve de placas", "Las filas adquieren un borde de luz y una sombra fina que invierten su posición con el gesto."),
-    WAKE("Estela de mosaicos", "Trazos cortos prolongan el movimiento de los iconos y pierden longitud al frenar."),
+    DEPTH("Marco clásico PS4", "Las filas ganan profundidad al deslizar; el marco conserva el foco."),
+    CRYSTAL("Cristal en movimiento", "Perspectiva lateral y reflejo de cristal en el sentido del gesto."),
+    LIGHT_RAIL("Carril de luz", "Desplazamiento lateral contenido y estela de luz en el borde."),
+    RIBBONS("Cintas de seda", "Las filas describen una onda lateral acompañada de cintas."),
+    RELIEF("Relieve de placas", "Perspectiva vertical con borde iluminado; sin cambiar el orden o altura de las filas."),
+    WAKE("Estela de mosaicos", "Desfase lateral escalonado y trazos que se recogen al frenar."),
     IOS_INERTIA("Inercia elástica · iOS", "Desaceleración gradual y rebote en los extremos. Más intensidad, más recorrido."),
     LANDING_FOCUS("Foco al aterrizar · PS5", "El marco se atenúa mientras deslizas y vuelve a definirse al detenerse."),
     DOT_PULSE("Pulso de puntos · Nothing", "Los puntos siguen el sentido del gesto y se apagan al detenerse."),
     NONE("Sin efecto", "Desplazamiento nativo, con el marco de enfoque fijo sobre la fila."),
     ;
+
+    val usesRowMotion: Boolean
+        get() = this in setOf(DEPTH, CRYSTAL, LIGHT_RAIL, RIBBONS, RELIEF, WAKE)
 
     val usesScrollInk: Boolean
         get() = when (this) {

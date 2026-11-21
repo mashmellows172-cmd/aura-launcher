@@ -137,7 +137,7 @@ internal fun QuickOrderEditor(order: List<String>, onMove: (List<String>) -> Uni
 }
 
 @Composable
-internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -> Unit, compact: Boolean = false) {
+internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -> Unit, compact: Boolean = false, toolsOnly: Boolean = false) {
     val context = LocalContext.current
     val manager = remember(context) { context.getSystemService(CameraManager::class.java) }
     val scope = rememberCoroutineScope()
@@ -159,8 +159,8 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
     }
     var configuring by rememberSaveable { mutableStateOf(false) }
     val preferences = remember(context) { context.getSharedPreferences("quick_center_shortcuts", 0) }
-    val defaults = listOf("Linterna", "Buscar apps", "Ajustes rápidos")
-    var order by remember(preferences) { mutableStateOf(quickOrder(preferences.getString("shortcut_order", null), defaults)) }
+    val defaults = if (toolsOnly) listOf("Linterna", "Calculadora", "Gemini") else listOf("Linterna", "Buscar apps", "Ajustes rápidos")
+    var order by remember(preferences, toolsOnly) { mutableStateOf(quickOrder(preferences.getString("shortcut_order", null), defaults)) }
     var showTorch by remember { mutableStateOf(preferences.getBoolean("torch", true)) }
     var showSearch by remember { mutableStateOf(preferences.getBoolean("search", true)) }
     var showSettings by remember { mutableStateOf(preferences.getBoolean("settings", true)) }
@@ -177,7 +177,7 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
         permitted = granted
         if (granted) toggleTorch(torch != true) else toast("Concede acceso a la cámara para usar el flash")
     }
-    DisposableEffect(manager, cameraId, permitted, showTorch) {
+    DisposableEffect(manager, cameraId, permitted, showTorch, toolsOnly) {
         val callback = object : CameraManager.TorchCallback() {
             override fun onTorchModeChanged(id: String, enabled: Boolean) {
                 if (id == cameraId) { torch = enabled; torchUnavailable = false }
@@ -186,16 +186,27 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
                 if (id == cameraId) { torch = null; torchUnavailable = true }
             }
         }
-        val registered = manager != null && cameraId != null && showTorch &&
+        val registered = manager != null && cameraId != null && (showTorch || toolsOnly) &&
             runCatching { manager.registerTorchCallback(context.mainExecutor, callback) }.isSuccess
         onDispose { if (registered) manager?.unregisterTorchCallback(callback) }
     }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         for (label in order) key(label) {
         when (label) {
-        "Linterna" -> if (showTorch) QuickShortcut("torch", label, Modifier.weight(1f), compact = compact, enabled = cameraId != null && (!permitted || torch != null),
+        "Linterna" -> if (showTorch || toolsOnly) QuickShortcut("torch", label, Modifier.weight(1f), compact = compact, enabled = cameraId != null && (!permitted || torch != null),
             active = torch, detail = if (permitted && torchUnavailable) "Flash ocupado o bloqueado" else null) {
             if (permitted) toggleTorch(torch != true) else permission.launch(Manifest.permission.CAMERA)
+        }
+        "Calculadora" -> QuickShortcut("calculator", label, Modifier.weight(1f), compact = compact) {
+            onSettings {
+                runCatching { context.startActivity(Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_CALCULATOR)) }
+                    .onFailure { toast("No hay una calculadora disponible") }
+            }
+        }
+        "Gemini" -> QuickShortcut("assistant", label, Modifier.weight(1f), compact = compact) {
+            val intent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.bard")
+            if (intent == null) toast("Gemini no está instalado o no tiene acceso de inicio")
+            else onSettings { runCatching { context.startActivity(intent) }.onFailure { toast("No se pudo abrir Gemini") } }
         }
         "Buscar apps" -> if (showSearch) QuickShortcut("search", label, Modifier.weight(1f), compact = compact, onClick = onSearch)
         else -> if (showSettings) QuickShortcut("settings", label, Modifier.weight(1f), compact = compact) {
@@ -209,7 +220,7 @@ internal fun QuickCenterActions(onSearch: () -> Unit, onSettings: (() -> Unit) -
         }
         }
     }
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    if (!toolsOnly) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         TextButton(onClick = { configuring = true }) { Text(if (compact) "Editar accesos" else "Personalizar accesos") }
         DropdownMenu(expanded = configuring, onDismissRequest = { configuring = false }) {
             QuickOrderEditor(order, onMove = {
@@ -246,9 +257,10 @@ private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabl
     compact: Boolean = false, active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
 ) {
     val shape = quickPanelShape()
-    TextButton(onClick = onClick, enabled = enabled, shape = shape, contentPadding = PaddingValues(6.dp),
+    val interactions = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    TextButton(onClick = onClick, interactionSource = interactions, enabled = enabled, shape = shape, contentPadding = PaddingValues(6.dp),
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-        modifier = modifier.heightIn(min = if (compact) 48.dp else 64.dp).ps4ControlGlass(shape, translucent = active != true)
+        modifier = modifier.heightIn(min = if (compact) 48.dp else 64.dp).ps4ControlGlass(shape, translucent = active != true).quickToolMotion(interactions, active)
             .semantics {
                 if (detail != null) stateDescription = detail
                 else if (active != null) stateDescription = if (active) "Encendida" else "Apagada"

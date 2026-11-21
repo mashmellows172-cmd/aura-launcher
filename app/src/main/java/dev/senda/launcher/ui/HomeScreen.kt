@@ -236,7 +236,7 @@ fun HomeScreen(
     val reducedList = listMotionReduced(listSettings)
     val landingFocus = listSettings.motion == "LANDING_FOCUS"
     val observeGesture = listSettings.motion == "DOT_PULSE" ||
-        (state.theme == LauncherTheme.PS4 && state.visualSettings.activePs4ListProfile().usesScrollInk)
+        (state.theme == LauncherTheme.PS4 && state.visualSettings.activePs4ListProfile().let { it.usesScrollInk || it.usesRowMotion })
     val animateRows = state.theme != LauncherTheme.PS4 &&
         state.visualSettings.motion != "NONE" && modernListProfiles.none { it.first == state.visualSettings.motion }
     val motionController = if (!reducedList && (animateRows || observeGesture)) {
@@ -292,6 +292,12 @@ fun HomeScreen(
         mutableStateOf(QuickCenterTarget.entries.firstOrNull {
             it.name == quickPrefs.getString("miniature", null)
         } ?: QuickCenterTarget.PANEL)
+    }
+    LaunchedEffect(miniTarget) {
+        if (miniTarget == QuickCenterTarget.MEDIA) {
+            miniTarget = QuickCenterTarget.PANEL
+            quickPrefs.edit().putString("miniature", QuickCenterTarget.PANEL.name).apply()
+        }
     }
     var pinnedQuickNote by remember(quickPrefs) { mutableStateOf(quickPrefs.getString("pinned_note", "").orEmpty()) }
     val timerStore = remember(context) { dev.senda.launcher.data.QuickTimers.get(context) }
@@ -687,7 +693,7 @@ fun HomeScreen(
                 showQuickCenter = true
             }
             ThemedQuickCenter {
-                if (miniTarget != QuickCenterTarget.PANEL) {
+                if (miniTarget != QuickCenterTarget.PANEL && miniTarget != QuickCenterTarget.MEDIA) {
                     QuickCenterMiniature(miniTarget,
                         state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
                         pinnedQuickNote, quickTimers, timerStore,
@@ -1597,7 +1603,7 @@ private fun AppRow(
     Row(
         modifier = modifier.fillMaxWidth()
             .heightIn(min = if (console) maxOf(appearance.rowHeight, appearance.iconSize + 28).dp else appearance.rowHeight.dp)
-            .then(if (console) Modifier else Modifier.auraListMotion(listState, rowKey, visualSettings)),
+            .then(if (console) Modifier.ps4ListRowMotion(listState, rowKey, visualSettings) else Modifier.auraListMotion(listState, rowKey, visualSettings)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {

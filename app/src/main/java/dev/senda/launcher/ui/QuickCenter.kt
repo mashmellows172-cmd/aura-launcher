@@ -358,7 +358,7 @@ internal fun QuickCenter(
                             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                 TextButton(onClick = { selectingMini = true }) { Text("Miniatura") }
                                 DropdownMenu(expanded = selectingMini, onDismissRequest = { selectingMini = false }) {
-                                    for (option in QuickCenterTarget.entries) {
+                                    for (option in QuickCenterTarget.entries.filter { it != QuickCenterTarget.MEDIA }) {
                                         DropdownMenuItem(text = { Text(option.label) },
                                             trailingIcon = if (option == miniTarget) ({ Text("Activa") }) else null,
                                             onClick = {
@@ -372,6 +372,10 @@ internal fun QuickCenter(
                             }
                         }
                     }
+                    QuickCenterActions(onSearch = {}, onSettings = { action ->
+                        panelDrag.interrupt()
+                        motion.close(reduced) { onDismiss(); action() }
+                    }, compact = true, toolsOnly = true)
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (showNote) QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)

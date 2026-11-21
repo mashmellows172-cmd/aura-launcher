@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: rama `codex/beta109-direct-media-motion`, beta109 sobre beta108 `8a6777e`. Consultar [BETA109](../BETA109.md) y [delegación](BETA109-DELEGATION.md). Instalada sobre beta108 el 21 de noviembre; firma, versión, hash instalado y HOME verificados. Ampliación/contracción y portada real YouTube comprobadas. Acceso multimedia activado con autorización específica. Pendiente restaurar la miniatura temporal de Reproductor a Oculta cuando vuelva Aura al primer plano. STATE.json distingue este checkpoint de la integración histórica.
+Checkpoint actual: `codex/beta110-quick-tools`, beta110 sobre beta109 `2510853`. [Ficha BETA110](../BETA110.md). Instalada con firma, versión, hash y HOME comprobados. Calculadora y Gemini probados. Nueva petición elimina la miniatura multimedia y sustituye su restauración pendiente; el reproductor vive dentro del Centro rápido. Linterna requiere permiso runtime y no se encendió en pruebas. Comparación física de perfiles de scroll pendiente.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

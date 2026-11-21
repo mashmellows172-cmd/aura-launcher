@@ -147,6 +147,20 @@
         "single artwork overlay",
         "partial-control input gating"
       ]
+    },
+    {
+      "id": "BETA110-QUICK-TOOLS-SCROLL",
+      "owner": "codex",
+      "status": "INSTALLED_PARTIALLY_VALIDATED",
+      "branch": "codex/beta110-quick-tools",
+      "baseCommit": "2510853",
+      "contract": "docs/superpowers/plans/2026-11-21-quick-tools.md",
+      "report": "docs/BETA110.md",
+      "scope": [
+        "interior player and tools",
+        "six PS4 row motions",
+        "preview/runtime suppression consistency"
+      ]
     }
   ],
   "budget": {
@@ -194,8 +208,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta109 installed, version/hash/HOME verified. After explicit user authorization, MediaAccessService notification access enabled persistently and bound. Real YouTube metadata/artwork observed; handle expansion to 16:9 and return to compact checked. Opened from pinned media mini and inspected settled image. FPS/full interpolation not measured. Temporarily switched mini from PANEL/Oculta to MEDIA/Reproductor for test; restore PANEL remains pending because Aura left foreground and no further input was sent. User was asked to leave Aura visible for restoration. Read docs/BETA109.md before next phone action. Source implementation 32a9ca1 on codex/beta109-direct-media-motion.",
-  "checkpointBranch": "codex/beta109-direct-media-motion",
+  "latestCheckpoint": "Beta110 0.76.0/code110 installed over beta109 Nov21; certificate, exact installed SHA-256, version and HOME verified. Player retained inside Quick Center, MEDIA mini migrated to PANEL per new user instruction (supersedes prior restoration pending). Themed Torch/Calculator/Gemini tools visible; Calculator and Gemini host launched through panel, no data/prompts entered. CAMERA remains denied, torch untested. Six PS4 row-transform profiles and runtime suppression explanation implemented; physical profile comparison pending. assembleBeta lintBeta passed 1m22s: 0 errors, 59 warnings, 4 hints. Source reviews complete; see docs/BETA110.md.",
+  "checkpointBranch": "codex/beta110-quick-tools",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,
