@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-19",
+  "updated": "2026-11-20",
   "integrationBranch": "codex/beta100-agent-integration",
   "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
   "coordinator": "codex",
@@ -179,7 +179,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta107 0.73.0/code107 built with assembleBeta lintBeta: 0 errors, 58 warnings, 4 hints. Three PlayStation identities with persistent IDs and manual overrides. Independent icon crop fix reviewed. ADB signature compatible; streamed install failed, separate transfer retry in progress. Physical comparison pending. See docs/BETA107.md. Beta106 retro library import and widgets/permission setup remain pending.",
+  "latestCheckpoint": "Beta107 0.73.0/code107 published on codex/beta107-playstation-identities (implementation 222114b). assembleBeta lintBeta passed: 0 errors, 58 warnings, 4 hints. Original signing certificate and transferred APK hash verified; pm install -r returned Success after 480.705s transfer. ADB disconnected before post-install version/hash and physical checks; reconnect timed out Nov20. No uninstall or phone settings changed. See docs/BETA107.md. Beta106 retro library import and widget/permission setup remain pending.",
   "checkpointBranch": "codex/beta107-playstation-identities",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

@@ -1,6 +1,6 @@
 # Beta107 · Tres identidades PlayStation
 
-19 de noviembre de 2026. Aura 0.73.0-beta107, código 107, paquete `dev.senda.launcher.debug`. Base beta106 `f887378`. Rama `codex/beta107-playstation-identities`. Diseño iniciado el 18 de noviembre.
+Registro actualizado el 20 de noviembre de 2026; compilación del 19 de noviembre. Aura 0.73.0-beta107, código 107, paquete `dev.senda.launcher.debug`. Base beta106 `f887378`. Rama `codex/beta107-playstation-identities`. Diseño iniciado el 18 de noviembre.
 
 ## Cambios visibles
 
@@ -29,7 +29,7 @@ Antigravity no ofreció un CLI/canal utilizable. Un agente de desarrollo interno
 
 ## Instalación y límites
 
-La firma del candidato se comparó con el APK beta106 extraído del Motorola y coincide (SHA-256 del certificado `729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c`). El primer `adb install -r` falló durante la transmisión. El segundo intento de transferencia devolvió EOF tras cambiar la dirección de red del teléfono; se reconectó al mismo número de serie anunciado por mDNS y se detectó un hash parcial incorrecto. Ese archivo no se instaló. Se inició una transferencia íntegra nueva con comprobación de hash previa a `pm install -r`. Hasta verificar su resultado, la instalación permanece pendiente y la última versión comprobada es beta106. No se desinstaló Aura ni se cambiaron permisos o ajustes.
+La firma del candidato se comparó con el APK beta106 extraído del Motorola y coincide (SHA-256 del certificado `729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c`). El primer `adb install -r` falló durante la transmisión. El segundo intento de transferencia devolvió EOF tras cambiar la dirección de red del teléfono; se reconectó al mismo número de serie anunciado por mDNS y se detectó un hash parcial incorrecto. Ese archivo no se instaló. La transferencia íntegra posterior terminó en 480.705 s (15,973,529 bytes). El SHA-256 remoto coincidió con el APK local y `pm install -r` devolvió **Success**, con salida 0. La conexión desapareció antes de consultar versión, ruta y hash del paquete ya instalado. El 20 de noviembre ADB no detecta dispositivos y la reconexión al último puerto agota el tiempo de espera. Por tanto, Android confirmó instalación, pero la verificación posterior y la revisión visual permanecen pendientes; no se afirma haber contrastado el hash instalado. La última consulta de versión previa al éxito mostró beta106. No se desinstaló Aura ni se cambiaron permisos o ajustes.
 
 La revisión visual comparativa de las tres variantes, las transiciones, texto grande, fondos personalizados y fluidez física sigue pendiente. El teléfono estaba en uso en otra aplicación: no se forzó navegación ni se capturó contenido personal. No se afirman FPS ni fidelidad exacta a las consolas. Siguen pendientes de beta106 la importación de la biblioteca retro y configuración de widgets/permisos; no se presenta esa configuración como recuperada.
 
@@ -40,3 +40,5 @@ La revisión visual comparativa de las tres variantes, las transiciones, texto g
 - [Pantallas de PS Vita](https://manuals.playstation.net/document/en/psvita/basic/screens.html).
 
 Referencias adaptadas a la estructura vertical de Aura: búsqueda, lista, A–Z, favoritas, widgets y apertura con un toque permanecen disponibles.
+
+Código publicado en `codex/beta107-playstation-identities`, commit de implementación `222114b`; documentación de entrega actualizada por separado.

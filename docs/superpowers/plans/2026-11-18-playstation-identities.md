@@ -23,7 +23,9 @@ theme/Ps4Design.kt centraliza geometría y tiempos. Ps4PaletteColors/AuraTheme/T
 - [x] Revisión independiente y auditoría de contraste acotada.
 - [x] assembleBeta lintBeta, sin suites automáticas.
 - [x] Actualizar ficha, historial y continuidad.
-- [ ] Publicar rama. Instalación con firma compatible y revisión física: estado real en BETA107.md.
+- [x] Publicar rama `codex/beta107-playstation-identities` (implementación `222114b`).
+- [x] Actualización con firma compatible: hash transferido verificado y Android Success.
+- [ ] Verificación posterior de versión/hash instalado y revisión física: ADB desconectado, pendiente. Ver BETA107.md.
 
 ## Delegación
 Antigravity no ofrece CLI/canal utilizable en este notebook. No se afirma haberlo ejecutado. Agente de desarrollo paralelo autorizado para dos archivos de fondos, revisión del diff por coordinador y revisión independiente final.

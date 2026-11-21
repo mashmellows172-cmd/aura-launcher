@@ -1,6 +1,6 @@
 # Historial de actualizaciones de Aura Launcher
 
-Beta107 preparada el 19 de noviembre de 2026. 0.73.0-beta107, código 107. Tres identidades PlayStation: Clásica PS4/XMB, Next-Gen PS5 y Portátil Vita/Play; fondos originales, fuentes, geometrías y superficies coordinadas. Conserva IDs y personalizaciones. Compilación/lint correctos: 0 errores, 58 advertencias y 4 avisos. Actualización ADB pendiente de comprobación; revisión visual física pendiente. [Ficha](docs/BETA107.md).
+Beta107 entregada; registro actualizado el 20 de noviembre de 2026. 0.73.0-beta107, código 107. Tres identidades PlayStation: Clásica PS4/XMB, Next-Gen PS5 y Portátil Vita/Play; fondos originales, fuentes y superficies coordinadas. Compilación/lint del 19 de noviembre: 0 errores, 58 advertencias y 4 avisos. Android confirmó actualización con Success tras verificar firma y hash transferido; consulta posterior de versión/hash instalado y revisión visual pendientes por desconexión ADB. [Ficha](docs/BETA107.md).
 
 Beta106 instalada el 18 de noviembre de 2026 mediante reinstalación autorizada por cambio de firma. 0.72.0-beta106, código 106. Versión/hash y Aura como Inicio verificados. Restauración contrastada por reexportación, 111 ajustes, 9 favoritas y 5 imágenes idénticos al respaldo. Firma vigente 729385fc… con copia privada. Biblioteca retro guardada, importación y reconexión de widgets/permisos pendientes. [Ficha](docs/BETA106.md).
 
