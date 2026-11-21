@@ -14,8 +14,10 @@ Versión objetivo: `0.78.0-beta112` · código `112` · 21 de noviembre de 2026.
 ## Validación
 
 - `assembleBeta lintBeta`: correcto el 21 de noviembre de 2026; 0 errores, 59 advertencias y 4 avisos existentes.
-- APK: `app/build/outputs/apk/beta/app-beta.apk`, SHA-256 `07170BABE1E89507931F7F3C924FDFF3F3A0052E79CAADE8887BE0D7772AD966`.
-- No se intentó instalar ni abrir el panel en el Motorola: ADB local seguía sin iniciar su servidor, por lo que no se afirman versión remota, revisión visual ni mejora de fluidez medida.
+- APK: `app/build/outputs/apk/beta/app-beta.apk`, SHA-256 `AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A`.
+- ADB detectó `motorola edge 50 ultra`; certificado local e instalado coincide (`729385fc…202a67c`). Se actualizó con `pm install -r` sin desinstalar. Android confirma `0.78.0-beta112`/código 112, hash instalado `AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A` y Aura como Inicio.
+- El primer comando usó por error una ruta del teléfono con `adb install`, que sólo acepta una ruta local; devolvió `failed to stat` y no modificó la aplicación. Se corrigió con `adb shell pm install -r` tras volver a comparar hash. No se cambió ningún permiso ni ajuste.
+- No se realizó revisión visual/táctil del rail ni se afirma mejora de fluidez medida.
 
 ## Límites
 

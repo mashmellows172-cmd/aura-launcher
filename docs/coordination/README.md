@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta111-media-hub`, beta112 sobre beta111 `07957f9`. [Ficha BETA112](../BETA112.md). Candidata compilada/lint: rail contextual de una fila, revelado localizado por cápsula y herramientas bajo Accesos. YouTube conserva controles de sesión y adopta ±10 s cuando permite búsqueda. Instalación y revisión física pendientes: el servidor ADB local no arrancó, por lo que no se intentó actualizar ni cambiar datos/permisos. Beta110 sigue siendo la última instalación verificada.
+Checkpoint actual: `codex/beta111-media-hub`, beta112 sobre beta111 `07957f9`. [Ficha BETA112](../BETA112.md). Rail contextual de una fila, revelado localizado por cápsula y herramientas bajo Accesos. YouTube conserva controles de sesión y adopta ±10 s cuando permite búsqueda. Instalado sobre beta110 sin desinstalar; certificado, versión, hash y HOME verificados. Revisión física de gestos pendiente.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

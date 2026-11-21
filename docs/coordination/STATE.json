@@ -165,7 +165,7 @@
     {
       "id": "BETA111-MEDIA-HUB",
       "owner": "codex",
-      "status": "COMPILED_PENDING_DEVICE_VALIDATION",
+      "status": "INSTALLED_PENDING_GESTURE_VALIDATION",
       "branch": "codex/beta111-media-hub",
       "baseCommit": "110a632810063d35c3300f94124078d10695d754",
       "contract": "docs/superpowers/plans/2026-11-21-media-hub-reinvention.md",
@@ -181,7 +181,7 @@
     {
       "id": "BETA112-PROGRESSIVE-RAIL",
       "owner": "codex",
-      "status": "COMPILED_PENDING_DEVICE_VALIDATION",
+      "status": "INSTALLED_PENDING_GESTURE_VALIDATION",
       "branch": "codex/beta111-media-hub",
       "baseCommit": "07957f9191bb5c3596406f302ac8f354b81aba30",
       "contract": "docs/superpowers/plans/2026-11-21-quick-center-progressive-rail.md",
@@ -241,7 +241,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta112 0.78.0/code112 compiled on Nov21 from beta111. Quick Center is a one-row contextual rail with localized up/down reveal; media and tools render only on demand. The YouTube source-session path uses symmetric ±10s seeking when exposed by the source. Independent review findings on no-session media, artwork teardown, pinned order, note visibility, selected rail scrolling, text height, accessibility activation and handle selection were fixed before the final build. assembleBeta lintBeta passed: 0 errors, 59 warnings, 4 hints. APK SHA-256 AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A. Device installation/review pending: local ADB server could not start, so beta110 remains latest verified device version. See docs/BETA112.md.",
+  "latestCheckpoint": "Beta112 0.78.0/code112 installed on Nov21 over beta110 without uninstall. Quick Center is a one-row contextual rail with localized up/down reveal; media and tools render only on demand. The YouTube source-session path uses symmetric ±10s seeking when exposed by the source. Independent review findings on no-session media, artwork teardown, pinned order, note visibility, selected rail scrolling, text height, accessibility activation and handle selection were fixed before the final build. assembleBeta lintBeta passed: 0 errors, 59 warnings, 4 hints. Candidate and pulled installed APK SHA-256 AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A; version112 and HOME verified on Motorola Edge50Ultra. Gesture/visual review is pending. See docs/BETA112.md.",
   "checkpointBranch": "codex/beta111-media-hub",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
