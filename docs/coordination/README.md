@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: rama `codex/beta108-theme-fidelity`, candidata beta108 sobre beta107 `3c2e767`. Consultar [BETA108](../BETA108.md) para implementación, validaciones y pendientes. Android confirmó la instalación anterior de beta107, pero se perdió la conexión antes de verificar versión/hash; beta108 aún no está instalada. STATE.json distingue este checkpoint de la integración histórica.
+Checkpoint actual: rama `codex/beta108-theme-fidelity`, beta108 sobre beta107 `3c2e767`. Consultar [BETA108](../BETA108.md) para implementación, validaciones y pendientes. Beta108 instalada sobre beta107 el 21 de noviembre; firma, versión, hash instalado y rol HOME verificados. Comparación visual física pendiente. STATE.json distingue este checkpoint de la integración histórica.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

@@ -40,9 +40,9 @@ Las sesiones pausadas válidas pueden conservar sus controles en los demás tema
 
 ## Entrega y límites
 
-APK: `app/build/outputs/apk/beta/app-beta.apk`. Copia estable ignorada por Git: `beta/Aura-0.74.0-beta108.apk`. SHA-256: `6BCAD5936A8F93F0EF589BAFF88E212BCBE9987551CEB0B1235F88A4BD52822D`. Certificado candidato verificado: `729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c`. Esto no equivale a comprobar una instalación actual en el teléfono.
+APK: `app/build/outputs/apk/beta/app-beta.apk`. Copia estable ignorada por Git: `beta/Aura-0.74.0-beta108.apk`. SHA-256: `6BCAD5936A8F93F0EF589BAFF88E212BCBE9987551CEB0B1235F88A4BD52822D`. Certificado candidato verificado: `729385fce1929acc453ec13a8b13f8e6fa4d8a5693713a10c8b2c2cdb202a67c`. El 21 de noviembre se comprobó además el mismo hash en el APK realmente instalado.
 
-El Motorola no está disponible por ADB ni mDNS al revisar esta entrega. Instalación y comparación visual física pendientes. No se afirma haber perfeccionado visualmente las siete familias ni fidelidad exacta a Sony por una revisión de código. La restauración retro/widgets/permisos pendiente de beta106 continúa pendiente; no se han cambiado permisos ni ajustes del teléfono.
+El 21 de noviembre se vinculó el Motorola Edge 50 Ultra autorizado y se comprobó que tenía beta107. Su APK se extrajo a almacenamiento privado fuera de Git y se comparó el certificado con beta108: compatible. Se transfirió el candidato, se verificó su hash remoto y `pm install -r` devolvió Success sin desinstalar. Verificación posterior: `versionCode=108`, `versionName=0.74.0-beta108`, SHA-256 del APK instalado idéntico al candidato y Aura conserva el rol HOME. No se cambiaron ajustes ni permisos. Comparación visual física pendiente. No se afirma haber perfeccionado visualmente las siete familias ni fidelidad exacta a Sony por una revisión de código. La restauración retro/widgets/permisos pendiente de beta106 continúa pendiente; no se han cambiado permisos ni ajustes del teléfono.
 
 GitHub contrastado: base propia beta107 sin cambios remotos nuevos; `main` anuncia beta99 `43b2789`. Esta entrega publica su propia rama sin sobrescribir ni incorporar silenciosamente esa línea.
 

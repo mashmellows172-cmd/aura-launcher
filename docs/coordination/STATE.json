@@ -179,7 +179,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta108 0.74.0/code108 candidate based on beta107 3c2e767. Corrected Sony identity and shared Quick Center across seven theme families with historical materials and preserved manual shapes. Independent review findings fixed. assembleBeta lintBeta passed in 1m37s: 0 errors, 58 warnings, 4 hints. Candidate hash/certificate verified, Motorola absent from ADB/mDNS: installation and physical visual verification pending. See docs/BETA108.md. Prior migration library/widgets/permissions remain pending.",
+  "latestCheckpoint": "Beta108 0.74.0/code108 installed Nov21 over beta107 on authorized Motorola Edge 50 Ultra. Certificate compatibility, transferred and installed APK SHA-256, version and HOME verified. No uninstall, data clearing, permission or settings changes. Source published on codex/beta108-theme-fidelity (implementation c26c093). Physical visual comparison remains pending. See docs/BETA108.md. Prior migration retro library/widgets/permissions remain pending.",
   "checkpointBranch": "codex/beta108-theme-fidelity",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
