@@ -27,3 +27,6 @@ OpenCode está instalado (v2.1.4), pero listar modelos falla al activar compleme
 
 ## Resultado
 Código revisado, compilado y beta109 instalada con versión/hash comprobados. Ampliación por asa probada en Motorola. La verificación física es parcial: imagen real, vídeo y gestos invertidos pendientes porque la sesión actual es genérica y Aura carece de acceso de notificaciones. El permiso no se modificó. Los intentos de agentes locales y su rechazo/no-final se registran sin atribuirles una implementación inexistente.
+
+## Continuación física
+Con autorización específica se activó acceso multimedia y se observó portada real YouTube, ampliación/contracción y apertura desde miniatura. No se certificó cada fotograma ni FPS. Se cambió temporalmente Oculta→Reproductor para probar el origen y queda pendiente restaurar Oculta cuando el usuario vuelva a Aura. No seguir pulsando mientras otra superficie esté activa.

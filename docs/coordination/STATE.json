@@ -194,7 +194,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta109 0.75.0/code109 installed over beta108 Nov21. Signature, transferred+installed SHA-256, version and HOME verified. Direct panel expansion confirmed by physical handle swipe and UI state. Actual artwork travel unverified: generic media data and Aura notification access absent; permission not modified. assembleBeta lintBeta passed in 1m7s: 0 errors, 58 warnings, 4 hints. Delegation outcomes documented, generated local proposals not accepted blindly. See docs/BETA109.md and docs/coordination/BETA109-DELEGATION.md.",
+  "latestCheckpoint": "Beta109 installed, version/hash/HOME verified. After explicit user authorization, MediaAccessService notification access enabled persistently and bound. Real YouTube metadata/artwork observed; handle expansion to 16:9 and return to compact checked. Opened from pinned media mini and inspected settled image. FPS/full interpolation not measured. Temporarily switched mini from PANEL/Oculta to MEDIA/Reproductor for test; restore PANEL remains pending because Aura left foreground and no further input was sent. User was asked to leave Aura visible for restoration. Read docs/BETA109.md before next phone action. Source implementation 32a9ca1 on codex/beta109-direct-media-motion.",
   "checkpointBranch": "codex/beta109-direct-media-motion",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

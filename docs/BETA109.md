@@ -34,6 +34,15 @@ Instalación real en Motorola Edge 50 Ultra: beta108 previa, certificado compara
 
 Revisión física acotada autorizada: Inicio de Aura, apertura del Centro rápido y arrastre del asa hacia arriba. UI y captura confirmaron cambio de Ampliar a Contraer y aparición de Minimizar. La sesión presente muestra estado genérico y no proporciona portada o metadatos. Se confirmó por lectura que el acceso de notificaciones de Aura está ausente; no se activó. Por tanto, el viaje con imagen real, vídeo, inversión rápida y teclado físico siguen pendientes. Capturas y XML se guardan solo en almacenamiento privado fuera de Git. No se inició contenido ni se accionó transporte.
 
-No se ejecutaron ni añadieron suites automáticas. Se conservan preferencias, temas, iconos normales, packs y recursos personales. No se cambian permisos, volumen ni ajustes del Motorola.
+No se ejecutaron ni añadieron suites automáticas. Se conservan temas, iconos normales, packs y recursos personales. Volumen y controles de reproducción no se modificaron. La activación multimedia posterior tuvo autorización específica; la prueba temporal de miniatura y su restauración se detallan abajo.
 
 La compilación y la revisión source no demuestran fluidez física. La continuidad con reproducción real, vídeo, cambios de contenido y gestos rápidos debe distinguirse de una comprobación estática del panel. No se afirman FPS ni ausencia de fallos sin la evidencia correspondiente.
+
+
+## Continuación de la revisión física
+
+El usuario autorizó explícitamente activar de forma persistente «Aura · Reproducción multimedia». Se habilitó el componente existente MediaAccessService y se comprobó su aprobación y vinculación. La primera lectura inmediata de Settings todavía no reflejaba el cambio; una comprobación posterior confirmó tanto el permiso como el servicio conectado. No se cambió volumen ni se pulsaron controles de reproducción.
+
+Después llegaron portada, título y progreso reales de YouTube. Se comprobó ampliación por el asa: slot de imagen de 1104×621 px, proporción 16:9; retorno por gesto a compacto, con retirada de los controles extra. Se probó abrir el reproductor ampliado desde su miniatura de Inicio y se inspeccionó su portada asentada. No se ha medido FPS ni registrado cada fotograma del viaje; los estados inicial/final observados no equivalen a certificar toda la interpolación.
+
+Para probar el origen se cambió temporalmente Miniatura de «Oculta» a «Reproductor». Aura salió del primer plano durante la preparación de la restauración. No se siguió pulsando sobre la otra superficie; se solicitó volver a Aura para restaurar «Oculta». Esta restauración queda pendiente hasta confirmarla. Las evidencias privadas pueden contener avisos del sistema y no se publican en GitHub.
