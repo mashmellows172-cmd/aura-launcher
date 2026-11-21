@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta110-quick-tools`, beta110 sobre beta109 `2510853`. [Ficha BETA110](../BETA110.md). Instalada con firma, versión, hash y HOME comprobados. Calculadora y Gemini probados. Nueva petición elimina la miniatura multimedia y sustituye su restauración pendiente; el reproductor vive dentro del Centro rápido. Linterna requiere permiso runtime y no se encendió en pruebas. Comparación física de perfiles de scroll pendiente.
+Checkpoint actual: `codex/beta111-media-hub`, beta111 sobre beta110 `110a632`. [Ficha BETA111](../BETA111.md). Candidata compilada/lint: hub multimedia único, compacto y expandible por gesto, con carátula reactiva a sesión real y delegación de vídeo a la fuente. Instalación y revisión física pendientes: el servidor ADB local no arrancó, por lo que no se intentó actualizar ni cambiar datos/permisos. Beta110 sigue siendo la última instalación verificada.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

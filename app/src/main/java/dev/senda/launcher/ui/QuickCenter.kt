@@ -522,6 +522,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
     var scrub by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
     var pendingSeek by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
     var seekStatus by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<String?>(null) }
+    var swipeOffset by remember(audio.sessionId, audio.mediaId) { mutableFloatStateOf(0f) }
     val duration = audio.durationMs?.takeIf { it > 0L }
     fun seek(target: Long) {
         val limit = duration ?: return
@@ -561,85 +562,105 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             }
         }
     }
+
+    // The cover is deliberately reactive to the real playback position rather than an infinite
+    // decorative clock. It stays still when playback is paused or the panel is not visible.
+    val playbackFraction by remember(position, duration) {
+        derivedStateOf {
+            val current = position.value ?: return@derivedStateOf 0f
+            val total = duration ?: return@derivedStateOf 0f
+            (current.toDouble() / total).toFloat().coerceIn(0f, 1f)
+        }
+    }
+    val hubGesture = Modifier.pointerInput(expanded, audio.sessionId) {
+        detectVerticalDragGestures(
+            onVerticalDrag = { change, amount ->
+                change.consume()
+                swipeOffset = (swipeOffset + amount).coerceIn(-96f, 96f)
+            },
+            onDragCancel = { swipeOffset = 0f },
+            onDragEnd = {
+                when {
+                    swipeOffset < -32f -> onExpandedChange(true)
+                    swipeOffset > 44f -> onExpandedChange(false)
+                }
+                swipeOffset = 0f
+            },
+        )
+    }
     QuickCard(if (contrast) Modifier else Modifier.sonyGlassRim(mediaColor)) {
-        Column(Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (audio.isYouTubeVideo) {
-            YouTubeMediaHeader(audio, expanded, animated, mediaColor,
-                onExpandedChange = { onExpandedChange(!expanded) }, onOpen = onOpenSource,
-                onCoverPositioned = { coverCoordinates = it; onArtworkPositioned(it) }, secondaryInk = muted, actionInk = ink,
-                expansion = expansion, hideArtwork = hideArtwork) {
-                if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration, mediaColor)
-            }
-        } else         BoxWithConstraints(Modifier.fillMaxWidth()) {
-            val compactCover = when {
-                maxWidth < 290.dp || LocalDensity.current.fontScale >= 1.4f -> 60.dp
-                maxWidth < 340.dp -> 76.dp
-                else -> 88.dp
-            }
-            val expandedCover = (compactCover + 28.dp).coerceAtMost(maxWidth * .38f).coerceAtLeast(compactCover)
-            Row(Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                Box(Modifier.layout { measurable, constraints ->
-                        val side = (compactCover + (expandedCover - compactCover) * expansion.value).roundToPx().coerceAtMost(constraints.maxWidth)
-                        val image = measurable.measure(Constraints.fixed(side, side))
-                        layout(side, side) { image.placeRelative(0, 0) }
-                    }.onGloballyPositioned { coverCoordinates = it; onArtworkPositioned(it) }
-                    .clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable(onClickLabel = if (expanded) "Minimizar reproductor" else "Ampliar reproductor") {
-                        onExpandedChange(!expanded)
-                    }, contentAlignment = Alignment.Center) {
-                    if (cover != null) {
-                        if (!hideArtwork) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    } else MediaCoverFallback(audio, activeQuickTheme, Modifier.fillMaxSize())
-                }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(audio.playbackLabel, color = muted,
-                        style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(audio.title ?: audio.appLabel ?: "Multimedia", style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    audio.artist?.takeIf { it.isNotBlank() }?.let {
-                        Text(it, color = muted, style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            BoxWithConstraints(Modifier.fillMaxWidth().then(hubGesture)) {
+                // A wide compact frame reads as one controllable object. On expansion it becomes
+                // a cinematic 16:9 surface for video, and a richer album frame for audio.
+                val compactRatio = if (audio.isYouTubeVideo) 3.45f else 3.9f
+                val expandedRatio = if (audio.isYouTubeVideo) 16f / 9f else 1.45f
+                val ratio = compactRatio + (expandedRatio - compactRatio) * expansion.value
+                val height = (maxWidth / ratio).coerceAtLeast(76.dp)
+                Box(Modifier.fillMaxWidth().height(height)
+                    .graphicsLayer {
+                        translationY = swipeOffset * .16f
+                        val pull = kotlin.math.abs(swipeOffset) / 96f
+                        scaleX = 1f - pull * .012f
+                        scaleY = 1f - pull * .012f
                     }
-                    if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration, mediaColor)
+                    .onGloballyPositioned { coordinates ->
+                        coverCoordinates = coordinates
+                        onArtworkPositioned(coordinates)
+                    }
+                    .clip(RoundedCornerShape(if (expanded) 22.dp else 16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .drawWithCache {
+                        val lineX = size.width * playbackFraction
+                        val halo = mediaColor.value.copy(alpha = if (audio.isPlaying) .20f else .08f)
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color(0xBD020814))))
+                            if (audio.isPlaying) {
+                                drawCircle(halo, radius = size.minDimension * .34f,
+                                    center = Offset(lineX, size.height * .42f))
+                                drawLine(mediaColor.value.copy(alpha = .58f), Offset(lineX, 0f),
+                                    Offset(lineX, size.height), strokeWidth = 2.dp.toPx())
+                            }
+                        }
+                    }
+                    .semantics {
+                        contentDescription = "${audio.playbackLabel}: ${audio.title ?: audio.appLabel ?: "Multimedia"}. " +
+                            if (expanded) "Desliza abajo para contraer" else "Desliza arriba para mostrar controles"
+                    }) {
+                    if (cover != null && !hideArtwork) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(),
+                        contentScale = if (audio.isYouTubeVideo) ContentScale.Fit else ContentScale.Crop)
+                    else MediaCoverFallback(audio, activeQuickTheme, Modifier.fillMaxSize())
+                    Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text("${audio.appLabel ?: if (audio.isYouTubeVideo) "YouTube" else "Multimedia"} · ${audio.playbackLabel}",
+                                color = Color.White, style = MaterialTheme.typography.labelMedium,
+                                maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(if (expanded) "Desliza ↓" else "Desliza ↑", color = Color.White.copy(alpha = .82f),
+                                style = MaterialTheme.typography.labelSmall)
+                        }
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Column(Modifier.weight(1f)) {
+                                Text(audio.title ?: audio.appLabel ?: "Multimedia", color = Color.White,
+                                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium,
+                                    maxLines = if (expanded) 2 else 1, overflow = TextOverflow.Ellipsis)
+                                audio.artist?.takeIf(String::isNotBlank)?.let {
+                                    Text(it, color = Color.White.copy(alpha = .80f), style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                            }
+                            QuickMediaButton(if (audio.isPlaying) "pause" else "play",
+                                if (audio.isPlaying) "Pausar" else "Reanudar",
+                                if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
+                        }
+                    }
+                    if (duration != null && position.value != null) Box(
+                        Modifier.align(Alignment.BottomCenter).padding(horizontal = 14.dp, vertical = 8.dp)
+                    ) { QuickMediaProgress(position, duration, mediaColor) }
                 }
             }
-        }
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
-                QuickMediaButton(if (audio.isPlaying) "pause" else "play",
-                    if (audio.isPlaying) "Pausar" else "Reanudar",
-                    if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
-                QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
-            }
-            TextButton(onClick = { onExpandedChange(!expanded) },
-                modifier = Modifier.weight(1f).heightIn(min = 48.dp)) { Text(if (expanded) "Contraer" else "Ampliar") }
-        }
-        if (audio.isYouTubeVideo && audio.canSeek && duration != null && audio.positionMs != null) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = {
-                    val baseline = pendingSeek?.first ?: position.value ?: 0L
-                    seek(baseline - 10_000L)
-                }, modifier = Modifier.weight(1f).heightIn(min = 48.dp)
-                    .semantics { contentDescription = "Retroceder vídeo diez segundos" }) { Text("−10 s") }
-                OutlinedButton(onClick = {
-                    val baseline = pendingSeek?.first ?: position.value ?: 0L
-                    seek(baseline + 10_000L)
-                }, modifier = Modifier.weight(1f).heightIn(min = 48.dp)
-                    .semantics { contentDescription = "Adelantar vídeo diez segundos" }) { Text("+10 s") }
-            }
-            val seekFeedback = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
-            if (!expanded && seekFeedback != null) Text(seekFeedback, color = muted,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-        }
-        if (audio.isYouTubeVideo && (!audio.canSeek || duration == null)) {
-            Text(if (audio.isBuffering) "Esperando datos del vídeo…" else "YouTube no comunica búsqueda temporal para esta sesión",
-                color = muted, style = MaterialTheme.typography.bodySmall)
-        }
         if (hasRevealedControls) Box(Modifier.clipToBounds().layout { measurable, constraints ->
             val content = measurable.measure(constraints.copy(minHeight = 0))
             val progress = expansion.value.coerceIn(0f, 1f)
@@ -647,19 +668,15 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         }.graphicsLayer { alpha = expansion.value }
             .then(if (!expanded || !fullyRevealed) Modifier.clearAndSetSemantics {} else Modifier)) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (onOpenDetails != null) {
-                    TextButton(enabled = expanded && fullyRevealed, onClick = {
-                        val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
-                            val p = coordinates.positionOnScreen()
-                            if (p.x.isFinite() && p.y.isFinite()) Rect(p.x, p.y,
-                                p.x + coordinates.size.width, p.y + coordinates.size.height) else null
-                        }
-                        onOpenDetails(origin)
-                    }, modifier = Modifier.heightIn(min = 48.dp)) {
-                        Text("Abrir ficha multimedia")
-                    }
-                }
                 val current = position.value
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
+                    QuickMediaButton(if (audio.isPlaying) "pause" else "play",
+                        if (audio.isPlaying) "Pausar" else "Reanudar",
+                        if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
+                    QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
+                }
                 if (duration != null && current != null) {
                     val actual = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
                     val fraction = scrub ?: actual
@@ -693,7 +710,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     val status = if (pendingSeek != null) "Esperando confirmación…" else seekStatus
                     if (status != null) Text(status, color = muted, style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                    if (audio.canSeek && !audio.isYouTubeVideo) {
+                    if (audio.canSeek) {
                         val baseline = pendingSeek?.first ?: current
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = expanded && fullyRevealed && baseline > 0,
@@ -707,9 +724,17 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                    if (audio.sessionId != null && !audio.isYouTubeVideo) TextButton(onClick = onOpenSource, enabled = expanded && fullyRevealed, modifier = Modifier.weight(1f)) {
-                        Text("Abrir app", color = quickAccent)
+                    if (audio.sessionId != null) TextButton(onClick = onOpenSource, enabled = expanded && fullyRevealed, modifier = Modifier.weight(1f)) {
+                        Text(if (audio.isYouTubeVideo) "Abrir vídeo" else "Abrir app", color = quickAccent)
                     }
+                    if (onOpenDetails != null) TextButton(enabled = expanded && fullyRevealed, onClick = {
+                        val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
+                            val p = coordinates.positionOnScreen()
+                            if (p.x.isFinite() && p.y.isFinite()) Rect(p.x, p.y,
+                                p.x + coordinates.size.width, p.y + coordinates.size.height) else null
+                        }
+                        onOpenDetails(origin)
+                    }) { Text("Ficha", color = quickAccent) }
                     TextButton(onClick = { onExpandedChange(false) }, enabled = expanded && fullyRevealed) { Text("Minimizar", color = quickAccent) }
                 }
             }
