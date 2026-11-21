@@ -271,6 +271,8 @@ fun HomeScreen(
     var showDeviceShortcuts by rememberSaveable { mutableStateOf(false) }
     var quickTarget by rememberSaveable { mutableStateOf(QuickCenterTarget.PANEL) }
     var quickCenterOrigin by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
+    var quickArtworkOrigin by remember { mutableStateOf<MediaArtworkOrigin?>(null) }
+    var miniArtworkBounds by remember { mutableStateOf<androidx.compose.ui.geometry.Rect?>(null) }
     var showStatusDiagnostics by rememberSaveable { mutableStateOf(false) }
     var showAvatar by rememberSaveable { mutableStateOf(false) }
     var showWeatherConnection by rememberSaveable { mutableStateOf(false) }
@@ -676,6 +678,8 @@ fun HomeScreen(
         if (dev.senda.launcher.ui.theme.historicalProfile(state.theme) != null && !searchFocused && query.isBlank()) {
             fun openQuickCenter(origin: androidx.compose.ui.geometry.Rect?, target: QuickCenterTarget) {
                 quickCenterOrigin = origin
+                quickArtworkOrigin = miniArtworkBounds?.takeIf { target == QuickCenterTarget.MEDIA && miniTarget == QuickCenterTarget.MEDIA }
+                    ?.let { MediaArtworkOrigin(it, mediaArtworkKey(state.audioInfo)) }
                 quickTarget = target
                 soundFeedback.play(SoundEvent.MENU)
                 viewModel.refreshHeader()
@@ -686,7 +690,10 @@ fun HomeScreen(
                 if (miniTarget != QuickCenterTarget.PANEL) {
                     QuickCenterMiniature(miniTarget,
                         state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
-                        pinnedQuickNote, quickTimers, timerStore) { openQuickCenter(it, miniTarget) }
+                        pinnedQuickNote, quickTimers, timerStore,
+                        hideArtwork = showQuickCenter && quickTarget == QuickCenterTarget.MEDIA && !sonyMotionReduced && !LocalThemePreview.current &&
+                            state.visualSettings.menuEffect != "NONE" && state.visualSettings.mediaDetailsMotionEnabled,
+                        onArtworkPositioned = { miniArtworkBounds = it }) { openQuickCenter(it, miniTarget) }
                 }
                 QuickCenterButton(selectionTint.animated.takeIf { contextualAccent }) { openQuickCenter(it, QuickCenterTarget.PANEL) }
             }
@@ -715,6 +722,7 @@ fun HomeScreen(
                 event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
                 reduced = sonyMotionReduced,
                 origin = quickCenterOrigin,
+                artworkOrigin = quickArtworkOrigin,
                 appAccent = selectionTint.settled.value.takeIf { contextualAccent },
                 target = quickTarget,
                 miniTarget = miniTarget,

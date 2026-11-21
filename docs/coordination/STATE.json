@@ -132,6 +132,21 @@
       ],
       "dependsOn": [],
       "result": "No concrete material findings, including final StatusCenter/active-theme caller delta. Physical appearance/motion not verified."
+    },
+    {
+      "id": "BETA109-DIRECT-MEDIA",
+      "owner": "codex + local-agent-attempts + internal-agents",
+      "status": "INSTALLED_PARTIALLY_VALIDATED",
+      "branch": "codex/beta109-direct-media-motion",
+      "baseCommit": "8a6777e",
+      "contract": "docs/superpowers/plans/2026-11-21-direct-media-motion.md",
+      "report": "docs/BETA109.md",
+      "delegation": "docs/coordination/BETA109-DELEGATION.md",
+      "scope": [
+        "direct anchored panel drag",
+        "single artwork overlay",
+        "partial-control input gating"
+      ]
     }
   ],
   "budget": {
@@ -179,8 +194,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta108 0.74.0/code108 installed Nov21 over beta107 on authorized Motorola Edge 50 Ultra. Certificate compatibility, transferred and installed APK SHA-256, version and HOME verified. No uninstall, data clearing, permission or settings changes. Source published on codex/beta108-theme-fidelity (implementation c26c093). Physical visual comparison remains pending. See docs/BETA108.md. Prior migration retro library/widgets/permissions remain pending.",
-  "checkpointBranch": "codex/beta108-theme-fidelity",
+  "latestCheckpoint": "Beta109 0.75.0/code109 installed over beta108 Nov21. Signature, transferred+installed SHA-256, version and HOME verified. Direct panel expansion confirmed by physical handle swipe and UI state. Actual artwork travel unverified: generic media data and Aura notification access absent; permission not modified. assembleBeta lintBeta passed in 1m7s: 0 errors, 58 warnings, 4 hints. Delegation outcomes documented, generated local proposals not accepted blindly. See docs/BETA109.md and docs/coordination/BETA109-DELEGATION.md.",
+  "checkpointBranch": "codex/beta109-direct-media-motion",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,

@@ -29,6 +29,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import kotlin.math.roundToInt
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -161,6 +169,7 @@ internal fun QuickCenter(
     onCalendar: () -> Unit,
     onOpenPlayer: () -> Unit,
     onOpenMediaSource: () -> Unit,
+    artworkOrigin: MediaArtworkOrigin? = null,
 ) {
     val contrast = LocalAppearance.current.highContrast
     val preview = LocalThemePreview.current
@@ -171,7 +180,6 @@ internal fun QuickCenter(
     val panel = colors.background
     val ink = if (contrast) colors.onSurface else quickInk
     val motion = rememberPs4PanelMotion(reduced)
-    val close = { motion.close(reduced, onDismiss) }
     var expanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.MEDIA) }
     var timersExpanded by rememberSaveable { mutableStateOf(target == QuickCenterTarget.TIMERS) }
     var showNote by rememberSaveable { mutableStateOf(target == QuickCenterTarget.NOTE) }
@@ -180,28 +188,40 @@ internal fun QuickCenter(
     val mediaColor = atmosphere.color
     val mediaExpanded = expanded && hasMedia
     val animated = motion.effect != "NONE" && LocalMotionSettings.current.mediaDetailsMotionEnabled
-    val latestClose by rememberUpdatedState(close)
     val scope = rememberCoroutineScope()
-    val cardsScroll = rememberScrollState()
-    var dragOffset by remember { mutableFloatStateOf(0f) }
-    var settling by remember { mutableStateOf<Job?>(null) }
-    fun settle() {
-        settling?.cancel()
-        if (!animated) dragOffset = 0f
-        else settling = scope.launch {
-            animate(dragOffset, 0f, animationSpec = tween(180, easing = Ps4Motion.easing)) { value, _ ->
-                dragOffset = value
-            }
-        }
+    val density = LocalDensity.current
+    val panelDrag = remember(scope, density.density) {
+        QuickPanelDragState(scope, with(density) { 180.dp.toPx() }, with(density) { 240.dp.toPx() },
+            with(density) { 1000.dp.toPx() }, mediaExpanded)
     }
-    LaunchedEffect(hasMedia) { if (!hasMedia) expanded = false }
+    val close = { panelDrag.interrupt(); motion.close(reduced, onDismiss) }
+    val latestDismiss by rememberUpdatedState(onDismiss)
+    val cardsScroll = rememberScrollState()
+    val expansion = if (animated) panelDrag.expansion else rememberUpdatedState(if (mediaExpanded) 1f else 0f)
+    val coverBounds = remember { mutableStateOf<Rect?>(null) }
+    val visibleCoverBounds = remember { mutableStateOf<Rect?>(null) }
+    val dialogOrigin = remember { mutableStateOf(Offset.Zero) }
+    val artworkProgress = remember(panelDrag, motion, animated) { derivedStateOf {
+        motion.progress.value * if (animated) (1f - panelDrag.offset.value.coerceAtLeast(0f) / panelDrag.dismissDistance).coerceIn(0f, 1f) else 1f
+    } }
+    val overlayArtwork = animated && !contrast && audio?.artwork?.let { !it.isRecycled } == true
+    fun positionArtwork(coordinates: LayoutCoordinates) {
+        if (!coordinates.isAttached) { coverBounds.value = null; visibleCoverBounds.value = null; return }
+        val point = coordinates.positionOnScreen()
+        coverBounds.value = Rect(point, Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat()))
+        visibleCoverBounds.value = coordinates.boundsInWindow().translate(point - coordinates.positionInWindow())
+    }
+    LaunchedEffect(hasMedia) {
+        if (!hasMedia) { expanded = false; panelDrag.expand(false, animated) }
+    }
     fun expandMedia(value: Boolean) {
-        expanded = value
-        if (value) timersExpanded = false
+        expanded = value && hasMedia
+        panelDrag.expand(expanded, animated)
+        if (expanded) timersExpanded = false
     }
     fun expandTimers(value: Boolean) {
         timersExpanded = value
-        if (value) expanded = false
+        if (value) expandMedia(false)
     }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val time = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
@@ -226,9 +246,9 @@ internal fun QuickCenter(
         onDismissRequest = close,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
-        BoxWithConstraints(Modifier.fillMaxSize()) {
+        BoxWithConstraints(Modifier.fillMaxSize().onGloballyPositioned { dialogOrigin.value = it.positionOnScreen() }) {
             Box(Modifier.matchParentSize().graphicsLayer {
-                alpha = motion.progress.value * (1f - (dragOffset.coerceAtLeast(0f) / size.height.coerceAtLeast(1f)) * .65f)
+                alpha = motion.progress.value * (1f - (if (animated) panelDrag.offset.value.coerceAtLeast(0f) / panelDrag.dismissDistance else 0f) * .65f)
             }
                 .background(Color.Black.copy(alpha = .52f))
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null,
@@ -245,12 +265,13 @@ internal fun QuickCenter(
                 modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding()
                     .widthIn(max = 560.dp).fillMaxWidth().heightIn(max = sheetMax)
                     .onGloballyPositioned { coordinates ->
+                        panelDrag.dismissDistance = coordinates.size.height.toFloat()
                         val point = coordinates.positionOnScreen()
                         destination = if (point.x.isFinite() && point.y.isFinite()) Rect(point,
                             Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
                     }
                     .ps4PanelTransform(motion.progress.asState(), motion.effect, origin = { origin }, destination = { destination })
-                    .graphicsLayer { if (animated) translationY = dragOffset }
+                    .graphicsLayer { if (animated) translationY = panelDrag.offset.value.coerceAtLeast(0f) }
                     .semantics { paneTitle = "Centro rápido" },
                 shape = shape,
                 color = panel,
@@ -270,35 +291,22 @@ internal fun QuickCenter(
                     .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                        .pointerInput(hasMedia, mediaExpanded, animated) {
-                            val expandDistance = 44.dp.toPx()
-                            val closeDistance = (if (mediaExpanded) 138.dp else 78.dp).toPx()
-                            var distance = 0f
+                        .pointerInput(panelDrag, hasMedia, animated) {
+                            val tracker = VelocityTracker()
+                            var trackedDistance = 0f
                             detectVerticalDragGestures(
-                                onDragStart = {
-                                    settling?.cancel()
-                                    distance = 0f
-                                    dragOffset = 0f
-                                },
+                                onDragStart = { tracker.resetTracking(); trackedDistance = 0f; panelDrag.begin() },
                                 onVerticalDrag = { change, delta ->
                                     change.consume()
-                                    distance += delta
-                                    if (animated && !motion.closing) {
-                                        val down = distance.coerceAtLeast(0f)
-                                        dragOffset = if (distance < 0f) (distance * .35f).coerceAtLeast(-24.dp.toPx())
-                                        else (down * .68f).coerceAtMost(180.dp.toPx())
-                                    }
+                                    trackedDistance += delta
+                                    tracker.addPosition(change.uptimeMillis, Offset(0f, trackedDistance))
+                                    if (!motion.closing) panelDrag.dragBy(delta, hasMedia)
                                 },
-                                onDragCancel = { if (!motion.closing) settle() },
+                                onDragCancel = { if (!motion.closing) panelDrag.cancel(animated, hasMedia) { expanded = it } },
                                 onDragEnd = {
-                                    if (!motion.closing) {
-                                        when {
-                                            distance >= closeDistance -> latestClose()
-                                            distance >= expandDistance && mediaExpanded -> { expanded = false; settle() }
-                                            distance <= -expandDistance && hasMedia -> { expandMedia(true); settle() }
-                                            else -> settle()
-                                        }
-                                    }
+                                    if (!motion.closing) panelDrag.release(tracker.calculateVelocity().y, hasMedia, animated,
+                                        onExpanded = { value -> expanded = value; if (value) timersExpanded = false },
+                                        onDismiss = { latestDismiss() })
                                 },
                             )
                         }
@@ -388,8 +396,9 @@ internal fun QuickCenter(
                                 "Música" -> if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
                                     onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
                                     onOpenMediaDetails?.let { open ->
-                                        { origin -> motion.close(reduced) { onDismiss(); open(origin) } }
-                                    })
+                                        { origin -> panelDrag.interrupt(); motion.close(reduced) { onDismiss(); open(origin) } }
+                                    }, expansion = expansion, hideArtwork = overlayArtwork,
+                                    onArtworkPositioned = ::positionArtwork)
                                 else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
                                 "Temporizadores" -> if (!preview && timerStore != null) {
                                     QuickTimerCard(timers, timerStore, timersExpanded, ::expandTimers)
@@ -420,6 +429,8 @@ internal fun QuickCenter(
             }
             }
         }
+        if (overlayArtwork) QuickArtworkOverlay(audio, artworkOrigin, coverBounds,
+            dialogOrigin, artworkProgress, visibleTarget = visibleCoverBounds)
     }
     }
 }
@@ -494,12 +505,15 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
     mediaColor: State<Color>, onExpandedChange: (Boolean) -> Unit, onPlayback: () -> Unit,
     onPrevious: () -> Unit, onNext: () -> Unit, onSeek: (Long) -> Unit, onOpenSource: () -> Unit,
     onOpenDetails: ((Rect?) -> Unit)?,
+    expansion: State<Float>, hideArtwork: Boolean, onArtworkPositioned: (LayoutCoordinates) -> Unit,
 ) {
     val contrast = LocalAppearance.current.highContrast
     val ink = if (contrast) MaterialTheme.colorScheme.onSurface else quickInk
     val muted = if (contrast) MaterialTheme.colorScheme.onSurfaceVariant else quickMuted
     val track = MaterialTheme.colorScheme.surfaceVariant
     val cover = audio.artwork?.takeUnless { it.isRecycled }
+    val fullyRevealed by remember(expansion) { derivedStateOf { expansion.value >= .95f } }
+    val hasRevealedControls by remember(expansion) { derivedStateOf { expansion.value > .001f } }
     var coverCoordinates by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
     var scrub by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Float?>(null) }
     var pendingSeek by remember(audio.sessionId, audio.mediaId, audio.title, audio.durationMs) { mutableStateOf<Pair<Long, Long>?>(null) }
@@ -549,7 +563,8 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
         if (audio.isYouTubeVideo) {
             YouTubeMediaHeader(audio, expanded, animated, mediaColor,
                 onExpandedChange = { onExpandedChange(!expanded) }, onOpen = onOpenSource,
-                onCoverPositioned = { coverCoordinates = it }, secondaryInk = muted, actionInk = ink) {
+                onCoverPositioned = { coverCoordinates = it; onArtworkPositioned(it) }, secondaryInk = muted, actionInk = ink,
+                expansion = expansion, hideArtwork = hideArtwork) {
                 if (duration != null && audio.positionMs != null) QuickMediaProgress(position, duration, mediaColor)
             }
         } else         BoxWithConstraints(Modifier.fillMaxWidth()) {
@@ -558,22 +573,21 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 maxWidth < 340.dp -> 76.dp
                 else -> 88.dp
             }
-            val coverSize = animateDpAsState(
-                if (expanded) (compactCover + 28.dp).coerceAtMost(maxWidth * .38f) else compactCover,
-                tween(if (animated) 240 else 0, easing = Ps4Motion.easing), label = "quick-media-cover")
+            val expandedCover = (compactCover + 28.dp).coerceAtMost(maxWidth * .38f).coerceAtLeast(compactCover)
             Row(Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                 Box(Modifier.layout { measurable, constraints ->
-                        val side = coverSize.value.roundToPx().coerceAtMost(constraints.maxWidth)
+                        val side = (compactCover + (expandedCover - compactCover) * expansion.value).roundToPx().coerceAtMost(constraints.maxWidth)
                         val image = measurable.measure(Constraints.fixed(side, side))
                         layout(side, side) { image.placeRelative(0, 0) }
-                    }.onGloballyPositioned { coverCoordinates = it }
+                    }.onGloballyPositioned { coverCoordinates = it; onArtworkPositioned(it) }
                     .clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(onClickLabel = if (expanded) "Minimizar reproductor" else "Ampliar reproductor") {
                         onExpandedChange(!expanded)
                     }, contentAlignment = Alignment.Center) {
-                    if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    else MediaCoverFallback(audio, activeQuickTheme, Modifier.fillMaxSize())
+                    if (cover != null) {
+                        if (!hideArtwork) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    } else MediaCoverFallback(audio, activeQuickTheme, Modifier.fillMaxSize())
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(audio.playbackLabel, color = muted,
@@ -622,16 +636,15 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             Text(if (audio.isBuffering) "Esperando datos del vídeo…" else "YouTube no comunica búsqueda temporal para esta sesión",
                 color = muted, style = MaterialTheme.typography.bodySmall)
         }
-        AnimatedVisibility(
-            visible = expanded,
-            enter = if (animated) expandVertically(tween(220, easing = Ps4Motion.easing), expandFrom = Alignment.Top) +
-                fadeIn(tween(160)) else androidx.compose.animation.EnterTransition.None,
-            exit = if (animated) shrinkVertically(tween(180, easing = Ps4Motion.easing), shrinkTowards = Alignment.Top) +
-                fadeOut(tween(110)) else androidx.compose.animation.ExitTransition.None,
-        ) {
+        if (hasRevealedControls) Box(Modifier.clipToBounds().layout { measurable, constraints ->
+            val content = measurable.measure(constraints.copy(minHeight = 0))
+            val progress = expansion.value.coerceIn(0f, 1f)
+            layout(content.width, (content.height * progress).roundToInt()) { content.placeRelative(0, 0) }
+        }.graphicsLayer { alpha = expansion.value }
+            .then(if (!expanded || !fullyRevealed) Modifier.clearAndSetSemantics {} else Modifier)) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (onOpenDetails != null) {
-                    TextButton(onClick = {
+                    TextButton(enabled = expanded && fullyRevealed, onClick = {
                         val origin = coverCoordinates?.takeIf { it.isAttached }?.let { coordinates ->
                             val p = coordinates.positionOnScreen()
                             if (p.x.isFinite() && p.y.isFinite()) Rect(p.x, p.y,
@@ -658,9 +671,9 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                                 style = MaterialTheme.typography.labelMedium)
                         }
                     }
-                    if (audio.canSeek) Slider(value = fraction, onValueChange = { scrub = it },
+                    if (audio.canSeek) Slider(value = fraction, enabled = expanded && fullyRevealed, onValueChange = { scrub = it },
                         onValueChangeFinished = {
-                            scrub?.let {
+                            if (expanded && fullyRevealed) scrub?.let {
                                 seek((it.toDouble() * duration).toLong())
                             }
                             scrub = null
@@ -679,10 +692,10 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                     if (audio.canSeek && !audio.isYouTubeVideo) {
                         val baseline = pendingSeek?.first ?: current
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = baseline > 0,
+                            OutlinedButton(onClick = { seek(baseline - 10_000L) }, enabled = expanded && fullyRevealed && baseline > 0,
                                 modifier = Modifier.weight(1f).heightIn(min = 48.dp)
                                     .semantics { contentDescription = "Retroceder 10 segundos" }) { Text("−10 s") }
-                            OutlinedButton(onClick = { seek(baseline + 30_000L) }, enabled = baseline < duration,
+                            OutlinedButton(onClick = { seek(baseline + 30_000L) }, enabled = expanded && fullyRevealed && baseline < duration,
                                 modifier = Modifier.weight(1f).heightIn(min = 48.dp)
                                     .semantics { contentDescription = "Adelantar 30 segundos" }) { Text("+30 s") }
                         }
@@ -690,10 +703,10 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                    if (audio.sessionId != null && !audio.isYouTubeVideo) TextButton(onClick = onOpenSource, modifier = Modifier.weight(1f)) {
+                    if (audio.sessionId != null && !audio.isYouTubeVideo) TextButton(onClick = onOpenSource, enabled = expanded && fullyRevealed, modifier = Modifier.weight(1f)) {
                         Text("Abrir app", color = quickAccent)
                     }
-                    TextButton(onClick = { onExpandedChange(false) }) { Text("Minimizar", color = quickAccent) }
+                    TextButton(onClick = { onExpandedChange(false) }, enabled = expanded && fullyRevealed) { Text("Minimizar", color = quickAccent) }
                 }
             }
         }

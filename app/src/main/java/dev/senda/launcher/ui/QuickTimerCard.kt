@@ -8,6 +8,8 @@ import android.os.SystemClock
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -81,6 +83,8 @@ internal fun QuickCenterMiniature(
     note: String,
     timers: List<QuickTimer>,
     store: QuickTimers,
+    hideArtwork: Boolean = false,
+    onArtworkPositioned: (Rect?) -> Unit = {},
     onOpen: (Rect?) -> Unit,
 ) {
     val timer = if (target == QuickCenterTarget.TIMERS) timers.nextTimer() else null
@@ -123,9 +127,13 @@ internal fun QuickCenterMiniature(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        if (cover != null) Image(cover.asImageBitmap(), null,
-            Modifier.size(36.dp).clip(RoundedCornerShape(6.dp)), contentScale = ContentScale.Crop)
-        else ThemeSystemIcon(when (target) {
+        if (cover != null) Box(Modifier.size(36.dp).onGloballyPositioned { coordinates ->
+            val point = coordinates.positionOnScreen()
+            onArtworkPositioned(Rect(point, Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())))
+        }.clip(RoundedCornerShape(6.dp)).background(if (audio.isYouTubeVideo) Color(0xFF050912) else MaterialTheme.colorScheme.surfaceVariant)) {
+            if (!hideArtwork) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(),
+                contentScale = if (audio.isYouTubeVideo) ContentScale.Fit else ContentScale.Crop)
+        } else ThemeSystemIcon(when (target) {
             QuickCenterTarget.MEDIA -> "play"
             QuickCenterTarget.NOTE -> "edit"
             else -> "clock"

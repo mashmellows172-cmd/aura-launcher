@@ -47,10 +47,12 @@ internal fun YouTubeMediaHeader(
     onCoverPositioned: (LayoutCoordinates) -> Unit = {},
     secondaryInk: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     actionInk: Color = MaterialTheme.colorScheme.primary,
+    expansion: State<Float>? = null,
+    hideArtwork: Boolean = false,
     progress: @Composable () -> Unit = {},
 ) {
-    val ratio = animateFloatAsState(if (expanded) 16f / 9f else 2.6f,
-        tween(if (animated) 240 else 0, easing = Ps4Motion.easing), label = "youtube-thumbnail")
+    val ratio = if (expansion == null) animateFloatAsState(if (expanded) 16f / 9f else 2.6f,
+        tween(if (animated) 240 else 0, easing = Ps4Motion.easing), label = "youtube-thumbnail") else null
     val cover = audio.artwork?.takeUnless { it.isRecycled }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -61,7 +63,7 @@ internal fun YouTubeMediaHeader(
         }
         Box(Modifier.fillMaxWidth().layout { measurable, constraints ->
                 val width = constraints.maxWidth
-                val height = constraints.constrainHeight((width / ratio.value).roundToInt())
+                val height = constraints.constrainHeight((width / (expansion?.let { 2.6f + (16f / 9f - 2.6f) * it.value } ?: ratio!!.value)).roundToInt())
                 val thumbnail = measurable.measure(Constraints.fixed(width, height))
                 layout(width, height) { thumbnail.placeRelative(0, 0) }
             }.onGloballyPositioned(onCoverPositioned)
@@ -71,9 +73,9 @@ internal fun YouTubeMediaHeader(
             .semantics { contentDescription = "Miniatura de ${audio.title ?: "YouTube"}" },
             contentAlignment = Alignment.Center,
         ) {
-            if (cover != null) Image(cover.asImageBitmap(), null,
-                Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
-            else CompositionLocalProvider(LocalContentColor provides Color.White) {
+            if (cover != null) {
+                if (!hideArtwork) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
+            } else CompositionLocalProvider(LocalContentColor provides Color.White) {
                 ThemeSystemIcon("play", LauncherTheme.PS4, Modifier.size(42.dp))
             }
         }
