@@ -245,7 +245,7 @@ private fun QuickShortcutToggle(label: String, checked: Boolean, onChange: (Bool
 private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabled: Boolean = true,
     compact: Boolean = false, active: Boolean? = null, detail: String? = null, onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = quickPanelShape()
     TextButton(onClick = onClick, enabled = enabled, shape = shape, contentPadding = PaddingValues(6.dp),
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         modifier = modifier.heightIn(min = if (compact) 48.dp else 64.dp).ps4ControlGlass(shape, translucent = active != true)
@@ -254,7 +254,7 @@ private fun QuickShortcut(icon: String, label: String, modifier: Modifier, enabl
                 else if (active != null) stateDescription = if (active) "Encendida" else "Apagada"
             }) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            ThemeSystemIcon(icon, LauncherTheme.PS4)
+            ThemeSystemIcon(icon, activeQuickTheme)
             Text(label, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelSmall)
             if (detail != null) Text(detail, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelSmall)
         }

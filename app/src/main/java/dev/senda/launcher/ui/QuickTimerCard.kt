@@ -85,7 +85,7 @@ internal fun QuickCenterMiniature(
 ) {
     val timer = if (target == QuickCenterTarget.TIMERS) timers.nextTimer() else null
     val now by rememberTimerClock(timer?.takeIf(QuickTimer::running)?.deadline, store)
-    val shape = RoundedCornerShape(14.dp)
+    val shape = quickPanelShape()
     var bounds by remember { mutableStateOf<Rect?>(null) }
     val media = target == QuickCenterTarget.MEDIA
     val cover = if (media) audio.artwork?.takeUnless { it.isRecycled } else null
@@ -129,7 +129,7 @@ internal fun QuickCenterMiniature(
             QuickCenterTarget.MEDIA -> "play"
             QuickCenterTarget.NOTE -> "edit"
             else -> "clock"
-        }, LauncherTheme.PS4, Modifier.size(28.dp))
+        }, activeQuickTheme, Modifier.size(28.dp))
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(subtitle, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -181,7 +181,7 @@ internal fun QuickTimerCard(
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ThemeSystemIcon("clock", LauncherTheme.PS4, Modifier.size(25.dp))
+                ThemeSystemIcon("clock", activeQuickTheme, Modifier.size(25.dp))
                 Column(Modifier.weight(1f)) {
                     Text("Temporizadores", style = MaterialTheme.typography.titleMedium)
                     if (!expanded) {

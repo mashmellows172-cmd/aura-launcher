@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: rama `codex/beta107-playstation-identities`, beta107 sobre beta106 `f887378`. Consultar [BETA107](../BETA107.md) para implementación, validaciones, instalación y pendientes; STATE.json distingue este checkpoint de la rama de integración histórica. Beta106 fue instalada y restaurada el 18 de noviembre; no asumir que una beta posterior está instalada sin comprobar su ficha.
+Checkpoint actual: rama `codex/beta108-theme-fidelity`, candidata beta108 sobre beta107 `3c2e767`. Consultar [BETA108](../BETA108.md) para implementación, validaciones y pendientes. Android confirmó la instalación anterior de beta107, pero se perdió la conexión antes de verificar versión/hash; beta108 aún no está instalada. STATE.json distingue este checkpoint de la integración histórica.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

@@ -61,7 +61,7 @@ internal fun ThemedSectionHeading(title: String, count: Int, theme: LauncherThem
             fontWeight = if(console) when (LocalPs4Palette.current) {
                 dev.senda.launcher.data.Ps4Palette.CLASSIC -> FontWeight.Light
                 dev.senda.launcher.data.Ps4Palette.MIDNIGHT -> FontWeight.Medium
-                dev.senda.launcher.data.Ps4Palette.WHITE -> FontWeight.Bold
+                dev.senda.launcher.data.Ps4Palette.WHITE -> FontWeight.Light
             } else if (profile?.material == HistoricalMaterial.FLOW) FontWeight.Normal else FontWeight.SemiBold)
         Text(count.toString(), Modifier.background(if(console)Color.Transparent else MaterialTheme.colorScheme.surfaceVariant, profile.chromeShape())
             .padding(horizontal = 9.dp, vertical = 3.dp), style = MaterialTheme.typography.labelMedium,

@@ -46,8 +46,8 @@ enum class IconTreatment(val label: String) { AUTO("Temáticos"), ORIGINAL("Norm
 // Stable IDs retain existing preferences, Room snapshots and portable backups.
 enum class Ps4Palette(val label: String, val description: String) {
     CLASSIC("Clásica · PS4/XMB", "Ondas azules, placas nítidas y tipografía ligera."),
-    MIDNIGHT("Next-Gen · PS5", "Grafito, luz dorada y tarjetas con profundidad."),
-    WHITE("Portátil · Vita/Play", "Cian eléctrico, esferas brillantes y detalles táctiles."),
+    MIDNIGHT("Next-Gen · PS5", "Paneles compactos, foco blanco y atmósfera azul grafito."),
+    WHITE("Portátil · Vita/Play", "Azul LiveArea, placas brillantes y tipografía ligera."),
 }
 
 data class ThemeFinish(val accent: AccentChoice = AccentChoice.DEFAULT, val shape: ShapeChoice = ShapeChoice.DEFAULT, val icons: IconTreatment = IconTreatment.AUTO, val wallpaperDim: Int = 64, val ps4Palette: Ps4Palette = Ps4Palette.CLASSIC, val ps4AccentIntensity: Int = 100)

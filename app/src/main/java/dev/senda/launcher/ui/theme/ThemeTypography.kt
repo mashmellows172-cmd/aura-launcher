@@ -44,10 +44,10 @@ private val ps5Type = ps4Type.copy(
     titleMedium = ps4Type.titleMedium.copy(fontWeight = FontWeight.Medium, fontSize = 19.sp),
     labelLarge = ps4Type.labelLarge.copy(letterSpacing = .4.sp),
 )
-private val portableType = themedTypography(xperiaFont, FontWeight.Normal).copy(
-    headlineLarge = ps4Type.headlineLarge.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Normal),
-    titleMedium = ps4Type.titleMedium.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Bold),
-    bodyLarge = ps4Type.bodyLarge.copy(fontFamily = xperiaFont, fontWeight = FontWeight.Normal),
+private val portableType = themedTypography(ps4Font, FontWeight.Light).copy(
+    headlineLarge = ps4Type.headlineLarge.copy(fontWeight = FontWeight.Light, fontSize = 26.sp),
+    titleMedium = ps4Type.titleMedium.copy(fontWeight = FontWeight.Normal, fontSize = 18.sp),
+    bodyLarge = ps4Type.bodyLarge.copy(fontWeight = FontWeight.Normal, fontSize = 17.sp),
 )
 
 internal fun ps4Typography(palette: dev.senda.launcher.data.Ps4Palette): Typography = when (palette) {

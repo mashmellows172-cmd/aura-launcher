@@ -419,7 +419,7 @@ fun HomeScreen(
     } else null
     val mediaAvailable = state.headerSettings.showAudioWidget && state.audioInfo.isPlaying
     val hasPs4Session = state.theme == LauncherTheme.PS4 && state.audioInfo.sessionId != null && !state.audioInfo.generic
-    val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && hasPs4Session)
+    val mediaControlsAvailable = mediaAvailable || (state.headerSettings.showAudioWidget && state.audioInfo.sessionId != null && !state.audioInfo.generic)
     LaunchedEffect(mediaControlsAvailable) {
         if (!mediaControlsAvailable) showMediaControls = false
     }
@@ -673,7 +673,7 @@ fun HomeScreen(
             }
         }
         }
-        if (state.theme == LauncherTheme.PS4 && !searchFocused && query.isBlank()) {
+        if (dev.senda.launcher.ui.theme.historicalProfile(state.theme) != null && !searchFocused && query.isBlank()) {
             fun openQuickCenter(origin: androidx.compose.ui.geometry.Rect?, target: QuickCenterTarget) {
                 quickCenterOrigin = origin
                 quickTarget = target
@@ -682,12 +682,14 @@ fun HomeScreen(
                 timerStore.expire()
                 showQuickCenter = true
             }
-            if (miniTarget != QuickCenterTarget.PANEL) {
-                QuickCenterMiniature(miniTarget,
-                    state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
-                    pinnedQuickNote, quickTimers, timerStore) { openQuickCenter(it, miniTarget) }
+            ThemedQuickCenter {
+                if (miniTarget != QuickCenterTarget.PANEL) {
+                    QuickCenterMiniature(miniTarget,
+                        state.audioInfo.takeIf { mediaControlsAvailable } ?: dev.senda.launcher.data.ActiveAudioInfo(),
+                        pinnedQuickNote, quickTimers, timerStore) { openQuickCenter(it, miniTarget) }
+                }
+                QuickCenterButton(selectionTint.animated.takeIf { contextualAccent }) { openQuickCenter(it, QuickCenterTarget.PANEL) }
             }
-            QuickCenterButton(selectionTint.animated.takeIf { contextualAccent }) { openQuickCenter(it, QuickCenterTarget.PANEL) }
         }
         }
         if (flyLetter && query.isBlank() && !searchFocused) {
@@ -704,65 +706,67 @@ fun HomeScreen(
 
     } // Motion controller provider
 
-    if (showQuickCenter && state.theme == LauncherTheme.PS4) {
+    if (showQuickCenter && dev.senda.launcher.ui.theme.historicalProfile(state.theme) != null) {
         val audio = state.audioInfo
-        QuickCenter(
-            audio = audio.takeIf { mediaControlsAvailable },
-            alarmAt = state.headerInfo.alarmAt,
-            event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
-            reduced = sonyMotionReduced,
-            origin = quickCenterOrigin,
-            appAccent = selectionTint.settled.value.takeIf { contextualAccent },
-            target = quickTarget,
-            miniTarget = miniTarget,
-            onMiniTargetChange = {
-                miniTarget = it
-                quickPrefs.edit().putString("miniature", it.name).apply()
-            },
-            pinnedNote = pinnedQuickNote,
-            onSavePinnedNote = {
-                pinnedQuickNote = it
-                quickPrefs.edit().putString("pinned_note", it).apply()
-            },
-            timers = quickTimers,
-            timerStore = timerStore,
-            onDismiss = { showQuickCenter = false },
-            showMusic = state.headerSettings.showAudioWidget,
-            decorationConstrained = decorationQuality,
-            onOpenMediaDetails = if (hasPs4Session) ({ origin ->
-                mediaArtworkOrigin = origin
-                showMediaControls = true
-            }) else null,
-            onPrevious = { viewModel.previousAudio(audio.sessionId) },
-            onSeek = { viewModel.seekAudio(audio.sessionId, it) },
-            onPlayback = {
-                if (audio.isPlaying) viewModel.pauseAudio(audio.sessionId)
-                else viewModel.resumeAudio(audio.sessionId)
-            },
-            onNext = { viewModel.nextAudio(audio.sessionId) },
-            onOpenMediaSource = {
-                showQuickCenter = false
-                viewModel.openAudioApp(audio.sessionId)
-            },
-            onAlarm = { showQuickCenter = false; openNextAlarm(context) },
-            onEvent = { showQuickCenter = false; openAgenda(context, it) },
-            onCalendar = { showQuickCenter = false; openCalendar(context) },
-            onOpenPlayer = {
-                showQuickCenter = false
-                if (audio.sessionId != null) viewModel.openAudioApp(audio.sessionId)
-                else {
-                    searchInput = androidx.compose.ui.text.input.TextFieldValue("música")
-                    scope.launch {
-                        androidx.compose.runtime.withFrameNanos { }
-                        searchFocus.requestFocus()
-                        keyboard?.show()
+        ThemedQuickCenter {
+            QuickCenter(
+                audio = audio.takeIf { mediaControlsAvailable },
+                alarmAt = state.headerInfo.alarmAt,
+                event = state.headerInfo.event.takeIf { state.headerSettings.showCalendar && state.headerInfo.calendarPermission },
+                reduced = sonyMotionReduced,
+                origin = quickCenterOrigin,
+                appAccent = selectionTint.settled.value.takeIf { contextualAccent },
+                target = quickTarget,
+                miniTarget = miniTarget,
+                onMiniTargetChange = {
+                    miniTarget = it
+                    quickPrefs.edit().putString("miniature", it.name).apply()
+                },
+                pinnedNote = pinnedQuickNote,
+                onSavePinnedNote = {
+                    pinnedQuickNote = it
+                    quickPrefs.edit().putString("pinned_note", it).apply()
+                },
+                timers = quickTimers,
+                timerStore = timerStore,
+                onDismiss = { showQuickCenter = false },
+                showMusic = state.headerSettings.showAudioWidget,
+                decorationConstrained = decorationQuality,
+                onOpenMediaDetails = if (hasPs4Session) ({ origin ->
+                    mediaArtworkOrigin = origin
+                    showMediaControls = true
+                }) else null,
+                onPrevious = { viewModel.previousAudio(audio.sessionId) },
+                onSeek = { viewModel.seekAudio(audio.sessionId, it) },
+                onPlayback = {
+                    if (audio.isPlaying) viewModel.pauseAudio(audio.sessionId)
+                    else viewModel.resumeAudio(audio.sessionId)
+                },
+                onNext = { viewModel.nextAudio(audio.sessionId) },
+                onOpenMediaSource = {
+                    showQuickCenter = false
+                    viewModel.openAudioApp(audio.sessionId)
+                },
+                onAlarm = { showQuickCenter = false; openNextAlarm(context) },
+                onEvent = { showQuickCenter = false; openAgenda(context, it) },
+                onCalendar = { showQuickCenter = false; openCalendar(context) },
+                onOpenPlayer = {
+                    showQuickCenter = false
+                    if (audio.sessionId != null) viewModel.openAudioApp(audio.sessionId)
+                    else {
+                        searchInput = androidx.compose.ui.text.input.TextFieldValue("música")
+                        scope.launch {
+                            androidx.compose.runtime.withFrameNanos { }
+                            searchFocus.requestFocus()
+                            keyboard?.show()
+                        }
                     }
-                }
-            },
-        )
+                },
+            )
+        } // ThemedQuickCenter
     }
 
-    if (showDeviceShortcuts && state.theme == LauncherTheme.PS4) {
+    if (showDeviceShortcuts && dev.senda.launcher.ui.theme.historicalProfile(state.theme) != null) {
         AuraAlertDialog(
             onDismissRequest = { showDeviceShortcuts = false },
             title = { Text("Accesos del dispositivo") },

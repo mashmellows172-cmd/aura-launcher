@@ -82,8 +82,10 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-private val quickInk = Color(0xFFF4F8FF)
-private val quickMuted = Color(0xFFCDDEF5)
+private val quickInk: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurface
+private val quickMuted: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
 internal val quickBlue: Color
     @Composable get() = MaterialTheme.colorScheme.primary
 private val quickEdge: Color
@@ -102,6 +104,7 @@ internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false
     return background(Brush.verticalGradient(listOf(
         lerp(MaterialTheme.colorScheme.surfaceVariant, accent, .05f).copy(alpha = opacity), MaterialTheme.colorScheme.surface.copy(alpha = opacity),
     )), shape).border(1.dp, lerp(quickEdge, accent, .38f).copy(alpha = if (translucent) .65f else 1f), shape)
+        .quickSurfaceDetail()
 }
 
 @Composable
@@ -115,16 +118,16 @@ internal fun QuickCenterButton(tint: State<Color>?, onClick: (Rect?) -> Unit) {
                 val point = coordinates.positionOnScreen()
                 bounds = if (point.x.isFinite() && point.y.isFinite()) Rect(point,
                     Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())) else null
-            }.clip(CircleShape).ps4ControlGlass(CircleShape)
+            }.clip(quickPanelShape()).ps4ControlGlass(quickPanelShape())
             .then(if (tint != null && !contrast) Modifier.ps4SelectionGlow(tint) else Modifier),
-        shape = CircleShape,
+        shape = quickPanelShape(),
         border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else quickBlue),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
             contentColor = if (contrast) MaterialTheme.colorScheme.onBackground else quickInk,
         ),
     ) {
-        ThemeSystemIcon("layers", LauncherTheme.PS4)
+        ThemeSystemIcon("layers", activeQuickTheme)
         Spacer(Modifier.width(10.dp))
         Text("Centro rápido", style = MaterialTheme.typography.titleMedium)
     }
@@ -235,7 +238,7 @@ internal fun QuickCenter(
             val availableHeight = maxHeight - imeBottom
             val compact = availableHeight < 490.dp || density.fontScale >= 1.35f
             val sheetMax = (maxHeight - 16.dp).coerceAtLeast(120.dp)
-            val cornerRadius = ps4Design(LocalPs4Palette.current).panelRadius.dp
+            val cornerRadius = quickPanelRadius()
             val shape = RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
             CompositionLocalProvider(LocalQuickAccent provides accent) {
             Surface(
@@ -254,11 +257,13 @@ internal fun QuickCenter(
                 contentColor = ink,
             ) {
                 Box {
-                SonyGlassBackdrop(audio?.artwork?.takeIf { showMusic }, mediaColor, reduced,
-                    decorationConstrained ?: LocalDecorationConstrained.current)
+                if (activeQuickTheme == LauncherTheme.PS4 || activeQuickTheme == LauncherTheme.XPERIA) {
+                    SonyGlassBackdrop(audio?.artwork?.takeIf { showMusic }, mediaColor, reduced,
+                        decorationConstrained ?: LocalDecorationConstrained.current)
+                }
                 val surfaceFinish = if (contrast) Modifier else Modifier
                     .background(Brush.verticalGradient(listOf(colors.surfaceVariant.copy(alpha = .35f), panel.copy(alpha = .88f), panel)))
-                    .quickCenterCornerLight(accent, cornerRadius, intensity)
+                    .quickCenterCornerLight(accent, cornerRadius, intensity).quickSurfaceDetail()
                 Column(Modifier.border(BorderStroke(1.dp, if (contrast) edge else quickEdge), shape)
                     .then(surfaceFinish)
                     .navigationBarsPadding().imePadding()
@@ -312,7 +317,7 @@ internal fun QuickCenter(
                     }
                     Row(Modifier.fillMaxWidth().padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        ThemeSystemIcon("layers", LauncherTheme.PS4, Modifier.size(26.dp))
+                        ThemeSystemIcon("layers", activeQuickTheme, Modifier.size(26.dp))
                         Text("Centro rápido", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                         if (hasMedia && !compact) {
                             TextButton(onClick = { expandMedia(!mediaExpanded) },
@@ -322,7 +327,7 @@ internal fun QuickCenter(
                                 }) { Text(if (mediaExpanded) "Contraer" else "Ampliar") }
                         }
                         IconButton(onClick = close, modifier = Modifier.semantics { contentDescription = "Cerrar Centro rápido" }) {
-                            ThemeSystemIcon("close", LauncherTheme.PS4)
+                            ThemeSystemIcon("close", activeQuickTheme)
                         }
                     }
                     val configuration: @Composable () -> Unit = {
@@ -454,7 +459,7 @@ private fun Modifier.quickCenterCornerLight(accent: Color, cornerRadius: android
 
 @Composable
 internal fun QuickCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val shape = RoundedCornerShape(ps4Design(LocalPs4Palette.current).panelRadius.dp)
+    val shape = quickPanelShape()
     val cardContrast = if (LocalAppearance.current.highContrast) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape) else Modifier
     Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).then(cardContrast).then(modifier).padding(12.dp)) {
         content()
@@ -470,7 +475,7 @@ private fun QuickActionCard(icon: String, label: String, value: String, action: 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(Modifier.size(46.dp).background(if (contrast) MaterialTheme.colorScheme.surfaceVariant
                 else MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center) { ThemeSystemIcon(icon, LauncherTheme.PS4, Modifier.size(26.dp)) }
+                contentAlignment = Alignment.Center) { ThemeSystemIcon(icon, activeQuickTheme, Modifier.size(26.dp)) }
             Column(Modifier.weight(1f)) {
                 Text(label, color = muted, style = MaterialTheme.typography.bodyMedium)
                 Text(value, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -568,7 +573,7 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
                         onExpandedChange(!expanded)
                     }, contentAlignment = Alignment.Center) {
                     if (cover != null) Image(cover.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    else MediaCoverFallback(audio, LauncherTheme.PS4, Modifier.fillMaxSize())
+                    else MediaCoverFallback(audio, activeQuickTheme, Modifier.fillMaxSize())
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(audio.playbackLabel, color = muted,
@@ -727,7 +732,7 @@ private fun quickMediaAccent(color: Color, fallback: Color, trackColor: Color): 
     return when {
         contrast(color) >= 3f -> color
         contrast(fallback) >= 3f -> fallback
-        else -> Color.White
+        else -> if (contrast(Color.Black) >= contrast(Color.White)) Color.Black else Color.White
     }
 }
 

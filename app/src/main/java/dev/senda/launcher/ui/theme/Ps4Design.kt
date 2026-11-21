@@ -17,8 +17,8 @@ internal data class Ps4Design(
 )
 
 private val classicDesign = Ps4Design(10, 2, IconHolder.BEVELED, 280, 0)
-private val nextGenDesign = Ps4Design(24, 14, IconHolder.ROUNDED, 240, 3)
-private val portableDesign = Ps4Design(28, 100, IconHolder.CIRCLE, 260, 1)
+private val nextGenDesign = Ps4Design(10, 8, IconHolder.ROUNDED, 260, 2)
+private val portableDesign = Ps4Design(16, 100, IconHolder.CIRCLE, 300, 1)
 
 internal fun ps4Design(palette: Ps4Palette): Ps4Design = when (palette) {
     Ps4Palette.CLASSIC -> classicDesign

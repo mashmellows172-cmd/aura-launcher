@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-20",
+  "updated": "2026-11-21",
   "integrationBranch": "codex/beta100-agent-integration",
   "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
   "coordinator": "codex",
@@ -179,8 +179,8 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta107 0.73.0/code107 published on codex/beta107-playstation-identities (implementation 222114b). assembleBeta lintBeta passed: 0 errors, 58 warnings, 4 hints. Original signing certificate and transferred APK hash verified; pm install -r returned Success after 480.705s transfer. ADB disconnected before post-install version/hash and physical checks; reconnect timed out Nov20. No uninstall or phone settings changed. See docs/BETA107.md. Beta106 retro library import and widget/permission setup remain pending.",
-  "checkpointBranch": "codex/beta107-playstation-identities",
+  "latestCheckpoint": "Beta108 0.74.0/code108 candidate based on beta107 3c2e767. Corrected Sony identity and shared Quick Center across seven theme families with historical materials and preserved manual shapes. Independent review findings fixed. assembleBeta lintBeta passed in 1m37s: 0 errors, 58 warnings, 4 hints. Candidate hash/certificate verified, Motorola absent from ADB/mDNS: installation and physical visual verification pending. See docs/BETA108.md. Prior migration library/widgets/permissions remain pending.",
+  "checkpointBranch": "codex/beta108-theme-fidelity",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
     "reservePercent": 10,

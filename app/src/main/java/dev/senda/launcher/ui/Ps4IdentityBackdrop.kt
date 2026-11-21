@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import dev.senda.launcher.data.Ps4Palette
 import dev.senda.launcher.ui.theme.Ps4PaletteColors
@@ -25,8 +24,6 @@ internal fun Ps4IdentityBackdrop(
     Box(modifier.drawWithCache {
         val w = size.width
         val h = size.height
-        val hairline = Stroke(.7.dp.toPx())
-        val controlStroke = Stroke(1.dp.toPx())
         val readingShade = Brush.horizontalGradient(
             0f to palette.bottom.copy(alpha = .70f),
             .52f to palette.bottom.copy(alpha = .48f),
@@ -42,7 +39,7 @@ internal fun Ps4IdentityBackdrop(
             val y = ((index * 61 + 7) % 103) / 102f
             IdentityParticle(Offset(w * (.20f + x * .88f), h * y),
                 (.45f + index % 5 * .28f).dp.toPx(),
-                if (index % 4 == 0) palette.ink else palette.accent,
+                if (index % 5 == 0) Color(0xFFD5C7A3) else palette.ink,
                 .12f + index % 4 * .055f)
         }
         val shaft = Brush.horizontalGradient(listOf(Color.Transparent,
@@ -54,48 +51,22 @@ internal fun Ps4IdentityBackdrop(
             cubicTo(w * .97f, h * .65f, w * .74f, h * .30f, w * .89f, -h * .08f)
             close()
         }
-        val orbs = listOf(
-            Triple(.96f, .24f, .31f), Triple(.77f, .52f, .19f),
-            Triple(1.02f, .88f, .39f), Triple(.45f, .91f, .12f),
-            Triple(.80f, .10f, .065f),
-        ).map { (x, y, radius) ->
-            val center = Offset(w * x, h * y)
-            val r = w * radius
-            IdentityOrb(center, r, Brush.radialGradient(
-                0f to palette.ink.copy(alpha = .32f),
-                .19f to palette.accent.copy(alpha = .27f),
-                .58f to palette.raised.copy(alpha = .38f),
-                1f to palette.bottom.copy(alpha = .72f),
-                center = center - Offset(r * .34f, r * .40f), radius = r * 1.5f,
-            ), Brush.radialGradient(
-                listOf(palette.ink.copy(alpha = .50f), Color.Transparent),
-                center = center - Offset(r * .36f, r * .40f), radius = r * 1.35f,
-            ))
+        // Vita's blue flow and glass bands belong behind content; bubbles belong to app plates.
+        val bands = List(3) { index ->
+            Path().apply {
+                val y = h * (.28f + index * .25f)
+                moveTo(-w * .12f, y)
+                cubicTo(w * .25f, y + h * .18f, w * .64f, y - h * .14f, w * 1.12f, y + h * .10f)
+                lineTo(w * 1.12f, y + h * .15f)
+                cubicTo(w * .63f, y - h * .09f, w * .25f, y + h * .21f, -w * .12f, y + h * .04f)
+                close()
+            }
         }
-        // A quiet, non-interactive handheld control cluster stays in the right margin.
-        val controlCenter = Offset(w * .91f, h * .70f)
-        val controlRadius = w * .027f
-        val controlGap = w * .047f
-        val buttons = listOf(Offset(0f, -controlGap), Offset(controlGap, 0f),
-            Offset(0f, controlGap), Offset(-controlGap, 0f)).map { controlCenter + it }
-        val padCenter = Offset(w * .91f, h * .80f)
-        val padArm = w * .035f
-        val padNeck = w * .012f
-        val pad = Path().apply {
-            moveTo(padCenter.x - padNeck, padCenter.y - padArm)
-            lineTo(padCenter.x + padNeck, padCenter.y - padArm)
-            lineTo(padCenter.x + padNeck, padCenter.y - padNeck)
-            lineTo(padCenter.x + padArm, padCenter.y - padNeck)
-            lineTo(padCenter.x + padArm, padCenter.y + padNeck)
-            lineTo(padCenter.x + padNeck, padCenter.y + padNeck)
-            lineTo(padCenter.x + padNeck, padCenter.y + padArm)
-            lineTo(padCenter.x - padNeck, padCenter.y + padArm)
-            lineTo(padCenter.x - padNeck, padCenter.y + padNeck)
-            lineTo(padCenter.x - padArm, padCenter.y + padNeck)
-            lineTo(padCenter.x - padArm, padCenter.y - padNeck)
-            lineTo(padCenter.x - padNeck, padCenter.y - padNeck)
-            close()
-        }
+        val bandFill = Brush.linearGradient(listOf(Color.Transparent,
+            palette.accent.copy(alpha = .15f), Color.White.copy(alpha = .09f), Color.Transparent),
+            start = Offset(w, 0f), end = Offset(0f, h))
+        val horizon = Brush.verticalGradient(listOf(Color.Transparent,
+            palette.accent.copy(alpha = .08f), Color.Transparent), startY = h * .35f, endY = h * .85f)
         onDrawBehind {
             if (strength <= 0f) return@onDrawBehind
             drawRect(light, alpha = strength)
@@ -106,23 +77,9 @@ internal fun Ps4IdentityBackdrop(
                         alpha = particle.alpha * strength)
                 }
             } else {
-                orbs.forEachIndexed { index, orb ->
-                    if (!constrained.value || index == 0 || index == 2) {
-                        drawCircle(orb.fill, orb.radius, orb.center, alpha = strength * .84f)
-                        if (!constrained.value) drawCircle(orb.edge, orb.radius, orb.center,
-                            alpha = strength * .65f, style = hairline)
-                    }
-                }
-                if (!constrained.value) {
-                    buttons.forEach { center ->
-                        drawCircle(palette.bottom, controlRadius, center, alpha = .34f * strength)
-                        drawCircle(palette.accent, controlRadius, center,
-                            alpha = .22f * strength, style = controlStroke)
-                    }
-                    drawPath(pad, palette.bottom, alpha = .34f * strength)
-                    drawPath(pad, palette.accent, alpha = .22f * strength, style = controlStroke)
-                    drawCircle(palette.accent, w * .034f, Offset(w * .91f, h * .87f),
-                        alpha = .17f * strength, style = controlStroke)
+                drawRect(horizon, alpha = strength)
+                bands.forEachIndexed { index, path ->
+                    if (!constrained.value || index == 1) drawPath(path, bandFill, alpha = strength)
                 }
             }
             drawRect(readingShade)
@@ -131,4 +88,3 @@ internal fun Ps4IdentityBackdrop(
 }
 
 private data class IdentityParticle(val center: Offset, val radius: Float, val color: Color, val alpha: Float)
-private data class IdentityOrb(val center: Offset, val radius: Float, val fill: Brush, val edge: Brush)

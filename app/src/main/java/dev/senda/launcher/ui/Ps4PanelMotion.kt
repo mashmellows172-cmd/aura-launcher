@@ -101,7 +101,7 @@ internal fun rememberPs4PanelMotion(reduced: Boolean): Ps4PanelMotion {
     val visual = LocalMotionSettings.current
     val design = dev.senda.launcher.ui.theme.ps4Design(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
     val console = dev.senda.launcher.ui.theme.LocalRetroStyle.current.theme == dev.senda.launcher.data.LauncherTheme.PS4
-    val duration = if (console) (visual.durationMs * design.motionMillis / 280).coerceIn(150, 800) else visual.durationMs
+    val duration = if (console) (visual.durationMs * design.motionMillis / 280).coerceIn(150, 800) else (visual.durationMs * (dev.senda.launcher.ui.theme.LocalHistoricalProfile.current?.durationMs ?: 280) / 280).coerceIn(150, 800)
     val still = reduced || visual.reduceMotion || visual.menuEffect == "NONE" ||
         LocalAppearance.current.highContrast || LocalThemePreview.current ||
         LocalSystemPowerSaving.current || !ValueAnimator.areAnimatorsEnabled()
