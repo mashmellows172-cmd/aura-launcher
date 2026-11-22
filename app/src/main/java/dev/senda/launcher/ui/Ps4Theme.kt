@@ -40,6 +40,7 @@ import dev.senda.launcher.data.LaunchableApp
 import dev.senda.launcher.data.LauncherTheme
 import dev.senda.launcher.data.LocalAppearance
 import dev.senda.launcher.ui.theme.rememberHistoricalPhase
+import dev.senda.launcher.ui.theme.ps4PaletteColors
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -79,6 +80,7 @@ internal fun Modifier.ps4TravelFrame(
     val arrival = if (quiet) null else remember(list) { Animatable(0f) }
     val emphasis = intensity.coerceIn(10, 100) / 100f
     val colors = MaterialTheme.colorScheme
+    val focusTokens = ps4PaletteColors(dev.senda.launcher.ui.theme.LocalPs4Palette.current)
     val frameRadius = dev.senda.launcher.ui.theme.ps4Design(dev.senda.launcher.ui.theme.LocalPs4Palette.current).panelRadius
     if (arrival != null) LaunchedEffect(list, focus) {
         snapshotFlow { if (list.isScrollInProgress) null else focus.value }.collectLatest { settledKey ->
@@ -105,18 +107,18 @@ internal fun Modifier.ps4TravelFrame(
                 val frameSize = Size(size.width - 2 * inset, item.size - 2 * inset)
                 val moving = list.isScrollInProgress
                 val flash = if (moving) 0f else arrival?.value ?: 0f
-                val accent = tint?.value ?: colors.primary
+                val accent = tint?.value ?: focusTokens.focusRim
                 if (landing && !quiet) {
                     if (moving) {
                         drawRoundRect(accent.copy(alpha = .14f), topLeft, frameSize, corner, style = outer)
                     } else {
                         drawRoundRect(accent.copy(alpha = .11f * flash * emphasis), topLeft, frameSize, corner)
-                        drawRoundRect(accent.copy(alpha = (.06f + .28f * flash) * emphasis),
+                        drawRoundRect(accent.copy(alpha = (focusTokens.focusHaloAlpha * .25f + .28f * flash) * emphasis),
                             topLeft, frameSize, corner, style = halo)
                         drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
                     }
                 } else {
-                    drawRoundRect(accent.copy(alpha = .12f + .18f * flash), topLeft, frameSize, corner, style = halo)
+                    drawRoundRect(accent.copy(alpha = focusTokens.focusHaloAlpha * .5f + .18f * flash), topLeft, frameSize, corner, style = halo)
                     drawRoundRect(accent, topLeft, frameSize, corner, style = outer)
                 }
             }

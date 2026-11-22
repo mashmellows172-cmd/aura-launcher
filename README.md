@@ -1,5 +1,7 @@
 # Aura Launcher
 
+Beta114 candidata el 22 de noviembre de 2026. 0.80.0-beta114, código 114. Foco Sony común para lista y Centro rápido, fondo de profundidad sin animación perpetua, materiales PS4/PS5/Vita diferenciados y jerarquía tipográfica refinada. `assembleBeta lintBeta` correcto (`BUILD SUCCESSFUL`, 3m; lint XML sin incidencias). Sin instalación ni revisión física. [Ficha](docs/BETA114.md).
+
 Beta113 candidata el 21 de noviembre de 2026. 0.79.0-beta113, código 113. El Centro rápido prioriza temporalmente reproducción, alarma próxima o agenda sin sobrescribir el orden personal, y muestra una escena diaria sólo cuando aporta información. Accesos conserva Linterna, Calculadora y Gemini; el reproductor muestra sólo capacidades públicas reales de MediaSession. Compilación/lint correctos (`BUILD SUCCESSFUL`, 3m47s; lint XML sin incidencias). Sin instalación ni revisión física en esta entrega. [Ficha](docs/BETA113.md).
 
 Beta112 instalada el 21 de noviembre de 2026. 0.78.0-beta112, código 112. Centro rápido reducido a una fila contextual: tocar selecciona; deslizar arriba revela sólo Música, Temporizadores, Alarma, Agenda, Nota o Accesos; deslizar abajo contrae. Herramientas bajo Accesos y YouTube con búsqueda −10/+10 cuando la sesión la permite. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Actualización sin desinstalar, firma, versión, hash y Aura como Inicio verificados; revisión táctil pendiente. [Ficha](docs/BETA112.md).

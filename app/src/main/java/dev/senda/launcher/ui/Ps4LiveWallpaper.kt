@@ -90,7 +90,9 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
     }
     Box(modifier.drawWithCache {
         val base=Brush.linearGradient(listOf(palette.top,middle.value,palette.bottom),end=Offset(size.width*.8f,size.height))
-        onDrawBehind { drawRect(base) }
+        val depth = Brush.radialGradient(listOf(targetPalette.accent.copy(alpha = (if (identity == dev.senda.launcher.data.Ps4Palette.MIDNIGHT) .08f else .16f) * decorationStrength), Color.Transparent),
+            center = Offset(size.width * .78f, size.height * .16f), radius = size.height.coerceAtLeast(1f) * .86f)
+        onDrawBehind { drawRect(base); drawRect(depth) }
     }) {
     val backdropModifier = Modifier.matchParentSize().graphicsLayer {
         // Animate a retained display list rather than rebuilding ribbon geometry per frame.
@@ -142,11 +144,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
                 }
                 drawPath(ribbon.crest,edge,alpha=(if (band == 0) .38f else .56f)*decorationStrength,style=hairline)
             }
-            // Fixed motes remain on the retained layer; no particle jobs.
+            // Motes are drawn only as a response to focus/touch; no idle particle loop.
             repeat(if (constrained.value) 0 else 14) { index ->
                 val x=size.width*(.05f+index*.069f+sin(time+index)*.014f+drift*.008f)
                 val y=size.height*(.08f+index*.064f)+sin(time+index*.7f)*size.height*.016f
-                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=.11f*decorationStrength)
+                val response = (scene?.light ?: 0f).coerceIn(0f, 1f)
+                drawCircle(Color(0xFFC2EDFF),radius=(.6f+index%3*.22f).dp.toPx(),center=Offset(x,y),alpha=(.025f + response * .085f)*decorationStrength)
             }
             drawRect(foregroundShade)
         }

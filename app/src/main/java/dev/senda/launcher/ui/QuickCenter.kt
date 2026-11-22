@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import dev.senda.launcher.ui.theme.LocalPs4Palette
 import dev.senda.launcher.ui.theme.ps4Design
+import dev.senda.launcher.ui.theme.ps4PaletteColors
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -176,15 +177,21 @@ internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false
     if (LocalAppearance.current.highContrast) return this
     val opacity = if (translucent) .66f else 1f
     val accent = quickAccent
+    val console = activeQuickTheme == LauncherTheme.PS4
+    val tokens = ps4PaletteColors(LocalPs4Palette.current)
+    val focus = if (console) tokens.focusRim else accent
     return background(Brush.verticalGradient(listOf(
-        lerp(MaterialTheme.colorScheme.surfaceVariant, accent, .05f).copy(alpha = opacity), MaterialTheme.colorScheme.surface.copy(alpha = opacity),
-    )), shape).border(1.dp, lerp(quickEdge, accent, .38f).copy(alpha = if (translucent) .65f else 1f), shape)
-        .quickSurfaceDetail()
+        lerp(MaterialTheme.colorScheme.surfaceVariant, focus, if (console) .10f else .05f).copy(alpha = opacity * if (console) tokens.panelAlpha else 1f),
+        MaterialTheme.colorScheme.surface.copy(alpha = opacity),
+    )), shape).border(1.dp, lerp(quickEdge, focus, if (console) .52f else .38f).copy(alpha = if (translucent) .65f else 1f), shape)
+        .then(if (console) Modifier.ps4Material() else Modifier).quickSurfaceDetail()
 }
 
 @Composable
 internal fun QuickCenterButton(tint: State<Color>?, onClick: (Rect?) -> Unit) {
     val contrast = LocalAppearance.current.highContrast
+    val console = activeQuickTheme == LauncherTheme.PS4
+    val focusBorder = if (console) ps4PaletteColors(LocalPs4Palette.current).focusRim else quickBlue
     var bounds by remember { mutableStateOf<Rect?>(null) }
     OutlinedButton(
         onClick = { onClick(bounds) },
@@ -196,7 +203,7 @@ internal fun QuickCenterButton(tint: State<Color>?, onClick: (Rect?) -> Unit) {
             }.clip(quickPanelShape()).ps4ControlGlass(quickPanelShape())
             .then(if (tint != null && !contrast) Modifier.ps4SelectionGlow(tint) else Modifier),
         shape = quickPanelShape(),
-        border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else quickBlue),
+        border = BorderStroke(1.5.dp, if (contrast) MaterialTheme.colorScheme.outline else focusBorder),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
             contentColor = if (contrast) MaterialTheme.colorScheme.onBackground else quickInk,

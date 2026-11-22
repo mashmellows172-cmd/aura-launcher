@@ -211,6 +211,24 @@
       ],
       "dependsOn": ["BETA112-PROGRESSIVE-RAIL"],
       "validation": "assembleBeta lintBeta passed; no device installation or physical validation in this delivery."
+    },
+    {
+      "id": "BETA114-SONY-VISUAL-SYSTEM",
+      "owner": "codex + antigravity-review",
+      "status": "COMPILED_PENDING_INSTALL_AND_PHYSICAL_VALIDATION",
+      "branch": "codex/beta111-media-hub",
+      "baseCommit": "fcca68d",
+      "contract": "docs/superpowers/plans/2026-11-22-sony-visual-system.md",
+      "report": "docs/BETA114.md",
+      "scope": [
+        "shared palette-aware focus source",
+        "retained depth background",
+        "Classic/PS5/Vita materials and typography",
+        "selection-to-panel visual continuity"
+      ],
+      "dependsOn": ["BETA113-ADAPTIVE-CENTER"],
+      "review": "Antigravity performed a read-only visual architecture review; coordinator integrated accepted direction.",
+      "validation": "assembleBeta lintBeta passed; no device installation, performance measurement or physical visual validation in this delivery."
     }
   ],
   "budget": {
@@ -258,7 +276,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta113 0.79.0/code113 candidate on Nov21. Quick Center transiently prioritizes playback, near alarm or near agenda without writing over persisted user order; the compact daily scene is omitted when empty. Accesos retains Flashlight, Calculator and Gemini. Expanded media exposes only MediaSession-announced controls and capabilities. assembleBeta lintBeta BUILD SUCCESSFUL in 3m47s; lint XML has no issues. APK SHA-256 6BE3F1A29ED84C0D2D0279872B03AFE9D25C61CF42071DB2E5D8A2DE38AFB8D9. Not installed or physically validated. See docs/BETA113.md.",
+  "latestCheckpoint": "Beta114 0.80.0/code114 candidate on Nov22. Sony visual system unifies focus across list/panel/Quick Center; PS4 background gets retained depth and interaction-only motes; Classic, PS5 and Vita materials/typography are distinct while Aura stays vertical. Antigravity supplied read-only visual review and two P2 fixes were applied. Final assembleBeta lintBeta BUILD SUCCESSFUL in 1m22s; lint XML has no issues. APK SHA-256 C210C8319A7ED0794265951E8D7D6A0228DF4CADBD51E32D3E7AEE27D2325410. Not installed or physically validated. See docs/BETA114.md.",
   "checkpointBranch": "codex/beta111-media-hub",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

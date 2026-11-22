@@ -125,22 +125,25 @@ private fun sampleAppAccent(bitmap: Bitmap, fallback: Color): Color {
 internal fun Modifier.ps4SelectionGlow(tint: State<Color>): Modifier {
     val intensity = LocalPs4AccentIntensity.current
     if (intensity == 0f) return this
+    val palette = dev.senda.launcher.ui.theme.LocalPs4Palette.current
+    val tokens = dev.senda.launcher.ui.theme.ps4PaletteColors(palette)
+    val focusTint = if (palette == dev.senda.launcher.data.Ps4Palette.MIDNIGHT) tokens.focusRim else tint.value
     return drawWithCache {
         if (size.width <= 0f || size.height <= 0f) return@drawWithCache onDrawBehind { }
         val center = Offset(size.width * .57f, size.height * .49f)
         val radiusY = size.height * .46f
         val stretch = size.width * .42f / radiusY
         val wash = Brush.radialGradient(
-            0f to Color.White.copy(alpha = .42f * intensity),
-            .48f to Color.White.copy(alpha = .22f * intensity),
-            .78f to Color.White.copy(alpha = .06f * intensity),
+            0f to tokens.focusRim.copy(alpha = (.42f + tokens.focusHaloAlpha) * intensity),
+            .48f to tokens.focusRim.copy(alpha = .22f * intensity),
+            .78f to tokens.focusRim.copy(alpha = .06f * intensity),
             1f to Color.White.copy(alpha = 0f),
             center = center,
             radius = radiusY,
         )
-        val edge = Brush.horizontalGradient(listOf(Color.Transparent, Color.White.copy(alpha = .85f * intensity), Color.Transparent))
+        val edge = Brush.horizontalGradient(listOf(Color.Transparent, tokens.focusRim.copy(alpha = .85f * intensity), Color.Transparent))
         onDrawBehind {
-            val filter = ColorFilter.tint(tint.value, BlendMode.SrcIn)
+            val filter = ColorFilter.tint(focusTint, BlendMode.SrcIn)
             scale(scaleX = stretch, scaleY = 1f, pivot = center) {
                 drawCircle(wash, radius = radiusY, center = center, colorFilter = filter)
             }

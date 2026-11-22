@@ -1,5 +1,7 @@
 # Historial de actualizaciones de Aura Launcher
 
+Beta114 candidata el 22 de noviembre de 2026. 0.80.0-beta114, código 114. Sistema visual Sony unificado: foco compartido, fondo PS4 profundo sin ciclo en reposo, materiales claramente distintos para Clásica/PS5/Vita y jerarquía Noto ajustada. Revisión visual de Antigravity aplicada; se conserva la lista vertical Aura. Compilación/lint: `BUILD SUCCESSFUL` en 3m, lint XML sin incidencias. No instalada ni revisada físicamente. [Ficha](docs/BETA114.md).
+
 Beta113 candidata el 21 de noviembre de 2026. 0.79.0-beta113, código 113. Centro rápido adaptativo: escena diaria compacta y prioridad temporal para reproducción, alarma o agenda sin alterar el orden guardado. Accesos conserva Linterna, Calculadora y Gemini; multimedia enseña únicamente capacidades públicas de la sesión. Compilación/lint: `BUILD SUCCESSFUL` en 3m47s, lint XML sin incidencias. No instalada ni revisada físicamente. [Ficha](docs/BETA113.md).
 
 Beta112 instalada el 21 de noviembre de 2026. 0.78.0-beta112, código 112. Centro rápido condensado en una fila de cápsulas contextuales y despliegue localizado por gesto arriba/abajo; herramientas trasladadas a Accesos. Música se crea bajo demanda, conservando controles públicos de sesión; YouTube usa ±10 s cuando la sesión permite buscar. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Actualizada sin desinstalar; firma, versión, hash y Aura como Inicio verificados en Motorola Edge 50 Ultra. Revisión táctil pendiente. [Ficha](docs/BETA112.md).
