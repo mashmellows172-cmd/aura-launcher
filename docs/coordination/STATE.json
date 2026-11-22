@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-21",
-  "integrationBranch": "codex/beta100-agent-integration",
-  "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
+  "updated": "2026-11-22",
+  "integrationBranch": "codex/beta113-themed-choreography",
+  "implementationBase": "5e7f20e",
   "coordinator": "codex",
   "transport": "github-asynchronous",
   "liveAgentConnectionsVerified": false,
@@ -192,8 +192,40 @@
         "deferred media and quick tools",
         "YouTube symmetric seek controls"
       ],
-      "dependsOn": ["BETA111-MEDIA-HUB"],
+      "dependsOn": [
+        "BETA111-MEDIA-HUB"
+      ],
       "review": "Independent source review identified two P1 and six P2 issues; all were addressed before final compile/lint."
+    },
+    {
+      "id": "MOTION-113",
+      "owner": "codex-motion113",
+      "status": "IN_PROGRESS",
+      "branch": "codex/beta113-themed-choreography",
+      "baseCommit": "5e7f20e",
+      "scope": [
+        "Shared theme surface choreography, search and A-Z"
+      ]
+    },
+    {
+      "id": "WEATHER-113",
+      "owner": "codex-weather113",
+      "status": "IN_PROGRESS",
+      "branch": "codex/beta113-themed-choreography",
+      "baseCommit": "5e7f20e",
+      "scope": [
+        "Finite integrated weather scenes"
+      ]
+    },
+    {
+      "id": "CAPSULE-113",
+      "owner": "codex-capsule113",
+      "status": "IN_PROGRESS",
+      "branch": "codex/beta113-themed-choreography",
+      "baseCommit": "5e7f20e",
+      "scope": [
+        "Capsule and detail panel continuity"
+      ]
     }
   ],
   "budget": {
@@ -250,5 +282,6 @@
     "observedCodexWeeklyPercent": 45,
     "date": "2026-11-11",
     "dailyQuotaAvailable": false
-  }
+  },
+  "currentSessionDelegation": "Three in-process delegated agents, bounded local Ollama review. External Claude/OpenCode sessions not verified."
 }
