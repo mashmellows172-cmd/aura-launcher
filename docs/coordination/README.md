@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta111-media-hub`, beta112 sobre beta111 `07957f9`. [Ficha BETA112](../BETA112.md). Rail contextual de una fila, revelado localizado por cápsula y herramientas bajo Accesos. YouTube conserva controles de sesión y adopta ±10 s cuando permite búsqueda. Instalado sobre beta110 sin desinstalar; certificado, versión, hash y HOME verificados. Revisión física de gestos pendiente.
+Checkpoint actual: `codex/beta111-media-hub`, beta113 candidata sobre beta112. [Ficha BETA113](../BETA113.md). Rail contextual de una fila con prioridad transitoria por reproducción, alarma o agenda; la escena diaria no se muestra vacía. Herramientas bajo Accesos mantienen Linterna, Calculadora y Gemini; multimedia se limita a capacidades reales de MediaSession. Compilación/lint correctos, instalación y revisión física de beta113 pendientes.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

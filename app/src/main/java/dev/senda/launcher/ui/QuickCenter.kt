@@ -110,6 +110,66 @@ private fun quickTargetRailCard(target: QuickCenterTarget) = when (target) {
     QuickCenterTarget.PANEL -> "Accesos"
 }
 
+private data class QuickCenterScene(
+    val icon: String,
+    val title: String,
+    val detail: String,
+    val target: String,
+)
+
+/**
+ * Presentation-only ordering for the rail. The user-owned persisted order is kept as the
+ * tie-breaker and is never modified by this function.
+ */
+private fun contextualRailOrder(
+    configured: List<String>,
+    pinned: Set<String>,
+    audio: ActiveAudioInfo?,
+    alarmAt: Long?,
+    event: AgendaEvent?,
+    now: Long,
+): List<String> = configured.withIndex().sortedWith(
+    compareBy<IndexedValue<String>>(
+        { if (it.value in pinned) 0 else 1 },
+        {
+            when (it.value) {
+                "Música" -> if (audio?.isPlaying == true) 0 else 3
+                "Alarma" -> when {
+                    alarmAt == null -> 4
+                    alarmAt <= now + 12 * 60 * 60 * 1000L -> 1
+                    else -> 3
+                }
+                "Agenda" -> when {
+                    event == null -> 4
+                    event.begin <= now + 4 * 60 * 60 * 1000L -> 1
+                    else -> 3
+                }
+                "Temporizadores" -> 2
+                else -> 5
+            }
+        },
+        { it.index },
+    ),
+).map { it.value }
+
+private fun quickDailyScene(
+    audio: ActiveAudioInfo?,
+    alarmAt: Long?,
+    event: AgendaEvent?,
+    now: Long,
+): QuickCenterScene? = when {
+    audio?.isPlaying == true -> QuickCenterScene(
+        icon = "play", title = "Ahora suena", detail = audio.title ?: audio.appLabel ?: "Multimedia", target = "Música",
+    )
+    alarmAt != null && alarmAt in now..(now + 12 * 60 * 60 * 1000L) -> QuickCenterScene(
+        icon = "alarm", title = "Próxima alarma", detail = "Dentro de poco", target = "Alarma",
+    )
+    event != null && event.begin in now..(now + 4 * 60 * 60 * 1000L) -> QuickCenterScene(
+        icon = "calendar", title = "Próximo evento", detail = event.title, target = "Agenda",
+    )
+    else -> null
+}
+
 /** A lighter version of the sheet material lets the wallpaper show through on Inicio. */
 @Composable
 internal fun Modifier.ps4ControlGlass(shape: Shape, translucent: Boolean = false): Modifier {
@@ -265,6 +325,7 @@ internal fun QuickCenter(
     val date = remember(locale) { DateTimeFormatter.ofPattern("EEE d MMM", locale) }
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
+    val currentTime = System.currentTimeMillis()
     var destination by remember { mutableStateOf<Rect?>(null) }
     val prefs = LocalContext.current.getSharedPreferences("quick_center_shortcuts", 0).takeUnless { preview }
     val cards = listOf("Música", "Temporizadores", "Alarma", "Agenda")
@@ -403,8 +464,11 @@ internal fun QuickCenter(
                             }
                         }
                     }
+                    val dailyScene = remember(audio?.isPlaying, audio?.title, audio?.appLabel, alarmAt, event?.begin, event?.title, currentTime / 60_000L) {
+                        quickDailyScene(audio, alarmAt, event, currentTime)
+                    }
                     val railItems = buildList {
-                        for (card in cardOrder.sortedBy { if (it in pinned) 0 else 1 }) {
+                        for (card in contextualRailOrder(cardOrder, pinned, audio, alarmAt, event, currentTime)) {
                             when (card) {
                                 "Música" -> if (showMusic) add(QuickRailItemModel(card, "play", "Música",
                                     audio?.title ?: "Sin reproducción"))
@@ -421,6 +485,9 @@ internal fun QuickCenter(
                     }
                     val resolvedRailCard = selectedRailCard.takeIf { selected -> railItems.any { it.id == selected } }
                         ?: railItems.firstOrNull()?.id ?: "Accesos"
+                    dailyScene?.let { scene ->
+                        QuickDailyScene(scene) { revealRailCard(scene.target) }
+                    }
                     QuickCenterRail(railItems, resolvedRailCard, revealedRailCard,
                         onSelect = ::selectRailCard, onReveal = ::revealRailCard, onCollapse = ::collapseRailCard)
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
@@ -520,6 +587,43 @@ internal fun QuickCard(modifier: Modifier = Modifier, content: @Composable () ->
     Box(Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape).then(cardContrast).then(modifier).padding(12.dp)) {
         content()
     }
+}
+
+@Composable
+private fun QuickDailyScene(scene: QuickCenterScene, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(14.dp)
+    Row(
+        Modifier.fillMaxWidth().clip(shape).ps4ControlGlass(shape, translucent = true)
+            .clickable(onClickLabel = "Mostrar ${scene.title}", onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .semantics {
+                contentDescription = "${scene.title}. ${scene.detail}"
+                stateDescription = "Toca para mostrar detalles"
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        ThemeSystemIcon(scene.icon, activeQuickTheme, Modifier.size(20.dp))
+        Column(Modifier.weight(1f)) {
+            Text(scene.title, style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(scene.detail, color = quickMuted, style = MaterialTheme.typography.labelSmall,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        Text("Ver", color = quickAccent, style = MaterialTheme.typography.labelMedium)
+    }
+}
+
+@Composable
+private fun QuickMediaCapabilities(audio: ActiveAudioInfo) {
+    val capabilities = buildList {
+        if (audio.canSeek) add("búsqueda")
+        if (audio.canPrevious || audio.canNext) add("pistas")
+        if (audio.canPlay || audio.canPause) add("reproducción")
+    }
+    val label = if (capabilities.isEmpty()) "Controles disponibles en la app origen"
+    else "Disponible: ${capabilities.joinToString(" · ")}"
+    Text(label, color = quickMuted, style = MaterialTheme.typography.labelSmall,
+        modifier = Modifier.semantics { stateDescription = label })
 }
 
 @Composable
@@ -710,14 +814,22 @@ private fun QuickMediaCard(audio: ActiveAudioInfo, animated: Boolean, expanded: 
             .then(if (!expanded || !fullyRevealed) Modifier.clearAndSetSemantics {} else Modifier)) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val current = position.value
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    QuickMediaButton("previous", "Pista anterior", audio.canPrevious, onPrevious)
-                    QuickMediaButton(if (audio.isPlaying) "pause" else "play",
-                        if (audio.isPlaying) "Pausar" else "Reanudar",
-                        if (audio.isPlaying) audio.canPause else audio.canPlay, onPlayback)
-                    QuickMediaButton("next", "Siguiente pista", audio.canNext, onNext)
+                val controls = buildList {
+                    if (audio.canPrevious) add("previous" to "Pista anterior")
+                    if (if (audio.isPlaying) audio.canPause else audio.canPlay) add((if (audio.isPlaying) "pause" else "play") to (if (audio.isPlaying) "Pausar" else "Reanudar"))
+                    if (audio.canNext) add("next" to "Siguiente pista")
                 }
+                if (controls.isNotEmpty()) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    controls.forEach { (icon, label) ->
+                        QuickMediaButton(icon, label, true, when (icon) {
+                            "previous" -> onPrevious
+                            "next" -> onNext
+                            else -> onPlayback
+                        })
+                    }
+                }
+                QuickMediaCapabilities(audio)
                 if (duration != null && current != null) {
                     val actual = (current.toDouble() / duration).toFloat().coerceIn(0f, 1f)
                     val fraction = scrub ?: actual

@@ -194,6 +194,23 @@
       ],
       "dependsOn": ["BETA111-MEDIA-HUB"],
       "review": "Independent source review identified two P1 and six P2 issues; all were addressed before final compile/lint."
+    },
+    {
+      "id": "BETA113-ADAPTIVE-CENTER",
+      "owner": "codex",
+      "status": "COMPILED_PENDING_INSTALL_AND_PHYSICAL_VALIDATION",
+      "branch": "codex/beta111-media-hub",
+      "baseCommit": "5e7f20e",
+      "contract": "docs/superpowers/plans/2026-11-21-adaptive-quick-center.md",
+      "report": "docs/BETA113.md",
+      "scope": [
+        "transient contextual rail priority",
+        "non-empty daily scene",
+        "fixed quick utilities retained under Accesos",
+        "MediaSession capability disclosure"
+      ],
+      "dependsOn": ["BETA112-PROGRESSIVE-RAIL"],
+      "validation": "assembleBeta lintBeta passed; no device installation or physical validation in this delivery."
     }
   ],
   "budget": {
@@ -241,7 +258,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta112 0.78.0/code112 installed on Nov21 over beta110 without uninstall. Quick Center is a one-row contextual rail with localized up/down reveal; media and tools render only on demand. The YouTube source-session path uses symmetric ±10s seeking when exposed by the source. Independent review findings on no-session media, artwork teardown, pinned order, note visibility, selected rail scrolling, text height, accessibility activation and handle selection were fixed before the final build. assembleBeta lintBeta passed: 0 errors, 59 warnings, 4 hints. Candidate and pulled installed APK SHA-256 AB352DF56FB661F011215828F92E8A405C0EEA3298F733ACEB0E713D36916E2A; version112 and HOME verified on Motorola Edge50Ultra. Gesture/visual review is pending. See docs/BETA112.md.",
+  "latestCheckpoint": "Beta113 0.79.0/code113 candidate on Nov21. Quick Center transiently prioritizes playback, near alarm or near agenda without writing over persisted user order; the compact daily scene is omitted when empty. Accesos retains Flashlight, Calculator and Gemini. Expanded media exposes only MediaSession-announced controls and capabilities. assembleBeta lintBeta BUILD SUCCESSFUL in 3m47s; lint XML has no issues. APK SHA-256 6BE3F1A29ED84C0D2D0279872B03AFE9D25C61CF42071DB2E5D8A2DE38AFB8D9. Not installed or physically validated. See docs/BETA113.md.",
   "checkpointBranch": "codex/beta111-media-hub",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,
