@@ -200,7 +200,7 @@
     {
       "id": "MOTION-113",
       "owner": "codex-motion113",
-      "status": "IN_PROGRESS",
+      "status": "INTEGRATED_BUILD_LINT_VERIFIED",
       "branch": "codex/beta113-themed-choreography",
       "baseCommit": "5e7f20e",
       "scope": [
@@ -210,7 +210,7 @@
     {
       "id": "WEATHER-113",
       "owner": "codex-weather113",
-      "status": "IN_PROGRESS",
+      "status": "INTEGRATED_BUILD_LINT_VERIFIED",
       "branch": "codex/beta113-themed-choreography",
       "baseCommit": "5e7f20e",
       "scope": [
@@ -220,7 +220,7 @@
     {
       "id": "CAPSULE-113",
       "owner": "codex-capsule113",
-      "status": "IN_PROGRESS",
+      "status": "INTEGRATED_BUILD_LINT_VERIFIED",
       "branch": "codex/beta113-themed-choreography",
       "baseCommit": "5e7f20e",
       "scope": [
@@ -283,5 +283,6 @@
     "date": "2026-11-11",
     "dailyQuotaAvailable": false
   },
-  "currentSessionDelegation": "Three in-process delegated agents, bounded local Ollama review. External Claude/OpenCode sessions not verified."
+  "currentSessionDelegation": "Three in-process delegated agents, bounded local Ollama review. External Claude/OpenCode sessions not verified.",
+  "deviceObservedVersion": "0.80.0-beta114 / 114 on 2026-11-22, pending source reconciliation"
 }

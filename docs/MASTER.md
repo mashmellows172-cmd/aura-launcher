@@ -1,5 +1,7 @@
 # Registro maestro de Aura Launcher
 
+Beta113 candidata de integración del 22 de noviembre de 2026, 0.79.0-beta113/código 113, sobre beta112. Coreografía por tema, escenas finitas de clima y continuidad entre cápsula y detalle. La instalación actual del Motorola informa beta114, cuyo código aún no está en esta base de GitHub. Compilación y lint correctos con 0 errores, 59 advertencias y 4 avisos. APK, versión y firma verificados. Integración con beta114 y revisión física pendientes. [Ficha](BETA113.md).
+
 Beta104 instalada en el Motorola el 17 de noviembre de 2026. 0.70.0-beta104, código 104. PS4 ofrece diez animaciones de lista y un plegado gradual de reloj y clima. Compilación y lint correctos con 0 errores. Firma, versión y hash instalado verificados. Plegado y reapertura comprobados en PS4. Una muestra obtuvo P95 de 15 ms. Revisión de los cinco perfiles pendiente. [Ficha](BETA104.md).
 
 Beta103 instalada en el Motorola el 17 de noviembre de 2026. 0.69.1-beta103, código 103. La cabecera PS4 cambia de tamaño con la lista en reposo. El Centro rápido decide sus prioridades al abrir. Compilación y lint correctos con 0 errores. Versión y hash instalado verificados. Muestras de deslizamiento registradas: P95 de 19 y 20 ms frente a 17 ms en beta102. El orden contextual con sesiones reales sigue pendiente de comprobación. [Ficha](BETA103.md).

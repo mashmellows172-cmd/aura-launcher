@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -29,8 +26,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -58,14 +53,15 @@ internal fun ThemedSearchField(
     val settings = LocalMotionSettings.current
     val focused = interactions.collectIsFocusedAsState()
     val sony = theme == LauncherTheme.PS4 || theme == LauncherTheme.XPERIA
-    val animateMorph = sony && !readOnly && !settings.reduceMotion &&
+    val material = themeSurfaceMotion(theme, LocalPs4Palette.current)
+    val animateMorph = !readOnly && !settings.reduceMotion && !LocalThemePreview.current &&
         !dev.senda.launcher.data.LocalAppearance.current.highContrast && !LocalSystemPowerSaving.current &&
         android.animation.ValueAnimator.areAnimatorsEnabled()
     val lens = expansion ?: animateFloatAsState(
         if (animateMorph && (focused.value || query.text.isNotBlank())) 1f else 0f,
-        tween(if (animateMorph) 260 else 0, easing = Ps4Motion.easing), label = "search-field-lens")
+        tween(if (animateMorph) material.duration(200) else 0, easing = material.easing), label = "search-field-lens")
     val animateLens = animateMorph && settings.glowEnabled
-    val panel = Modifier.fillMaxWidth().then(if (animateMorph) Modifier.layout { measurable, constraints ->
+    val panel = Modifier.fillMaxWidth().then(if (animateMorph && sony) Modifier.layout { measurable, constraints ->
         val field = measurable.measure(constraints.copy(minHeight = 0))
         val inset = (5.dp.toPx() * lens.value).roundToInt()
         layout(field.width, constraints.constrainHeight(field.height + inset * 2)) {
@@ -80,7 +76,7 @@ internal fun ThemedSearchField(
         }
         val corner = CornerRadius(radius.toPx())
         onDrawBehind {
-            val alpha = glow()
+            val alpha = if (animateLens) glow() else 0f
             if (alpha > .01f) rings.forEachIndexed { index, (origin, bounds, stroke) ->
                 drawRoundRect(halo.copy(alpha = alpha * .09f / (3 - index)), origin, bounds, corner, style = stroke)
             }
@@ -90,23 +86,9 @@ internal fun ThemedSearchField(
         OutlinedTextField(
             value = query, onValueChange = onQuery,
             modifier = Modifier.fillMaxWidth().heightIn(min = fieldHeight.dp).focusRequester(focus)
-                .then(if (animateLens) Modifier.drawWithCache {
-                    val inset = 1.5.dp.toPx()
-                    val stroke = Stroke(1.dp.toPx())
-                    val ink = Brush.horizontalGradient(listOf(halo, halo.copy(alpha = .28f)))
-                    val bounds = Size((size.width - 2 * inset).coerceAtLeast(0f), (size.height - 2 * inset).coerceAtLeast(0f))
-                    onDrawWithContent {
-                        drawContent()
-                        val p = lens.value
-                        if (p > 0f) {
-                            val half = size.width * p / 2f
-                            clipRect(left = center.x - half, right = center.x + half) {
-                                drawRoundRect(ink, Offset(inset, inset), bounds, CornerRadius(radius.toPx()),
-                                    alpha = settings.glowStrength.coerceIn(0, 100) / 100f, style = stroke)
-                            }
-                        }
-                    }
-                } else Modifier),
+                .then(if (animateLens) Modifier.themeSearchFocus(material, halo,
+                    if (ps4Glass) ps4Design(LocalPs4Palette.current).panelRadius else profile?.radius ?: 18,
+                    settings.glowStrength.coerceIn(0, 100) / 100f) { lens.value } else Modifier),
             interactionSource = interactions,
             textStyle = fieldStyle,
             placeholder = { Text("Buscar apps", style = fieldStyle) },

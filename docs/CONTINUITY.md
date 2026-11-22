@@ -1,5 +1,7 @@
 # Continuidad del proyecto
 
+Beta113 candidata de integración del 22 de noviembre de 2026, 0.79.0-beta113/código 113, sobre beta112. Coreografía por tema, escenas finitas de clima y continuidad entre cápsula y detalle. La instalación actual del Motorola informa beta114, cuyo código aún no está en esta base de GitHub. Compilación y lint correctos con 0 errores, 59 advertencias y 4 avisos. APK, versión y firma verificados. Integración con beta114 y revisión física pendientes. [Ficha](BETA113.md).
+
 Beta112 instalada el 21 de noviembre de 2026. 0.78.0-beta112, código 112. Centro rápido convertido en rail de una fila con revelado localizado por gesto: Música, Temporizadores, Alarma, Agenda, Nota y Accesos. El reproductor YouTube queda fuera hasta desplegar Música y ofrece −10/+10 cuando la sesión es compatible. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Actualizada sin desinstalar sobre beta110; firma, versión, hash y Aura como Inicio verificados en Motorola Edge 50 Ultra. Revisión táctil pendiente. [Ficha](BETA112.md).
 
 Beta111 candidata el 21 de noviembre de 2026. 0.77.0-beta111, código 111. Centro multimedia rehecho como hub continuo y compacto que se expande al deslizar sobre la carátula. Mantiene controles Android reales, búsqueda temporal sólo si la sesión la permite y delegación explícita a la app fuente para vídeo. La carátula es reactiva al progreso, no un vídeo embebido. Compilación/lint: 0 errores, 59 advertencias y 4 avisos. Instalación y revisión física pendientes: ADB no pudo iniciar su servidor local. [Ficha](BETA111.md).

@@ -6,6 +6,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.ui.layout.layout
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import dev.senda.launcher.ui.theme.LocalPs4Palette
+import dev.senda.launcher.ui.theme.themeSurfaceMotion
 import dev.senda.launcher.ui.theme.ps4Design
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -190,7 +192,6 @@ internal fun QuickCenter(
     // Every opening starts as a compact rail. A target selects its capsule but does not
     // obscure the launcher until the user explicitly reveals that contextual detail.
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var timersExpanded by rememberSaveable { mutableStateOf(false) }
     var showNote by rememberSaveable { mutableStateOf(target == QuickCenterTarget.NOTE) }
     var selectedRailCard by rememberSaveable { mutableStateOf(quickTargetRailCard(target)) }
     var revealedRailCard by rememberSaveable { mutableStateOf<String?>(null) }
@@ -199,6 +200,27 @@ internal fun QuickCenter(
     val mediaColor = atmosphere.color
     val mediaExpanded = expanded && hasMedia
     val animated = motion.effect != "NONE" && LocalMotionSettings.current.mediaDetailsMotionEnabled
+    val railMotion = animated && !contrast &&
+        !(decorationConstrained ?: LocalDecorationConstrained.current).value
+    val railMaterial = themeSurfaceMotion(activeQuickTheme, LocalPs4Palette.current)
+    val railProgress = remember { Animatable(0f) }
+    var retainedRailCard by remember { mutableStateOf<String?>(null) }
+    val railBounds = remember { mutableStateMapOf<String, Rect>() }
+    var railArtworkBounds by remember { mutableStateOf<Rect?>(null) }
+    val railArtworkOrigin = audio?.let { current -> railArtworkBounds?.let { MediaArtworkOrigin(it, mediaArtworkKey(current)) } }
+    LaunchedEffect(revealedRailCard, railMotion, railMaterial) {
+        val card = revealedRailCard
+        if (card != null) {
+            if (retainedRailCard != card) railProgress.snapTo(0f)
+            retainedRailCard = card
+            if (railMotion) railProgress.animateTo(1f, tween(railMaterial.duration(260), easing = railMaterial.easing))
+            else railProgress.snapTo(1f)
+        } else {
+            if (railMotion) railProgress.animateTo(0f, tween(railMaterial.duration(260, closing = true), easing = railMaterial.easing))
+            else railProgress.snapTo(0f)
+            retainedRailCard = null
+        }
+    }
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val panelDrag = remember(scope, density.density) {
@@ -212,11 +234,17 @@ internal fun QuickCenter(
     val coverBounds = remember { mutableStateOf<Rect?>(null) }
     val visibleCoverBounds = remember { mutableStateOf<Rect?>(null) }
     val dialogOrigin = remember { mutableStateOf(Offset.Zero) }
-    val artworkProgress = remember(panelDrag, motion, animated) { derivedStateOf {
-        motion.progress.value * if (animated) (1f - panelDrag.offset.value.coerceAtLeast(0f) / panelDrag.dismissDistance).coerceIn(0f, 1f) else 1f
+    val artworkProgress = remember(railProgress) { derivedStateOf { railProgress.value } }
+    val artworkTransition by remember(railProgress, panelDrag, motion) { derivedStateOf {
+        motion.effect == "SPRING" && !motion.closing && panelDrag.offset.value <= 0f &&
+            railProgress.value > .001f && railProgress.value < .999f
     } }
-    val overlayArtwork = animated && !contrast && selectedRailCard == "Música" &&
-        (mediaExpanded || expansion.value > .001f) && audio?.artwork?.let { !it.isRecycled } == true
+    val detailInteractive by remember(revealedRailCard, retainedRailCard) { derivedStateOf {
+        revealedRailCard != null && revealedRailCard == retainedRailCard && railProgress.value >= .95f
+    } }
+    val overlayArtwork = railMotion && artworkTransition && retainedRailCard == "Música" &&
+        railArtworkOrigin != null && coverBounds.value != null &&
+        audio?.artwork?.let { !it.isRecycled } == true
     fun positionArtwork(coordinates: LayoutCoordinates) {
         if (!coordinates.isAttached) { coverBounds.value = null; visibleCoverBounds.value = null; return }
         val point = coordinates.positionOnScreen()
@@ -229,21 +257,15 @@ internal fun QuickCenter(
     fun expandMedia(value: Boolean) {
         expanded = value && hasMedia
         panelDrag.expand(expanded, animated)
-        if (expanded) timersExpanded = false
-    }
-    fun expandTimers(value: Boolean) {
-        timersExpanded = value
-        if (value) expandMedia(false)
     }
     fun revealRailCard(card: String) {
         selectedRailCard = card
         revealedRailCard = card
         when (card) {
             "Música" -> expandMedia(true)
-            "Temporizadores" -> expandTimers(true)
+            "Temporizadores" -> expandMedia(false)
             else -> {
                 expandMedia(false)
-                timersExpanded = false
             }
         }
     }
@@ -251,13 +273,11 @@ internal fun QuickCenter(
         if (revealedRailCard == card) revealedRailCard = null
         when (card) {
             "Música" -> expandMedia(false)
-            "Temporizadores" -> expandTimers(false)
         }
     }
     fun selectRailCard(card: String) {
         selectedRailCard = card
         if (card != "Música") expandMedia(false)
-        if (card != "Temporizadores") timersExpanded = false
         if (revealedRailCard != card) revealedRailCard = null
     }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
@@ -334,13 +354,13 @@ internal fun QuickCenter(
                                 },
                                 onDragCancel = { if (!motion.closing) panelDrag.cancel(animated, hasMedia) { value ->
                                     expanded = value
-                                    if (value) { selectedRailCard = "Música"; revealedRailCard = "Música"; timersExpanded = false }
+                                    if (value) { selectedRailCard = "Música"; revealedRailCard = "Música" }
                                 } },
                                 onDragEnd = {
                                     if (!motion.closing) panelDrag.release(tracker.calculateVelocity().y, hasMedia, animated,
                                         onExpanded = { value ->
                                             expanded = value
-                                            if (value) { selectedRailCard = "Música"; revealedRailCard = "Música"; timersExpanded = false }
+                                            if (value) { selectedRailCard = "Música"; revealedRailCard = "Música" }
                                             else if (revealedRailCard == "Música") revealedRailCard = null
                                         },
                                         onDismiss = { latestDismiss() })
@@ -407,7 +427,7 @@ internal fun QuickCenter(
                         for (card in cardOrder.sortedBy { if (it in pinned) 0 else 1 }) {
                             when (card) {
                                 "Música" -> if (showMusic) add(QuickRailItemModel(card, "play", "Música",
-                                    audio?.title ?: "Sin reproducción"))
+                                    audio?.title ?: "Sin reproducción", audio?.artwork))
                                 "Temporizadores" -> add(QuickRailItemModel(card, "clock", "Temporizadores",
                                     timers.firstOrNull { it.running }?.let { "En marcha" } ?: "Gestionar"))
                                 "Alarma" -> add(QuickRailItemModel(card, "alarm", "Alarma",
@@ -422,49 +442,60 @@ internal fun QuickCenter(
                     val resolvedRailCard = selectedRailCard.takeIf { selected -> railItems.any { it.id == selected } }
                         ?: railItems.firstOrNull()?.id ?: "Accesos"
                     QuickCenterRail(railItems, resolvedRailCard, revealedRailCard,
-                        onSelect = ::selectRailCard, onReveal = ::revealRailCard, onCollapse = ::collapseRailCard)
+                        onSelect = ::selectRailCard, onReveal = ::revealRailCard, onCollapse = ::collapseRailCard,
+                        motionEnabled = railMotion, artworkInFlight = overlayArtwork,
+                        onBounds = { id, bounds -> if (bounds == null) railBounds.remove(id) else if (railBounds[id] != bounds) railBounds[id] = bounds },
+                        onArtworkBounds = { railArtworkBounds = it })
                     Column(Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(cardsScroll),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        when (resolvedRailCard) {
-                            "Música" -> if (revealedRailCard == "Música" && (audio == null || mediaExpanded || expansion.value > .001f)) {
-                                if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
-                                    onExpandedChange = ::expandMedia, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
-                                    onOpenMediaDetails?.let { open ->
-                                        { origin -> panelDrag.interrupt(); motion.close(reduced) { onDismiss(); open(origin) } }
-                                    }, expansion = expansion, hideArtwork = overlayArtwork,
-                                    onArtworkPositioned = ::positionArtwork)
-                                else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
-                            }
-                            "Temporizadores" -> if (timersExpanded) {
-                                if (!preview && timerStore != null) QuickTimerCard(timers, timerStore, true, ::expandTimers)
-                                else QuickActionCard("clock", "Temporizadores", "Ejemplo · 5 min", "Contraer") { expandTimers(false) }
-                            }
-                            "Alarma" -> if (revealedRailCard == "Alarma") {
-                                if (alarmAt != null) {
-                                    val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
-                                    val day = when (at.toLocalDate()) {
-                                        today -> "Hoy"
-                                        today.plusDays(1) -> "Mañana"
-                                        else -> date.format(at)
-                                    }
-                                    QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
-                                } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
-                            }
-                            "Agenda" -> if (revealedRailCard == "Agenda") {
-                                if (event != null) {
-                                    val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
-                                    val whenText = if (event.allDay) date.format(at) else
-                                        if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
-                                    QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
-                                } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
-                            }
-                            "Nota" -> if (revealedRailCard == "Nota") QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
-                            "Accesos" -> if (revealedRailCard == "Accesos") {
-                                QuickCenterActions(onSearch = {}, onSettings = { action ->
-                                    panelDrag.interrupt()
-                                    motion.close(reduced) { onDismiss(); action() }
-                                }, compact = true, toolsOnly = true)
-                                if (!preview) configuration()
+                        val detail = retainedRailCard
+                        if (detail != null) QuickRailDetail(
+                            cardId = detail, progress = railProgress.asState(), source = { railBounds[detail] },
+                            interactive = detailInteractive,
+                            effect = if (railMotion && detail != "Música") motion.effect else "FADE",
+                        ) {
+                            when (detail) {
+                                "Música" -> {
+                                    if (audio != null) QuickMediaCard(audio, animated, mediaExpanded, compact, mediaColor,
+                                        onExpandedChange = { if (it) revealRailCard("Música") else collapseRailCard("Música") }, onPlayback, onPrevious, onNext, onSeek, onOpenMediaSource,
+                                        onOpenMediaDetails?.let { open ->
+                                            { origin -> panelDrag.interrupt(); motion.close(reduced) { onDismiss(); open(origin) } }
+                                        }, expansion = expansion, hideArtwork = overlayArtwork,
+                                        onArtworkPositioned = ::positionArtwork)
+                                    else QuickActionCard("play", "Música", "Sin reproducción activa", "Abrir", onOpenPlayer)
+                                }
+                                "Temporizadores" -> {
+                                    if (!preview && timerStore != null) QuickTimerCard(timers, timerStore, true,
+                                        { if (it) revealRailCard("Temporizadores") else collapseRailCard("Temporizadores") })
+                                    else QuickActionCard("clock", "Temporizadores", "Ejemplo · 5 min", "Contraer") { collapseRailCard("Temporizadores") }
+                                }
+                                "Alarma" -> {
+                                    if (alarmAt != null) {
+                                        val at = Instant.ofEpochMilli(alarmAt).atZone(zone)
+                                        val day = when (at.toLocalDate()) {
+                                            today -> "Hoy"
+                                            today.plusDays(1) -> "Mañana"
+                                            else -> date.format(at)
+                                        }
+                                        QuickActionCard("alarm", "Próxima alarma", "${time.format(at)} · $day", "Editar", onAlarm)
+                                    } else QuickActionCard("alarm", "Próxima alarma", "Sin alarma informada", "Abrir Reloj", onAlarm)
+                                }
+                                "Agenda" -> {
+                                    if (event != null) {
+                                        val at = Instant.ofEpochMilli(event.begin).atZone(if (event.allDay) ZoneOffset.UTC else zone)
+                                        val whenText = if (event.allDay) date.format(at) else
+                                            if (at.toLocalDate() == today) time.format(at) else "${date.format(at)} ${time.format(at)}"
+                                        QuickActionCard("calendar", "Próximo evento", "$whenText · ${event.title}", "Ver") { onEvent(event) }
+                                    } else QuickActionCard("calendar", "Agenda", "Sin evento disponible", "Abrir", onCalendar)
+                                }
+                                "Nota" -> QuickPinnedNoteCard(pinnedNote, onSavePinnedNote)
+                                "Accesos" -> {
+                                    QuickCenterActions(onSearch = {}, onSettings = { action ->
+                                        panelDrag.interrupt()
+                                        motion.close(reduced) { onDismiss(); action() }
+                                    }, compact = true, toolsOnly = true)
+                                    if (!preview) configuration()
+                                }
                             }
                         }
                     }
@@ -474,8 +505,11 @@ internal fun QuickCenter(
             }
             }
         }
-        if (overlayArtwork) QuickArtworkOverlay(audio, artworkOrigin, coverBounds,
-            dialogOrigin, artworkProgress, visibleTarget = visibleCoverBounds)
+        if (overlayArtwork) QuickArtworkOverlay(audio, railArtworkOrigin, coverBounds,
+            dialogOrigin, artworkProgress, visibleTarget = visibleCoverBounds,
+            modifier = Modifier.graphicsLayer {
+                alpha = motion.progress.value * (1f - panelDrag.offset.value.coerceAtLeast(0f) / panelDrag.dismissDistance).coerceIn(0f, 1f)
+            })
     }
     }
 }

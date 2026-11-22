@@ -1,11 +1,14 @@
 package dev.senda.launcher.ui
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -16,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +30,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -43,6 +53,7 @@ internal data class QuickRailItemModel(
     val icon: String,
     val title: String,
     val summary: String,
+    val artwork: Bitmap? = null,
 )
 
 @Composable
@@ -53,6 +64,10 @@ internal fun QuickCenterRail(
     onSelect: (String) -> Unit,
     onReveal: (String) -> Unit,
     onCollapse: (String) -> Unit,
+    motionEnabled: Boolean,
+    artworkInFlight: Boolean,
+    onBounds: (String, Rect?) -> Unit,
+    onArtworkBounds: (Rect?) -> Unit,
 ) {
     val state = rememberLazyListState()
     val selectedIndex = items.indexOfFirst { it.id == selectedId }
@@ -67,6 +82,8 @@ internal fun QuickCenterRail(
     ) {
         items(items, key = { it.id }, contentType = { "quick-center-rail" }) { item ->
             QuickCenterRailItem(item, item.id == selectedId, item.id == revealedId,
+                motionEnabled = motionEnabled, hideArtwork = artworkInFlight && item.id == "Música",
+                onBounds = { onBounds(item.id, it) }, onArtworkBounds = onArtworkBounds,
                 onClick = { onSelect(item.id) },
                 onReveal = { onReveal(item.id) }, onCollapse = { onCollapse(item.id) })
         }
@@ -78,10 +95,20 @@ private fun QuickCenterRailItem(
     item: QuickRailItemModel,
     selected: Boolean,
     revealed: Boolean,
+    motionEnabled: Boolean,
+    hideArtwork: Boolean,
+    onBounds: (Rect?) -> Unit,
+    onArtworkBounds: (Rect?) -> Unit,
     onClick: () -> Unit,
     onReveal: () -> Unit,
     onCollapse: () -> Unit,
 ) {
+    DisposableEffect(item.id) {
+        onDispose {
+            onBounds(null)
+            if (item.id == "Música") onArtworkBounds(null)
+        }
+    }
     var dragDistance by remember(item.id) { mutableFloatStateOf(0f) }
     val shape = RoundedCornerShape(14.dp)
     val gesture = Modifier.pointerInput(item.id) {
@@ -102,9 +129,14 @@ private fun QuickCenterRailItem(
     }
     Column(
         modifier = Modifier.widthIn(min = 96.dp, max = 142.dp).heightIn(min = 64.dp)
+            .onGloballyPositioned { coordinates ->
+                val point = coordinates.positionOnScreen()
+                if (point.x.isFinite() && point.y.isFinite()) onBounds(Rect(point,
+                    Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())))
+            }
             .graphicsLayer {
-                translationY = dragDistance * .12f
-                val pull = abs(dragDistance) / 84f
+                translationY = if (motionEnabled) dragDistance * .12f else 0f
+                val pull = if (motionEnabled) abs(dragDistance) / 84f else 0f
                 scaleX = 1f - pull * .015f
                 scaleY = 1f - pull * .015f
             }
@@ -131,7 +163,15 @@ private fun QuickCenterRailItem(
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-        ThemeSystemIcon(item.icon, activeQuickTheme, Modifier.height(20.dp))
+        val cover = item.artwork?.takeUnless { it.isRecycled }
+        if (cover != null) Image(cover.asImageBitmap(), null,
+            Modifier.size(24.dp).onGloballyPositioned { coordinates ->
+                val point = coordinates.positionOnScreen()
+                if (point.x.isFinite() && point.y.isFinite()) onArtworkBounds(Rect(point,
+                    Size(coordinates.size.width.toFloat(), coordinates.size.height.toFloat())))
+            }.graphicsLayer { alpha = if (hideArtwork) 0f else 1f }
+                .clip(RoundedCornerShape(6.dp)), contentScale = ContentScale.Crop)
+        else ThemeSystemIcon(item.icon, activeQuickTheme, Modifier.height(20.dp))
         Text(item.title, maxLines = 1, overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.labelMedium)
         Text(item.summary, maxLines = 1, overflow = TextOverflow.Ellipsis,

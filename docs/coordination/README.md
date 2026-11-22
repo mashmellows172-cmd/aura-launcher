@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta111-media-hub`, beta112 sobre beta111 `07957f9`. [Ficha BETA112](../BETA112.md). Rail contextual de una fila, revelado localizado por cápsula y herramientas bajo Accesos. YouTube conserva controles de sesión y adopta ±10 s cuando permite búsqueda. Instalado sobre beta110 sin desinstalar; certificado, versión, hash y HOME verificados. Revisión física de gestos pendiente.
+Checkpoint de integración: `codex/beta113-themed-choreography`, candidata beta113 sobre beta112 `5e7f20e`. [Ficha BETA113](../BETA113.md). Movimiento por familia, clima finito y continuidad del Centro rápido. El Motorola informa beta114. Integrar su código antes de sustituir la instalación y completar revisión física.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

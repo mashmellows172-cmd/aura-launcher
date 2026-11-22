@@ -1168,7 +1168,7 @@ internal fun Header(
                         else if(LocalRetroStyle.current.enabled) RetroClock(clockTime,Modifier.clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button })
                         else Text(clockTime,Modifier.heightIn(min=48.dp).clickable(onClick=onOpenAlarms).semantics { contentDescription="Abrir alarmas · $clockTime";role=Role.Button },style=MaterialTheme.typography.headlineLarge)
                     }
-                    HeaderWeather(widgetController,weatherPackage,weatherAppLabel ?: "Prognoza",reduceMotion,onOpenWeather,onWeatherConnection)
+                    HeaderWeather(widgetController,weatherPackage,weatherAppLabel ?: "Prognoza",reduceMotion,onOpenWeather,onWeatherConnection,weatherMotion=weatherMotion)
                 }
                 }
                 Row(

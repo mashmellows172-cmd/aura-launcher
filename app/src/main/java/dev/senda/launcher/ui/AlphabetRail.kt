@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -59,7 +61,9 @@ fun AlphabetRail(
     val markerShape = if (ps4) RoundedCornerShape(5.dp) else profile.chromeShape()
     val haptics = LocalHapticFeedback.current
     val effect = RailEffects.canonical(visualSettings.railEffect)
-    val duration = visualSettings.railDurationMs.coerceIn(80,600)
+    val material = themeSurfaceMotion(theme, LocalPs4Palette.current)
+    val direction = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
+    val duration = material.duration(visualSettings.railDurationMs.coerceIn(80,600))
     val bubbleSize = visualSettings.railBubbleSize.coerceIn(40,84).dp
     val hold = visualSettings.railBubbleHoldMs.coerceIn(0,1000)
     val intensity = visualSettings.railIntensity.coerceIn(0,100) / 100f
@@ -69,10 +73,13 @@ fun AlphabetRail(
     var held by remember { mutableStateOf(false) }
     var lastHaptic by remember { mutableLongStateOf(0L) }
     var releaseToken by remember { mutableIntStateOf(0) }
-    val reduced = highContrast || visualSettings.reduceMotion || effect=="NONE" || !ValueAnimator.areAnimatorsEnabled()
+    val reduced = highContrast || visualSettings.reduceMotion || effect=="NONE" ||
+        LocalSystemPowerSaving.current || LocalThemePreview.current || !ValueAnimator.areAnimatorsEnabled()
+    val bubbleProgress = animateFloatAsState(if (held) 1f else 0f,
+        tween(if (reduced) 0 else duration, easing = material.easing), label = "rail-material")
     val engagement = animateFloatAsState(if(dragging && !reduced)1f else 0f,
         if(reduced) snap() else if(effect=="SPRING") spring(.58f,650f*(220f/duration)*(220f/duration))
-        else tween(duration, easing=FastOutSlowInEasing),label="rail-engagement")
+        else tween(duration, easing=material.easing),label="rail-engagement")
     LaunchedEffect(releaseToken,dragging,hold) {
         if(!dragging){delay(hold.toLong());held=false}
     }
@@ -100,7 +107,7 @@ fun AlphabetRail(
         val indicatorY=animateDpAsState(slot*(selectedIndex%rows),
             if(reduced || dragging && (ps4 || effect!="SPRING"))snap()
             else if(effect=="SPRING")spring(.62f,650f*(220f/duration)*(220f/duration))
-            else tween(duration,easing=FastOutSlowInEasing),label="rail-position")
+            else tween(duration,easing=material.easing),label="rail-position")
         val marker = if (ps4) Modifier.ps4ControlGlass(markerShape, translucent = !held)
         else Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = .18f), markerShape)
         Box(Modifier.offset {
@@ -170,24 +177,27 @@ fun AlphabetRail(
             IntOffset(-(bubbleSize+RailTokens.bubbleGap).roundToPx(),y.roundToPx())
         }){
             val enter=if(reduced)fadeIn(tween(0)) else when(effect){
-                "FADE"->fadeIn(tween(duration))
-                "WAVE"->fadeIn(tween(duration))+slideInHorizontally(tween(duration)){it/2}
-                "CASCADE"->fadeIn(tween(duration))+slideInVertically(tween(duration)){it/3}
-                else->fadeIn(tween(duration))+scaleIn(if(effect=="SPRING")spring(.6f,600f) else tween(duration),initialScale=if(effect=="LENS").4f else .7f)
+                "FADE"->fadeIn(tween(duration, easing = material.easing))
+                "WAVE"->fadeIn(tween(duration, easing = material.easing))+slideInHorizontally(tween(duration, easing = material.easing)){it/2}
+                "CASCADE"->fadeIn(tween(duration, easing = material.easing))+slideInVertically(tween(duration, easing = material.easing)){it/3}
+                else->fadeIn(tween(duration, easing = material.easing))+scaleIn(if(effect=="SPRING")spring(.6f,600f) else tween(duration, easing = material.easing),initialScale=if(effect=="LENS").4f else .7f)
             }
-            AnimatedVisibility(held,enter=enter,exit=if(reduced)fadeOut(tween(0)) else fadeOut(tween(duration.coerceAtMost(220)))){
+            AnimatedVisibility(held,enter=enter,exit=if(reduced)fadeOut(tween(0)) else fadeOut(tween(duration.coerceAtMost(220), easing = material.easing))){
+                val materialBubble = if (reduced || effect == "FADE") Modifier else Modifier
+                    .graphicsLayer { applyThemeSurfaceMotion(material, bubbleProgress.value, direction = direction) }
+                    .themeSurfaceReveal(material) { bubbleProgress.value }
                 if (ps4) {
                     val capsule = RoundedCornerShape(28)
-                    Box(Modifier.size(bubbleSize)
+                    Box(materialBubble.size(bubbleSize)
                         .background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)), capsule)
                         .border(1.dp, quickBlue, capsule)
                         .clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
                         Text(letters[selectedIndex], color = Color.White, fontWeight = FontWeight.SemiBold,
                             fontSize = (bubbleSize.value * .56f).sp, maxLines = 1)
                     }
-                } else HistoricalPanel(theme,Modifier.size(bubbleSize).clearAndSetSemantics {},selected=true){
+                } else HistoricalPanel(theme,materialBubble.size(bubbleSize).clearAndSetSemantics {},selected=true){
                     Box(Modifier.fillMaxSize(),contentAlignment=Alignment.Center){
-                        if(effect=="FADE" && !reduced)Crossfade(letters[selectedIndex],animationSpec=tween(duration),label="rail-letter"){
+                        if(effect=="FADE" && !reduced)Crossfade(letters[selectedIndex],animationSpec=tween(duration, easing = material.easing),label="rail-letter"){
                             Text(it,fontWeight=FontWeight.Bold,fontSize=(visualSettings.railBubbleSize.coerceIn(40,84)*.5f).sp,maxLines=1)
                         } else Text(letters[selectedIndex],fontWeight=FontWeight.Bold,fontSize=(visualSettings.railBubbleSize.coerceIn(40,84)*.5f).sp,maxLines=1)
                     }
