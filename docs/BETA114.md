@@ -24,5 +24,6 @@ Versión candidata: `0.80.0-beta114` · código `114` · 22 de noviembre de 2026
 
 ## Límites y pendientes
 
-- Beta114 no fue instalada ni validada visualmente en el Motorola durante esta entrega.
+- Se actualizó sobre beta112 mediante `adb install -r`, sin desinstalar ni borrar datos. Android confirmó `0.80.0-beta114`/código 114 y Aura continúa resolviendo como Inicio (`dev.senda.launcher.debug/dev.senda.launcher.MainActivity`). El APK extraído después de instalar coincide byte a byte por SHA-256 con el artefacto local.
+- No se realizó revisión visual/táctil del nuevo sistema Sony en el Motorola durante esta entrega.
 - No se declara medición de fluidez, FPS ni consumo; las capas nuevas se limitaron a rutas de dibujo ya existentes y sin temporizadores ambientales.

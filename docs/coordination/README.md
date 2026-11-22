@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta111-media-hub`, beta114 candidata sobre beta113. [Ficha BETA114](../BETA114.md). Foco visual, fondo retenido, materiales y tipografía Sony se coordinan entre lista y Centro rápido, preservando la estructura vertical de Aura. Antigravity revisó la dirección en modo lectura. Compilación/lint correctos; instalación y revisión física de beta114 pendientes.
+Checkpoint actual: `codex/beta111-media-hub`, beta114 instalada sobre beta112. [Ficha BETA114](../BETA114.md). Foco visual, fondo retenido, materiales y tipografía Sony se coordinan entre lista y Centro rápido, preservando la estructura vertical de Aura. Antigravity revisó la dirección en modo lectura. Firma, versión, hash instalado y Aura como Inicio verificados; revisión física de beta114 pendiente.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 
