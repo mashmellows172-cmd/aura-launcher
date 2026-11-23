@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-21",
+  "updated": "2026-11-23",
   "integrationBranch": "codex/beta100-agent-integration",
   "implementationBase": "9f24d9e98427acc9d75c9b8304418ab07cd68480",
   "coordinator": "codex",
@@ -229,6 +229,24 @@
       "dependsOn": ["BETA113-ADAPTIVE-CENTER"],
       "review": "Antigravity performed a read-only visual architecture review; coordinator integrated accepted direction.",
       "validation": "assembleBeta lintBeta passed; signature, version, installed artifact hash and HOME verified after adb install -r; physical visual validation pending."
+    },
+    {
+      "id": "BETA115-PS4-AESTHETIC-CHROME",
+      "owner": "codex + beta115-source-review",
+      "status": "CANDIDATE_BLOCKED_FINAL_BUILD",
+      "branch": "codex/beta111-media-hub",
+      "baseCommit": "2e08c8e",
+      "contract": "docs/superpowers/plans/2026-11-23-ps4-aesthetic-chrome.md",
+      "report": "docs/BETA115.md",
+      "scope": [
+        "PS4 HUD reflection",
+        "retained three-layer classic waves",
+        "Quick Center glass refinement",
+        "shared palette focus material"
+      ],
+      "dependsOn": ["BETA114-SONY-VISUAL-SYSTEM"],
+      "review": "Independent source review found and removed a permanent focus sweep; no remaining P1/P2 findings.",
+      "validation": "git diff --check passed. Full assembleBeta lintBeta did not complete because the Windows session interrupted Gradle before package/lint output; no APK or device installation claimed."
     }
   ],
   "budget": {
@@ -276,7 +294,7 @@
       "githubBranchPublished": true
     }
   ],
-  "latestCheckpoint": "Beta114 0.80.0/code114 installed over beta112 on Nov22 without uninstalling. Sony visual system unifies focus across list/panel/Quick Center; PS4 background gets retained depth and interaction-only motes; Classic, PS5 and Vita materials/typography are distinct while Aura stays vertical. Antigravity supplied read-only visual review and two P2 fixes were applied. Final assembleBeta lintBeta BUILD SUCCESSFUL in 1m22s; lint XML has no issues. APK SHA-256 C210C8319A7ED0794265951E8D7D6A0228DF4CADBD51E32D3E7AEE27D2325410 matches the APK pulled from the Motorola. Signature, version and Aura HOME resolution were verified; physical visual validation pending. See docs/BETA114.md.",
+  "latestCheckpoint": "Beta115 0.81.0/code115 candidate on Nov23. Approved PS4 aesthetic chrome adds palette HUD reflection, three retained classic-wave layers, refined Quick Center glass and common focus material while preserving Aura vertical structure. Independent source review removed one permanent sweep; git diff --check passed. Full Gradle package/lint was interrupted by the Windows session after an R.jar intermediate lock was regenerated; no APK, installation or physical validation claimed. Beta114 remains installed. See docs/BETA115.md.",
   "checkpointBranch": "codex/beta111-media-hub",
   "currentUserQuotaPolicy": {
     "stopAtPercent": 90,

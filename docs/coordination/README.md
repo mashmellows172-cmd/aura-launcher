@@ -4,7 +4,7 @@ Entrada única para Codex, DeepSeek Harness, Antigravity/Gemini y OpenCode. Repo
 
 ## Fuente vigente
 
-Checkpoint actual: `codex/beta111-media-hub`, beta114 instalada sobre beta112. [Ficha BETA114](../BETA114.md). Foco visual, fondo retenido, materiales y tipografía Sony se coordinan entre lista y Centro rápido, preservando la estructura vertical de Aura. Antigravity revisó la dirección en modo lectura. Firma, versión, hash instalado y Aura como Inicio verificados; revisión física de beta114 pendiente.
+Checkpoint actual: `codex/beta111-media-hub`, beta115 candidata. [Ficha BETA115](../BETA115.md). Cromo PS4 aprobado: HUD, ondas retenidas, cristal del Centro rápido y foco común, preservando la estructura vertical de Aura. Revisión fuente/diff correcta; compilación/lint final e instalación pendientes por interrupción de Gradle en la sesión Windows.
 
 Para asignar trabajo nuevo, consulta STATE.json y confirma el SHA y la rama de integración indicada antes de empezar. Cada entrega queda en su rama de GitHub con un informe que indique commits, comprobaciones y pendientes. El coordinador consolida los resultados aceptados por PR y actualiza la continuidad.
 

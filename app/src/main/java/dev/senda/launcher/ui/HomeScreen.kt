@@ -1058,7 +1058,9 @@ internal fun Header(
                 .then(signal)
                 .then(if (entry != null) Modifier.ps4HeaderSweep(entry, accent, entryIntensity, beamAlpha = .5f) else Modifier),
             top = {
-                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                    .then(if (theme == LauncherTheme.PS4 && !motionReduced) Modifier.ps4HudChrome() else Modifier),
+                    verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(48.dp).homeGestures(onGesture)
                         .combinedClickable(onClick = onAvatar, onLongClickLabel = "Abrir ajustes de Aura",
                             onLongClick = { soundFeedback.play(SoundEvent.MENU); if (!preview) themeMenuExpanded = true }, onDoubleClick = onDoubleTap)

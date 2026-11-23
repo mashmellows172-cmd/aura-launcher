@@ -92,8 +92,13 @@ internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
             lineTo(size.width, size.height * .48f); close()
         }
         val sheen = Brush.verticalGradient(
-            listOf(scheme.onSurface.copy(alpha = .065f), Color.Transparent),
+            listOf(scheme.onSurface.copy(alpha = tokens.glassReflectionAlpha), Color.Transparent),
             endY = size.height.coerceAtLeast(1f) * .45f,
+        )
+        val upperRim = Brush.horizontalGradient(
+            listOf(Color.Transparent, tokens.focusRim.copy(alpha = tokens.focusSweepAlpha), Color.Transparent),
+            startX = size.width * .08f,
+            endX = size.width * .92f,
         )
         val light = Brush.linearGradient(
             listOf(tokens.focusRim.copy(alpha = tokens.focusHaloAlpha), Color.Transparent),
@@ -110,9 +115,32 @@ internal fun Modifier.ps4Material(highlight: State<Float>? = null): Modifier {
                 for (x in 1..(size.width / step).toInt()) drawLine(tokens.focusRim, Offset(x * step, 0f), Offset(x * step, size.height), .45.dp.toPx(), alpha = .08f)
             }
             drawLine(scheme.onSurface, Offset(0f, edgeHeight), Offset(size.width, edgeHeight), edgeHeight, alpha = .18f)
+            drawRect(upperRim, size = Size(size.width, edgeHeight))
             drawRect(edge, Offset(0f, size.height - edgeHeight), Size(size.width, edgeHeight))
             val strength = highlight?.value?.coerceIn(0f, 1f) ?: 0f
             if (strength > 0f) drawRect(light, alpha = strength)
+        }
+    }
+}
+
+/** Thin retained HUD reflection; it has no clock and is suppressed with decorative motion. */
+@Composable
+internal fun Modifier.ps4HudChrome(): Modifier {
+    if (LocalAppearance.current.highContrast) return this
+    val tokens = ps4PaletteColors(LocalPs4Palette.current)
+    return drawWithCache {
+        val glow = Brush.horizontalGradient(
+            listOf(Color.Transparent, tokens.focusRim.copy(alpha = tokens.hudGlowAlpha), Color.Transparent),
+            startX = size.width * .12f,
+            endX = size.width * .88f,
+        )
+        val rim = Brush.verticalGradient(
+            listOf(Color.White.copy(alpha = tokens.glassReflectionAlpha), Color.Transparent),
+            endY = size.height.coerceAtLeast(1f) * .62f,
+        )
+        onDrawBehind {
+            drawRect(rim)
+            drawRect(glow, topLeft = Offset.Zero, size = Size(size.width, 1.dp.toPx()))
         }
     }
 }

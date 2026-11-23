@@ -122,7 +122,9 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
         Ps4IdentityBackdrop(identity, palette, backdropModifier, decorationStrength)
     } else Box(backdropModifier.drawWithCache {
         val atmosphere=Brush.radialGradient(listOf(Color(0xFF0070D1).copy(alpha=.34f*decorationStrength),Color.Transparent),center=Offset(size.width,size.height*.18f),radius=size.height*.7f)
-        val ribbons=List(2) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
+        // Three retained paths establish foreground, midground and distant-wave depth.
+        // They rebuild only when the canvas changes, never from an idle animation clock.
+        val ribbons=List(3) { ConsoleRibbon(it).apply { update(size.width,size.height,.7f,0f) } }
         val glass=Brush.linearGradient(listOf(Color(0xFF0055D9).copy(alpha=.04f),Color(0xFF137EFF).copy(alpha=.12f),Color(0xFF2FCBFF).copy(alpha=.23f),Color(0xFF0070D1).copy(alpha=.04f)),start=Offset(0f,size.height*.9f),end=Offset(size.width,size.height*.1f))
         val edge=Brush.horizontalGradient(listOf(Color.Transparent,Color(0xFF008CFF),Color(0xFF9DEEFF),Color(0xFF0070D1).copy(alpha=.1f)))
         val glowStrokes=listOf(Stroke(9.dp.toPx()),Stroke(3.dp.toPx()))
@@ -138,11 +140,12 @@ internal fun Ps4Wallpaper(reduced: Boolean, modifier: Modifier = Modifier, listS
             val time=.7f
             val drift=0f
             ribbons.forEachIndexed { band, ribbon ->
-                drawPath(ribbon.fill,glass,alpha=(if (band == 0) .76f else .98f)*decorationStrength)
+                val layerAlpha = when (band) { 0 -> .52f; 1 -> .78f; else -> .98f }
+                drawPath(ribbon.fill,glass,alpha=layerAlpha*decorationStrength)
                 if (!constrained.value) glowStrokes.forEachIndexed { index, stroke ->
-                    drawPath(ribbon.crest,edge,alpha=(.08f+index*.03f)*decorationStrength,style=stroke)
+                    drawPath(ribbon.crest,edge,alpha=(.05f + band * .018f + index*.03f)*decorationStrength,style=stroke)
                 }
-                drawPath(ribbon.crest,edge,alpha=(if (band == 0) .38f else .56f)*decorationStrength,style=hairline)
+                drawPath(ribbon.crest,edge,alpha=(.26f + band * .12f)*decorationStrength,style=hairline)
             }
             // Motes are drawn only as a response to focus/touch; no idle particle loop.
             repeat(if (constrained.value) 0 else 14) { index ->
