@@ -13,5 +13,5 @@ Versión candidata: `0.81.0-beta115` · código `115` · 23 de noviembre de 2026
 
 - No hay cambio de permisos, dependencias, acciones del sistema ni disposición horizontal de consola.
 - La revisión de fuente independiente detectó un reflejo fijo de foco; se retiró para no simular una animación y para no contaminar la vista previa. No quedaron hallazgos P1/P2.
-- `git diff --check` no informó errores de espacios. No hay resultado completo de `assembleBeta lintBeta`: la sesión Windows interrumpió Gradle antes del empaquetado/lint final y un `R.jar` intermedio estuvo bloqueado al intentar la limpieza. El archivo intermedio se regeneró de forma recuperable; no se borró código ni se cambió el teléfono.
-- Quedan pendientes compilación/lint completos, APK e instalación física en Motorola.
+- `assembleBeta lintBeta` terminó tras regenerar de forma recuperable un `R.jar` intermedio bloqueado; no se borró código ni se cambió el teléfono. El APK está en `app/build/outputs/apk/beta/app-beta.apk`; SHA-256 `635323E9F927949C3C63740B121D3320CCD1D109E30653DEF287DDEE420F9420`. El XML de lint contiene 0 elementos `issue`.
+- Queda pendiente la comparación de firma con la app instalada, la actualización física y revisión visual/táctil en Motorola.

@@ -1,6 +1,6 @@
 # Historial de actualizaciones de Aura Launcher
 
-Beta115 candidata el 23 de noviembre de 2026. 0.81.0-beta115, código 115. Pulido visual PS4 aprobado: HUD con reflejo contenido, tres planos de ondas retenidas, cristal refinado del Centro rápido y foco común de lista/panel. Sin permisos, dependencias, carrusel horizontal ni ciclos ambientales en reposo. Compilación/lint e instalación pendientes. [Ficha](docs/BETA115.md).
+Beta115 candidata compilada el 23 de noviembre de 2026. 0.81.0-beta115, código 115. Pulido visual PS4 aprobado: HUD con reflejo contenido, tres planos de ondas retenidas, cristal refinado del Centro rápido y foco común de lista/panel. Sin permisos, dependencias, carrusel horizontal ni ciclos ambientales en reposo. APK SHA-256 `635323E9F927949C3C63740B121D3320CCD1D109E30653DEF287DDEE420F9420`; lint XML sin incidencias. Instalación pendiente de reconectar el Motorola. [Ficha](docs/BETA115.md).
 
 Beta114 instalada el 22 de noviembre de 2026. 0.80.0-beta114, código 114. Sistema visual Sony unificado: foco compartido, fondo PS4 profundo sin ciclo en reposo, materiales claramente distintos para Clásica/PS5/Vita y jerarquía Noto ajustada. Revisión visual de Antigravity aplicada; se conserva la lista vertical Aura. Compilación/lint: `BUILD SUCCESSFUL` en 1m22s, lint XML sin incidencias. Actualizada por `adb install -r`; firma, versión, hash y Aura como Inicio verificados. Revisión visual/táctil pendiente. [Ficha](docs/BETA114.md).
 
